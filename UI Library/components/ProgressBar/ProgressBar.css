@@ -1,0 +1,143 @@
+/* ═══════════════════════════════════════════
+   ProgressBar — Lotteryplus Design System
+   Figma: "progress-bars-lottery" (14291:136200)
+   ═══════════════════════════════════════════ */
+
+/* ── Keyframes ── */
+
+@keyframes stepPop {
+  0% {
+    transform: scale(0.85);
+  }
+  60% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1.0);
+  }
+}
+
+@keyframes lineFill {
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* ── Container ── */
+
+.ltp-progress-bar {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 0;
+  width: 100%;
+}
+
+/* ── Step ── */
+
+.ltp-progress-bar__step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* ── Circle ── */
+
+.ltp-progress-bar__circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.ltp-progress-bar__circle--animated.ltp-progress-bar__circle--active {
+  animation: stepPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.ltp-progress-bar__circle--animated.ltp-progress-bar__circle--completed {
+  animation: stepPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* ── Label ── */
+
+.ltp-progress-bar__label {
+  text-align: center;
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+
+/* ── Connector (line between steps) ── */
+
+.ltp-progress-bar__connector {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.ltp-progress-bar__connector-track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 100%;
+}
+
+.ltp-progress-bar__connector-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ltp-progress-bar__connector-fill--completed {
+  transform: scaleX(1);
+}
+
+.ltp-progress-bar__connector-fill--animated {
+  animation: lineFill 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* ── Staggered animation delays ── */
+
+.ltp-progress-bar__step--delay-0 .ltp-progress-bar__circle--animated,
+.ltp-progress-bar__connector--delay-0 .ltp-progress-bar__connector-fill--animated {
+  animation-delay: 0ms;
+}
+
+.ltp-progress-bar__step--delay-1 .ltp-progress-bar__circle--animated,
+.ltp-progress-bar__connector--delay-1 .ltp-progress-bar__connector-fill--animated {
+  animation-delay: 150ms;
+}
+
+.ltp-progress-bar__step--delay-2 .ltp-progress-bar__circle--animated,
+.ltp-progress-bar__connector--delay-2 .ltp-progress-bar__connector-fill--animated {
+  animation-delay: 300ms;
+}
+
+.ltp-progress-bar__step--delay-3 .ltp-progress-bar__circle--animated,
+.ltp-progress-bar__connector--delay-3 .ltp-progress-bar__connector-fill--animated {
+  animation-delay: 450ms;
+}
+
+.ltp-progress-bar__step--delay-4 .ltp-progress-bar__circle--animated,
+.ltp-progress-bar__connector--delay-4 .ltp-progress-bar__connector-fill--animated {
+  animation-delay: 600ms;
+}

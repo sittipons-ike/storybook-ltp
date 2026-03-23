@@ -1,0 +1,79 @@
+/* ═══════════════════════════════════════════
+   TextField Component — Lotteryplus Design System
+   Source: Figma "text-field" component set (14291:131807)
+   All values reference Foundation tokens
+   ═══════════════════════════════════════════ */
+
+/* Wrapper */
+.ltp-textfield {
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+}
+
+/* Field container */
+.ltp-textfield__field {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* Input — reset browser defaults */
+.ltp-textfield__input {
+  appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  outline: none;
+  text-align: left;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  flex: 1;
+}
+
+.ltp-textfield__input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+/* Remove browser input styling for autofill */
+.ltp-textfield__input:-webkit-autofill,
+.ltp-textfield__input:-webkit-autofill:hover,
+.ltp-textfield__input:-webkit-autofill:focus {
+  -webkit-text-fill-color: inherit;
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Read only / disabled input */
+.ltp-textfield__input--readonly {
+  cursor: default;
+  pointer-events: none;
+}
+
+/* Clear icon button — reset */
+.ltp-textfield__clear-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  outline: none;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ltp-textfield__clear-btn::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}

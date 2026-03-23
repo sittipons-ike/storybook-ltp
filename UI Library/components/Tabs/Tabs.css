@@ -1,0 +1,27 @@
+/* ═══════════════════════════════════════════
+   Tabs Component — Resets & Utilities
+   Figma: "horizontal-tabs-underline" & "horizontal-tabs_button"
+   ═══════════════════════════════════════════ */
+
+/* Reset button styles for tab items */
+.ltp-tabs__item {
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  outline: none;
+}
+
+.ltp-tabs__item:focus-visible {
+  outline: 2px solid #E32321;
+  outline-offset: -2px;
+  border-radius: 4px;
+}
+
+/* Transition for smooth state changes */
+.ltp-tabs__item {
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}

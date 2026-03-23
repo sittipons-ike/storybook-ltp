@@ -1,0 +1,40 @@
+/* Global font: Graphik TH — Lotteryplus Design System */
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@100;300;400;500;600;700;900&display=swap');
+
+/* Graphik TH is a commercial font — use Sarabun as fallback for Thai glyphs */
+:root {
+  --ltp-font-family: 'Graphik TH', 'Sarabun', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Apply to all story content */
+.sb-show-main,
+#storybook-root,
+#storybook-root * {
+  font-family: var(--ltp-font-family) !important;
+}
+
+/* Force form elements (button, input, select, textarea) —
+   these do NOT inherit font-family by default in most browsers */
+#storybook-root button,
+#storybook-root input,
+#storybook-root select,
+#storybook-root textarea,
+#storybook-root label,
+#storybook-root optgroup {
+  font-family: var(--ltp-font-family) !important;
+}
+
+/* Docs page content */
+.sbdocs-content,
+.sbdocs-content * {
+  font-family: var(--ltp-font-family) !important;
+}
+
+/* Docs form elements */
+.sbdocs-content button,
+.sbdocs-content input,
+.sbdocs-content select,
+.sbdocs-content textarea,
+.sbdocs-content label {
+  font-family: var(--ltp-font-family) !important;
+}

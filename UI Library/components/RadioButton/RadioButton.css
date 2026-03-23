@@ -1,0 +1,27 @@
+/* ═══════════════════════════════════════════
+   RadioButton Component — Lotteryplus Design System
+   All values reference Foundation tokens
+   ═══════════════════════════════════════════ */
+
+/* Reset button styles for RadioOption */
+.ltp-radio-option {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+.ltp-radio-option::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+/* Disabled state */
+.ltp-radio-option--disabled {
+  pointer-events: none;
+}
+
+/* Radio dot */
+.ltp-radio-dot {
+  flex-shrink: 0;
+}

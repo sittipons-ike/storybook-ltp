@@ -1,0 +1,89 @@
+/* ═══════════════════════════════════════════
+   Dropdown Component — Lotteryplus Design System
+   Source: Figma "dropdown" component set (14291:131904)
+   All values reference Foundation tokens
+   ═══════════════════════════════════════════ */
+
+/* Wrapper */
+.ltp-dropdown {
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+}
+
+/* Field — reset button styles */
+.ltp-dropdown__field {
+  appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  outline: none;
+  text-align: left;
+  box-sizing: border-box;
+  width: 100%;
+  user-select: none;
+}
+
+.ltp-dropdown__field::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+/* Field hover state — only when not read-only/disabled */
+.ltp-dropdown__field:not(.ltp-dropdown__field--readonly):not(.ltp-dropdown__field--disabled):hover {
+  cursor: pointer;
+}
+
+/* Read only / disabled field */
+.ltp-dropdown__field--readonly,
+.ltp-dropdown__field--disabled {
+  cursor: default;
+  pointer-events: none;
+}
+
+/* Dropdown list */
+.ltp-dropdown__list {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  box-sizing: border-box;
+  list-style: none;
+  margin: 0;
+}
+
+/* Option item — reset */
+.ltp-dropdown__option {
+  appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  outline: none;
+  text-align: left;
+  box-sizing: border-box;
+  width: 100%;
+  cursor: pointer;
+  user-select: none;
+}
+
+.ltp-dropdown__option::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+/* Overlay to close dropdown when clicking outside */
+.ltp-dropdown__overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 99;
+}

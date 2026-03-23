@@ -1,0 +1,33 @@
+/* ═══════════════════════════════════════════
+   Loading Component — Animation & Resets
+   Figma: "Loading" component (14291:131477)
+   ═══════════════════════════════════════════ */
+
+/* Spin animation keyframes */
+@keyframes ltp-loading-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Container reset */
+.ltp-loading {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+/* SVG spin animation */
+.ltp-loading__spinner {
+  animation: ltp-loading-spin 1s linear infinite;
+  transform-origin: center center;
+}
+
+/* Paused state */
+.ltp-loading--paused .ltp-loading__spinner {
+  animation-play-state: paused;
+}

@@ -1,0 +1,21 @@
+/* ============================================================
+   Icon Component — Lotteryplus Design System
+   Figma: icons-size component set
+   Sizes: 12 | 16 | 20 | 24 | 32 | 40 | 48 | 56 | 64 | 72
+   Colors: Primary (#E32321) | Secondary (#262626) |
+           Tertiary (#737373) | On BG (#FFFFFF)
+   ============================================================ */
+
+.ltp-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.ltp-icon--missing {
+  border: 1px dashed #D4D4D4;
+  border-radius: 4px;
+  background: #FAFAFA;
+}

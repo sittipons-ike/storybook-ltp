@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Storybook build output
+storybook-static/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+debug-storybook.log
+
+# Claude Code
+.claude/
+
+# MCP config
+mcp.json
+
+# Figma export
+ltp-design-system.json

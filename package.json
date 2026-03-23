@@ -1,0 +1,25 @@
+{
+  "name": "lotteryplus-ui-library",
+  "version": "7.1.0",
+  "private": true,
+  "description": "Lotteryplus Design System UI Components — from Figma Design Systems Web App Lotteryplus V.7.1",
+  "scripts": {
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "dependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "@storybook/addon-essentials": "^8.6.14",
+    "@storybook/blocks": "^8.6.14",
+    "@storybook/react": "^8.6.14",
+    "@storybook/react-vite": "^8.6.14",
+    "storybook": "^8.6.14",
+    "vite": "^8.0.1"
+  }
+}

@@ -1,0 +1,50 @@
+/* ═══════════════════════════════════════════
+   Modal Component — Lotteryplus Design System
+   All values reference Foundation tokens
+   ═══════════════════════════════════════════ */
+
+.ltp-modal {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Button resets */
+.ltp-modal__btn {
+  outline: none;
+  text-decoration: none;
+  user-select: none;
+  transition: opacity 0.15s ease;
+}
+
+.ltp-modal__btn:hover {
+  opacity: 0.9;
+}
+
+.ltp-modal__btn:active {
+  opacity: 0.8;
+}
+
+.ltp-modal__btn::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+/* Overlay */
+.ltp-modal-overlay {
+  animation: ltp-modal-fade-in 0.2s ease;
+}
+
+.ltp-modal-overlay .ltp-modal {
+  animation: ltp-modal-scale-in 0.2s ease;
+}
+
+@keyframes ltp-modal-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ltp-modal-scale-in {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}

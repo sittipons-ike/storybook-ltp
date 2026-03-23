@@ -1,0 +1,35 @@
+/* ═══════════════════════════════════════════
+   Button Component — Lotteryplus Design System
+   All values reference Foundation tokens
+   ═══════════════════════════════════════════ */
+
+/* Base reset */
+.ltp-button {
+  box-sizing: border-box;
+  outline: none;
+  text-decoration: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Remove default button styles */
+.ltp-button::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+/* Text element */
+.ltp-button__text {
+  display: inline-block;
+  text-align: center;
+}
+
+/* Disabled state */
+.ltp-button--disabled {
+  pointer-events: none;
+}
+
+/* Link type - text decoration on hover */
+.ltp-button--link:not(.ltp-button--disabled):hover .ltp-button__text {
+  text-decoration: underline;
+}
