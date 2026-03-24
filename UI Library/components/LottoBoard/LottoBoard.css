@@ -1,0 +1,79 @@
+/* ═══════════════════════════════════════════
+   LottoBoard Components — Lotteryplus Design System
+   All values reference Foundation tokens
+   ═══════════════════════════════════════════ */
+
+/* Base reset */
+.ltp-number-search-box *,
+.ltp-menu-button *,
+.ltp-set-select *,
+.ltp-search-card * {
+  box-sizing: border-box;
+}
+
+/* NumberSearchBox input reset */
+.ltp-number-box-input {
+  outline: none;
+  border: none;
+  background: transparent;
+  text-align: center;
+  caret-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.ltp-number-box-input:focus {
+  outline: none;
+}
+
+/* Hide number input spinners */
+.ltp-number-box-input::-webkit-outer-spin-button,
+.ltp-number-box-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.ltp-number-box-input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* MenuButton reset */
+.ltp-menu-btn {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.ltp-menu-btn::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+/* SetSelect stepper button reset */
+.ltp-stepper-btn {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.ltp-stepper-btn::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+/* SearchCard link reset */
+.ltp-clear-link {
+  cursor: pointer;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  outline: none;
+  padding: 0;
+}
