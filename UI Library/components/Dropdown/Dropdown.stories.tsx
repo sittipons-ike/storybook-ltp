@@ -12,6 +12,8 @@ import {
   BORDER_WIDTH,
   SHADOW,
 } from './tokens';
+import ColorBindingsTable from '../../system/ColorBindingsTable';
+import type { ColorBinding } from '../../system/ColorBindingsTable';
 
 // ═══════════════════════════════════════════
 //  Dropdown Stories — Lotteryplus Design System
@@ -384,4 +386,29 @@ export const TokenVerification: Story = {
     );
   },
   parameters: { layout: 'padded' },
+};
+
+// ── Color Bindings ──
+export const ColorBindings: StoryObj = {
+  name: 'Color Bindings',
+  render: () => (
+    <ColorBindingsTable
+      componentName="Dropdown"
+      figmaId="14291:131904"
+      bindings={[
+        { token: 'dropdown-bg-white', figmaVariable: 'colors/dropdown/dropdown-bg-white', hex: '#FFFFFF', usage: 'Field background (default)' },
+        { token: 'dropdown-bg-disable', figmaVariable: 'colors/dropdown/dropdown-bg-disable', hex: '#F5F5F5', usage: 'Field background (read only)' },
+        { token: 'dropdown-border', figmaVariable: 'colors/dropdown/dropdown-border', hex: '#D4D4D4', usage: 'Field border (default/actived/readOnly)' },
+        { token: 'dropdown-fg-gray', figmaVariable: 'colors/dropdown/dropdown-fg-gray', hex: '#737373', usage: 'Field border (hover), hover icon' },
+        { token: 'dropdown-bd-bg-active', figmaVariable: 'colors/dropdown/dropdown-bd-bg-active', hex: '#E32321', usage: 'Field border (active state)' },
+        { token: 'dropdown-fg-green', figmaVariable: 'colors/dropdown/dropdown-fg-green', hex: '#22C55E', usage: 'Field border (complete)' },
+        { token: 'dropdown-fg-red', figmaVariable: 'colors/dropdown/dropdown-fg-red', hex: '#E32321', usage: 'Field border (error), required marker, error text' },
+        { token: 'dropdown-fg-dark', figmaVariable: 'colors/dropdown/dropdown-fg-dark', hex: '#262626', usage: 'Label text, active/actived text, icons' },
+        { token: 'dropdown-fg-disable', figmaVariable: 'colors/dropdown/dropdown-fg-disable', hex: '#C9C9C9', usage: 'Placeholder text, default icon' },
+        { token: 'dropdown-fg-soft-gray', figmaVariable: 'colors/dropdown/dropdown-fg-soft-gray', hex: '#E5E5E5', usage: 'Option hover bg' },
+        { token: 'dropdown-option-bg-selected', figmaVariable: 'colors/dropdown/dropdown-fg-red', hex: '#E32321', usage: 'Selected option bg' },
+        { token: 'dropdown-option-text-selected', figmaVariable: 'colors/dropdown/dropdown-fg-white', hex: '#FFFFFF', usage: 'Selected option text' },
+      ]}
+    />
+  ),
 };

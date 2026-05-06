@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import Button from './Button';
 import { BUTTON_COLORS, SIZE_CONFIG, TYPOGRAPHY, RADIUS, BORDER_WIDTH, SPACING } from './tokens';
+import ColorBindingsTable from '../../system/ColorBindingsTable';
+import type { ColorBinding } from '../../system/ColorBindingsTable';
 
 // ═══════════════════════════════════════════
 //  Button Stories — Lotteryplus Design System
@@ -309,4 +311,51 @@ export const FullMatrix: Story = {
     </div>
   ),
   parameters: { layout: 'padded' },
+};
+
+// ── Color Bindings ──
+export const ColorBindings: StoryObj = {
+  name: 'Color Bindings',
+  render: () => (
+    <ColorBindingsTable
+      componentName="Button"
+      figmaId="14291:130847"
+      bindings={[
+        // Primary
+        { token: 'btn-bg-pri-default', figmaVariable: 'colors/button/primary/btn-bg-pri-default', hex: '#E32321', usage: 'Primary button bg (default)' },
+        { token: 'btn-bg-pri-hover', figmaVariable: 'colors/button/primary/btn-bg-pri-hover', hex: '#B91C1C', usage: 'Primary button bg (hover)' },
+        { token: 'btn-bg-pri-focused', figmaVariable: 'colors/button/primary/btn-bg-pri-focused', hex: '#DC2626', usage: 'Primary button bg (focused)' },
+        { token: 'btn-bg-pri-pressed', figmaVariable: 'colors/button/primary/btn-bg-pri-pressed', hex: '#7F1D1D', usage: 'Primary button bg (pressed)' },
+        { token: 'btn-bg-pri-disabled', figmaVariable: 'colors/button/primary/btn-bg-pri-disabled', hex: '#F5F5F5', usage: 'Primary button bg (disabled)' },
+        { token: 'btn-fg-pri-default', figmaVariable: 'colors/button/primary/btn-fg-pri-default', hex: '#FFFFFF', usage: 'Primary button text' },
+        { token: 'btn-fg-pri-disabled', figmaVariable: 'colors/button/primary/btn-fg-pri-disabled', hex: '#C9C9C9', usage: 'Primary button text (disabled)' },
+        // Secondary
+        { token: 'btn-bg-sec-default', figmaVariable: 'colors/button/secondary/btn-bg-sec-default', hex: '#262626', usage: 'Secondary button bg (default)' },
+        { token: 'btn-bg-sec-hover', figmaVariable: 'colors/button/secondary/btn-bg-sec-hover', hex: '#4F4F4F', usage: 'Secondary button bg (hover)' },
+        { token: 'btn-bg-sec-pressed', figmaVariable: 'colors/button/secondary/btn-bg-sec-pressed', hex: '#1A1A1A', usage: 'Secondary button bg (pressed)' },
+        { token: 'btn-fg-sec-default', figmaVariable: 'colors/button/secondary/btn-fg-sec-default', hex: '#FFFFFF', usage: 'Secondary button text' },
+        // Tertiary
+        { token: 'btn-bg-ter-default', figmaVariable: 'colors/button/tertiary/btn-bg-ter-default', hex: '#FFFFFF', usage: 'Tertiary button bg (default)' },
+        { token: 'btn-bg-ter-hover', figmaVariable: 'colors/button/tertiary/btn-bg-ter-hover', hex: '#FAFAFA', usage: 'Tertiary button bg (hover)' },
+        { token: 'btn-bg-ter-pressed', figmaVariable: 'colors/button/tertiary/btn-bg-ter-pressed', hex: '#C9C9C9', usage: 'Tertiary button bg (pressed)' },
+        { token: 'btn-fg-ter-default', figmaVariable: 'colors/button/tertiary/btn-fg-ter-default', hex: '#262626', usage: 'Tertiary button text (default)' },
+        { token: 'btn-fg-ter-hover', figmaVariable: 'colors/button/tertiary/btn-fg-ter-hover', hex: '#4F4F4F', usage: 'Tertiary button text (hover)' },
+        { token: 'btn-border-ter-default', figmaVariable: 'colors/button/tertiary/btn-border-ter-default', hex: '#D4D4D4', usage: 'Tertiary button border (default)' },
+        { token: 'btn-border-ter-hover', figmaVariable: 'colors/button/tertiary/btn-border-ter-hover', hex: '#4F4F4F', usage: 'Tertiary button border (hover)' },
+        { token: 'btn-border-ter-pressed', figmaVariable: 'colors/button/tertiary/btn-border-ter-pressed', hex: '#1A1A1A', usage: 'Tertiary button border (pressed)' },
+        // Outline
+        { token: 'btn-fg-outline-default', figmaVariable: 'colors/button/outline/btn-fg-outline-default', hex: '#262626', usage: 'Outline button text (default)' },
+        { token: 'btn-fg-outline-hover', figmaVariable: 'colors/button/outline/btn-fg-outline-hover', hex: '#4F4F4F', usage: 'Outline button text (hover)' },
+        { token: 'btn-fg-outline-pressed', figmaVariable: 'colors/button/outline/btn-fg-outline-pressed', hex: '#1A1A1A', usage: 'Outline button text (pressed)' },
+        { token: 'btn-fg-outline-disabled', figmaVariable: 'colors/button/outline/btn-fg-outline-disabled', hex: '#C9C9C9', usage: 'Outline button text (disabled)' },
+        // Link
+        { token: 'btn-fg-link-default', figmaVariable: 'colors/button/link/btn-fg-link-default', hex: '#3B82F6', usage: 'Link button text (default)' },
+        { token: 'btn-fg-link-hover', figmaVariable: 'colors/button/link/btn-fg-link-hover', hex: '#60A5FA', usage: 'Link button text (hover)' },
+        { token: 'btn-fg-link-focused', figmaVariable: 'colors/button/link/btn-fg-link-focused', hex: '#2563EB', usage: 'Link button text (focused)' },
+        { token: 'btn-fg-link-pressed', figmaVariable: 'colors/button/link/btn-fg-link-pressed', hex: '#1D4ED8', usage: 'Link button text (pressed)' },
+        // Shared disabled border
+        { token: 'btn-border-disabled', figmaVariable: 'colors/button/disabled/btn-border-disabled', hex: '#C9C9C9', usage: 'Disabled button border (all types)' },
+      ]}
+    />
+  ),
 };

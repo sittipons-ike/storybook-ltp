@@ -7,6 +7,8 @@ import {
   LOADING_ANIMATION,
   RADIUS,
 } from './tokens';
+import ColorBindingsTable from '../../system/ColorBindingsTable';
+import type { ColorBinding } from '../../system/ColorBindingsTable';
 
 // ═══════════════════════════════════════════
 //  Loading Stories — Lotteryplus Design System
@@ -549,4 +551,20 @@ export const TokenVerification: Story = {
       </div>
     );
   },
+};
+
+// ── Color Bindings ──
+export const ColorBindings: StoryObj = {
+  name: 'Color Bindings',
+  render: () => (
+    <ColorBindingsTable
+      componentName="Loading"
+      figmaId="14291:131477"
+      bindings={[
+        { token: 'loading-bg-black-80', figmaVariable: 'colors/loading/loading-bg-black-80%', hex: '#000000CC', usage: 'Track ring fill (black 80%, element 25% opacity)' },
+        { token: 'loading-fg-white', figmaVariable: 'colors/loading/loading-fg-white', hex: '#FFFFFF', usage: 'Spinning arc indicator' },
+        { token: 'fg-primary', figmaVariable: 'Color/Foreground/FG-Primary', hex: '#E32321', usage: 'Logo fill (hidden by default)' },
+      ]}
+    />
+  ),
 };

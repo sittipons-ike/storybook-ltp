@@ -9,6 +9,8 @@ import {
   RADIUS,
   BORDER_WIDTH,
 } from './tokens';
+import ColorBindingsTable from '../../system/ColorBindingsTable';
+import type { ColorBinding } from '../../system/ColorBindingsTable';
 
 // ═══════════════════════════════════════════
 //  RadioButton Stories — Lotteryplus Design System
@@ -382,4 +384,27 @@ export const InteractiveDemo: Story = {
       </div>
     );
   },
+};
+
+// ── Color Bindings ──
+export const ColorBindings: StoryObj = {
+  name: 'Color Bindings',
+  render: () => (
+    <ColorBindingsTable
+      componentName="RadioButton"
+      figmaId="14457:1351"
+      bindings={[
+        { token: 'radio-bg-white', figmaVariable: 'colors/radio-buttons/bg-white', hex: '#FFFFFF', usage: 'Radio circle / card bg (default)' },
+        { token: 'radio-bg-disable', figmaVariable: 'colors/radio-buttons/bg-disable', hex: '#F5F5F5', usage: 'Radio circle / card bg (disabled)' },
+        { token: 'radio-border', figmaVariable: 'colors/radio-buttons/border', hex: '#D4D4D4', usage: 'Radio / card border (default)' },
+        { token: 'radio-bg-green', figmaVariable: 'colors/radio-buttons/bg-green', hex: '#22C55E', usage: 'Selected radio border & check dot' },
+        { token: 'radio-fg-disable', figmaVariable: 'colors/radio-buttons/fg-disable', hex: '#C9C9C9', usage: 'Disabled check dot, unselected text' },
+        { token: 'radio-eff-bg-green', figmaVariable: 'colors/radio-buttons/eff-bg-green', hex: '#22C55E66', usage: 'Focus ring (green 40%)' },
+        { token: 'radio-card-bg-selected', figmaVariable: 'colors/radio-buttons/bg-green-soft', hex: '#F0FDF4', usage: 'Selected card bg (soft green)' },
+        { token: 'radio-fg-dark', figmaVariable: 'colors/radio-buttons/fg-dark', hex: '#262626', usage: 'Label text, selected card text' },
+        { token: 'radio-fg-red', figmaVariable: 'colors/radio-buttons/fg-red', hex: '#E32321', usage: 'Required marker, error text' },
+        { token: 'radio-optional', figmaVariable: 'colors/radio-buttons/fg-optional', hex: '#A3A3A3', usage: 'Optional label text' },
+      ]}
+    />
+  ),
 };

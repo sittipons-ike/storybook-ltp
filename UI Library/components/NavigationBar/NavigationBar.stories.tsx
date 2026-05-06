@@ -11,6 +11,8 @@ import {
   NAV_DIMENSIONS,
   CART_GRADIENT,
 } from './tokens';
+import ColorBindingsTable from '../../system/ColorBindingsTable';
+import type { ColorBinding } from '../../system/ColorBindingsTable';
 
 // ═══════════════════════════════════════════
 //  NavigationBar Stories — Lotteryplus Design System
@@ -344,4 +346,25 @@ export const TokenVerification: Story = {
       </div>
     );
   },
+};
+
+// ── Color Bindings ──
+export const ColorBindings: StoryObj = {
+  name: 'Color Bindings',
+  render: () => (
+    <ColorBindingsTable
+      componentName="NavigationBar"
+      figmaId="14291:135864"
+      bindings={[
+        { token: 'navigation-bg-white', figmaVariable: 'colors/navigation-bar/navigation-bg-white', hex: '#FFFFFF', usage: 'Nav bar background' },
+        { token: 'navigation-fg-red', figmaVariable: 'colors/navigation-bar/navigation-fg-red', hex: '#E32321', usage: 'Active text & selector bar' },
+        { token: 'navigation-fg-dark', figmaVariable: 'colors/navigation-bar/navigation-fg-dark', hex: '#262626', usage: 'Inactive text' },
+        { token: 'navigation-fg-white', figmaVariable: 'colors/navigation-bar/navigation-fg-white', hex: '#FFFFFF', usage: 'Cart button text, badge text' },
+        { token: 'navigation-border', figmaVariable: 'colors/navigation-bar/navigation-border', hex: '#F5F5F5', usage: 'Top border' },
+        { token: 'cart-gradient-start', figmaVariable: 'colors/navigation-bar/cart-gradient', hex: '#F85C2A', usage: 'Cart button gradient start' },
+        { token: 'cart-gradient-end', figmaVariable: 'colors/navigation-bar/cart-gradient', hex: '#D80F0D', usage: 'Cart button gradient end' },
+        { token: 'home-indicator', figmaVariable: 'colors/navigation-bar/home-indicator', hex: '#000000', usage: 'Home indicator pill' },
+      ]}
+    />
+  ),
 };

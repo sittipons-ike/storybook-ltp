@@ -12,6 +12,8 @@ import {
   SHADOW,
   type ModalState,
 } from './tokens';
+import ColorBindingsTable from '../../system/ColorBindingsTable';
+import type { ColorBinding } from '../../system/ColorBindingsTable';
 
 // ═══════════════════════════════════════════
 //  Modal Stories — Lotteryplus Design System
@@ -305,4 +307,32 @@ export const TokenVerification: Story = {
     );
   },
   parameters: { layout: 'padded' },
+};
+
+// ── Color Bindings ──
+export const ColorBindings: StoryObj = {
+  name: 'Color Bindings',
+  render: () => (
+    <ColorBindingsTable
+      componentName="Modal"
+      figmaId="14610:24998"
+      bindings={[
+        { token: 'modal-bg-white', figmaVariable: 'colors/modal/modal-bg-white', hex: '#FFFFFF', usage: 'Modal background' },
+        { token: 'modal-fg-dark', figmaVariable: 'colors/modal/modal-fg-dark', hex: '#262626', usage: 'Title & subtitle text' },
+        { token: 'overlay-default', figmaVariable: 'colors/modal/overlay-default', hex: '#00000099', usage: 'Overlay background (black 60%)' },
+        { token: 'modal-fg-green', figmaVariable: 'colors/modal/modal-fg-green', hex: '#22C55E', usage: 'Success icon color' },
+        { token: 'modal-bg-soft-green', figmaVariable: 'colors/modal/modal-bg-soft-green', hex: '#F0FDF4', usage: 'Success icon circle bg' },
+        { token: 'modal-fg-yellow', figmaVariable: 'colors/modal/modal-fg-yellow', hex: '#EAB308', usage: 'Warning icon color' },
+        { token: 'modal-bg-soft-yellow', figmaVariable: 'colors/modal/modal-bg-soft-yellow', hex: '#FEFCE8', usage: 'Warning icon circle bg' },
+        { token: 'modal-fg-red', figmaVariable: 'colors/modal/modal-fg-red', hex: '#E32321', usage: 'Error / warning-serious icon color' },
+        { token: 'modal-bg-soft-red', figmaVariable: 'colors/modal/modal-bg-soft-red', hex: '#FEF2F2', usage: 'Error / warning-serious icon circle bg' },
+        { token: 'modal-bg', figmaVariable: 'colors/modal/modal-bg', hex: '#FAFAFA', usage: 'Info icon circle bg' },
+        { token: 'btn-bg-pri-default', figmaVariable: 'colors/button/primary/btn-bg-pri-default', hex: '#E32321', usage: 'Primary button bg (confirm)' },
+        { token: 'btn-fg-pri-default', figmaVariable: 'colors/button/primary/btn-fg-pri-default', hex: '#FFFFFF', usage: 'Primary button text' },
+        { token: 'btn-bg-ter-default', figmaVariable: 'colors/button/tertiary/btn-bg-ter-default', hex: '#FFFFFF', usage: 'Secondary button bg (cancel)' },
+        { token: 'btn-fg-ter-default', figmaVariable: 'colors/button/tertiary/btn-fg-ter-default', hex: '#262626', usage: 'Secondary button text' },
+        { token: 'btn-border-ter', figmaVariable: 'colors/button/tertiary/btn-border-ter', hex: '#D4D4D4', usage: 'Secondary button border' },
+      ]}
+    />
+  ),
 };

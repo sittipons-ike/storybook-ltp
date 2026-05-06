@@ -11,6 +11,8 @@ import {
   RADIUS,
   BORDER_WIDTH,
 } from './tokens';
+import ColorBindingsTable from '../../system/ColorBindingsTable';
+import type { ColorBinding } from '../../system/ColorBindingsTable';
 
 // ═══════════════════════════════════════════
 //  TextField Stories — Lotteryplus Design System
@@ -296,4 +298,26 @@ export const TokenVerification: Story = {
     );
   },
   parameters: { layout: 'padded' },
+};
+
+// ── Color Bindings ──
+export const ColorBindings: StoryObj = {
+  name: 'Color Bindings',
+  render: () => (
+    <ColorBindingsTable
+      componentName="TextField"
+      figmaId="14291:131807"
+      bindings={[
+        { token: 'text-field-bg-white', figmaVariable: 'colors/text-field/text-field-bg-white', hex: '#FFFFFF', usage: 'Field background (default)' },
+        { token: 'text-field-bg-disable', figmaVariable: 'colors/text-field/text-field-bg-disable', hex: '#F5F5F5', usage: 'Field background (read only)' },
+        { token: 'text-field-border', figmaVariable: 'colors/text-field/text-field-border', hex: '#D4D4D4', usage: 'Field border (default/actived/readOnly)' },
+        { token: 'text-field-fg-gray', figmaVariable: 'colors/text-field/text-field-fg-gray', hex: '#737373', usage: 'Field border (hover), read-only text' },
+        { token: 'text-field-bd-bg-active', figmaVariable: 'colors/text-field/text-field-bd-bg-active', hex: '#E32321', usage: 'Field border (active state)' },
+        { token: 'text-field-fg-green', figmaVariable: 'colors/text-field/text-field-fg-green', hex: '#22C55E', usage: 'Field border (complete)' },
+        { token: 'text-field-fg-red', figmaVariable: 'colors/text-field/text-field-fg-red', hex: '#E32321', usage: 'Field border (error), required marker, error text' },
+        { token: 'text-field-fg-dark', figmaVariable: 'colors/text-field/text-field-fg-dark', hex: '#262626', usage: 'Label text, active/actived input text' },
+        { token: 'text-field-fg-disable', figmaVariable: 'colors/text-field/text-field-fg-disable', hex: '#C9C9C9', usage: 'Placeholder text' },
+      ]}
+    />
+  ),
 };

@@ -9,6 +9,8 @@ import {
   RADIUS,
   SPACING,
 } from './tokens';
+import ColorBindingsTable from '../../system/ColorBindingsTable';
+import type { ColorBinding } from '../../system/ColorBindingsTable';
 
 // ═══════════════════════════════════════════
 //  Toggle Switch Stories — Lotteryplus Design System
@@ -303,4 +305,20 @@ export const TokenVerification: Story = {
       </div>
     );
   },
+};
+
+// ── Color Bindings ──
+export const ColorBindings: StoryObj = {
+  name: 'Color Bindings',
+  render: () => (
+    <ColorBindingsTable
+      componentName="ToggleSwitch"
+      figmaId="14291:131527"
+      bindings={[
+        { token: 'toggle-bg-green', figmaVariable: 'colors/toggle-switch/toggle-bg-green', hex: '#22C55E', usage: 'Track background (active=true)' },
+        { token: 'toggle-bg-soft-gray', figmaVariable: 'colors/toggle-switch/toggle-bg-soft-gray', hex: '#E5E5E5', usage: 'Track background (active=false)' },
+        { token: 'toggle-fg-white', figmaVariable: 'colors/toggle-switch/toggle-fg-white', hex: '#FFFFFF', usage: 'Knob fill color' },
+      ]}
+    />
+  ),
 };

@@ -18,6 +18,8 @@ import {
   SEARCH_CARD,
 } from './tokens';
 import type { MenuButtonType } from './tokens';
+import ColorBindingsTable from '../../system/ColorBindingsTable';
+import type { ColorBinding } from '../../system/ColorBindingsTable';
 
 // ═══════════════════════════════════════════
 //  LottoBoard Stories — Lotteryplus Design System
@@ -321,4 +323,27 @@ export const TokenVerification: NumberSearchBoxStory = {
     );
   },
   parameters: { layout: 'padded', docs: { source: { type: 'code' } } },
+};
+
+// ── Color Bindings ──
+export const ColorBindings: StoryObj = {
+  name: 'Color Bindings',
+  render: () => (
+    <ColorBindingsTable
+      componentName="LottoBoard"
+      figmaId="14291:130847"
+      bindings={[
+        { token: 'lotto-board-bg-white', figmaVariable: 'colors/lotto-board/lotto-board-bg-white', hex: '#FFFFFF', usage: 'Card / input background' },
+        { token: 'lotto-board-bg-dark', figmaVariable: 'colors/lotto-board/lotto-board-bg-dark', hex: '#262626', usage: 'Dark background elements' },
+        { token: 'lotto-board-bg-gray', figmaVariable: 'colors/lotto-board/lotto-board-bg-gray', hex: '#C9C9C9', usage: 'Disabled / inactive bg' },
+        { token: 'lotto-board-border', figmaVariable: 'colors/lotto-board/lotto-board-border', hex: '#D4D4D4', usage: 'Input / card border' },
+        { token: 'lotto-board-fg-dark', figmaVariable: 'colors/lotto-board/lotto-board-fg-dark', hex: '#262626', usage: 'Primary text color' },
+        { token: 'lotto-board-fg-red', figmaVariable: 'colors/lotto-board/lotto-board-fg-red', hex: '#E32321', usage: 'Accent / active text color' },
+        { token: 'btn-bg-pri-default', figmaVariable: 'colors/button/primary/btn-bg-pri-default', hex: '#E32321', usage: 'Primary menu button bg' },
+        { token: 'btn-fg-pri-default', figmaVariable: 'colors/button/primary/btn-fg-pri-default', hex: '#FFFFFF', usage: 'Primary menu button text' },
+        { token: 'btn-bg-oncont-default', figmaVariable: 'colors/button/on-container/btn-bg-oncont-default', hex: '#FFFFFF', usage: 'On-container button bg' },
+        { token: 'btn-fg-oncont-default', figmaVariable: 'colors/button/on-container/btn-fg-oncont-default', hex: '#E32321', usage: 'On-container button text' },
+      ]}
+    />
+  ),
 };

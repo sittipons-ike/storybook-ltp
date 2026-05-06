@@ -8,6 +8,8 @@ import {
   TYPOGRAPHY,
   SPACING,
 } from './tokens';
+import ColorBindingsTable from '../../system/ColorBindingsTable';
+import type { ColorBinding } from '../../system/ColorBindingsTable';
 
 // ═══════════════════════════════════════════
 //  Breadcrumb Stories — Lotteryplus Design System
@@ -229,4 +231,21 @@ export const TokenVerification: Story = {
       </div>
     );
   },
+};
+
+// ── Color Bindings ──
+export const ColorBindings: StoryObj = {
+  name: 'Color Bindings',
+  render: () => (
+    <ColorBindingsTable
+      componentName="Breadcrumb"
+      figmaId="14291:136385"
+      bindings={[
+        { token: 'breadcrumb-fg-dark', figmaVariable: 'colors/breadcrumb/breadcrumb-fg-dark', hex: '#141414', usage: 'Inactive breadcrumb text' },
+        { token: 'breadcrumb-fg-red', figmaVariable: 'colors/breadcrumb/breadcrumb-fg-red', hex: '#E32321', usage: 'Active breadcrumb text (current page)' },
+        { token: 'icon-fg-secondary', figmaVariable: 'colors/icon/icon-fg-secondary', hex: '#262626', usage: 'Inactive icon & separator' },
+        { token: 'icon-fg-primary', figmaVariable: 'colors/icon/icon-fg-primary', hex: '#E32321', usage: 'Active icon' },
+      ]}
+    />
+  ),
 };

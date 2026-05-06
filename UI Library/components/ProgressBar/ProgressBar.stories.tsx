@@ -8,6 +8,8 @@ import {
   PROGRESS_COLORS,
   PROGRESS_DIMENSIONS,
 } from './tokens';
+import ColorBindingsTable from '../../system/ColorBindingsTable';
+import type { ColorBinding } from '../../system/ColorBindingsTable';
 
 // ═══════════════════════════════════════════
 //  ProgressBar Stories — Lotteryplus Design System
@@ -530,4 +532,22 @@ export const TokenVerification: Story = {
       </div>
     );
   },
+};
+
+// ── Color Bindings ──
+export const ColorBindings: StoryObj = {
+  name: 'Color Bindings',
+  render: () => (
+    <ColorBindingsTable
+      componentName="ProgressBar"
+      figmaId="14291:136200"
+      bindings={[
+        { token: 'progress-bg-red', figmaVariable: 'colors/progress/progress-bg-red', hex: '#E32321', usage: 'Active/completed circle & line' },
+        { token: 'progress-bg-soft-gray', figmaVariable: 'colors/progress/progress-bg-soft-gray', hex: '#D4D4D4', usage: 'Inactive circle & line' },
+        { token: 'progress-fg-dark', figmaVariable: 'colors/progress/progress-fg-dark', hex: '#262626', usage: 'Active/completed label text' },
+        { token: 'progress-fg-disable', figmaVariable: 'colors/progress/progress-fg-disable', hex: '#C9C9C9', usage: 'Inactive label text' },
+        { token: 'icon-on-bg', figmaVariable: 'colors/icon/on-bg', hex: '#FFFFFF', usage: 'Icon on colored circle (white)' },
+      ]}
+    />
+  ),
 };

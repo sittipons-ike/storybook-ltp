@@ -10,6 +10,8 @@ import {
   RADIUS,
   BORDER_WIDTH,
 } from './tokens';
+import ColorBindingsTable from '../../system/ColorBindingsTable';
+import type { ColorBinding } from '../../system/ColorBindingsTable';
 
 // ═══════════════════════════════════════════
 //  Tabs Stories — Lotteryplus Design System
@@ -328,4 +330,26 @@ export const TokenVerification: Story = {
       </div>
     );
   },
+};
+
+// ── Color Bindings ──
+export const ColorBindings: StoryObj = {
+  name: 'Color Bindings',
+  render: () => (
+    <ColorBindingsTable
+      componentName="Tabs"
+      figmaId="14370:9654"
+      bindings={[
+        { token: 'tabs-fg-primary', figmaVariable: 'colors/tabs/tabs-fg-primary', hex: '#E32321', usage: 'Selected text (underline), selected border' },
+        { token: 'tabs-fg-secondary', figmaVariable: 'colors/tabs/tabs-fg-secondary', hex: '#262626', usage: 'Unselected text' },
+        { token: 'tabs-fg-white', figmaVariable: 'colors/tabs/tabs-fg-white', hex: '#FFFFFF', usage: 'Selected text in button-style' },
+        { token: 'tabs-fg-disable', figmaVariable: 'colors/tabs/tabs-fg-disable', hex: '#C9C9C9', usage: 'Bottom border underline' },
+        { token: 'tabs-bg-white', figmaVariable: 'colors/tabs/tabs-bg-white', hex: '#FFFFFF', usage: 'Button container bg' },
+        { token: 'tabs-bg-primary', figmaVariable: 'colors/tabs/tabs-bg-primary', hex: '#E32321', usage: 'Active tab bg (red scheme)' },
+        { token: 'tabs-bg-secondary', figmaVariable: 'colors/tabs/tabs-bg-secondary', hex: '#262626', usage: 'Active tab bg (black scheme)' },
+        { token: 'border-disable', figmaVariable: 'Color/Border/Border-Disable', hex: '#E5E5E5', usage: 'Separator line in underline style' },
+        { token: 'border-primary', figmaVariable: 'Color/Border/Border-Primary', hex: '#E32321', usage: 'Active underline indicator' },
+      ]}
+    />
+  ),
 };

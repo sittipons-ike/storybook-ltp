@@ -14,6 +14,8 @@ import {
   type ToastType,
   type ToastVariant,
 } from './tokens';
+import ColorBindingsTable from '../../system/ColorBindingsTable';
+import type { ColorBinding } from '../../system/ColorBindingsTable';
 
 // ═══════════════════════════════════════════
 //  Toast Stories — Lotteryplus Design System
@@ -383,4 +385,32 @@ export const TokenVerification: Story = {
     );
   },
   parameters: { layout: 'padded' },
+};
+
+// ── Color Bindings ──
+export const ColorBindings: StoryObj = {
+  name: 'Color Bindings',
+  render: () => (
+    <ColorBindingsTable
+      componentName="Toast"
+      figmaId="14848:2072"
+      bindings={[
+        // Light toast
+        { token: 'toast-bg-soft-blue', figmaVariable: 'colors/toast/toast-bg-soft-blue', hex: '#EFF6FF', usage: 'Light informative bg' },
+        { token: 'toast-fg-blue', figmaVariable: 'colors/toast/toast-fg-blue', hex: '#3B82F6', usage: 'Light informative border & icon circle' },
+        { token: 'toast-bg-soft-green', figmaVariable: 'colors/toast/toast-bg-soft-green', hex: '#F0FDF4', usage: 'Light success bg' },
+        { token: 'toast-fg-green', figmaVariable: 'colors/toast/toast-fg-green', hex: '#22C55E', usage: 'Light success border & icon circle' },
+        { token: 'toast-bg-soft-red', figmaVariable: 'colors/toast/toast-bg-soft-red', hex: '#FEF2F2', usage: 'Light error bg' },
+        { token: 'toast-fg-red', figmaVariable: 'colors/toast/toast-fg-red', hex: '#E32321', usage: 'Light error border & icon circle' },
+        { token: 'toast-fg-dark', figmaVariable: 'colors/toast/toast-fg-dark', hex: '#262626', usage: 'Light toast text & close icon' },
+        // Solid toast
+        { token: 'toast-bg-blue', figmaVariable: 'colors/toast/toast-bg-blue', hex: '#3B82F6', usage: 'Solid informative bg' },
+        { token: 'toast-bg-green', figmaVariable: 'colors/toast/toast-bg-green', hex: '#22C55E', usage: 'Solid success bg' },
+        { token: 'toast-bg-yellow', figmaVariable: 'colors/toast/toast-bg-yellow', hex: '#EAB308', usage: 'Solid warning bg' },
+        { token: 'toast-bg-red', figmaVariable: 'colors/toast/toast-bg-red', hex: '#E32321', usage: 'Solid error bg' },
+        { token: 'toast-bg-soft-yellow', figmaVariable: 'colors/toast/toast-bg-soft-yellow', hex: '#FEFCE8', usage: 'Solid warning icon circle bg' },
+        { token: 'toast-fg-white', figmaVariable: 'colors/toast/toast-fg-white', hex: '#FFFFFF', usage: 'Solid toast text & close icon' },
+      ]}
+    />
+  ),
 };
