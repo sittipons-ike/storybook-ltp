@@ -24,3 +24,10 @@ mcp.json
 
 # Figma export
 ltp-design-system.json
+
+# Agent monitor runtime artifacts
+agent-monitor/events.jsonl
+agent-monitor/*.log
+
+# Cloned external repos / scratch
+open-design/
