@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Claude Code Agent Dashboard</title>
+<style>
+  /* ─── Reset & Base ─────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f0f1a;
+    --card-bg: #1a1a2e;
+    --card-border: #2a2a4a;
+    --text: #e0e0f0;
+    --text-dim: #8888aa;
+    --explorer: #00d4ff;
+    --planner: #ffd700;
+    --coder: #00ff88;
+    --tester: #ff66b2;
+    --reviewer: #aa88ff;
+    --glow-spread: 20px;
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── Background Grid ──────────────────────────────── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── Header ───────────────────────────────────────── */
+  .header {
+    position: relative;
+    text-align: center;
+    padding: 40px 20px 20px;
+    z-index: 1;
+  }
+  .header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #00d4ff, #aa88ff, #ff66b2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .header p {
+    color: var(--text-dim);
+    font-size: 13px;
+    margin-top: 6px;
+    letter-spacing: 2px;
+  }
+
+  /* ─── Stats Bar ────────────────────────────────────── */
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    padding: 16px;
+    margin: 0 auto 24px;
+    max-width: 700px;
+    z-index: 1;
+    position: relative;
+  }
+  .stat {
+    text-align: center;
+  }
+  .stat-value {
+    font-size: 26px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
+
+  /* ─── Agent Grid ───────────────────────────────────── */
+  .agents-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 24px;
+    padding: 0 24px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ─── Agent Card ───────────────────────────────────── */
+  .agent-card {
+    width: 200px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 24px 16px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform .3s, box-shadow .3s;
+  }
+  .agent-card:hover {
+    transform: translateY(-4px);
+  }
+  .agent-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 16px 16px 0 0;
+  }
+  .agent-card[data-role="explorer"]::before { background: var(--explorer); }
+  .agent-card[data-role="planner"]::before  { background: var(--planner); }
+  .agent-card[data-role="coder"]::before    { background: var(--coder); }
+  .agent-card[data-role="tester"]::before   { background: var(--tester); }
+  .agent-card[data-role="reviewer"]::before { background: var(--reviewer); }
+
+  .agent-card[data-role="explorer"]:hover { box-shadow: 0 8px 32px rgba(0,212,255,.15); }
+  .agent-card[data-role="planner"]:hover  { box-shadow: 0 8px 32px rgba(255,215,0,.15); }
+  .agent-card[data-role="coder"]:hover    { box-shadow: 0 8px 32px rgba(0,255,136,.15); }
+  .agent-card[data-role="tester"]:hover   { box-shadow: 0 8px 32px rgba(255,102,178,.15); }
+  .agent-card[data-role="reviewer"]:hover { box-shadow: 0 8px 32px rgba(170,136,255,.15); }
+
+  /* ─── Pixel Character ──────────────────────────────── */
+  .pixel-character {
+    width: 80px;
+    height: 96px;
+    margin: 0 auto 16px;
+    position: relative;
+    image-rendering: pixelated;
+  }
+
+  /* Pixel art via box-shadow on a tiny element */
+  .pixel-char {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    top: 0;
+    left: 0;
+  }
+
+  /* Character idle animation */
+  @keyframes idle-bounce {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-4px); }
+  }
+  @keyframes idle-breathe {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.02); }
+  }
+  .agent-card.working .pixel-character {
+    animation: idle-bounce 0.8s ease-in-out infinite;
+  }
+  .agent-card.thinking .pixel-character {
+    animation: idle-breathe 1.5s ease-in-out infinite;
+  }
+
+  /* ─── Status Badge ─────────────────────────────────── */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+  .status-badge.working  { background: rgba(0,255,136,.1);  color: #00ff88; }
+  .status-badge.working .status-dot  { background: #00ff88; box-shadow: 0 0 8px #00ff88; }
+  .status-badge.thinking { background: rgba(255,215,0,.1);  color: #ffd700; }
+  .status-badge.thinking .status-dot { background: #ffd700; animation: pulse-dot 1.2s infinite; }
+  .status-badge.waiting  { background: rgba(136,136,170,.1); color: #8888aa; }
+  .status-badge.waiting .status-dot  { background: #8888aa; }
+  .status-badge.done     { background: rgba(0,255,136,.1);  color: #00ff88; }
+  .status-badge.done .status-dot     { background: #00ff88; }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.3; }
+  }
+
+  /* ─── Role Name ────────────────────────────────────── */
+  .role-name {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .agent-card[data-role="explorer"] .role-name { color: var(--explorer); }
+  .agent-card[data-role="planner"]  .role-name { color: var(--planner); }
+  .agent-card[data-role="coder"]    .role-name { color: var(--coder); }
+  .agent-card[data-role="tester"]   .role-name { color: var(--tester); }
+  .agent-card[data-role="reviewer"] .role-name { color: var(--reviewer); }
+
+  /* ─── Task Text ────────────────────────────────────── */
+  .task-text {
+    font-size: 12px;
+    color: var(--text-dim);
+    height: 18px;
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+
+  /* ─── Progress Bar ─────────────────────────────────── */
+  .progress-track {
+    width: 100%;
+    height: 4px;
+    background: rgba(255,255,255,.05);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width .3s ease;
+    position: relative;
+  }
+  .progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 20px;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.4));
+    animation: shimmer 1.5s infinite;
+  }
+  @keyframes shimmer {
+    0%   { opacity: 0; }
+    50%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  .agent-card[data-role="explorer"] .progress-fill { background: var(--explorer); box-shadow: 0 0 8px var(--explorer); }
+  .agent-card[data-role="planner"]  .progress-fill { background: var(--planner);  box-shadow: 0 0 8px var(--planner); }
+  .agent-card[data-role="coder"]    .progress-fill { background: var(--coder);    box-shadow: 0 0 8px var(--coder); }
+  .agent-card[data-role="tester"]   .progress-fill { background: var(--tester);   box-shadow: 0 0 8px var(--tester); }
+  .agent-card[data-role="reviewer"] .progress-fill { background: var(--reviewer); box-shadow: 0 0 8px var(--reviewer); }
+
+  /* ─── Activity Feed ────────────────────────────────── */
+  .activity-section {
+    max-width: 700px;
+    margin: 0 auto 40px;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+  .activity-section h2 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+  .activity-feed {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 4px 0;
+    max-height: 220px;
+    overflow-y: auto;
+  }
+  .activity-feed::-webkit-scrollbar { width: 4px; }
+  .activity-feed::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 2px; }
+
+  .feed-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(255,255,255,.03);
+    animation: feed-in .3s ease;
+  }
+  .feed-item:last-child { border-bottom: none; }
+
+  @keyframes feed-in {
+    from { opacity: 0; transform: translateX(-10px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .feed-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .feed-time {
+    color: var(--text-dim);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+    width: 50px;
+  }
+  .feed-msg { color: var(--text); }
+  .feed-agent {
+    font-weight: 600;
+  }
+
+  /* ─── Pixel Art Sprites (CSS only) ─────────────────── */
+  /* Each sprite is an 18x22 grid, 4px per pixel = 72x88 */
+
+  .sprite-explorer,
+  .sprite-planner,
+  .sprite-coder,
+  .sprite-tester,
+  .sprite-reviewer {
+    position: absolute;
+    width: 4px; height: 4px;
+    top: 0; left: 4px;
+    /* box-shadow pixel art below */
+  }
+
+  /* ── Explorer: cyan adventurer with compass ── */
+  .sprite-explorer {
+    box-shadow:
+      /* hat */
+      24px 0 0 #006688, 28px 0 0 #006688, 32px 0 0 #006688, 36px 0 0 #006688, 40px 0 0 #006688,
+      20px 4px 0 #008aaa, 24px 4px 0 #008aaa, 28px 4px 0 #00b8dd, 32px 4px 0 #00b8dd, 36px 4px 0 #008aaa, 40px 4px 0 #008aaa, 44px 4px 0 #008aaa,
+      20px 8px 0 #00b8dd, 24px 8px 0 #00d4ff, 28px 8px 0 #00d4ff, 32px 8px 0 #00d4ff, 36px 8px 0 #00d4ff, 40px 8px 0 #00b8dd,
+      /* face */
+      24px 12px 0 #ffcc99, 28px 12px 0 #ffcc99, 32px 12px 0 #ffcc99, 36px 12px 0 #ffcc99,
+      20px 16px 0 #ffcc99, 24px 16px 0 #222, 28px 16px 0 #ffcc99, 32px 16px 0 #ffcc99, 36px 16px 0 #222, 40px 16px 0 #ffcc99,
+      24px 20px 0 #ffcc99, 28px 20px 0 #ffcc99, 32px 20px 0 #ff8866, 36px 20px 0 #ffcc99,
+      /* body */
+      20px 28px 0 #007799, 24px 28px 0 #008aaa, 28px 28px 0 #00b8dd, 32px 28px 0 #00b8dd, 36px 28px 0 #008aaa, 40px 28px 0 #007799,
+      16px 32px 0 #ffcc99, 20px 32px 0 #008aaa, 24px 32px 0 #00b8dd, 28px 32px 0 #00d4ff, 32px 32px 0 #00d4ff, 36px 32px 0 #00b8dd, 40px 32px 0 #008aaa, 44px 32px 0 #ffcc99,
+      12px 36px 0 #ffcc99, 16px 36px 0 #ffcc99, 20px 36px 0 #008aaa, 24px 36px 0 #00b8dd, 28px 36px 0 #00d4ff, 32px 36px 0 #00d4ff, 36px 36px 0 #00b8dd, 40px 36px 0 #008aaa, 44px 36px 0 #ffcc99, 48px 36px 0 #ffcc99,
+      20px 40px 0 #007799, 24px 40px 0 #008aaa, 28px 40px 0 #00b8dd, 32px 40px 0 #00b8dd, 36px 40px 0 #008aaa, 40px 40px 0 #007799,
+      20px 44px 0 #006688, 24px 44px 0 #007799, 28px 44px 0 #008aaa, 32px 44px 0 #008aaa, 36px 44px 0 #007799, 40px 44px 0 #006688,
+      /* belt */
+      24px 48px 0 #aa8833, 28px 48px 0 #ccaa44, 32px 48px 0 #ccaa44, 36px 48px 0 #aa8833,
+      /* legs */
+      20px 52px 0 #005566, 24px 52px 0 #006688, 28px 52px 0 #006688, 32px 52px 0 #006688, 36px 52px 0 #006688, 40px 52px 0 #005566,
+      20px 56px 0 #005566, 24px 56px 0 #005566, 36px 56px 0 #005566, 40px 56px 0 #005566,
+      /* boots */
+      16px 60px 0 #553322, 20px 60px 0 #664433, 24px 60px 0 #664433, 36px 60px 0 #664433, 40px 60px 0 #664433, 44px 60px 0 #553322,
+      16px 64px 0 #553322, 20px 64px 0 #553322, 24px 64px 0 #553322, 36px 64px 0 #553322, 40px 64px 0 #553322, 44px 64px 0 #553322;
+  }
+
+  /* ── Planner: gold strategist with scroll ── */
+  .sprite-planner {
+    box-shadow:
+      /* crown */
+      24px 0 0 #ccaa00, 32px 0 0 #ccaa00, 40px 0 0 #ccaa00,
+      20px 4px 0 #ddbb00, 24px 4px 0 #ffdd00, 28px 4px 0 #ddbb00, 32px 4px 0 #ffdd00, 36px 4px 0 #ddbb00, 40px 4px 0 #ffdd00, 44px 4px 0 #ddbb00,
+      20px 8px 0 #ccaa00, 24px 8px 0 #ddbb00, 28px 8px 0 #ddbb00, 32px 8px 0 #ddbb00, 36px 8px 0 #ddbb00, 40px 8px 0 #ddbb00, 44px 8px 0 #ccaa00,
+      /* face */
+      24px 12px 0 #ffcc99, 28px 12px 0 #ffcc99, 32px 12px 0 #ffcc99, 36px 12px 0 #ffcc99,
+      20px 16px 0 #ffcc99, 24px 16px 0 #222, 28px 16px 0 #ffcc99, 32px 16px 0 #ffcc99, 36px 16px 0 #222, 40px 16px 0 #ffcc99,
+      24px 20px 0 #ffcc99, 28px 20px 0 #ffcc99, 32px 20px 0 #cc6644, 36px 20px 0 #ffcc99,
+      28px 24px 0 #ffcc99, 32px 24px 0 #ffcc99,
+      /* robe */
+      16px 28px 0 #aa8800, 20px 28px 0 #ccaa00, 24px 28px 0 #ddbb00, 28px 28px 0 #ffdd00, 32px 28px 0 #ffdd00, 36px 28px 0 #ddbb00, 40px 28px 0 #ccaa00, 44px 28px 0 #aa8800,
+      12px 32px 0 #ffcc99, 16px 32px 0 #aa8800, 20px 32px 0 #ccaa00, 24px 32px 0 #ddbb00, 28px 32px 0 #ffdd00, 32px 32px 0 #ffdd00, 36px 32px 0 #ddbb00, 40px 32px 0 #ccaa00, 44px 32px 0 #aa8800, 48px 32px 0 #ffcc99,
+      12px 36px 0 #ffcc99, 16px 36px 0 #aa8800, 20px 36px 0 #ccaa00, 24px 36px 0 #ddbb00, 28px 36px 0 #eedd44, 32px 36px 0 #eedd44, 36px 36px 0 #ddbb00, 40px 36px 0 #ccaa00, 44px 36px 0 #aa8800, 48px 36px 0 #ffcc99,
+      20px 40px 0 #ccaa00, 24px 40px 0 #ddbb00, 28px 40px 0 #ffdd00, 32px 40px 0 #ffdd00, 36px 40px 0 #ddbb00, 40px 40px 0 #ccaa00,
+      20px 44px 0 #aa8800, 24px 44px 0 #ccaa00, 28px 44px 0 #ddbb00, 32px 44px 0 #ddbb00, 36px 44px 0 #ccaa00, 40px 44px 0 #aa8800,
+      20px 48px 0 #aa8800, 24px 48px 0 #ccaa00, 28px 48px 0 #ccaa00, 32px 48px 0 #ccaa00, 36px 48px 0 #ccaa00, 40px 48px 0 #aa8800,
+      /* legs */
+      24px 52px 0 #886600, 28px 52px 0 #886600, 32px 52px 0 #886600, 36px 52px 0 #886600,
+      20px 56px 0 #886600, 24px 56px 0 #886600, 36px 56px 0 #886600, 40px 56px 0 #886600,
+      /* shoes */
+      16px 60px 0 #553322, 20px 60px 0 #664433, 24px 60px 0 #664433, 36px 60px 0 #664433, 40px 60px 0 #664433, 44px 60px 0 #553322;
+  }
+
+  /* ── Coder: green hacker with terminal ── */
+  .sprite-coder {
+    box-shadow:
+      /* hood */
+      24px 0 0 #005522, 28px 0 0 #007733, 32px 0 0 #007733, 36px 0 0 #005522,
+      20px 4px 0 #005522, 24px 4px 0 #007733, 28px 4px 0 #00aa44, 32px 4px 0 #00aa44, 36px 4px 0 #007733, 40px 4px 0 #005522,
+      20px 8px 0 #007733, 24px 8px 0 #00aa44, 28px 8px 0 #00cc55, 32px 8px 0 #00cc55, 36px 8px 0 #00aa44, 40px 8px 0 #007733,
+      /* face + glasses */
+      24px 12px 0 #ffcc99, 28px 12px 0 #ffcc99, 32px 12px 0 #ffcc99, 36px 12px 0 #ffcc99,
+      20px 16px 0 #333, 24px 16px 0 #00ff88, 28px 16px 0 #333, 32px 16px 0 #333, 36px 16px 0 #00ff88, 40px 16px 0 #333,
+      24px 20px 0 #ffcc99, 28px 20px 0 #ffcc99, 32px 20px 0 #ffcc99, 36px 20px 0 #ffcc99,
+      28px 24px 0 #ffcc99, 32px 24px 0 #ffcc99,
+      /* hoodie */
+      16px 28px 0 #005522, 20px 28px 0 #007733, 24px 28px 0 #00aa44, 28px 28px 0 #00cc55, 32px 28px 0 #00cc55, 36px 28px 0 #00aa44, 40px 28px 0 #007733, 44px 28px 0 #005522,
+      12px 32px 0 #ffcc99, 16px 32px 0 #007733, 20px 32px 0 #00aa44, 24px 32px 0 #00cc55, 28px 32px 0 #00ff66, 32px 32px 0 #00ff66, 36px 32px 0 #00cc55, 40px 32px 0 #00aa44, 44px 32px 0 #007733, 48px 32px 0 #ffcc99,
+      12px 36px 0 #ffcc99, 16px 36px 0 #007733, 20px 36px 0 #00aa44, 24px 36px 0 #00cc55, 28px 36px 0 #00ff66, 32px 36px 0 #00ff66, 36px 36px 0 #00cc55, 40px 36px 0 #00aa44, 44px 36px 0 #007733, 48px 36px 0 #ffcc99,
+      20px 40px 0 #007733, 24px 40px 0 #00aa44, 28px 40px 0 #00cc55, 32px 40px 0 #00cc55, 36px 40px 0 #00aa44, 40px 40px 0 #007733,
+      20px 44px 0 #005522, 24px 44px 0 #007733, 28px 44px 0 #00aa44, 32px 44px 0 #00aa44, 36px 44px 0 #007733, 40px 44px 0 #005522,
+      /* pants */
+      20px 48px 0 #333344, 24px 48px 0 #444455, 28px 48px 0 #444455, 32px 48px 0 #444455, 36px 48px 0 #444455, 40px 48px 0 #333344,
+      20px 52px 0 #333344, 24px 52px 0 #333344, 36px 52px 0 #333344, 40px 52px 0 #333344,
+      /* sneakers */
+      16px 56px 0 #222, 20px 56px 0 #333, 24px 56px 0 #00ff88, 36px 56px 0 #00ff88, 40px 56px 0 #333, 44px 56px 0 #222;
+  }
+
+  /* ── Tester: pink quality guardian ── */
+  .sprite-tester {
+    box-shadow:
+      /* helmet */
+      24px 0 0 #aa2266, 28px 0 0 #cc3388, 32px 0 0 #cc3388, 36px 0 0 #aa2266,
+      20px 4px 0 #cc3388, 24px 4px 0 #ee44aa, 28px 4px 0 #ff66bb, 32px 4px 0 #ff66bb, 36px 4px 0 #ee44aa, 40px 4px 0 #cc3388,
+      20px 8px 0 #ee44aa, 24px 8px 0 #ff66bb, 28px 8px 0 #ff88cc, 32px 8px 0 #ff88cc, 36px 8px 0 #ff66bb, 40px 8px 0 #ee44aa,
+      /* visor */
+      20px 12px 0 #224, 24px 12px 0 #88ccff, 28px 12px 0 #aaddff, 32px 12px 0 #aaddff, 36px 12px 0 #88ccff, 40px 12px 0 #224,
+      /* face */
+      24px 16px 0 #ffcc99, 28px 16px 0 #ffcc99, 32px 16px 0 #ffcc99, 36px 16px 0 #ffcc99,
+      24px 20px 0 #ffcc99, 28px 20px 0 #ff6688, 32px 20px 0 #ff6688, 36px 20px 0 #ffcc99,
+      28px 24px 0 #ffcc99, 32px 24px 0 #ffcc99,
+      /* armor */
+      16px 28px 0 #992255, 20px 28px 0 #aa3366, 24px 28px 0 #cc4488, 28px 28px 0 #ee55aa, 32px 28px 0 #ee55aa, 36px 28px 0 #cc4488, 40px 28px 0 #aa3366, 44px 28px 0 #992255,
+      12px 32px 0 #ffcc99, 16px 32px 0 #aa3366, 20px 32px 0 #cc4488, 24px 32px 0 #ee55aa, 28px 32px 0 #ff66bb, 32px 32px 0 #ff66bb, 36px 32px 0 #ee55aa, 40px 32px 0 #cc4488, 44px 32px 0 #aa3366, 48px 32px 0 #ffcc99,
+      12px 36px 0 #ffcc99, 16px 36px 0 #992255, 20px 36px 0 #aa3366, 24px 36px 0 #cc4488, 28px 36px 0 #ee55aa, 32px 36px 0 #ee55aa, 36px 36px 0 #cc4488, 40px 36px 0 #aa3366, 44px 36px 0 #992255, 48px 36px 0 #ffcc99,
+      20px 40px 0 #992255, 24px 40px 0 #aa3366, 28px 40px 0 #cc4488, 32px 40px 0 #cc4488, 36px 40px 0 #aa3366, 40px 40px 0 #992255,
+      /* belt */
+      24px 44px 0 #666, 28px 44px 0 #888, 32px 44px 0 #888, 36px 44px 0 #666,
+      /* legs */
+      20px 48px 0 #882244, 24px 48px 0 #882244, 36px 48px 0 #882244, 40px 48px 0 #882244,
+      20px 52px 0 #772233, 24px 52px 0 #772233, 36px 52px 0 #772233, 40px 52px 0 #772233,
+      /* boots */
+      16px 56px 0 #552233, 20px 56px 0 #663344, 24px 56px 0 #663344, 36px 56px 0 #663344, 40px 56px 0 #663344, 44px 56px 0 #552233;
+  }
+
+  /* ── Reviewer: purple sage with monocle ── */
+  .sprite-reviewer {
+    box-shadow:
+      /* beret */
+      28px 0 0 #6633aa, 32px 0 0 #7744bb,
+      20px 4px 0 #5522aa, 24px 4px 0 #6633bb, 28px 4px 0 #7744cc, 32px 4px 0 #8855dd, 36px 4px 0 #7744cc, 40px 4px 0 #6633bb,
+      24px 8px 0 #7744cc, 28px 8px 0 #8855dd, 32px 8px 0 #9966ee, 36px 8px 0 #8855dd, 40px 8px 0 #7744cc,
+      /* face + monocle */
+      24px 12px 0 #ffcc99, 28px 12px 0 #ffcc99, 32px 12px 0 #ffcc99, 36px 12px 0 #ffcc99,
+      20px 16px 0 #ffcc99, 24px 16px 0 #222, 28px 16px 0 #ffcc99, 32px 16px 0 #aa88ff, 36px 16px 0 #222, 40px 16px 0 #aa88ff,
+      24px 20px 0 #ffcc99, 28px 20px 0 #ffcc99, 32px 20px 0 #cc8866, 36px 20px 0 #ffcc99,
+      28px 24px 0 #ffcc99, 32px 24px 0 #ffcc99,
+      /* coat */
+      16px 28px 0 #4422aa, 20px 28px 0 #5533bb, 24px 28px 0 #6644cc, 28px 28px 0 #7755dd, 32px 28px 0 #7755dd, 36px 28px 0 #6644cc, 40px 28px 0 #5533bb, 44px 28px 0 #4422aa,
+      12px 32px 0 #ffcc99, 16px 32px 0 #5533bb, 20px 32px 0 #6644cc, 24px 32px 0 #7755dd, 28px 32px 0 #8866ee, 32px 32px 0 #8866ee, 36px 32px 0 #7755dd, 40px 32px 0 #6644cc, 44px 32px 0 #5533bb, 48px 32px 0 #ffcc99,
+      12px 36px 0 #ffcc99, 16px 36px 0 #5533bb, 20px 36px 0 #6644cc, 24px 36px 0 #7755dd, 28px 36px 0 #8866ee, 32px 36px 0 #8866ee, 36px 36px 0 #7755dd, 40px 36px 0 #6644cc, 44px 36px 0 #5533bb, 48px 36px 0 #ffcc99,
+      20px 40px 0 #5533bb, 24px 40px 0 #6644cc, 28px 40px 0 #7755dd, 32px 40px 0 #7755dd, 36px 40px 0 #6644cc, 40px 40px 0 #5533bb,
+      20px 44px 0 #4422aa, 24px 44px 0 #5533bb, 28px 44px 0 #6644cc, 32px 44px 0 #6644cc, 36px 44px 0 #5533bb, 40px 44px 0 #4422aa,
+      /* pants */
+      20px 48px 0 #333, 24px 48px 0 #444, 28px 48px 0 #444, 32px 48px 0 #444, 36px 48px 0 #444, 40px 48px 0 #333,
+      20px 52px 0 #333, 24px 52px 0 #333, 36px 52px 0 #333, 40px 52px 0 #333,
+      /* fancy shoes */
+      16px 56px 0 #442266, 20px 56px 0 #553377, 24px 56px 0 #553377, 36px 56px 0 #553377, 40px 56px 0 #553377, 44px 56px 0 #442266;
+  }
+
+  /* ─── Floating Particles ───────────────────────────── */
+  .particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .particle {
+    position: absolute;
+    width: 2px; height: 2px;
+    border-radius: 50%;
+    opacity: 0;
+    animation: float-up linear infinite;
+  }
+  @keyframes float-up {
+    0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+    10%  { opacity: 0.6; }
+    90%  { opacity: 0.6; }
+    100% { transform: translateY(-20px) scale(1); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Floating particles -->
+<div class="particles" id="particles"></div>
+
+<!-- Header -->
+<header class="header">
+  <h1>Agent Dashboard</h1>
+  <p>Claude Code Visual Monitor</p>
+</header>
+
+<!-- Stats -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-value" style="color: var(--coder)" id="stat-files">0</div>
+    <div class="stat-label">Files Changed</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value" style="color: var(--explorer)" id="stat-lines">0</div>
+    <div class="stat-label">Lines Written</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value" style="color: var(--planner)" id="stat-tasks">0</div>
+    <div class="stat-label">Tasks Done</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value" style="color: var(--reviewer)" id="stat-time">0:00</div>
+    <div class="stat-label">Elapsed</div>
+  </div>
+</div>
+
+<!-- Agent Cards -->
+<div class="agents-grid" id="agents-grid"></div>
+
+<!-- Activity Feed -->
+<section class="activity-section">
+  <h2>Activity Feed</h2>
+  <div class="activity-feed" id="activity-feed"></div>
+</section>
+
+<script>
+// ─── Agent Definitions ──────────────────────────────
+const agents = [
+  {
+    role: 'explorer',
+    name: 'Explorer',
+    sprite: 'sprite-explorer',
+    tasks: [
+      'Scanning file structure...',
+      'Searching for components...',
+      'Mapping dependencies...',
+      'Reading config files...',
+      'Traversing directories...',
+      'Indexing codebase...',
+    ],
+  },
+  {
+    role: 'planner',
+    name: 'Planner',
+    sprite: 'sprite-planner',
+    tasks: [
+      'Designing architecture...',
+      'Evaluating trade-offs...',
+      'Drafting implementation...',
+      'Reviewing requirements...',
+      'Planning test strategy...',
+      'Structuring approach...',
+    ],
+  },
+  {
+    role: 'coder',
+    name: 'Coder',
+    sprite: 'sprite-coder',
+    tasks: [
+      'Writing component code...',
+      'Implementing feature...',
+      'Refactoring module...',
+      'Adding TypeScript types...',
+      'Building UI layout...',
+      'Creating utility function...',
+    ],
+  },
+  {
+    role: 'tester',
+    name: 'Tester',
+    sprite: 'sprite-tester',
+    tasks: [
+      'Running test suite...',
+      'Checking edge cases...',
+      'Validating assertions...',
+      'Testing accessibility...',
+      'Verifying build output...',
+      'Benchmarking performance...',
+    ],
+  },
+  {
+    role: 'reviewer',
+    name: 'Reviewer',
+    sprite: 'sprite-reviewer',
+    tasks: [
+      'Reviewing code quality...',
+      'Checking conventions...',
+      'Analyzing complexity...',
+      'Approving changes...',
+      'Scanning for issues...',
+      'Validating patterns...',
+    ],
+  },
+];
+
+// ─── State ──────────────────────────────────────────
+const state = {
+  agents: agents.map((a, i) => ({
+    ...a,
+    status: 'waiting',
+    progress: 0,
+    task: '',
+    speed: 0.5 + Math.random() * 1.5,
+    activateAt: i * 3000 + 1000,
+  })),
+  files: 0,
+  lines: 0,
+  tasks: 0,
+  startTime: Date.now(),
+  logs: [],
+};
+
+// ─── Build Cards ────────────────────────────────────
+const grid = document.getElementById('agents-grid');
+
+state.agents.forEach((agent) => {
+  const card = document.createElement('div');
+  card.className = `agent-card waiting`;
+  card.dataset.role = agent.role;
+  card.id = `card-${agent.role}`;
+
+  card.innerHTML = `
+    <div class="pixel-character">
+      <div class="pixel-char ${agent.sprite}"></div>
+    </div>
+    <div class="role-name">${agent.name}</div>
+    <div class="status-badge waiting">
+      <span class="status-dot"></span>
+      <span class="status-text">Standby</span>
+    </div>
+    <div class="task-text" id="task-${agent.role}">&nbsp;</div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-${agent.role}" style="width: 0%"></div>
+    </div>
+  `;
+  grid.appendChild(card);
+});
+
+// ─── Create Particles ───────────────────────────────
+const particlesEl = document.getElementById('particles');
+const colors = ['var(--explorer)', 'var(--planner)', 'var(--coder)', 'var(--tester)', 'var(--reviewer)'];
+
+for (let i = 0; i < 30; i++) {
+  const p = document.createElement('div');
+  p.className = 'particle';
+  p.style.left = Math.random() * 100 + '%';
+  p.style.background = colors[i % colors.length];
+  p.style.animationDuration = 8 + Math.random() * 12 + 's';
+  p.style.animationDelay = Math.random() * 10 + 's';
+  p.style.width = p.style.height = (1 + Math.random() * 3) + 'px';
+  particlesEl.appendChild(p);
+}
+
+// ─── Activity Feed ──────────────────────────────────
+function addLog(agent, message) {
+  const feed = document.getElementById('activity-feed');
+  const elapsed = ((Date.now() - state.startTime) / 1000).toFixed(0);
+  const mins = Math.floor(elapsed / 60);
+  const secs = (elapsed % 60).toString().padStart(2, '0');
+
+  const item = document.createElement('div');
+  item.className = 'feed-item';
+  item.innerHTML = `
+    <div class="feed-dot" style="background: var(--${agent.role})"></div>
+    <span class="feed-time">${mins}:${secs}</span>
+    <span class="feed-msg"><span class="feed-agent" style="color: var(--${agent.role})">${agent.name}</span> ${message}</span>
+  `;
+
+  feed.insertBefore(item, feed.firstChild);
+  if (feed.children.length > 30) feed.lastChild.remove();
+}
+
+// ─── Simulation Loop ────────────────────────────────
+function pickTask(agent) {
+  return agent.tasks[Math.floor(Math.random() * agent.tasks.length)];
+}
+
+function updateCard(agent) {
+  const card = document.getElementById(`card-${agent.role}`);
+  const badge = card.querySelector('.status-badge');
+  const statusText = card.querySelector('.status-text');
+  const taskEl = document.getElementById(`task-${agent.role}`);
+  const progressEl = document.getElementById(`progress-${agent.role}`);
+
+  card.className = `agent-card ${agent.status}`;
+  badge.className = `status-badge ${agent.status}`;
+
+  const labels = { waiting: 'Standby', thinking: 'Thinking', working: 'Working', done: 'Done' };
+  statusText.textContent = labels[agent.status] || agent.status;
+  taskEl.textContent = agent.task || '\u00A0';
+  progressEl.style.width = agent.progress + '%';
+}
+
+function tick() {
+  const now = Date.now();
+  const elapsed = now - state.startTime;
+
+  state.agents.forEach((agent) => {
+    if (agent.status === 'waiting' && elapsed >= agent.activateAt) {
+      agent.status = 'thinking';
+      agent.task = pickTask(agent);
+      agent.progress = 0;
+      addLog(agent, `started: ${agent.task}`);
+      setTimeout(() => {
+        agent.status = 'working';
+        updateCard(agent);
+      }, 1500 + Math.random() * 1000);
+    }
+
+    if (agent.status === 'working') {
+      agent.progress = Math.min(100, agent.progress + agent.speed);
+
+      if (agent.progress >= 100) {
+        agent.status = 'done';
+        addLog(agent, `completed: ${agent.task}`);
+        state.tasks++;
+        state.files += 1 + Math.floor(Math.random() * 3);
+        state.lines += 20 + Math.floor(Math.random() * 200);
+
+        setTimeout(() => {
+          agent.status = 'thinking';
+          agent.task = pickTask(agent);
+          agent.progress = 0;
+          agent.speed = 0.3 + Math.random() * 1.8;
+          addLog(agent, `started: ${agent.task}`);
+          updateCard(agent);
+          setTimeout(() => {
+            agent.status = 'working';
+            updateCard(agent);
+          }, 1200 + Math.random() * 800);
+        }, 2000 + Math.random() * 2000);
+      }
+    }
+
+    updateCard(agent);
+  });
+
+  // Update stats
+  document.getElementById('stat-files').textContent = state.files;
+  document.getElementById('stat-lines').textContent = state.lines.toLocaleString();
+  document.getElementById('stat-tasks').textContent = state.tasks;
+  const secs = Math.floor(elapsed / 1000);
+  document.getElementById('stat-time').textContent =
+    `${Math.floor(secs / 60)}:${(secs % 60).toString().padStart(2, '0')}`;
+}
+
+setInterval(tick, 100);
+</script>
+</body>
+</html>

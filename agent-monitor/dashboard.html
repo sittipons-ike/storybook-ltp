@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Agent Monitor - Live</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a12;
+    --card: #12121e;
+    --border: #1e1e35;
+    --zone-bg: #0e0e1a;
+    --zone-border: #1a1a30;
+    --text: #e0e0f0;
+    --dim: #6a6a88;
+    --explorer: #00d4ff;
+    --planner: #ffd700;
+    --uxui: #ff8844;
+    --uxwriter: #44ddbb;
+    --coder: #00ff88;
+    --tester: #ff66b2;
+    --reviewer: #aa88ff;
+  }
+
+  body {
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.015) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+  }
+
+  /* ── Header ─────────────────────── */
+  .header {
+    text-align: center;
+    padding: 28px 16px 6px;
+    position: relative; z-index: 1;
+  }
+  .header h1 {
+    font-size: 18px; font-weight: 600;
+    letter-spacing: 6px; text-transform: uppercase;
+    background: linear-gradient(90deg, var(--uxui), var(--coder), var(--explorer));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .connection-status {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 6px; font-size: 11px; color: var(--dim);
+  }
+  .conn-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #ff4444; transition: background .3s;
+  }
+  .conn-dot.connected { background: #00ff88; box-shadow: 0 0 8px #00ff8866; }
+
+  /* ── Main Layout ────────────────── */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 16px;
+    max-width: 1100px;
+    margin: 16px auto 0;
+    padding: 0 20px;
+    position: relative; z-index: 1;
+  }
+
+  /* ── Zone Box ───────────────────── */
+  .zone {
+    background: var(--zone-bg);
+    border: 1px solid var(--zone-border);
+    border-radius: 14px;
+    padding: 14px;
+    position: relative;
+  }
+  .zone-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  /* ── Support Zone (left) ────────── */
+  .zone-support {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* ── Pipeline Zone (right) ─────── */
+  .zone-pipeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* Pipeline phases */
+  .phase {
+    position: relative;
+  }
+  .phase-label {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 8px;
+    padding-left: 4px;
+    opacity: 0.6;
+  }
+  .phase-row {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Arrow between phases */
+  .phase-arrow {
+    display: flex;
+    justify-content: center;
+    padding: 6px 0;
+    color: var(--dim);
+    font-size: 14px;
+    opacity: 0.3;
+  }
+  .phase-arrow.active { opacity: 0.8; }
+
+  /* Inline arrow between cards */
+  .inline-arrow {
+    color: var(--dim);
+    font-size: 16px;
+    opacity: 0.25;
+    flex-shrink: 0;
+    transition: opacity .4s;
+  }
+  .inline-arrow.active { opacity: 0.7; }
+
+  /* ── Agent Card ─────────────────── */
+  .agent-card {
+    width: 150px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 10px 12px;
+    text-align: center;
+    position: relative;
+    transition: all .4s ease;
+    flex-shrink: 0;
+  }
+  .zone-support .agent-card { width: 100%; }
+
+  .agent-card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    border-radius: 12px 12px 0 0;
+    opacity: 0.3; transition: opacity .4s;
+  }
+  .agent-card.active { border-color: transparent; }
+  .agent-card.active::before { opacity: 1; }
+
+  /* Per-role colors */
+  .agent-card[data-role="explorer"]::before { background: var(--explorer); }
+  .agent-card[data-role="explorer"].active  { border-color: var(--explorer); box-shadow: 0 0 24px rgba(0,212,255,.12); }
+  .agent-card[data-role="planner"]::before  { background: var(--planner); }
+  .agent-card[data-role="planner"].active   { border-color: var(--planner); box-shadow: 0 0 24px rgba(255,215,0,.12); }
+  .agent-card[data-role="uxui"]::before     { background: var(--uxui); }
+  .agent-card[data-role="uxui"].active      { border-color: var(--uxui); box-shadow: 0 0 24px rgba(255,136,68,.12); }
+  .agent-card[data-role="uxwriter"]::before { background: var(--uxwriter); }
+  .agent-card[data-role="uxwriter"].active  { border-color: var(--uxwriter); box-shadow: 0 0 24px rgba(68,221,187,.12); }
+  .agent-card[data-role="coder"]::before    { background: var(--coder); }
+  .agent-card[data-role="coder"].active     { border-color: var(--coder); box-shadow: 0 0 24px rgba(0,255,136,.12); }
+  .agent-card[data-role="tester"]::before   { background: var(--tester); }
+  .agent-card[data-role="tester"].active    { border-color: var(--tester); box-shadow: 0 0 24px rgba(255,102,178,.12); }
+  .agent-card[data-role="reviewer"]::before { background: var(--reviewer); }
+  .agent-card[data-role="reviewer"].active  { border-color: var(--reviewer); box-shadow: 0 0 24px rgba(170,136,255,.12); }
+
+  /* ── Sprite ─────────────────────── */
+  .sprite-wrap {
+    width: 48px; height: 66px;
+    margin: 0 auto 8px;
+    position: relative;
+    image-rendering: pixelated;
+    opacity: 0.3; filter: saturate(0.2);
+    transition: all .4s ease;
+  }
+  .agent-card.active .sprite-wrap {
+    opacity: 1; filter: saturate(1);
+    animation: pkmn-walk .5s steps(2) infinite;
+  }
+  @keyframes pkmn-walk {
+    0%, 100% { transform: translateY(0); }
+    25% { transform: translateY(-3px) translateX(-1px); }
+    75% { transform: translateY(-3px) translateX(1px); }
+  }
+  .px { position: absolute; width: 3px; height: 3px; top: 0; left: 0; }
+
+  /* "!" exclamation bubble on activate */
+  .agent-card.active .sprite-wrap::after {
+    content: '!';
+    position: absolute;
+    top: -14px; right: -2px;
+    width: 16px; height: 16px;
+    background: #fff;
+    color: #d22;
+    font-size: 11px; font-weight: 900;
+    line-height: 16px; text-align: center;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.4);
+    animation: bubble-pop .3s ease;
+    z-index: 2;
+  }
+  @keyframes bubble-pop {
+    0% { transform: scale(0) translateY(4px); opacity: 0; }
+    60% { transform: scale(1.3) translateY(-2px); opacity: 1; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
+  }
+
+  /* ── Pokemon Ruby Overworld Sprites (3px/pixel, ~16x20 grid) ── */
+
+  /* Explorer — Ranger: wide-brim hat, backpack, magnifying glass */
+  .px-explorer { box-shadow:
+    /* -- hat brim wide -- */
+    15px 0 #004a66, 18px 0 #005a7a, 21px 0 #006a8a, 24px 0 #006a8a, 27px 0 #005a7a, 30px 0 #004a66,
+    9px 3px #005a7a, 12px 3px #007a9a, 15px 3px #009abb, 18px 3px #00b8dd, 21px 3px #00d4ff, 24px 3px #00d4ff, 27px 3px #00b8dd, 30px 3px #009abb, 33px 3px #007a9a, 36px 3px #005a7a,
+    12px 6px #004a66, 15px 6px #005a7a, 18px 6px #006a8a, 21px 6px #006a8a, 24px 6px #006a8a, 27px 6px #006a8a, 30px 6px #005a7a, 33px 6px #004a66,
+    /* -- hair -- */
+    15px 9px #553311, 18px 9px #664422, 21px 9px #664422, 24px 9px #664422, 27px 9px #664422, 30px 9px #553311,
+    /* -- face -- */
+    15px 12px #fdb, 18px 12px #fdb, 21px 12px #fdb, 24px 12px #fdb, 27px 12px #fdb, 30px 12px #fdb,
+    15px 15px #fdb, 18px 15px #211, 21px 15px #fdb, 24px 15px #fdb, 27px 15px #211, 30px 15px #fdb,
+    18px 18px #fdb, 21px 18px #fdb, 24px 18px #e97, 27px 18px #fdb,
+    /* -- neck -- */
+    21px 21px #fdb, 24px 21px #fdb,
+    /* -- body: cyan vest + backpack -- */
+    12px 24px #005a7a, 15px 24px #007a9a, 18px 24px #009abb, 21px 24px #00b8dd, 24px 24px #00b8dd, 27px 24px #009abb, 30px 24px #007a9a, 33px 24px #005a7a, 36px 24px #654, 39px 24px #654,
+    9px 27px #fdb, 12px 27px #007a9a, 15px 27px #009abb, 18px 27px #00b8dd, 21px 27px #00d4ff, 24px 27px #00d4ff, 27px 27px #00b8dd, 30px 27px #009abb, 33px 27px #007a9a, 36px 27px #876, 39px 27px #765,
+    9px 30px #fdb, 12px 30px #005a7a, 15px 30px #007a9a, 18px 30px #009abb, 21px 30px #00b8dd, 24px 30px #00b8dd, 27px 30px #009abb, 30px 30px #007a9a, 33px 30px #005a7a, 36px 30px #876, 39px 30px #765,
+    15px 33px #005a7a, 18px 33px #007a9a, 21px 33px #009abb, 24px 33px #009abb, 27px 33px #007a9a, 30px 33px #005a7a,
+    /* -- belt -- */
+    18px 36px #863, 21px 36px #a84, 24px 36px #a84, 27px 36px #863,
+    /* -- legs -- */
+    15px 39px #004a66, 18px 39px #005a7a, 21px 39px #005a7a, 27px 39px #005a7a, 30px 39px #005a7a,
+    15px 42px #004a66, 18px 42px #004a66, 27px 42px #004a66, 30px 42px #004a66,
+    /* -- boots -- */
+    12px 45px #432, 15px 45px #543, 18px 45px #543, 27px 45px #543, 30px 45px #543, 33px 45px #432;
+  }
+
+  /* Planner — Prof. Birch: lab coat, glasses, clipboard */
+  .px-planner { box-shadow:
+    /* -- hair -- */
+    18px 0 #884411, 21px 0 #995522, 24px 0 #995522, 27px 0 #884411,
+    15px 3px #884411, 18px 3px #aa6633, 21px 3px #bb7744, 24px 3px #bb7744, 27px 3px #aa6633, 30px 3px #884411,
+    /* -- face + glasses -- */
+    15px 6px #fdb, 18px 6px #fdb, 21px 6px #fdb, 24px 6px #fdb, 27px 6px #fdb, 30px 6px #fdb,
+    12px 9px #fdb, 15px 9px #446, 18px 9px #88e, 21px 9px #fdb, 24px 9px #88e, 27px 9px #446, 30px 9px #fdb,
+    15px 12px #fdb, 18px 12px #fdb, 21px 12px #fdb, 24px 12px #e97, 27px 12px #fdb,
+    /* -- neck -- */
+    21px 15px #fdb, 24px 15px #fdb,
+    /* -- lab coat (white/cream) + gold trim -- */
+    12px 18px #ca0, 15px 18px #eee, 18px 18px #fff, 21px 18px #fff, 24px 18px #fff, 27px 18px #fff, 30px 18px #eee, 33px 18px #ca0,
+    9px 21px #fdb, 12px 21px #eee, 15px 21px #fff, 18px 21px #fff, 21px 21px #fd0, 24px 21px #fd0, 27px 21px #fff, 30px 21px #fff, 33px 21px #eee, 36px 21px #fdb,
+    9px 24px #fdb, 12px 24px #ddd, 15px 24px #eee, 18px 24px #fff, 21px 24px #fff, 24px 24px #fff, 27px 24px #fff, 30px 24px #eee, 33px 24px #ddd, 36px 24px #fdb,
+    15px 27px #ddd, 18px 27px #eee, 21px 27px #fff, 24px 27px #fff, 27px 27px #eee, 30px 27px #ddd,
+    /* -- clipboard in hand -- */
+    36px 24px #a84, 39px 24px #ffe, 39px 21px #ffe, 39px 27px #ffe,
+    /* -- pants -- */
+    15px 30px #886600, 18px 30px #997711, 21px 30px #997711, 24px 30px #997711, 27px 30px #997711, 30px 30px #886600,
+    15px 33px #886600, 18px 33px #886600, 27px 33px #886600, 30px 33px #886600,
+    /* -- shoes -- */
+    12px 36px #443, 15px 36px #554, 18px 36px #554, 27px 36px #554, 30px 36px #554, 33px 36px #443;
+  }
+
+  /* UX/UI — Artist: beret, apron, paintbrush */
+  .px-uxui { box-shadow:
+    /* -- beret -- */
+    21px 0 #c52, 24px 0 #e63, 27px 0 #e63,
+    15px 3px #c52, 18px 3px #e63, 21px 3px #f84, 24px 3px #fa5, 27px 3px #fa5, 30px 3px #f84, 33px 3px #e63,
+    15px 6px #e63, 18px 6px #f84, 21px 6px #fa5, 24px 6px #fa5, 27px 6px #f84, 30px 6px #e63,
+    /* -- face -- */
+    15px 9px #fdb, 18px 9px #fdb, 21px 9px #fdb, 24px 9px #fdb, 27px 9px #fdb, 30px 9px #fdb,
+    15px 12px #fdb, 18px 12px #211, 21px 12px #fdb, 24px 12px #fdb, 27px 12px #211, 30px 12px #fdb,
+    18px 15px #fdb, 21px 15px #fdb, 24px 15px #e86, 27px 15px #fdb,
+    /* -- neck -- */
+    21px 18px #fdb, 24px 18px #fdb,
+    /* -- apron/smock -- */
+    12px 21px #933, 15px 21px #b44, 18px 21px #d55, 21px 21px #f84, 24px 21px #f84, 27px 21px #d55, 30px 21px #b44, 33px 21px #933,
+    9px 24px #fdb, 12px 24px #b44, 15px 24px #d55, 18px 24px #f84, 21px 24px #fa5, 24px 24px #fa5, 27px 24px #f84, 30px 24px #d55, 33px 24px #b44, 36px 24px #fdb,
+    9px 27px #fdb, 12px 27px #933, 15px 27px #b44, 18px 27px #d55, 21px 27px #f84, 24px 27px #f84, 27px 27px #d55, 30px 27px #b44, 33px 27px #933,
+    15px 30px #822, 18px 30px #933, 21px 30px #b44, 24px 30px #b44, 27px 30px #933, 30px 30px #822,
+    /* -- paintbrush in hand -- */
+    6px 24px #fdb, 3px 21px #654, 3px 18px #654, 3px 15px #f84, 3px 12px #fa5,
+    /* -- legs -- */
+    15px 33px #445, 18px 33px #556, 21px 33px #556, 27px 33px #556, 30px 33px #556,
+    15px 36px #334, 18px 36px #334, 27px 36px #334, 30px 36px #334,
+    /* -- shoes -- */
+    12px 39px #633, 15px 39px #744, 18px 39px #744, 27px 39px #744, 30px 39px #744, 33px 39px #633;
+  }
+
+  /* UX Writer — Reporter: glasses, notebook, quill pen */
+  .px-uxwriter { box-shadow:
+    /* -- hair -- */
+    18px 0 #2a7a5a, 21px 0 #2a7a5a, 24px 0 #2a7a5a, 27px 0 #2a7a5a,
+    15px 3px #2a7a5a, 18px 3px #3b8b6b, 21px 3px #4c9c7c, 24px 3px #4c9c7c, 27px 3px #3b8b6b, 30px 3px #2a7a5a,
+    /* -- face + round glasses -- */
+    15px 6px #fdb, 18px 6px #fdb, 21px 6px #fdb, 24px 6px #fdb, 27px 6px #fdb, 30px 6px #fdb,
+    12px 9px #fdb, 15px 9px #366, 18px 9px #4dd, 21px 9px #366, 24px 9px #4dd, 27px 9px #366, 30px 9px #fdb,
+    15px 12px #fdb, 18px 12px #fdb, 21px 12px #fdb, 24px 12px #fdb, 27px 12px #fdb,
+    /* -- neck -- */
+    21px 15px #fdb, 24px 15px #fdb,
+    /* -- teal sweater + scarf -- */
+    12px 18px #196, 15px 18px #1a7, 18px 18px #2b8, 21px 18px #3c9, 24px 18px #3c9, 27px 18px #2b8, 30px 18px #1a7, 33px 18px #196,
+    9px 21px #fdb, 12px 21px #1a7, 15px 21px #2b8, 18px 21px #3c9, 21px 21px #4db, 24px 21px #4db, 27px 21px #3c9, 30px 21px #2b8, 33px 21px #1a7, 36px 21px #fdb,
+    9px 24px #fdb, 12px 24px #196, 15px 24px #1a7, 18px 24px #2b8, 21px 24px #3c9, 24px 24px #3c9, 27px 24px #2b8, 30px 24px #1a7, 33px 24px #196,
+    15px 27px #185, 18px 27px #196, 21px 27px #1a7, 24px 27px #1a7, 27px 27px #196, 30px 27px #185,
+    /* -- notebook + quill in hand -- */
+    36px 18px #ffe, 39px 18px #ffe, 36px 21px #ffe, 39px 21px #ddc, 36px 24px #ffe, 39px 24px #ddc, 42px 15px #876, 42px 12px #987, 42px 9px #fff,
+    /* -- pants -- */
+    15px 30px #334, 18px 30px #445, 21px 30px #445, 27px 30px #445, 30px 30px #445,
+    15px 33px #334, 18px 33px #334, 27px 33px #334, 30px 33px #334,
+    /* -- shoes -- */
+    12px 36px #255, 15px 36px #366, 18px 36px #366, 27px 36px #366, 30px 36px #366, 33px 36px #255;
+  }
+
+  /* Coder — Ace Trainer: hoodie with hood up, glowing glasses, laptop */
+  .px-coder { box-shadow:
+    /* -- hood -- */
+    18px 0 #042, 21px 0 #053, 24px 0 #053, 27px 0 #042,
+    12px 3px #042, 15px 3px #053, 18px 3px #074, 21px 3px #085, 24px 3px #085, 27px 3px #074, 30px 3px #053, 33px 3px #042,
+    12px 6px #053, 15px 6px #074, 18px 6px #085, 21px 6px #096, 24px 6px #096, 27px 6px #085, 30px 6px #074, 33px 6px #053,
+    /* -- face in hood shadow -- */
+    15px 9px #eca, 18px 9px #eca, 21px 9px #eca, 24px 9px #eca, 27px 9px #eca, 30px 9px #eca,
+    15px 12px #eca, 18px 12px #0f8, 21px 12px #222, 24px 12px #222, 27px 12px #0f8, 30px 12px #eca,
+    18px 15px #eca, 21px 15px #eca, 24px 15px #eca, 27px 15px #eca,
+    /* -- neck -- */
+    21px 18px #eca, 24px 18px #eca,
+    /* -- hoodie body -- */
+    12px 21px #042, 15px 21px #053, 18px 21px #074, 21px 21px #096, 24px 21px #096, 27px 21px #074, 30px 21px #053, 33px 21px #042,
+    9px 24px #eca, 12px 24px #053, 15px 24px #074, 18px 24px #096, 21px 24px #0a7, 24px 24px #0a7, 27px 24px #096, 30px 24px #074, 33px 24px #053, 36px 24px #eca,
+    9px 27px #eca, 12px 27px #042, 15px 27px #053, 18px 27px #074, 21px 27px #096, 24px 27px #096, 27px 27px #074, 30px 27px #053, 33px 27px #042,
+    /* -- kangaroo pocket -- */
+    18px 30px #042, 21px 30px #053, 24px 30px #053, 27px 30px #042,
+    15px 33px #031, 18px 33px #042, 21px 33px #053, 24px 33px #053, 27px 33px #042, 30px 33px #031,
+    /* -- jeans -- */
+    15px 36px #335, 18px 36px #446, 21px 36px #446, 27px 36px #446, 30px 36px #446,
+    15px 39px #335, 18px 39px #335, 27px 39px #335, 30px 39px #335,
+    /* -- sneakers with green glow -- */
+    12px 42px #222, 15px 42px #333, 18px 42px #0f8, 27px 42px #0f8, 30px 42px #333, 33px 42px #222;
+  }
+
+  /* Tester — Battle Girl: helmet with visor, armor vest, shield */
+  .px-tester { box-shadow:
+    /* -- helmet -- */
+    18px 0 #923, 21px 0 #b34, 24px 0 #b34, 27px 0 #923,
+    12px 3px #a24, 15px 3px #c45, 18px 3px #e56, 21px 3px #f6b, 24px 3px #f6b, 27px 3px #e56, 30px 3px #c45, 33px 3px #a24,
+    12px 6px #c45, 15px 6px #e56, 18px 6px #f6b, 21px 6px #f8c, 24px 6px #f8c, 27px 6px #f6b, 30px 6px #e56, 33px 6px #c45,
+    /* -- visor -- */
+    15px 9px #224, 18px 9px #88ccff, 21px 9px #aaddff, 24px 9px #aaddff, 27px 9px #88ccff, 30px 9px #224,
+    /* -- face -- */
+    15px 12px #fdb, 18px 12px #fdb, 21px 12px #fdb, 24px 12px #fdb, 27px 12px #fdb, 30px 12px #fdb,
+    18px 15px #fdb, 21px 15px #fdb, 24px 15px #f68, 27px 15px #fdb,
+    /* -- neck -- */
+    21px 18px #fdb, 24px 18px #fdb,
+    /* -- armor vest -- */
+    12px 21px #812, 15px 21px #a24, 18px 21px #c45, 21px 21px #e56, 24px 21px #e56, 27px 21px #c45, 30px 21px #a24, 33px 21px #812,
+    9px 24px #fdb, 12px 24px #a24, 15px 24px #c45, 18px 24px #e56, 21px 24px #f6b, 24px 24px #f6b, 27px 24px #e56, 30px 24px #c45, 33px 24px #a24, 36px 24px #fdb,
+    9px 27px #fdb, 12px 27px #812, 15px 27px #a24, 18px 27px #c45, 21px 27px #e56, 24px 27px #e56, 27px 27px #c45, 30px 27px #a24, 33px 27px #812,
+    /* -- shield in hand -- */
+    3px 21px #889, 6px 21px #aab, 3px 24px #aab, 6px 24px #ccd, 3px 27px #889, 6px 27px #aab,
+    /* -- belt -- */
+    18px 30px #666, 21px 30px #888, 24px 30px #888, 27px 30px #666,
+    /* -- legs -- */
+    15px 33px #812, 18px 33px #923, 21px 33px #923, 27px 33px #923, 30px 33px #923,
+    15px 36px #701, 18px 36px #701, 27px 36px #701, 30px 36px #701,
+    /* -- armored boots -- */
+    12px 39px #523, 15px 39px #634, 18px 39px #634, 27px 39px #634, 30px 39px #634, 33px 39px #523;
+  }
+
+  /* Reviewer — Elite Four Gentleman: top hat, cape, monocle */
+  .px-reviewer { box-shadow:
+    /* -- top hat -- */
+    18px 0 #324, 21px 0 #435, 24px 0 #435, 27px 0 #324,
+    15px 3px #324, 18px 3px #435, 21px 3px #546, 24px 3px #546, 27px 3px #435, 30px 3px #324,
+    15px 6px #435, 18px 6px #546, 21px 6px #657, 24px 6px #657, 27px 6px #546, 30px 6px #435,
+    12px 9px #42a, 15px 9px #53b, 18px 9px #64c, 21px 9px #75d, 24px 9px #75d, 27px 9px #64c, 30px 9px #53b, 33px 9px #42a,
+    /* -- face + monocle -- */
+    15px 12px #fdb, 18px 12px #fdb, 21px 12px #fdb, 24px 12px #fdb, 27px 12px #fdb, 30px 12px #fdb,
+    15px 15px #fdb, 18px 15px #211, 21px 15px #fdb, 24px 15px #fdb, 27px 15px #fd0, 30px 15px #211,
+    18px 18px #fdb, 21px 18px #fdb, 24px 18px #c86, 27px 18px #fdb, 30px 18px #fd0,
+    /* -- monocle chain -- */
+    33px 18px #ca0, 33px 21px #ca0,
+    /* -- neck + cravat -- */
+    21px 21px #fff, 24px 21px #fff,
+    /* -- suit + cape -- */
+    9px 24px #42a, 12px 24px #53b, 15px 24px #445, 18px 24px #556, 21px 24px #667, 24px 24px #667, 27px 24px #556, 30px 24px #445, 33px 24px #53b, 36px 24px #42a,
+    6px 27px #42a, 9px 27px #53b, 12px 27px #fdb, 15px 27px #556, 18px 27px #667, 21px 27px #778, 24px 27px #778, 27px 27px #667, 30px 27px #556, 33px 27px #fdb, 36px 27px #53b, 39px 27px #42a,
+    6px 30px #31a, 9px 30px #42a, 12px 30px #fdb, 15px 30px #445, 18px 30px #556, 21px 30px #667, 24px 30px #667, 27px 30px #556, 30px 30px #445, 33px 30px #fdb, 36px 30px #42a, 39px 30px #31a,
+    9px 33px #31a, 12px 33px #42a, 15px 33px #445, 18px 33px #556, 21px 33px #556, 24px 33px #556, 27px 33px #556, 30px 33px #445, 33px 33px #42a, 36px 33px #31a,
+    /* -- pants -- */
+    15px 36px #334, 18px 36px #445, 21px 36px #445, 27px 36px #445, 30px 36px #445,
+    15px 39px #334, 18px 39px #334, 27px 39px #334, 30px 39px #334,
+    /* -- fancy shoes -- */
+    12px 42px #42a, 15px 42px #53b, 18px 42px #53b, 27px 42px #53b, 30px 42px #53b, 33px 42px #42a;
+  }
+
+  /* ── Role Label ─────────────────── */
+  .role-name {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    margin-bottom: 4px; opacity: 0.4; transition: opacity .4s;
+  }
+  .agent-card.active .role-name { opacity: 1; }
+  .agent-card[data-role="explorer"] .role-name { color: var(--explorer); }
+  .agent-card[data-role="planner"] .role-name  { color: var(--planner); }
+  .agent-card[data-role="uxui"] .role-name     { color: var(--uxui); }
+  .agent-card[data-role="uxwriter"] .role-name { color: var(--uxwriter); }
+  .agent-card[data-role="coder"] .role-name    { color: var(--coder); }
+  .agent-card[data-role="tester"] .role-name   { color: var(--tester); }
+  .agent-card[data-role="reviewer"] .role-name { color: var(--reviewer); }
+
+  /* ── Tool Badge ─────────────────── */
+  .tool-badge {
+    display: inline-block;
+    padding: 2px 8px; border-radius: 8px;
+    font-size: 10px; font-weight: 600;
+    background: rgba(255,255,255,.04);
+    color: var(--dim);
+    min-height: 18px;
+    margin-bottom: 2px;
+    transition: all .3s;
+  }
+  .agent-card.active .tool-badge {
+    background: rgba(255,255,255,.08);
+    color: var(--text);
+  }
+
+  /* ── Task Detail ────────────────── */
+  .task-detail {
+    font-size: 9px; color: var(--dim);
+    height: 14px; overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap;
+    margin-top: 2px;
+  }
+
+  /* ── Activity Bar ───────────────── */
+  .activity-bar {
+    width: 100%; height: 2px;
+    background: rgba(255,255,255,.03);
+    border-radius: 1px; margin-top: 8px; overflow: hidden;
+  }
+  .activity-bar-fill {
+    width: 0; height: 100%;
+    border-radius: 1px; transition: width .15s linear;
+  }
+  .agent-card[data-role="explorer"] .activity-bar-fill { background: var(--explorer); box-shadow: 0 0 6px var(--explorer); }
+  .agent-card[data-role="planner"] .activity-bar-fill  { background: var(--planner);  box-shadow: 0 0 6px var(--planner); }
+  .agent-card[data-role="uxui"] .activity-bar-fill     { background: var(--uxui);     box-shadow: 0 0 6px var(--uxui); }
+  .agent-card[data-role="uxwriter"] .activity-bar-fill { background: var(--uxwriter); box-shadow: 0 0 6px var(--uxwriter); }
+  .agent-card[data-role="coder"] .activity-bar-fill    { background: var(--coder);    box-shadow: 0 0 6px var(--coder); }
+  .agent-card[data-role="tester"] .activity-bar-fill   { background: var(--tester);   box-shadow: 0 0 6px var(--tester); }
+  .agent-card[data-role="reviewer"] .activity-bar-fill { background: var(--reviewer); box-shadow: 0 0 6px var(--reviewer); }
+
+  /* ── Event Log ──────────────────── */
+  .log-section {
+    max-width: 1100px;
+    margin: 16px auto 40px;
+    padding: 0 20px;
+    position: relative; z-index: 1;
+  }
+  .log-header {
+    display: flex; justify-content: space-between;
+    align-items: center; margin-bottom: 8px;
+  }
+  .log-header h2 {
+    font-size: 9px; text-transform: uppercase;
+    letter-spacing: 3px; color: var(--dim);
+  }
+  .log-header button {
+    background: none; border: 1px solid var(--border);
+    color: var(--dim); font-size: 10px;
+    padding: 3px 10px; border-radius: 6px;
+    cursor: pointer; font-family: inherit;
+    transition: all .2s;
+  }
+  .log-header button:hover { border-color: var(--dim); color: var(--text); }
+
+  .event-log {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; max-height: 200px;
+    overflow-y: auto;
+  }
+  .event-log::-webkit-scrollbar { width: 4px; }
+  .event-log::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .log-item {
+    display: flex; align-items: center;
+    gap: 8px; padding: 5px 12px;
+    font-size: 11px;
+    border-bottom: 1px solid rgba(255,255,255,.02);
+    animation: slide-in .25s ease;
+  }
+  @keyframes slide-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .log-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+  .log-time { color: var(--dim); font-size: 9px; flex-shrink: 0; width: 46px; font-variant-numeric: tabular-nums; }
+  .log-tool { font-weight: 600; flex-shrink: 0; min-width: 50px; font-size: 11px; }
+  .log-detail { color: var(--dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10px; }
+  .log-hook { font-size: 8px; padding: 1px 5px; border-radius: 3px; flex-shrink: 0; }
+  .log-hook.pre  { background: rgba(255,215,0,.1); color: #ffd700; }
+  .log-hook.post { background: rgba(0,255,136,.1);  color: #00ff88; }
+
+  .empty-state { text-align: center; padding: 30px 20px; color: var(--dim); }
+  .empty-state .pulse-ring {
+    width: 32px; height: 32px;
+    border: 2px solid var(--dim); border-radius: 50%;
+    margin: 0 auto 12px;
+    animation: pulse-ring 2s ease infinite;
+  }
+  @keyframes pulse-ring {
+    0%   { transform: scale(0.9); opacity: 0.5; }
+    50%  { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(0.9); opacity: 0.5; }
+  }
+
+  /* ── Particles ──────────────────── */
+  .particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .particle {
+    position: absolute; width: 2px; height: 2px;
+    border-radius: 50%; opacity: 0;
+    animation: float-up linear infinite;
+  }
+  @keyframes float-up {
+    0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+    10%  { opacity: 0.3; }
+    90%  { opacity: 0.3; }
+    100% { transform: translateY(-20px) scale(1); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="particles" id="particles"></div>
+
+<header class="header">
+  <h1>Agent Monitor</h1>
+  <div class="connection-status">
+    <span class="conn-dot" id="conn-dot"></span>
+    <span id="conn-text">Connecting...</span>
+  </div>
+</header>
+
+<!-- Zone Layout -->
+<div class="main-grid">
+
+  <!-- Support Zone (left) -->
+  <div class="zone zone-support">
+    <div class="zone-label">Support</div>
+    <div id="card-explorer"></div>
+    <div id="card-planner"></div>
+  </div>
+
+  <!-- Pipeline Zone (right) -->
+  <div class="zone zone-pipeline">
+    <div class="zone-label">Production Pipeline</div>
+
+    <!-- Design Phase -->
+    <div class="phase">
+      <div class="phase-label">Design</div>
+      <div class="phase-row">
+        <div id="card-uxui"></div>
+        <div class="inline-arrow" id="arrow-design-write">&#x2192;</div>
+        <div id="card-uxwriter"></div>
+        <div class="inline-arrow" id="arrow-write-code">&#x2192;</div>
+        <div id="card-coder"></div>
+      </div>
+    </div>
+
+    <div class="phase-arrow" id="arrow-dev-qa">&#x2193;</div>
+
+    <!-- QA Phase -->
+    <div class="phase">
+      <div class="phase-label">Quality Assurance</div>
+      <div class="phase-row">
+        <div id="card-tester"></div>
+        <div style="width:40px"></div>
+        <div id="card-reviewer"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Event Log -->
+<section class="log-section">
+  <div class="log-header">
+    <h2>Event Log</h2>
+    <button onclick="clearLog()">Clear</button>
+  </div>
+  <div class="event-log" id="event-log">
+    <div class="empty-state" id="empty-state">
+      <div class="pulse-ring"></div>
+      <div>Waiting for agent activity...</div>
+      <div style="font-size:10px; margin-top:4px">Run a command in Claude Code to see events here</div>
+    </div>
+  </div>
+</section>
+
+<script>
+const ROLES = [
+  { id: 'explorer',  name: 'Explorer',   sprite: 'px-explorer' },
+  { id: 'planner',   name: 'Planner',    sprite: 'px-planner' },
+  { id: 'uxui',      name: 'UX/UI',      sprite: 'px-uxui' },
+  { id: 'uxwriter',  name: 'UX Writer',  sprite: 'px-uxwriter' },
+  { id: 'coder',     name: 'Coder',      sprite: 'px-coder' },
+  { id: 'tester',    name: 'Tester',     sprite: 'px-tester' },
+  { id: 'reviewer',  name: 'Reviewer',   sprite: 'px-reviewer' },
+];
+
+const roleColors = {
+  explorer: 'var(--explorer)', planner: 'var(--planner)',
+  uxui: 'var(--uxui)', uxwriter: 'var(--uxwriter)',
+  coder: 'var(--coder)', tester: 'var(--tester)', reviewer: 'var(--reviewer)',
+};
+
+// Build cards into their slots
+ROLES.forEach(r => {
+  const slot = document.getElementById(`card-${r.id}`);
+  if (!slot) return;
+  const card = document.createElement('div');
+  card.className = 'agent-card';
+  card.dataset.role = r.id;
+  card.innerHTML = `
+    <div class="sprite-wrap"><div class="px ${r.sprite}"></div></div>
+    <div class="role-name">${r.name}</div>
+    <div class="tool-badge" id="tool-${r.id}">&nbsp;</div>
+    <div class="task-detail" id="detail-${r.id}">&nbsp;</div>
+    <div class="activity-bar"><div class="activity-bar-fill" id="bar-${r.id}"></div></div>
+  `;
+  slot.appendChild(card);
+});
+
+// Particles
+const particlesEl = document.getElementById('particles');
+const pColors = ['#00d4ff','#ffd700','#ff8844','#44ddbb','#00ff88','#ff66b2','#aa88ff'];
+for (let i = 0; i < 20; i++) {
+  const p = document.createElement('div');
+  p.className = 'particle';
+  p.style.left = Math.random()*100 + '%';
+  p.style.background = pColors[i % pColors.length];
+  p.style.animationDuration = 10 + Math.random()*15 + 's';
+  p.style.animationDelay = Math.random()*8 + 's';
+  particlesEl.appendChild(p);
+}
+
+// ── Agent State ──────────────────
+const agentTimers = {};
+
+// Track which agents are active for arrow highlighting
+const activeAgents = new Set();
+
+function updateArrows() {
+  // Design → Writer arrow
+  const a1 = document.getElementById('arrow-design-write');
+  a1.classList.toggle('active', activeAgents.has('uxui') || activeAgents.has('uxwriter'));
+  // Writer → Coder arrow
+  const a2 = document.getElementById('arrow-write-code');
+  a2.classList.toggle('active', activeAgents.has('uxwriter') || activeAgents.has('coder'));
+  // Dev → QA arrow
+  const a3 = document.getElementById('arrow-dev-qa');
+  a3.classList.toggle('active', activeAgents.has('coder') || activeAgents.has('tester') || activeAgents.has('reviewer'));
+}
+
+function activateAgent(role, tool, detail) {
+  const card = document.querySelector(`[data-role="${role}"].agent-card`) ||
+               document.querySelector(`#card-${role} .agent-card`);
+  if (!card) return;
+
+  const toolEl  = document.getElementById(`tool-${role}`);
+  const detailEl = document.getElementById(`detail-${role}`);
+  const barEl   = document.getElementById(`bar-${role}`);
+
+  card.classList.add('active');
+  if (toolEl)   toolEl.textContent = tool;
+  if (detailEl) detailEl.textContent = detail || '';
+  if (barEl)    barEl.style.width = '100%';
+
+  activeAgents.add(role);
+  updateArrows();
+
+  clearTimeout(agentTimers[role]);
+  agentTimers[role] = setTimeout(() => {
+    card.classList.remove('active');
+    if (toolEl)   toolEl.innerHTML = '&nbsp;';
+    if (detailEl) detailEl.innerHTML = '&nbsp;';
+    if (barEl)    barEl.style.width = '0';
+    activeAgents.delete(role);
+    updateArrows();
+  }, 4000);
+}
+
+// ── Event Log ────────────────────
+const startTime = Date.now();
+
+function addLogItem(event) {
+  const log = document.getElementById('event-log');
+  const empty = document.getElementById('empty-state');
+  if (empty) empty.remove();
+
+  const elapsed = Math.floor(((event.timestamp || Date.now()) - startTime) / 1000);
+  const mins = Math.floor(Math.abs(elapsed) / 60);
+  const secs = Math.abs(elapsed) % 60;
+
+  const item = document.createElement('div');
+  item.className = 'log-item';
+  item.innerHTML = `
+    <div class="log-dot" style="background:${roleColors[event.role] || 'var(--dim)'}"></div>
+    <span class="log-time">${mins}:${secs.toString().padStart(2,'0')}</span>
+    <span class="log-hook ${event.hook || 'pre'}">${event.hook === 'post' ? 'DONE' : 'RUN'}</span>
+    <span class="log-tool" style="color:${roleColors[event.role] || 'var(--dim)'}">${event.tool || '?'}</span>
+    <span class="log-detail">${event.detail || ''}</span>
+  `;
+  log.insertBefore(item, log.firstChild);
+  while (log.children.length > 100) log.lastChild.remove();
+
+  if (event.hook !== 'post') {
+    activateAgent(event.role || 'coder', event.tool || '?', event.detail || '');
+  }
+}
+
+function clearLog() {
+  const log = document.getElementById('event-log');
+  log.innerHTML = `<div class="empty-state" id="empty-state">
+    <div class="pulse-ring"></div>
+    <div>Waiting for agent activity...</div>
+    <div style="font-size:10px; margin-top:4px">Run a command in Claude Code to see events here</div>
+  </div>`;
+  fetch('/clear').catch(() => {});
+}
+
+// ── WebSocket ────────────────────
+let ws, reconnectDelay = 1000;
+function connect() {
+  const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+  ws = new WebSocket(`${proto}//${location.host}`);
+  ws.onopen = () => {
+    document.getElementById('conn-dot').classList.add('connected');
+    document.getElementById('conn-text').textContent = 'Connected';
+    reconnectDelay = 1000;
+  };
+  ws.onmessage = (msg) => {
+    try {
+      const data = JSON.parse(msg.data);
+      if (data.type === 'history') data.events.forEach(e => addLogItem(e));
+      else if (data.type === 'event') addLogItem(data.event);
+      else if (data.type === 'clear') clearLog();
+    } catch {}
+  };
+  ws.onclose = () => {
+    document.getElementById('conn-dot').classList.remove('connected');
+    document.getElementById('conn-text').textContent = 'Reconnecting...';
+    setTimeout(connect, reconnectDelay);
+    reconnectDelay = Math.min(reconnectDelay * 1.5, 10000);
+  };
+  ws.onerror = () => ws.close();
+}
+connect();
+</script>
+</body>
+</html>
