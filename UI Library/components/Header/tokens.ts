@@ -55,9 +55,6 @@ export const HEADER = {
   titleLineHeight: t.ref('header-title-line-height'),
   titleWeight: t.ref('header-title-weight'),
 
-  subtitleSize: t.ref('header-subtitle-size'),
-  subtitleLineHeight: t.ref('header-subtitle-line-height'),
-  subtitleWeight: t.ref('header-subtitle-weight'),
 
   successHeight: t.ref('header-success-height'),
   successPadding: t.ref('header-success-padding'),
@@ -154,13 +151,14 @@ export const DEVICE = {
 } as const;
 
 /**
- * Four text layers in `header-bar-mobile` still sit on pre-token styles, and each has a
+ * Three text layers in `header-bar-mobile` still sit on pre-token styles, and each has a
  * size/line-height pair no semantic role carries — which is why they were never mapped.
  * Their values are literals in top-and-footer.json rather than typography refs, and this
- * list is what Phase 2 has to migrate.
+ * list is what Phase 2 has to migrate. All three are on the success variant. (A fourth,
+ * the sub-page subtitle at 14/24 Medium, left with the subtitle itself on 2026-08-21 —
+ * the product never shows it.)
  */
 export const HEADER_UNMIGRATED_TYPE = [
-  { style: 'GraphikTH/L-Medium', value: '14/24 Medium', used: 'subtitle', nearest: 'sub-title/l-med is 14/22' },
   { style: 'Title/GraphikTH/L-SemiBold', value: '22/34 Semibold', used: 'success title', nearest: 'no role at 22px' },
   { style: 'Title/Body/GraphikTH/M-Regular', value: '14/24 Regular', used: 'success meta label', nearest: 'body/m-reg is 14/22' },
   { style: 'Title/GraphikTH/S-SemiBold', value: '14/24 Semibold', used: 'success meta value', nearest: 'body/m-semb is 14/22' },

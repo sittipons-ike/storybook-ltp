@@ -30,11 +30,6 @@ export interface HeaderProps {
 
   /** Page title. Figma calls this `text-center`; `sub` centres it, `success` leads with it. */
   title?: React.ReactNode;
-  /**
-   * The line under the title — the draw date, typically. Hidden in Figma's default
-   * instance, so it is off unless a value is passed.
-   */
-  subtitle?: React.ReactNode;
   /** The slogan the home header shows instead of a title. */
   slogan?: React.ReactNode;
 
@@ -166,7 +161,6 @@ export const HeaderAction: React.FC<{
 const Header: React.FC<HeaderProps> = ({
   variant = 'home',
   title,
-  subtitle,
   slogan,
   actionLeft,
   actionRight,
@@ -218,7 +212,9 @@ const Header: React.FC<HeaderProps> = ({
               borderRadius: HEADER.actionRadius,
               background: HEADER.foreground,
               color: HEADER.background,
-              fontSize: HEADER.subtitleSize,
+              // sub-title/lg/medium — the same 14 the badge always drew, from a real
+              // role now that the subtitle literal it borrowed is gone.
+              fontSize: HEADER.sloganSize,
               fontWeight: HEADER.titleWeight,
             }}
           >
@@ -383,10 +379,9 @@ const Header: React.FC<HeaderProps> = ({
           <HeaderAction icon="arrow-left-L" label="ย้อนกลับ" onClick={onBack} bordered={false} />
         )}
       </ActionWell>
-      {/* Figma's `heading` frame: 16 of vertical padding around a 24px title line. It used
-          to have no padding and a stretched 56px text box — same bar height either way,
-          but the title is a line now, so the subtitle stacks under it instead of
-          fighting it for the same box. */}
+      {/* Figma's `heading` frame: 16 of vertical padding around a 24px title line.
+          Figma also draws a hidden subtitle layer in here (งวดวันที่ …); the product never
+          shows it, so it is not modelled — decided with the user 2026-08-21. */}
       <div
         style={{
           flex: 1,
@@ -397,8 +392,8 @@ const Header: React.FC<HeaderProps> = ({
           flexDirection: 'column',
           justifyContent: 'center',
           textAlign: 'center',
-          paddingTop: subtitle ? undefined : HEADER.subHeadingPaddingY,
-          paddingBottom: subtitle ? undefined : HEADER.subHeadingPaddingY,
+          paddingTop: HEADER.subHeadingPaddingY,
+          paddingBottom: HEADER.subHeadingPaddingY,
         }}
       >
         <p
@@ -413,18 +408,6 @@ const Header: React.FC<HeaderProps> = ({
         >
           {title}
         </p>
-        {subtitle && (
-          <p
-            className="ltp-header__subtitle"
-            style={{
-              fontSize: HEADER.subtitleSize,
-              lineHeight: HEADER.subtitleLineHeight,
-              fontWeight: HEADER.subtitleWeight,
-            }}
-          >
-            {subtitle}
-          </p>
-        )}
       </div>
       <ActionWell>{actionRight}</ActionWell>
     </header>

@@ -35,7 +35,6 @@
    The padding grows the clip box so ink can never reach its edge; the negative margin
    hands the space back, so layout stays exactly 24. */
 .ltp-header__title,
-.ltp-header__subtitle,
 .ltp-header__slogan {
   margin: 0;
   overflow: hidden;

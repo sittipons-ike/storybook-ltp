@@ -100,15 +100,6 @@ export const Variants: StoryObj = {
         />
       </Device>
 
-      <Device label="type=sub-page + subtitle" sub="subtitle ถูกซ่อนไว้ใน Figma — ต้องส่งค่ามาถึงจะขึ้น">
-        <Header
-          variant="sub"
-          title="ตู้เซฟของฉัน"
-          subtitle="งวดวันที่ 1 มิถุนายน 2568"
-          actionRight={<HeaderAction icon="filled-navigation" label="เมนู" />}
-        />
-      </Device>
-
       <Device label="type=success" sub="94px · หน้าจบ flow">
         <Header
           variant="success"
