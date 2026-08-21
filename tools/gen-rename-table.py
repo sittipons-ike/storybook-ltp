@@ -28,8 +28,13 @@ FAMILIES = {"body", "heading", "display", "button", "label", "sub-title",
 STATES = {"default": "rest", "focused": "focus", "pressed": "active",
           "actived": "selected", "defualt": "rest",
           "hover": "hover", "disabled": "disabled"}
+# The variant is already the parent group, so it is dropped from the leaf rather than
+# expanded — `colors/button/primary/btn-bg-pri-default` becomes
+# `colors/button/primary/btn-background-rest`. `link` belongs on this list for the same
+# reason the abbreviations do: left off, `btn-bg-link-default` keeps a `-link-` that every
+# other variant loses, and the code side already spells it `--btn-link-background-rest`.
 VARIANTS = {"pri": "primary", "sec": "secondary", "ter": "tertiary",
-            "out": "outline", "oncont": "on-container"}
+            "out": "outline", "oncont": "on-container", "link": "link"}
 PROPS = {"bg": "background", "fg": "foreground"}
 BREAKPOINT = {"mobile-321": "2xs", "mobile-361": "xs", "mobile-390": "sm",
               "tablet-768": "md", "desktop-1024": "lg", "desktop-1280": "xl",

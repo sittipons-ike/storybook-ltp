@@ -35,16 +35,16 @@
 | `colors/button/accent/btn-fg-bg-dark` | `colors/button/accent/btn-foreground-background-dark` | R1 |
 | `colors/button/accent/btn-fg-bg-red` | `colors/button/accent/btn-foreground-background-red` | R1 |
 | `colors/button/accent/btn-fg-bg-white` | `colors/button/accent/btn-foreground-background-white` | R1 |
-| `colors/button/link/btn-bg-link-default` | `colors/button/link/btn-background-link-rest` | R1 R2 |
-| `colors/button/link/btn-bg-link-disabled` | `colors/button/link/btn-background-link-disabled` | R1 |
-| `colors/button/link/btn-bg-link-focused` | `colors/button/link/btn-background-link-focus` | R1 R2 |
-| `colors/button/link/btn-bg-link-hover` | `colors/button/link/btn-background-link-hover` | R1 |
-| `colors/button/link/btn-bg-link-pressed` | `colors/button/link/btn-background-link-active` | R1 R2 |
-| `colors/button/link/btn-fg-link-default` | `colors/button/link/btn-foreground-link-rest` | R1 R2 |
-| `colors/button/link/btn-fg-link-disabled` | `colors/button/link/btn-foreground-link-disabled` | R1 |
-| `colors/button/link/btn-fg-link-focused` | `colors/button/link/btn-foreground-link-focus` | R1 R2 |
-| `colors/button/link/btn-fg-link-hover` | `colors/button/link/btn-foreground-link-hover` | R1 |
-| `colors/button/link/btn-fg-link-pressed` | `colors/button/link/btn-foreground-link-active` | R1 R2 |
+| `colors/button/link/btn-bg-link-default` | `colors/button/link/btn-background-rest` | R1 R2 R3 |
+| `colors/button/link/btn-bg-link-disabled` | `colors/button/link/btn-background-disabled` | R1 R3 |
+| `colors/button/link/btn-bg-link-focused` | `colors/button/link/btn-background-focus` | R1 R2 R3 |
+| `colors/button/link/btn-bg-link-hover` | `colors/button/link/btn-background-hover` | R1 R3 |
+| `colors/button/link/btn-bg-link-pressed` | `colors/button/link/btn-background-active` | R1 R2 R3 |
+| `colors/button/link/btn-fg-link-default` | `colors/button/link/btn-foreground-rest` | R1 R2 R3 |
+| `colors/button/link/btn-fg-link-disabled` | `colors/button/link/btn-foreground-disabled` | R1 R3 |
+| `colors/button/link/btn-fg-link-focused` | `colors/button/link/btn-foreground-focus` | R1 R2 R3 |
+| `colors/button/link/btn-fg-link-hover` | `colors/button/link/btn-foreground-hover` | R1 R3 |
+| `colors/button/link/btn-fg-link-pressed` | `colors/button/link/btn-foreground-active` | R1 R2 R3 |
 | `colors/button/on-cont/btn-bg-oncont-actived` | `colors/button/on-container/btn-background-selected` | R1 R2 R3 |
 | `colors/button/on-cont/btn-bg-oncont-default` | `colors/button/on-container/btn-background-rest` | R1 R2 R3 |
 | `colors/button/on-cont/btn-bg-oncont-disabled` | `colors/button/on-container/btn-background-disabled` | R1 R3 |
