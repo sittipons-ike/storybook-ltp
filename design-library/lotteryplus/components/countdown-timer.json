@@ -18,9 +18,10 @@
     "float-line-height": "14px",
     "float-weight": 600,
     "_unmigrated_type": {
-      "_note": "The floated badge uses the Frontend's `text-label-xs` = 8/14 Semibold, and the sidebar variant `text-label-l` = 14/24. Neither pair exists as a role in the type system, same situation as header-bar-mobile's four legacy styles — literals until Phase 2 grows a role.",
-      "label-xs": "8/14 Semibold — floated badge",
-      "label-l": "14/24 — sidebar variant; falls back to body.lg.medium (16/24) until a role exists, recorded so the 2px difference is a known gap rather than a silent one"
+      "_note": "The floated badge uses the Frontend's text-label-xs = 8/14 Semibold; no role carries it. Keyed by token name for check-typography.py.",
+      "float-size": "8px — text-label-xs",
+      "float-line-height": "14px — text-label-xs",
+      "float-weight": "600 — text-label-xs"
     },
     "_source": {
       "padding-x": "Frontend `px-1.5` = 6px = spacing.md.",

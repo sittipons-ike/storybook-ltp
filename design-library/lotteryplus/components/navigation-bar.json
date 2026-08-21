@@ -27,7 +27,7 @@
     "order-badge-icon-size": 20,
     "order-badge-offset-top": -6,
     "order-badge-offset-right": -8,
-    "badge-size": 16,
+    "badge-diameter": 16,
     "badge-radius": "{design.semantic.radius.full}",
     "badge-border-width": 1.5,
     "badge-line-height": "1",
@@ -100,6 +100,11 @@
           }
         }
       ]
+    },
+    "_unmigrated_type": {
+      "_note": "Not text styles — unitless line-heights used to centre a glyph in its pill. Listed so check-typography.py knows they are deliberate.",
+      "timer-line-height": "1 — centring, no Figma token backs it",
+      "badge-line-height": "1 — same centring"
     }
   },
   "tokens": {

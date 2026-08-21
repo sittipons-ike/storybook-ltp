@@ -35,6 +35,10 @@
       "date": "2026-08-20",
       "scope": "token mirror searched for alert/banner; frontend component + module css read in full",
       "result": "VERIFIED ABSENT in Figma. Frontend is the authority per the amended rule (user decision 2026-08-20)."
+    },
+    "_unmigrated_type": {
+      "_note": "Typography literals with no role to bind to, kept deliberately. The token names below are what check-typography.py accepts; anything not listed fails.",
+      "description-line-height": "22px — the Frontend overrides caption/md/regular's 16 with leading-[22px]. No role carries 10/22."
     }
   }
 }

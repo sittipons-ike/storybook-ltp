@@ -146,7 +146,7 @@ export const NAVIGATION = {
   // Badges
   orderBadgeOffsetTop: t.ref('order-badge-offset-top'),
   orderBadgeOffsetRight: t.ref('order-badge-offset-right'),
-  badgeSize: t.ref('badge-size'),
+  badgeSize: t.ref('badge-diameter'),
   badgeRadius: t.ref('badge-radius'),
   badgeBorderWidth: t.ref('badge-border-width'),
   badgeLineHeight: t.ref('badge-line-height'),

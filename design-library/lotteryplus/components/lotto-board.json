@@ -75,13 +75,14 @@
     "typography-caption-tracking": "{design.semantic.typography.label.md.medium.tracking}",
     "typography-number-family": "{design.semantic.typography.body.xl.semibold.family}",
     "typography-number-tracking": "{design.semantic.typography.body.xl.semibold.tracking}",
-    "typography-number-size": 24,
-    "typography-number-line-height": 32,
-    "typography-number-weight": "700",
+    "typography-number-size": "{design.semantic.typography.display.xl.semibold.size}",
+    "typography-number-line-height": "{design.semantic.typography.display.xl.semibold.line-height}",
+    "typography-number-weight": "{design.semantic.typography.display.xl.semibold.weight}",
     "_source-typography-number": "storybook-local, no Figma token backs the size/line-height/weight — the digit style is 24px/32px Bold, and no semantic typography role resolves to that on mobile (size.xl is 20/24, size.2xl is 28/32) and no role carries weight.bold at all. Only family and tracking, which every role shares, are refs.",
     "_source": {
       "randomize-*": "The randomise control is Figma's `button-special`: 114x54, radius 8, filled with a linear gradient from #262626 at 0% to #E32321 at 66%, label `colors/button/accent/btn-fg-bg-white` (#FEF2F2), 24px glyph. Neither the gradient nor #FEF2F2 exists as a semantic token, so both stand verbatim.",
-      "randomize-gap": "4, from `Frame 1000012333` inside `button-special` — a HORIZONTAL row holding the 24px glyph then the label. Read on 2026-08-20."
+      "randomize-gap": "4, from `Frame 1000012333` inside `button-special` — a HORIZONTAL row holding the 24px glyph then the label. Read on 2026-08-20.",
+      "typography-number": "The digits in the number cells carry the text style `typography/display/xl-semb` — 20/36 Semibold, read off lotto-board-mobile (14583:89931) on 2026-08-21, and the style id is set on the layer, so this is Figma's own naming rather than a guess. The overlay used to say 24/32 weight 700, which matched no layer and no role: an invented value that survived because nothing forced typography to bind."
     },
     "_verified_from": {
       "node": "14583:89931 `lotto-board-mobile` (3 variants), 14583:89963 `menu-button` (3), 14583:90116 `number-search-box-2` (7), 19002:25158 `search-card` (3) — page `↳ search-lottery ✅`",

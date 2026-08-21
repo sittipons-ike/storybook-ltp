@@ -995,9 +995,9 @@
   --lotto-board-typography-caption-tracking: var(--sys-type-label-md-medium-tracking);
   --lotto-board-typography-number-family: var(--sys-type-body-xl-semibold-family);
   --lotto-board-typography-number-tracking: var(--sys-type-body-xl-semibold-tracking);
-  --lotto-board-typography-number-size: 24px;
-  --lotto-board-typography-number-line-height: 32px;
-  --lotto-board-typography-number-weight: 700;
+  --lotto-board-typography-number-size: var(--sys-type-display-xl-semibold-size);
+  --lotto-board-typography-number-line-height: var(--sys-type-display-xl-semibold-line-height);
+  --lotto-board-typography-number-weight: var(--sys-type-display-xl-semibold-weight);
   --modal-background-soft-dark: var(--sys-color-secondary-soft-light);
   --modal-background-soft-green: var(--sys-color-status-success-soft-light);
   --modal-background-soft-red: var(--sys-color-primary-soft-light);
@@ -1057,7 +1057,7 @@
   --navigation-order-badge-icon-size: 20px;
   --navigation-order-badge-offset-top: -6px;
   --navigation-order-badge-offset-right: -8px;
-  --navigation-badge-size: 16px;
+  --navigation-badge-diameter: 16px;
   --navigation-badge-radius: var(--sys-radius-full);
   --navigation-badge-border-width: 1.5px;
   --navigation-badge-line-height: 1;
@@ -1416,7 +1416,7 @@
   --topfoot-profile-summary-border-color: var(--sys-color-foreground-white);
   --topfoot-profile-summary-rule-gap: var(--sys-spacing-2xl);
   --topfoot-profile-noti-size: 32px;
-  --topfoot-profile-badge-size: 16px;
+  --topfoot-profile-badge-diameter: 16px;
   --topfoot-profile-badge-padding-x: var(--sys-spacing-md);
   --topfoot-profile-badge-radius: var(--sys-radius-full);
   --topfoot-profile-badge-background: var(--sys-color-background-default);

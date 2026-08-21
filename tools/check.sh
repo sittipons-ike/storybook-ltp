@@ -65,6 +65,9 @@ else
   printf '%s\n' "$naming" | sed 's/^/      /'
 fi
 
+step "Typography binds a role or names itself as debt"
+python3 tools/check-typography.py | sed 's/^/  /' || bad "a typography literal is neither bound nor recorded — that is how 24/32/700 shipped for digits Figma draws at 20/36/600"
+
 step "Pages compose, they do not reach for tokens"
 python3 tools/check-pages.py | sed 's/^/  /' || bad "a page reads a token directly — that is what the rename has to find later"
 

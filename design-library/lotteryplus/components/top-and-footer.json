@@ -28,9 +28,9 @@
       "action": "Guidline-UI Template › Layout › `Order Page / Receipt detail` › frame `Navbar`"
     },
     "_unmigrated_type": {
-      "_note": "Two text layers in header-bar-mobile still use pre-token styles, both on the success variant's meta row. Their 14/24 pairs are correct as drawn (confirmed by the user 2026-08-21) — no existing role carries 14/24, so they stay literals until Phase 2 grows one. The success title was resolved the other way on the same day: its 22/34 layer is stale, the intended role is title/lg/semibold (16/24), and the overlay now binds that role — Figma's text layer catches up in Phase 2.",
-      "Title/Body/GraphikTH/M-Regular": "14/24 Regular — success number label.",
-      "Title/GraphikTH/S-SemiBold": "14/24 Semibold — success number value."
+      "_note": "Two text layers in header-bar-mobile still use pre-token styles, both on the success variant's meta row. Their 14/24 pairs are correct as drawn (confirmed by the user 2026-08-21) — no existing role carries 14/24, so they stay literals until Phase 2 grows one. The success title was resolved the other way on the same day: its 22/34 layer is stale, the intended role is title/lg/semibold (16/24), and the overlay now binds that role — Figma's text layer catches up in Phase 2. Keyed by token name for check-typography.py.",
+      "header-success-meta-size": "14px — Title/Body/GraphikTH/M-Regular; body/md/regular is 14/22",
+      "header-success-meta-line-height": "24px — same pair, confirmed correct as drawn 2026-08-21"
     },
     "_figma_icons": {
       "_comment": "The icons Figma actually instantiates, per node, read on 2026-08-20 (14924:2118) and 2026-08-21 (14962:94338). check-figma-icons.py asserts the icons used in `sources` are exactly this set -- an extra one fails as loudly as a missing one. check-icons.py only ever asked whether a name resolved, and a wrong-but-real icon passes that: three of the five under 14924:2118 were wrong for months because resolving is not matching. Keys prefixed with `_` are documented but not enforced, which is how an icon Figma draws inside a nested component -- and that the nested component already renders -- is recorded without being demanded of the parent's source.",
@@ -147,7 +147,7 @@
     "profile-summary-border-color": "{design.semantic.colors.foreground.white}",
     "profile-summary-rule-gap": "{design.semantic.spacing.2xl}",
     "profile-noti-size": 32,
-    "profile-badge-size": 16,
+    "profile-badge-diameter": 16,
     "profile-badge-padding-x": "{design.semantic.spacing.md}",
     "profile-badge-radius": "{design.semantic.radius.full}",
     "profile-badge-background": "{design.semantic.colors.background.default}",

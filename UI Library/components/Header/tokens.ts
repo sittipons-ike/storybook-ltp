@@ -117,7 +117,7 @@ export const PROFILE_HEADER = {
   pillBackground: t.ref('profile-pill-background'),
 
   notiSize: t.ref('profile-noti-size'),
-  badgeSize: t.ref('profile-badge-size'),
+  badgeSize: t.ref('profile-badge-diameter'),
   badgePaddingX: t.ref('profile-badge-padding-x'),
   badgeRadius: t.ref('profile-badge-radius'),
   badgeBackground: t.ref('profile-badge-background'),

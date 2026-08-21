@@ -383,6 +383,10 @@
           "date": "2026-08-20",
           "scope": "token mirror searched for alert/banner; frontend component + module css read in full",
           "result": "VERIFIED ABSENT in Figma. Frontend is the authority per the amended rule (user decision 2026-08-20)."
+        },
+        "_unmigrated_type": {
+          "_note": "Typography literals with no role to bind to, kept deliberately. The token names below are what check-typography.py accepts; anything not listed fails.",
+          "description-line-height": "22px — the Frontend overrides caption/md/regular's 16 with leading-[22px]. No role carries 10/22."
         }
       }
     },
@@ -816,9 +820,10 @@
         "float-line-height": "14px",
         "float-weight": 600,
         "_unmigrated_type": {
-          "_note": "The floated badge uses the Frontend's `text-label-xs` = 8/14 Semibold, and the sidebar variant `text-label-l` = 14/24. Neither pair exists as a role in the type system, same situation as header-bar-mobile's four legacy styles — literals until Phase 2 grows a role.",
-          "label-xs": "8/14 Semibold — floated badge",
-          "label-l": "14/24 — sidebar variant; falls back to body.lg.medium (16/24) until a role exists, recorded so the 2px difference is a known gap rather than a silent one"
+          "_note": "The floated badge uses the Frontend's text-label-xs = 8/14 Semibold; no role carries it. Keyed by token name for check-typography.py.",
+          "float-size": "8px — text-label-xs",
+          "float-line-height": "14px — text-label-xs",
+          "float-weight": "600 — text-label-xs"
         },
         "_source": {
           "padding-x": "Frontend `px-1.5` = 6px = spacing.md.",
@@ -1422,13 +1427,14 @@
         "typography-caption-tracking": "{design.semantic.typography.label.md.medium.tracking}",
         "typography-number-family": "{design.semantic.typography.body.xl.semibold.family}",
         "typography-number-tracking": "{design.semantic.typography.body.xl.semibold.tracking}",
-        "typography-number-size": 24,
-        "typography-number-line-height": 32,
-        "typography-number-weight": "700",
+        "typography-number-size": "{design.semantic.typography.display.xl.semibold.size}",
+        "typography-number-line-height": "{design.semantic.typography.display.xl.semibold.line-height}",
+        "typography-number-weight": "{design.semantic.typography.display.xl.semibold.weight}",
         "_source-typography-number": "storybook-local, no Figma token backs the size/line-height/weight — the digit style is 24px/32px Bold, and no semantic typography role resolves to that on mobile (size.xl is 20/24, size.2xl is 28/32) and no role carries weight.bold at all. Only family and tracking, which every role shares, are refs.",
         "_source": {
           "randomize-*": "The randomise control is Figma's `button-special`: 114x54, radius 8, filled with a linear gradient from #262626 at 0% to #E32321 at 66%, label `colors/button/accent/btn-fg-bg-white` (#FEF2F2), 24px glyph. Neither the gradient nor #FEF2F2 exists as a semantic token, so both stand verbatim.",
-          "randomize-gap": "4, from `Frame 1000012333` inside `button-special` — a HORIZONTAL row holding the 24px glyph then the label. Read on 2026-08-20."
+          "randomize-gap": "4, from `Frame 1000012333` inside `button-special` — a HORIZONTAL row holding the 24px glyph then the label. Read on 2026-08-20.",
+          "typography-number": "The digits in the number cells carry the text style `typography/display/xl-semb` — 20/36 Semibold, read off lotto-board-mobile (14583:89931) on 2026-08-21, and the style id is set on the layer, so this is Figma's own naming rather than a guess. The overlay used to say 24/32 weight 700, which matched no layer and no role: an invented value that survived because nothing forced typography to bind."
         },
         "_verified_from": {
           "node": "14583:89931 `lotto-board-mobile` (3 variants), 14583:89963 `menu-button` (3), 14583:90116 `number-search-box-2` (7), 19002:25158 `search-card` (3) — page `↳ search-lottery ✅`",
@@ -1604,7 +1610,7 @@
         "order-badge-icon-size": 20,
         "order-badge-offset-top": -6,
         "order-badge-offset-right": -8,
-        "badge-size": 16,
+        "badge-diameter": 16,
         "badge-radius": "{design.semantic.radius.full}",
         "badge-border-width": 1.5,
         "badge-line-height": "1",
@@ -1677,6 +1683,11 @@
               }
             }
           ]
+        },
+        "_unmigrated_type": {
+          "_note": "Not text styles — unitless line-heights used to centre a glyph in its pill. Listed so check-typography.py knows they are deliberate.",
+          "timer-line-height": "1 — centring, no Figma token backs it",
+          "badge-line-height": "1 — same centring"
         }
       },
       "figma_node": "14291:135864"
@@ -2437,9 +2448,9 @@
           "action": "Guidline-UI Template › Layout › `Order Page / Receipt detail` › frame `Navbar`"
         },
         "_unmigrated_type": {
-          "_note": "Two text layers in header-bar-mobile still use pre-token styles, both on the success variant's meta row. Their 14/24 pairs are correct as drawn (confirmed by the user 2026-08-21) — no existing role carries 14/24, so they stay literals until Phase 2 grows one. The success title was resolved the other way on the same day: its 22/34 layer is stale, the intended role is title/lg/semibold (16/24), and the overlay now binds that role — Figma's text layer catches up in Phase 2.",
-          "Title/Body/GraphikTH/M-Regular": "14/24 Regular — success number label.",
-          "Title/GraphikTH/S-SemiBold": "14/24 Semibold — success number value."
+          "_note": "Two text layers in header-bar-mobile still use pre-token styles, both on the success variant's meta row. Their 14/24 pairs are correct as drawn (confirmed by the user 2026-08-21) — no existing role carries 14/24, so they stay literals until Phase 2 grows one. The success title was resolved the other way on the same day: its 22/34 layer is stale, the intended role is title/lg/semibold (16/24), and the overlay now binds that role — Figma's text layer catches up in Phase 2. Keyed by token name for check-typography.py.",
+          "header-success-meta-size": "14px — Title/Body/GraphikTH/M-Regular; body/md/regular is 14/22",
+          "header-success-meta-line-height": "24px — same pair, confirmed correct as drawn 2026-08-21"
         },
         "_figma_icons": {
           "_comment": "The icons Figma actually instantiates, per node, read on 2026-08-20 (14924:2118) and 2026-08-21 (14962:94338). check-figma-icons.py asserts the icons used in `sources` are exactly this set -- an extra one fails as loudly as a missing one. check-icons.py only ever asked whether a name resolved, and a wrong-but-real icon passes that: three of the five under 14924:2118 were wrong for months because resolving is not matching. Keys prefixed with `_` are documented but not enforced, which is how an icon Figma draws inside a nested component -- and that the nested component already renders -- is recorded without being demanded of the parent's source.",
@@ -2556,7 +2567,7 @@
         "profile-summary-border-color": "{design.semantic.colors.foreground.white}",
         "profile-summary-rule-gap": "{design.semantic.spacing.2xl}",
         "profile-noti-size": 32,
-        "profile-badge-size": 16,
+        "profile-badge-diameter": 16,
         "profile-badge-padding-x": "{design.semantic.spacing.md}",
         "profile-badge-radius": "{design.semantic.radius.full}",
         "profile-badge-background": "{design.semantic.colors.background.default}",

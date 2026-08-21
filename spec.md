@@ -1,5 +1,5 @@
 # Project Spec — Lotteryplus Design System
-_Last updated: 2026-08-21 16:40_
+_Last updated: 2026-08-21 21:30_
 
 ## Current State
 
@@ -13,7 +13,7 @@ _Last updated: 2026-08-21 16:40_
 | Asset | **112 logo/graphic** จาก Figma → `assets/logos/` (26 svg · 86 png · ไม่เข้า bundle) |
 | Pattern | 5 ตัว (+ **Stack · Surface · DeviceFrame** — structural primitive ที่ทำให้ page ไม่ต้องแตะ token) — AppShell (5 slot) + BareScreen · วัดจาก FE 81 หน้า และเทียบ Figma Template UI แล้ว |
 | Storybook | 179 stories · จัดตาม **atomic design** แล้ว: Foundations → Atoms → Molecules → Organisms → Patterns → System |
-| Gate | `check.sh` **8 ด่าน** · icon set-equality บังคับแล้ว **20/20** — เพิ่มด่าน *icon ตรงกับที่ Figma วาด* (set equality) ต่อจากด่าน icon resolve + ด่าน `_verified_from` |
+| Gate | `check.sh` **10 ด่าน** · icon set-equality **20/20** · typography ต้องผูก role หรือบันทึกเป็นหนี้ (ด่าน 10) — เพิ่มด่าน *icon ตรงกับที่ Figma วาด* (set equality) ต่อจากด่าน icon resolve + ด่าน `_verified_from` |
 
 **5 Source ที่ต้องตรงกัน:** Lark Standard (โครงสร้าง+ชื่อ) · Figma V.7.1 (ค่า — ชนะเสมอ) ·
 Storybook (เป้าหมาย SSOT) · FE (ตัวให้ยืม implementation) · design.md (สะพาน)
