@@ -1370,9 +1370,9 @@
   --topfoot-header-success-height: 94px;
   --topfoot-header-success-padding: var(--sys-spacing-2xl);
   --topfoot-header-success-gap: var(--sys-spacing-sm);
-  --topfoot-header-success-title-size: 22px;
-  --topfoot-header-success-title-line-height: 34px;
-  --topfoot-header-success-title-weight: 600;
+  --topfoot-header-success-title-size: var(--sys-type-title-lg-semibold-size);
+  --topfoot-header-success-title-line-height: var(--sys-type-title-lg-semibold-line-height);
+  --topfoot-header-success-title-weight: var(--sys-type-title-lg-semibold-weight);
   --topfoot-header-success-meta-size: 14px;
   --topfoot-header-success-meta-line-height: 24px;
   --topfoot-header-success-phoenix-width: 118px;

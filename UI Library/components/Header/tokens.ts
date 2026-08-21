@@ -151,15 +151,14 @@ export const DEVICE = {
 } as const;
 
 /**
- * Three text layers in `header-bar-mobile` still sit on pre-token styles, and each has a
- * size/line-height pair no semantic role carries — which is why they were never mapped.
- * Their values are literals in top-and-footer.json rather than typography refs, and this
- * list is what Phase 2 has to migrate. All three are on the success variant. (A fourth,
- * the sub-page subtitle at 14/24 Medium, left with the subtitle itself on 2026-08-21 —
- * the product never shows it.)
+ * Two text layers in `header-bar-mobile` still sit on pre-token styles — the success
+ * variant's meta row. Both are 14/24, confirmed correct as drawn (user, 2026-08-21); no
+ * role carries that pair yet, so they stay literals until Phase 2 grows one. The success
+ * title was resolved the other way the same day: its 22/34 layer in Figma is stale and
+ * the binding is now typography/title/lg/semibold. The sub-page subtitle left earlier —
+ * the product never shows it.
  */
 export const HEADER_UNMIGRATED_TYPE = [
-  { style: 'Title/GraphikTH/L-SemiBold', value: '22/34 Semibold', used: 'success title', nearest: 'no role at 22px' },
   { style: 'Title/Body/GraphikTH/M-Regular', value: '14/24 Regular', used: 'success meta label', nearest: 'body/m-reg is 14/22' },
   { style: 'Title/GraphikTH/S-SemiBold', value: '14/24 Semibold', used: 'success meta value', nearest: 'body/m-semb is 14/22' },
 ] as const;
