@@ -1,0 +1,354 @@
+{
+  "$meta": {
+    "scope": "patterns-only",
+    "version": "7.1.0",
+    "description": "Reusable page shells with slots, per Lark Standard §3.4 and §3.6. A pattern is the frame a page is built in — it holds slots, not content, and never carries data.",
+    "derived_from": {
+      "frontend": {
+        "method": "Parsed the `<Layout>` opening tag of every page in lotteryplus-frontend-main/src/pages on 2026-08-19 and grouped by which structural slots were switched on.",
+        "pages_measured": 81,
+        "pages_using_layout": 69,
+        "flag_combinations_found": 31,
+        "structural_shapes_found": 8,
+        "conclusion": "The 31 combinations collapse to 8 slot compositions, and those 8 are one shell with four optional slots. The variety was in flags, not in structure."
+      },
+      "figma": {
+        "method": "Read the two page templates the design team drew in `Guidline-UI Template > Layout` on the page `All page in App` of the Re-naming Tokens file (23430:298541), on 2026-08-19.",
+        "templates": 2,
+        "names": [
+          "Page — main page reached from the tab bar",
+          "Order Page / Receipt detail — everything else"
+        ],
+        "conclusion": "The two templates describe the same shell the Frontend does. They agree on every slot and add one the Frontend cannot have: the device status bar. Where they disagree with the Frontend it is about which component fills a slot, never about the frame."
+      }
+    },
+    "rules": [
+      "A pattern holds slots, never content. The Frontend's own `layout/index.tsx` imports 10 API modules and 11 Zustand stores — that is a page container, not a pattern, and porting it would drag the data layer into the design system.",
+      "Refs flow downward only: ui -> patterns -> components -> design.",
+      "Slot contract types: component | section | pattern | text | image | icon."
+    ]
+  },
+  "patterns": {
+    "app-shell": {
+      "name": "app-shell",
+      "responsibility": "Frame every page that sits inside the app chrome",
+      "type": "pattern",
+      "scope": "global",
+      "folder": "global/patterns/app-shell",
+      "css_prefix": "shell",
+      "usage": {
+        "pages": 69,
+        "of": 81
+      },
+      "slots": [
+        {
+          "name": "status-bar",
+          "required": false,
+          "present_in": 0,
+          "figma_templates": 2,
+          "accepts": [
+            "component"
+          ],
+          "fills": [],
+          "note": "The device's own strip — 47px in both Figma templates, absent from all 69 Frontend pages because a browser has no status bar. Off by default; the shell holds it so a design review compares like with like."
+        },
+        {
+          "name": "top-navbar",
+          "required": false,
+          "present_in": 67,
+          "accepts": [
+            "component"
+          ],
+          "fills": [
+            "navigation-bar"
+          ],
+          "note": "On in 67 of 69 pages. Effectively required — the two exceptions are static content pages under /nokplus."
+        },
+        {
+          "name": "header",
+          "required": false,
+          "present_in": 48,
+          "accepts": [
+            "component",
+            "section"
+          ],
+          "fills": [
+            "header"
+          ],
+          "note": "The page title bar. Figma models it as one component set, `header-bar-mobile` (14924:2118), with three types: `home-page` (146px, logo + slogan + phoenix), `sub-page` (56px, back arrow + centred title) and `success` (94px). The Frontend splits the same job across `components/header` and `components/navbar/compact-navbar`; Figma's single component is the structure the library follows."
+        },
+        {
+          "name": "main",
+          "required": true,
+          "present_in": 69,
+          "accepts": [
+            "section",
+            "component",
+            "pattern"
+          ],
+          "note": "The page's own content. The only slot every page fills."
+        },
+        {
+          "name": "bottom-navbar",
+          "required": false,
+          "present_in": 12,
+          "accepts": [
+            "component"
+          ],
+          "fills": [
+            "navigation-bar"
+          ],
+          "note": "The persistent tab bar. Only on top-level destinations."
+        },
+        {
+          "name": "footer",
+          "required": false,
+          "present_in": 12,
+          "accepts": [
+            "component",
+            "section"
+          ],
+          "fills": [
+            "footer",
+            "action-bar"
+          ],
+          "note": "Two different components, never both at once. `footer` is Figma's `footer-mobile` — the red-dark site footer. `action-bar` is the sticky bar of committing actions, which Figma draws only inside the page template and the Frontend ships as `components/common/footer-button` with 17 call sites."
+        }
+      ],
+      "variants": {
+        "navbar": {
+          "_note": "Which navigation-bar treatment the shell mounts. Measured from `navbarType` across all pages.",
+          "values": {
+            "compact": {
+              "pages": 37,
+              "default": true
+            },
+            "default": {
+              "pages": 10
+            },
+            "profile": {
+              "pages": 3
+            },
+            "big-title": {
+              "pages": 1
+            }
+          }
+        },
+        "header": {
+          "_note": "Header treatments the Frontend switches with flags. Each is a header variant, not a separate slot.",
+          "values": {
+            "default": {
+              "pages": 33
+            },
+            "phoenix": {
+              "pages": 14,
+              "flag": "isShowPhoenixHeader"
+            },
+            "squared": {
+              "pages": 1,
+              "flag": "isSquaredHeader"
+            },
+            "curved": {
+              "pages": 1,
+              "flag": "hasCurvedHeader"
+            }
+          }
+        }
+      },
+      "compositions": [
+        {
+          "slots": [
+            "top-navbar",
+            "header",
+            "main"
+          ],
+          "pages": 35
+        },
+        {
+          "slots": [
+            "top-navbar",
+            "main"
+          ],
+          "pages": 10
+        },
+        {
+          "slots": [
+            "top-navbar",
+            "header",
+            "main",
+            "bottom-navbar"
+          ],
+          "pages": 9
+        },
+        {
+          "slots": [
+            "top-navbar",
+            "main",
+            "footer"
+          ],
+          "pages": 8
+        },
+        {
+          "slots": [
+            "top-navbar",
+            "header",
+            "main",
+            "footer"
+          ],
+          "pages": 2
+        },
+        {
+          "slots": [
+            "top-navbar",
+            "main",
+            "bottom-navbar",
+            "footer"
+          ],
+          "pages": 2
+        },
+        {
+          "slots": [
+            "header",
+            "main"
+          ],
+          "pages": 2
+        },
+        {
+          "slots": [
+            "top-navbar",
+            "main",
+            "bottom-navbar"
+          ],
+          "pages": 1
+        }
+      ],
+      "not_slots": {
+        "_note": "Props on the Frontend's Layout that look structural but are not, so they do not become slots or variants of this pattern.",
+        "isPrivate": "Auth gate — 52 pages. A routing concern, not a layout one.",
+        "hasPaddingTop": "Content spacing — 21 pages. Belongs to the main slot's own padding.",
+        "isDisabledTitle": "Hides the header's title text — 18 pages. A header prop.",
+        "isDisableDetail": "Hides the header's detail line — 6 pages. A header prop.",
+        "hasCompactNavbar": "One page. A navbar variant already covered above."
+      },
+      "figma_templates": {
+        "_note": "The two shapes the design team drew, with the annotations they wrote beside them. Re-read on 2026-08-19 after the templates were re-pointed at live components. Note that Figma fills ONE top slot where the Frontend fills two: `type=home-page` carries its own app bar (logo, counters, hamburger) inside a 146px block, while the Frontend keeps TopNavbar and Header as separate components. Slot names below follow what each thing does — a block with brand and slogan is a header, a bar with a back arrow and a page title is a navbar — which is also how `components/layout/index.tsx` splits them.",
+        "main-page": {
+          "figma_frame": "Guidline-UI Template > Layout > `Page`",
+          "annotation": "คำอธิบาย กรณีหน้าหลักที่กดจาก Navbar",
+          "slots": [
+            "status-bar",
+            "header",
+            "main",
+            "bottom-navbar"
+          ],
+          "heights": {
+            "status-bar": 47,
+            "header": 146,
+            "bottom-navbar": 124
+          },
+          "fills": {
+            "header": "header-bar-mobile type=home-page (21282:140741) — 146px, app bar + slogan + phoenix in one component",
+            "bottom-navbar": "navigation-bar/Mobile-v2 (14291:135865)"
+          },
+          "rules_written_by_the_designer": [
+            "ต้องใช้ top-navigation-mobile พร้อมหัวข้อของหน้านั้นๆ",
+            "ต้องแสดง Hamburger Menu",
+            "พื้นหลังสีแดง พร้อมมีรูปนกฟีนิกซ์ (โลโก้ลอตเตอรี่พลัส)",
+            "navbar: ต้องแสดง Navbar เมื่อกดเมนูไหน ก็ต้องอยู่หน้านั้น"
+          ],
+          "not_used": "`top-navbar`. Figma has no separate bar here — the app bar row (LTP logo, nokcash and lottery counters, hamburger) lives inside the 146px header. The Frontend splits the same content into TopNavbar + Header; see figma_vs_frontend."
+        },
+        "sub-page": {
+          "figma_frame": "Guidline-UI Template > Layout > `Order Page / Receipt detail`",
+          "annotation": "คำอธิบาย กรณีที่ไม่ใช่หน้าหลัก หรือที่ไม่ได้กดจาก Navbar",
+          "slots": [
+            "status-bar",
+            "top-navbar",
+            "main",
+            "footer"
+          ],
+          "heights": {
+            "status-bar": 47,
+            "top-navbar": 56,
+            "footer": 110
+          },
+          "fills": {
+            "top-navbar": "header-bar-mobile type=sub-page (14924:2115) — 56px, back arrow + centred title, no phoenix",
+            "footer": "action-bar + home indicator"
+          },
+          "rules_written_by_the_designer": [
+            "หัวข้อของหน้านั้นๆ ในตำแหน่งตรงกลาง และด้านซ้ายแสดง icon arrow-left-L",
+            "พื้นหลังสีแดง (colors/top-and-footer/topfoot-bg-red)",
+            "footer: หากมีปุ่มให้ Action ก็แสดง หากไม่มีก็ไม่ต้องแสดงอะไรเลย",
+            "footer ไม่มี effect — BG = colors/background/bg-default, stroke 1px inside = colors/navigation-border",
+            "spacing: vertical gap between objects = spacing-lg (8)",
+            "body: พื้นหลัง colors/background/bg-default เต็มพื้นที่ไม่เว้นขอบซ้ายขวา, padding = spacing-2xl (16)"
+          ],
+          "not_used": "`header`. A sub page gets a navbar, not a header block."
+        },
+        "_orphaned_components": {
+          "status": "PARTLY RESOLVED — the two page templates were re-pointed at live components on 2026-08-19 and are now clean. The underlying problem is not gone.",
+          "finding": "`top-navigation-mobile/lottery/main-page` (14924:2116) and `top-navigation-mobile/nokplus/sub-page-noti` (15416:3648) are live COMPONENT nodes with a null parent — they sit on no page, so nobody can select, find or edit them. 35 instances still point at them, on pages `↳ tabs`, `↳ orders`, `↳ All page in App` and others.",
+          "checked": "2026-08-19 after the reset: node.removed === false, node.parent === null, 35 instances counted (was 37 before the two templates were fixed).",
+          "why_it_matters": "Every one of those 35 instances renders from a component the team cannot open. Fixing anything about them has to happen instance by instance.",
+          "live_equivalents": {
+            "146px header": "`header-bar-mobile type=home-page` (21282:140741) — what the main-page template now uses",
+            "56px navbar": "`header-bar-mobile type=sub-page` (14924:2115) — what the sub-page template now uses",
+            "72px bar": "`top-navigation-home` (14962:92372) — 390×72, type=nokplus | nokplus-noti | lottery. No template uses it any more."
+          }
+        }
+      },
+      "figma_vs_frontend": {
+        "_note": "Where the two sources genuinely disagree. None of these is a difference in the frame — every one is about what fills a slot.",
+        "status-bar": "Figma draws it in both templates; no Frontend page has one. Not a conflict — the Frontend runs in a browser.",
+        "mobile-footer": "Figma designed `footer-mobile` at 390 wide. The Frontend's `components/footer` returns null below 1280px, so that design is drawn but not shipped. Needs a decision, not a guess.",
+        "action-bar": "17 Frontend call sites, no Figma component set — it exists only as a frame inside the template. The two-button layout (secondary at one third) comes from the Frontend alone.",
+        "set-name": "Figma's `header-bar-mobile` set spans two slots: `home-page` and `success` are headers, `sub-page` is a top navbar. One component set, two responsibilities — which is why the library keeps them as one component but documents which slot each variant belongs in.",
+        "top-chrome": "Figma fills one top slot, the Frontend fills two. Figma's `type=home-page` is a 146px block containing the app bar and the slogan together; the Frontend renders TopNavbar (fixed, 80px) and Header (the tall red block) as separate components in separate slots. The shell keeps both slots because the Frontend needs them, and Figma's template simply leaves `top-navbar` empty."
+      }
+    },
+    "bare-screen": {
+      "name": "bare-screen",
+      "responsibility": "Fill the viewport with no app chrome",
+      "type": "pattern",
+      "scope": "global",
+      "folder": "global/patterns/bare-screen",
+      "css_prefix": "bare",
+      "usage": {
+        "pages": 7,
+        "of": 81
+      },
+      "slots": [
+        {
+          "name": "main",
+          "required": true,
+          "accepts": [
+            "section",
+            "component"
+          ],
+          "note": "The whole viewport. Nothing frames it."
+        }
+      ],
+      "real_pages": [
+        "404.tsx",
+        "checklogin/index.tsx",
+        "share-prizes/[id].tsx",
+        "aff/[id].tsx",
+        "2digitluglug/index.tsx",
+        "nokplus/index.tsx",
+        "check-prizes/type/[type].tsx"
+      ],
+      "_note": "Twelve pages render no `<Layout>`, but five are not screens — `_app`, `_document`, `server-sitemap.xml`, `design-system` and `testing`. The seven above are the real ones: error states, auth handoffs and shared links, all of which deliberately drop the chrome."
+    }
+  },
+  "open_questions": [
+    "The two page templates were fixed on 2026-08-19, but 35 instances elsewhere still point at `top-navigation-mobile/lottery/main-page` (14924:2116) and `.../nokplus/sub-page-noti` (15416:3648), which sit on no page. Re-point those too, or restore the components to a page?",
+    "Figma packs the app bar inside the 146px header; the Frontend keeps TopNavbar and Header separate. Should the design system follow Figma and merge them, or keep the two slots the Frontend needs?",
+    "Figma's `header-bar-mobile` set mixes two slots — `home-page` and `success` are headers, `sub-page` is a top navbar. Split the set, or keep it and document the split?",
+    "The page background is stated twice in Figma and the two do not match: the artwork binds `colors/background/bg-s-light` (#FAFAFA), the annotation beside it says `colors/background/bg-light` (#F5F5F5). The shell follows the artwork, because that is what renders. Which is intended?",
+    "The same annotation says the body panel must have `radius-2xl` (16) on its top corners so the red shows through behind them, but the frame it is annotating has a radius of 0. Should the shell apply the radius?",
+    "Four text layers in `header-bar-mobile` still use pre-token styles (`GraphikTH/L-Medium`, `Title/GraphikTH/L-SemiBold`, `Title/Body/GraphikTH/M-Regular`, `Title/GraphikTH/S-SemiBold`). Every one is a 14/24 or 22/34 pair that no semantic role carries. Add the roles, or restyle onto existing ones?",
+    "Figma has drawn `footer-mobile` but the Frontend never renders a footer below 1280px. Ship the mobile footer, or delete the design?",
+    "Two pages use the shell with a header and no top navbar. Is that intentional, or a mistake in those two pages?"
+  ]
+}

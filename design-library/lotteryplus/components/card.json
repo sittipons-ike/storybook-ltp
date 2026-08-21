@@ -1,0 +1,48 @@
+{
+  "_comment": "The lottery card graphic. Figma's `Card` (14591:60095) is artwork plus an ID overlaid — three fixed sizes, each with its own raster. The card face is an asset; the component is the asset plus text.",
+  "figma_node": "14591:60095",
+  "base": {
+    "l-width": 326,
+    "l-height": 205,
+    "l-id-x": 22,
+    "l-id-y": 165,
+    "m-width": 154,
+    "m-height": 96,
+    "m-id-x": 10,
+    "m-id-y": 72,
+    "s-width": 76,
+    "s-height": 48,
+    "id-gap": "{design.semantic.spacing.2lg}",
+    "typography-id-size": "{design.semantic.typography.body.lg.medium.size}",
+    "typography-id-line-height": "{design.semantic.typography.body.lg.medium.line-height}",
+    "typography-id-weight": "{design.semantic.typography.body.lg.medium.weight}",
+    "_verified_from": {
+      "node": "14591:60095 — component set `Card` on page `↳ logos-and-graphics ✅`",
+      "date": "2026-08-19",
+      "scope": "all 3 sizes, artwork nodes and the bound text style",
+      "result": "L 326x205, M 154x96, S 76x48, radius 0. The face is an IMAGE fill at each size — three different rasters, not one scaled. The ID reads `typography/body/l-med` (16/24 Medium) in `card-fg-white` with a 10 gap, placed absolutely at (22,165) on L and (10,72) on M. S carries no text."
+    },
+    "_source": {
+      "sizes and id offsets": "Read off each variant. The ID is positioned absolutely, not laid out, and the two offsets are not the same fraction of the card — 6.7%/80.5% on L against 6.5%/75% on M — so they are held per size rather than derived.",
+      "artwork": "Exported at 3x per size into UI Library/assets/logos as `card-lottery-l|m|s`. Three files because Figma uses three different images, not one scaled."
+    },
+    "_figma_gaps": {
+      "id-is-not-laid-out": "The ID is absolutely positioned on each size instead of being an auto-layout child, which is why its offsets had to be copied per size rather than expressed once.",
+      "large-face-is-heavy": "`card-lottery-l` is 272KB at 3x. It is a detailed illustration at 326px wide; if it ships on a list screen, a 2x export or a WebP would be worth considering."
+    },
+    "_figma_icons": {
+      "_comment": "The icons Figma instantiates for this component, read 2026-08-20 by walking the instance tree and keeping every main component whose parent set is `icons`. An icon Figma hides by default belongs in `icons` only when this component implements the state that reveals it; otherwise it is recorded under _figma_gaps instead, so the gate is not asking for a feature nobody built.",
+      "nodes": [
+        {
+          "node": "14591:60095",
+          "figma": "Card",
+          "note": "This component draws no icon at all in Figma. Recorded so that one appearing later has to be justified rather than slipping in.",
+          "sources": [
+            "LotteryCard.tsx"
+          ],
+          "icons": {}
+        }
+      ]
+    }
+  }
+}

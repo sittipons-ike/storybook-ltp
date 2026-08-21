@@ -1,0 +1,40 @@
+{
+  "_comment": "No Figma component. The Frontend hardcodes #EAB308 / #FEFCE8 — which are exactly the system's status.warning.default and status.warning.soft-light, so the component binds the roles the Frontend was reaching for. Built per the amended authority rule (2026-08-20). Kept separate from Toast: Toast is transient feedback with four types and a dismiss control; Alert is a static inline warning with none of that.",
+  "figma_node": null,
+  "base": {
+    "gap": "{design.semantic.spacing.2xl}",
+    "padding-x": "{design.semantic.spacing.2xl}",
+    "padding-y": "{design.semantic.spacing.lg}",
+    "radius": "{design.semantic.radius.2xl}",
+    "border-width": "{design.semantic.border-width.hairline}",
+    "border-color": "{design.semantic.colors.status.warning.default}",
+    "background": "{design.semantic.colors.status.warning.soft-light}",
+    "icon-circle-size": 28,
+    "icon-circle-color": "{design.semantic.colors.status.warning.default}",
+    "icon-size": 20,
+    "icon-color": "{design.semantic.colors.text.on-bgcolor}",
+    "text-color": "{design.semantic.colors.text.secondary.default}",
+    "title-size": "{design.semantic.typography.body.lg.semibold.size}",
+    "title-line-height": "{design.semantic.typography.body.lg.semibold.line-height}",
+    "title-weight": "{design.semantic.typography.body.lg.semibold.weight}",
+    "description-size": "{design.semantic.typography.caption.md.regular.size}",
+    "description-line-height": "22px",
+    "description-weight": "{design.semantic.typography.caption.md.regular.weight}",
+    "_source": {
+      "gap / padding / radius": "Frontend `gap-4 px-4 py-2 rounded-2xl` = 16 / 16x8 / 16 — every one lands on the scale exactly.",
+      "colors": "`border-[#EAB308] bg-[#FEFCE8]` — byte-identical to status.warning.default and .soft-light. The literal in the Frontend was the system colour all along.",
+      "icon": "warning-2-icon-filled, white, in a 28px (`min-h-7`) warning-yellow circle — the set's filled-Warning-2.",
+      "description-line-height": "The Frontend overrides caption.md.regular's 16px line-height with `leading-[22px]`. Kept verbatim as a literal; no role carries 10/22."
+    },
+    "_frontend_evidence": {
+      "component": "lotteryplus-frontend-main/src/components/common/alert — 1 usage, kept because the Standard section 3.4 lists alert as a canonical molecule",
+      "implementation": "icon circle + [title body_l_semb, description caption_m_reg] on text.secondary"
+    },
+    "_verified_from": {
+      "node": null,
+      "date": "2026-08-20",
+      "scope": "token mirror searched for alert/banner; frontend component + module css read in full",
+      "result": "VERIFIED ABSENT in Figma. Frontend is the authority per the amended rule (user decision 2026-08-20)."
+    }
+  }
+}

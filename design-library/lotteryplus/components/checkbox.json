@@ -1,0 +1,83 @@
+{
+  "_comment": "Layout and state geometry for checkbox. Colours come from the Figma mirror (colors/checkbox); these do not. RE-VERIFIED against Figma component set `checkbox` (14291:131502) on 2026-08-19 by reading all 14 variants — the first two builds were both wrong, see _corrections.",
+  "figma_node": "14291:131502",
+  "base": {
+    "size": 24,
+    "padding": "{design.semantic.spacing.xs}",
+    "radius": "{design.semantic.radius.sm}",
+    "border-width-rest": "{design.semantic.border-width.hairline}",
+    "border-width-emphasis": "1.5px",
+    "glyph-size": 20,
+    "border-success": "{design.semantic.colors.status.success.default}",
+    "border-primary": "{design.semantic.colors.primary.default}",
+    "border-error": "#EF4444",
+    "focus-ring-blur": "5px",
+    "focus-ring-spread": "3px",
+    "focus-ring-success": "{design.semantic.colors.status.success.default}@35%",
+    "focus-ring-primary": "{design.semantic.colors.primary.default}@35%",
+    "gap": "{design.semantic.spacing.lg}",
+    "height": 32,
+    "card-padding": "{design.semantic.spacing.2xl}",
+    "card-radius": "{design.semantic.radius.lg}",
+    "card-border-width": "{design.semantic.border-width.hairline}",
+    "typography-family": "{design.semantic.typography.body.md.medium.family}",
+    "typography-size": "{design.semantic.typography.body.md.medium.size}",
+    "typography-line-height": "{design.semantic.typography.body.md.medium.line-height}",
+    "typography-weight": "{design.semantic.typography.body.md.medium.weight}",
+    "typography-tracking": "{design.semantic.typography.body.md.medium.tracking}",
+    "_figma_truth_table": {
+      "_note": "All 14 variants read on 2026-08-19. Every variant is 24x24, radius 4, padding 2. `Primary Color=No` is green, `Yes` is red. The glyph appears in exactly two states.",
+      "Empty": "fill checkbox-bg-white · border checkbox-border 1px inside · no glyph",
+      "Selected": "fill checkbox-bg-green | checkbox-bg-red · no border · glyph outline-check 20 in checkbox-fg-white",
+      "All Seleted": "fill checkbox-bg-green | checkbox-bg-red · no border · glyph filled-minus 20 in checkbox-fg-white",
+      "Disable": "fill checkbox-bg-disable (#F5F5F5) · border checkbox-border 1px · no glyph",
+      "Hover": "fill #FFFFFF · border 1.5px tone · no glyph",
+      "Focus": "fill #FFFFFF · border 1.5px tone · drop shadow blur 5 spread 3 at 35% tone · no glyph",
+      "Error": "fill #FFFFFF · border 1.5px #EF4444 · no glyph"
+    },
+    "_source": {
+      "size": "The Figma frame is 24x24 with 2px padding on every variant.",
+      "radius": "4, which is exactly semantic.radius.sm. Figma states it as a literal on the frame.",
+      "border-width-emphasis": "1.5px on Hover, Focus and Error. No semantic border-width role carries 1.5 — hairline is 1 and thin is 2 — so the literal stands until one exists.",
+      "glyph-size": "20px `icons-size` instance, present only on Selected and All Seleted.",
+      "focus-ring-*": "Figma uses a DROP_SHADOW with blur 5, spread 3 and the tone at 35% alpha — not the 40% ring the rest of the library uses. Kept verbatim because Figma is the value authority.",
+      "height": "The row height the Frontend gives a checkbox with a label (h-8). Not from Figma, which ships the control alone."
+    },
+    "_corrections": {
+      "_why_twice": "This component was rebuilt twice from wrong readings. Recorded in full because the failure mode — reading a hidden node and believing it — is not specific to checkbox.",
+      "build-1": "Drew the box in CSS and invented a radius, border width and focus ring. Wrong values, right idea.",
+      "build-2": "Concluded 'Figma draws the whole control as an icon' and removed the box entirely. That was read off `Outline/Old/Check` — a HIDDEN, ORPHANED legacy instance sitting inside every unchecked variant. The result rendered a tick when the box was empty and had no box at all.",
+      "build-3": "Read all 14 variants and their frame properties. The frame draws the box (fill, stroke, radius 4); the icon is only the glyph, and only on two states.",
+      "icon-size-rest": "REMOVED. There is no glyph at rest — 18px was the size of the hidden legacy node.",
+      "checked-glyph": "Was `filled-check`. Figma uses `outline-check`.",
+      "unchecked-glyph": "Was `outline-check` rendered at rest, so an unticked box showed a tick. Figma shows nothing."
+    },
+    "_figma_gaps": {
+      "unbound-strokes": "The Hover, Focus and Error strokes are raw hexes with no bound variable. Hover and Focus match status.success.default (#22C55E) and primary.default (#E32321) exactly, so they are bound here; Figma should bind them too.",
+      "error-uses-the-old-red": "DECIDED 2026-08-19 — follow Figma. The Error stroke is #EF4444, Tailwind's red.500, which this design system overrode to #E32321 everywhere else. It matches no token, so it is held as a literal in `border-error` rather than silently swapped for the brand red. Figma is the value authority and the team chose to keep it; if the intent later changes, the fix is one value in this file.",
+      "no-checked-hover": "Figma draws no Hover, Focus or Error variant for a checked box. This component keeps the checked fill and layers the emphasis border, which is an extrapolation, not a reading."
+    },
+    "_verified_from": {
+      "node": "14291:131502 — component set `checkbox` on page `↳ checkbox`",
+      "date": "2026-08-19",
+      "scope": "all 14 variants, every frame property and nested glyph",
+      "result": "Rebuilt from the full truth table; see `_figma_truth_table` and `_corrections`. Measured in the browser afterwards: 7 of 7 state/colour combinations match, box 24x24, radius 4, focus ring #22C55E at 35% with blur 5 and spread 3."
+    },
+    "_figma_icons": {
+      "_comment": "The icons Figma instantiates for this component, read 2026-08-20 by walking the instance tree and keeping every main component whose parent set is `icons`. check-figma-icons.py holds the files in `sources` to exactly this set — an extra icon fails as loudly as a missing one, because an extra is one nobody compared. Files not listed in `sources` carry payload a caller passes, not a choice the design makes.",
+      "nodes": [
+        {
+          "node": "14291:131502",
+          "figma": "checkbox",
+          "sources": [
+            "tokens.ts"
+          ],
+          "icons": {
+            "filled-minus": "State=All Seleted (Figma's spelling) — the indeterminate box",
+            "outline-check": "State=Selected, both Primary Color=Yes and No"
+          }
+        }
+      ]
+    }
+  }
+}

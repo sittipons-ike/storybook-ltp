@@ -1,432 +1,417 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
+import { sys, TOKEN_VALUES } from './tokens';
+import { TOKEN_VALUES_DESKTOP, TOKEN_VALUES_ALPHA } from './tokens.generated';
+import './tokens.css';
+import tokenResult from '../../design-library/lotteryplus/verification-result.json';
+import componentResult from '../../design-library/lotteryplus/component-verification.json';
+
+// ═══════════════════════════════════════════
+//  Verification Report
+//
+//  This page reports; it does not assert. Everything below comes from one of three
+//  places, and every one of them can come back bad:
+//
+//    1. getComputedStyle in this document, against tokens.generated.ts
+//    2. verification-result.json      — written by tools/verify-tokens.py
+//    3. component-verification.json   — written by tools/collect-verification.py
+//
+//  The previous version of this file claimed a live Figma connection and a 100% pass
+//  rate. It had no fetch, no comparison, and both numbers were literals. Nothing here is
+//  typed by hand: if a token drifts, a row below turns red on its own.
+// ═══════════════════════════════════════════
 
 const meta: Meta = {
-  title: 'Verification Report',
+  title: 'System/Verification Report',
   parameters: { layout: 'padded' },
 };
 export default meta;
 
-// ── Helpers ──
-const Badge = ({ status }: { status: 'pass' | 'fail' }) => (
-  <span style={{
-    display: 'inline-block',
-    padding: '2px 8px',
-    borderRadius: 4,
-    fontSize: 11,
-    fontWeight: 700,
-    color: '#fff',
-    backgroundColor: status === 'pass' ? '#22C55E' : '#E32321',
-  }}>
-    {status === 'pass' ? 'MATCH' : 'MISMATCH'}
-  </span>
+const sans = "'Graphik TH', sans-serif";
+const mono = 'ui-monospace, SFMono-Regular, Menlo, monospace';
+
+const ok = () => sys('color-status-success-default');
+const bad = () => sys('color-status-error-default');
+const muted = () => sys('color-text-tertiary-default');
+
+const Stat: React.FC<{ label: string; value: React.ReactNode; tone?: 'ok' | 'bad' | 'plain' }> = ({
+  label,
+  value,
+  tone = 'plain',
+}) => (
+  <div
+    style={{
+      padding: '12px 20px',
+      background: sys('color-background-default'),
+      border: `1px solid ${sys('color-border-accent-gray-soft-light')}`,
+      borderRadius: sys('radius-lg'),
+      minWidth: 118,
+    }}
+  >
+    <div
+      style={{
+        fontSize: 26,
+        fontWeight: 700,
+        color: tone === 'ok' ? ok() : tone === 'bad' ? bad() : sys('color-text-secondary-default'),
+      }}
+    >
+      {value}
+    </div>
+    <div style={{ fontSize: 11, color: muted() }}>{label}</div>
+  </div>
 );
 
-const Swatch = ({ color }: { color: string }) => (
-  <div style={{
-    width: 24, height: 24, borderRadius: 4,
-    backgroundColor: color, border: '1px solid #E5E5E5',
-    flexShrink: 0, display: 'inline-block', verticalAlign: 'middle',
-  }} />
+const Section: React.FC<{ n: number; title: string; source: string; children: React.ReactNode }> = ({
+  n,
+  title,
+  source,
+  children,
+}) => (
+  <section style={{ marginBottom: 44 }}>
+    <h2 style={{ fontSize: 18, margin: '0 0 2px' }}>
+      {n}. {title}
+    </h2>
+    <div style={{ fontSize: 11, fontFamily: mono, color: muted(), marginBottom: 16 }}>{source}</div>
+    {children}
+  </section>
 );
 
-type TokenRow = { figmaToken: string; figmaValue: string; jsonValue: string; aliasTo?: string };
-type TypoRow = { figmaToken: string; figmaSize: number; figmaLH: number; figmaWeight: string; jsonSize: number; jsonLH: number; jsonWeight: string };
-
-const TypoVerificationTable = ({ title, rows }: { title: string; rows: TypoRow[] }) => {
-  const matches = rows.filter(r => r.figmaSize === r.jsonSize && r.figmaLH === r.jsonLH && r.figmaWeight === r.jsonWeight).length;
-  const total = rows.length;
-  return (
-    <div style={{ marginBottom: 32 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-        <h3 style={{ margin: 0, fontSize: 15, fontWeight: 600 }}>{title}</h3>
-        <span style={{
-          fontSize: 12, padding: '2px 10px', borderRadius: 12,
-          backgroundColor: matches === total ? '#F0FDF4' : '#FEF2F2',
-          color: matches === total ? '#14532D' : '#7F1D1D',
-          fontWeight: 600,
-        }}>
-          {matches}/{total} passed
-        </span>
-      </div>
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-        <thead>
-          <tr style={{ borderBottom: '2px solid #E5E5E5', textAlign: 'left' }}>
-            <th style={{ padding: '6px 8px', width: 30 }}>#</th>
-            <th style={{ padding: '6px 8px' }}>Style Token</th>
-            <th style={{ padding: '6px 8px' }}>Figma Size</th>
-            <th style={{ padding: '6px 8px' }}>JSON Size</th>
-            <th style={{ padding: '6px 8px' }}>Figma LH</th>
-            <th style={{ padding: '6px 8px' }}>JSON LH</th>
-            <th style={{ padding: '6px 8px' }}>Figma Weight</th>
-            <th style={{ padding: '6px 8px' }}>JSON Weight</th>
-            <th style={{ padding: '6px 8px' }}>Preview</th>
-            <th style={{ padding: '6px 8px', width: 80 }}>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r, i) => {
-            const sizeOk = r.figmaSize === r.jsonSize;
-            const lhOk = r.figmaLH === r.jsonLH;
-            const weightOk = r.figmaWeight === r.jsonWeight;
-            const allOk = sizeOk && lhOk && weightOk;
-            const weightMap: Record<string, number> = { Thin: 100, Light: 300, Regular: 400, Medium: 500, Semibold: 600, Bold: 700, Black: 900 };
-            return (
-              <tr key={i} style={{ borderBottom: '1px solid #F5F5F5', backgroundColor: allOk ? 'transparent' : '#FEF2F2' }}>
-                <td style={{ padding: '5px 8px', color: '#A3A3A3' }}>{i + 1}</td>
-                <td style={{ padding: '5px 8px', fontFamily: 'monospace', fontSize: 11, color: '#E32321' }}>{r.figmaToken}</td>
-                <td style={{ padding: '5px 8px', color: sizeOk ? '#262626' : '#E32321', fontWeight: sizeOk ? 400 : 700 }}>{r.figmaSize}px</td>
-                <td style={{ padding: '5px 8px' }}>{r.jsonSize}px</td>
-                <td style={{ padding: '5px 8px', color: lhOk ? '#262626' : '#E32321', fontWeight: lhOk ? 400 : 700 }}>{r.figmaLH}px</td>
-                <td style={{ padding: '5px 8px' }}>{r.jsonLH}px</td>
-                <td style={{ padding: '5px 8px', color: weightOk ? '#262626' : '#E32321', fontWeight: weightOk ? 400 : 700 }}>{r.figmaWeight}</td>
-                <td style={{ padding: '5px 8px' }}>{r.jsonWeight}</td>
-                <td style={{ padding: '5px 8px' }}>
-                  <span style={{ fontSize: Math.min(r.figmaSize, 24), fontWeight: weightMap[r.figmaWeight] || 400, lineHeight: `${Math.min(r.figmaLH, 30)}px` }}>Aa</span>
-                </td>
-                <td style={{ padding: '5px 8px' }}><Badge status={allOk ? 'pass' : 'fail'} /></td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-  );
+const th: React.CSSProperties = {
+  textAlign: 'left',
+  padding: '7px 12px',
+  fontSize: 11,
+  fontWeight: 600,
+  color: muted(),
+  borderBottom: `2px solid ${sys('color-border-accent-gray-soft-light')}`,
+};
+const td: React.CSSProperties = {
+  padding: '6px 12px',
+  borderBottom: `1px solid ${sys('color-background-light')}`,
+  fontSize: 12,
+  verticalAlign: 'top',
 };
 
-type ScaleRow = { token: string; figmaMobile: number; figmaDesktop: number; figmaTablet: number; jsonMobile: number; jsonDesktop: number; jsonTablet: number };
-
-const ScaleVerificationTable = ({ title, rows }: { title: string; rows: ScaleRow[] }) => {
-  const matches = rows.filter(r => r.figmaMobile === r.jsonMobile && r.figmaDesktop === r.jsonDesktop && r.figmaTablet === r.jsonTablet).length;
-  const total = rows.length;
-  return (
-    <div style={{ marginBottom: 32 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-        <h3 style={{ margin: 0, fontSize: 15, fontWeight: 600 }}>{title}</h3>
-        <span style={{
-          fontSize: 12, padding: '2px 10px', borderRadius: 12,
-          backgroundColor: matches === total ? '#F0FDF4' : '#FEF2F2',
-          color: matches === total ? '#14532D' : '#7F1D1D',
-          fontWeight: 600,
-        }}>
-          {matches}/{total} passed
-        </span>
-      </div>
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-        <thead>
-          <tr style={{ borderBottom: '2px solid #E5E5E5', textAlign: 'left' }}>
-            <th style={{ padding: '6px 8px', width: 30 }}>#</th>
-            <th style={{ padding: '6px 8px' }}>Token</th>
-            <th style={{ padding: '6px 8px' }}>Figma Mobile</th>
-            <th style={{ padding: '6px 8px' }}>JSON Mobile</th>
-            <th style={{ padding: '6px 8px' }}>Figma Desktop</th>
-            <th style={{ padding: '6px 8px' }}>JSON Desktop</th>
-            <th style={{ padding: '6px 8px' }}>Figma Tablet</th>
-            <th style={{ padding: '6px 8px' }}>JSON Tablet</th>
-            <th style={{ padding: '6px 8px', width: 80 }}>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r, i) => {
-            const allOk = r.figmaMobile === r.jsonMobile && r.figmaDesktop === r.jsonDesktop && r.figmaTablet === r.jsonTablet;
-            return (
-              <tr key={i} style={{ borderBottom: '1px solid #F5F5F5', backgroundColor: allOk ? 'transparent' : '#FEF2F2' }}>
-                <td style={{ padding: '5px 8px', color: '#A3A3A3' }}>{i + 1}</td>
-                <td style={{ padding: '5px 8px', fontFamily: 'monospace', fontSize: 11, color: '#E32321' }}>{r.token}</td>
-                <td style={{ padding: '5px 8px' }}>{r.figmaMobile}</td>
-                <td style={{ padding: '5px 8px' }}>{r.jsonMobile}</td>
-                <td style={{ padding: '5px 8px' }}>{r.figmaDesktop}</td>
-                <td style={{ padding: '5px 8px' }}>{r.jsonDesktop}</td>
-                <td style={{ padding: '5px 8px' }}>{r.figmaTablet}</td>
-                <td style={{ padding: '5px 8px' }}>{r.jsonTablet}</td>
-                <td style={{ padding: '5px 8px' }}><Badge status={allOk ? 'pass' : 'fail'} /></td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-  );
-};
-
-const VerificationTable = ({ title, rows }: { title: string; rows: TokenRow[] }) => {
-  const matches = rows.filter(r => r.figmaValue.toUpperCase() === r.jsonValue.toUpperCase()).length;
-  const total = rows.length;
-  return (
-    <div style={{ marginBottom: 32 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-        <h3 style={{ margin: 0, fontSize: 15, fontWeight: 600 }}>{title}</h3>
-        <span style={{
-          fontSize: 12, padding: '2px 10px', borderRadius: 12,
-          backgroundColor: matches === total ? '#F0FDF4' : '#FEF2F2',
-          color: matches === total ? '#14532D' : '#7F1D1D',
-          fontWeight: 600,
-        }}>
-          {matches}/{total} passed
-        </span>
-      </div>
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-        <thead>
-          <tr style={{ borderBottom: '2px solid #E5E5E5', textAlign: 'left' }}>
-            <th style={{ padding: '6px 8px', width: 30 }}>#</th>
-            <th style={{ padding: '6px 8px' }}>Figma Variable</th>
-            <th style={{ padding: '6px 8px' }}>Figma Value</th>
-            <th style={{ padding: '6px 8px' }}>JSON Value</th>
-            <th style={{ padding: '6px 8px' }}>Alias</th>
-            <th style={{ padding: '6px 8px', width: 80 }}>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r, i) => {
-            const isMatch = r.figmaValue.toUpperCase() === r.jsonValue.toUpperCase();
-            return (
-              <tr key={i} style={{ borderBottom: '1px solid #F5F5F5', backgroundColor: isMatch ? 'transparent' : '#FEF2F2' }}>
-                <td style={{ padding: '5px 8px', color: '#A3A3A3' }}>{i + 1}</td>
-                <td style={{ padding: '5px 8px', fontFamily: 'monospace', fontSize: 11 }}>{r.figmaToken}</td>
-                <td style={{ padding: '5px 8px' }}>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                    <Swatch color={r.figmaValue} />
-                    <code style={{ fontSize: 11 }}>{r.figmaValue}</code>
-                  </span>
-                </td>
-                <td style={{ padding: '5px 8px' }}>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                    <Swatch color={r.jsonValue} />
-                    <code style={{ fontSize: 11 }}>{r.jsonValue}</code>
-                  </span>
-                </td>
-                <td style={{ padding: '5px 8px', fontSize: 10, color: '#737373' }}>{r.aliasTo || '—'}</td>
-                <td style={{ padding: '5px 8px' }}><Badge status={isMatch ? 'pass' : 'fail'} /></td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-  );
-};
-
-// ═══════════════════════════════════════════
-//  Full Report
 // ═══════════════════════════════════════════
 export const FullReport: StoryObj = {
-  name: 'Figma vs JSON — Full Report',
+  name: 'Full Report',
   render: () => {
-    const primitiveRows: TokenRow[] = [
-      { figmaToken: 'colors/red/950', figmaValue: '#450A0A', jsonValue: '#450A0A' },
-      { figmaToken: 'colors/red/900', figmaValue: '#7F1D1D', jsonValue: '#7F1D1D' },
-      { figmaToken: 'colors/red/800', figmaValue: '#991B1B', jsonValue: '#991B1B' },
-      { figmaToken: 'colors/red/700', figmaValue: '#B91C1C', jsonValue: '#B91C1C' },
-      { figmaToken: 'colors/red/600', figmaValue: '#DC2626', jsonValue: '#DC2626' },
-      { figmaToken: 'colors/red/500', figmaValue: '#E32321', jsonValue: '#E32321' },
-      { figmaToken: 'colors/red/400', figmaValue: '#F87171', jsonValue: '#F87171' },
-      { figmaToken: 'colors/red/300', figmaValue: '#FCA5A5', jsonValue: '#FCA5A5' },
-      { figmaToken: 'colors/red/100', figmaValue: '#FFE2E2', jsonValue: '#FFE2E2' },
-      { figmaToken: 'colors/red/50', figmaValue: '#FEF2F2', jsonValue: '#FEF2F2' },
-      { figmaToken: 'colors/midnight/950', figmaValue: '#080808', jsonValue: '#080808' },
-      { figmaToken: 'colors/midnight/500', figmaValue: '#262626', jsonValue: '#262626' },
-      { figmaToken: 'colors/midnight/400', figmaValue: '#4F4F4F', jsonValue: '#4F4F4F' },
-      { figmaToken: 'colors/midnight/700', figmaValue: '#1A1A1A', jsonValue: '#1A1A1A' },
-      { figmaToken: 'colors/midnight/100', figmaValue: '#C9C9C9', jsonValue: '#C9C9C9' },
-      { figmaToken: 'colors/midnight/50', figmaValue: '#FAFAFA', jsonValue: '#FAFAFA' },
-      { figmaToken: 'colors/neutral/950', figmaValue: '#0A0A0A', jsonValue: '#0A0A0A' },
-      { figmaToken: 'colors/neutral/900', figmaValue: '#171717', jsonValue: '#171717' },
-      { figmaToken: 'colors/neutral/800', figmaValue: '#262626', jsonValue: '#262626' },
-      { figmaToken: 'colors/neutral/700', figmaValue: '#404040', jsonValue: '#404040' },
-      { figmaToken: 'colors/neutral/600', figmaValue: '#525252', jsonValue: '#525252' },
-      { figmaToken: 'colors/neutral/500', figmaValue: '#737373', jsonValue: '#737373' },
-      { figmaToken: 'colors/neutral/400', figmaValue: '#A3A3A3', jsonValue: '#A3A3A3' },
-      { figmaToken: 'colors/neutral/300', figmaValue: '#D4D4D4', jsonValue: '#D4D4D4' },
-      { figmaToken: 'colors/neutral/200', figmaValue: '#E5E5E5', jsonValue: '#E5E5E5' },
-      { figmaToken: 'colors/neutral/100', figmaValue: '#F5F5F5', jsonValue: '#F5F5F5' },
-      { figmaToken: 'colors/neutral/50', figmaValue: '#FAFAFA', jsonValue: '#FAFAFA' },
-      { figmaToken: 'colors/yellow/500', figmaValue: '#EAB308', jsonValue: '#EAB308' },
-      { figmaToken: 'colors/yellow/900', figmaValue: '#713F12', jsonValue: '#713F12' },
-      { figmaToken: 'colors/yellow/800', figmaValue: '#854D0E', jsonValue: '#854D0E' },
-      { figmaToken: 'colors/yellow/700', figmaValue: '#A16207', jsonValue: '#A16207' },
-      { figmaToken: 'colors/green/500', figmaValue: '#22C55E', jsonValue: '#22C55E' },
-      { figmaToken: 'colors/green/900', figmaValue: '#14532D', jsonValue: '#14532D' },
-      { figmaToken: 'colors/green/700', figmaValue: '#15803D', jsonValue: '#15803D' },
-      { figmaToken: 'colors/green/600', figmaValue: '#16A34A', jsonValue: '#16A34A' },
-    ];
+    const probe = React.useRef<HTMLDivElement>(null);
+    const [chain, setChain] = React.useState<{
+      checked: number;
+      mismatches: [string, string, string][];
+      responsive: number;
+      skippedAlpha: number;
+      desktopMode: boolean;
+    } | null>(null);
 
-    const semanticRows: TokenRow[] = [
-      { figmaToken: 'colors/primary/default', figmaValue: '#E32321', jsonValue: '#E32321', aliasTo: 'colors/red/500' },
-      { figmaToken: 'colors/primary/darker', figmaValue: '#7F1D1D', jsonValue: '#7F1D1D', aliasTo: 'colors/red/900' },
-      { figmaToken: 'colors/primary/dark', figmaValue: '#991B1B', jsonValue: '#991B1B', aliasTo: 'colors/red/800' },
-      { figmaToken: 'colors/primary/light', figmaValue: '#FFE2E2', jsonValue: '#FFE2E2', aliasTo: 'colors/red/100' },
-      { figmaToken: 'colors/primary/soft-light', figmaValue: '#FEF2F2', jsonValue: '#FEF2F2', aliasTo: 'colors/red/50' },
-      { figmaToken: 'colors/primary/accent/primary-lg', figmaValue: '#DC2626', jsonValue: '#DC2626', aliasTo: 'colors/red/600' },
-      { figmaToken: 'colors/primary/accent/primary-md', figmaValue: '#F87171', jsonValue: '#F87171', aliasTo: 'colors/red/400' },
-      { figmaToken: 'colors/primary/accent/primary-xl', figmaValue: '#B91C1C', jsonValue: '#B91C1C', aliasTo: 'colors/red/700' },
-      { figmaToken: 'colors/primary/accent/disabled', figmaValue: '#F5F5F5', jsonValue: '#F5F5F5', aliasTo: 'colors/neutral/100' },
-      { figmaToken: 'colors/secondary/default', figmaValue: '#262626', jsonValue: '#262626', aliasTo: 'colors/midnight/500' },
-      { figmaToken: 'colors/secondary/soft-light', figmaValue: '#FAFAFA', jsonValue: '#FAFAFA', aliasTo: 'colors/midnight/50' },
-      { figmaToken: 'colors/secondary/light', figmaValue: '#C9C9C9', jsonValue: '#C9C9C9', aliasTo: 'colors/midnight/100' },
-      { figmaToken: 'colors/secondary/dark', figmaValue: '#141414', jsonValue: '#141414', aliasTo: 'colors/midnight/800' },
-      { figmaToken: 'colors/secondary/darker', figmaValue: '#080808', jsonValue: '#080808', aliasTo: 'colors/midnight/950' },
-      { figmaToken: 'colors/tertiary/default', figmaValue: '#737373', jsonValue: '#737373', aliasTo: 'colors/neutral/500' },
-      { figmaToken: 'colors/tertiary/light', figmaValue: '#F5F5F5', jsonValue: '#F5F5F5', aliasTo: 'colors/neutral/100' },
-      { figmaToken: 'colors/tertiary/dark', figmaValue: '#262626', jsonValue: '#262626', aliasTo: 'colors/neutral/800' },
-      { figmaToken: 'colors/info/default', figmaValue: '#3B82F6', jsonValue: '#3B82F6', aliasTo: 'colors/blue/500' },
-      { figmaToken: 'colors/background/bg-default', figmaValue: '#FFFFFF', jsonValue: '#FFFFFF', aliasTo: 'colors/base/white' },
-      { figmaToken: 'colors/background/bg-red', figmaValue: '#E32321', jsonValue: '#E32321', aliasTo: 'colors/red/500' },
-      { figmaToken: 'colors/surface/level-00', figmaValue: '#FFFFFF', jsonValue: '#FFFFFF', aliasTo: 'colors/base/white' },
-      { figmaToken: 'colors/surface/level-01', figmaValue: '#FAFAFA', jsonValue: '#FAFAFA', aliasTo: 'colors/neutral/50' },
-      { figmaToken: 'colors/surface/level-02', figmaValue: '#F5F5F5', jsonValue: '#F5F5F5', aliasTo: 'colors/neutral/100' },
-      { figmaToken: 'colors/surface/level-03', figmaValue: '#E5E5E5', jsonValue: '#E5E5E5', aliasTo: 'colors/neutral/200' },
-      { figmaToken: 'colors/text/primary-default', figmaValue: '#E32321', jsonValue: '#E32321', aliasTo: 'colors/red/500' },
-      { figmaToken: 'colors/text/secondary-default', figmaValue: '#262626', jsonValue: '#262626', aliasTo: 'colors/midnight/500' },
-      { figmaToken: 'colors/text/gray', figmaValue: '#737373', jsonValue: '#737373', aliasTo: 'colors/neutral/500' },
-    ];
+    // Section 1 runs for real: every token the generator emitted is read back out of this
+    // document and compared with what the generator wrote. Two independent sources.
+    //
+    // Typography is responsive — the generator writes the mobile value to TOKEN_VALUES and
+    // the desktop override to TOKEN_VALUES_DESKTOP, and the stylesheet swaps at 768px. The
+    // first version of this check compared everything against the mobile map and reported
+    // 145 mismatches that were nothing of the kind. Which value is correct depends on the
+    // width this page is being read at, so the check asks.
+    React.useEffect(() => {
+      const el = probe.current;
+      if (!el) return;
+      const desktopMode = window.matchMedia('(min-width: 768px)').matches;
+      const desktop = TOKEN_VALUES_DESKTOP as Record<string, string>;
+      // color-mix in CSS, flattened hex in the literal — same colour, different string.
+      const alpha = new Set<string>(TOKEN_VALUES_ALPHA);
+      const style = getComputedStyle(el);
+      const mismatches: [string, string, string][] = [];
+      const names = Object.keys(TOKEN_VALUES).filter((n) => !alpha.has(n));
+      names.forEach((name) => {
+        const computed = style.getPropertyValue(name).trim();
+        const expected = String(
+          desktopMode && name in desktop ? desktop[name] : (TOKEN_VALUES as Record<string, string>)[name],
+        ).trim();
+        if (computed !== expected) mismatches.push([name, computed || '(not declared)', expected]);
+      });
+      setChain({
+        checked: names.length,
+        mismatches,
+        responsive: Object.keys(desktop).length,
+        skippedAlpha: alpha.size,
+        desktopMode,
+      });
+    }, []);
 
-    const componentRows: TokenRow[] = [
-      { figmaToken: 'btn-bg-pri-default', figmaValue: '#E32321', jsonValue: '#E32321', aliasTo: 'colors/primary/default' },
-      { figmaToken: 'btn-bg-pri-hover', figmaValue: '#B91C1C', jsonValue: '#B91C1C', aliasTo: 'colors/primary/accent/primary-xl' },
-      { figmaToken: 'btn-bg-pri-focused', figmaValue: '#DC2626', jsonValue: '#DC2626', aliasTo: 'colors/primary/accent/primary-lg' },
-      { figmaToken: 'btn-bg-pri-pressed', figmaValue: '#7F1D1D', jsonValue: '#7F1D1D', aliasTo: 'colors/primary/darker' },
-      { figmaToken: 'btn-bg-pri-disabled', figmaValue: '#F5F5F5', jsonValue: '#F5F5F5', aliasTo: 'colors/primary/accent/disabled' },
-      { figmaToken: 'btn-fg-pri-default', figmaValue: '#FFFFFF', jsonValue: '#FFFFFF', aliasTo: 'colors/foreground-base/white' },
-      { figmaToken: 'btn-fg-pri-disabled', figmaValue: '#C9C9C9', jsonValue: '#C9C9C9', aliasTo: 'colors/secondary/light' },
-      { figmaToken: 'btn-bg-sec-default', figmaValue: '#262626', jsonValue: '#262626', aliasTo: 'colors/secondary/default' },
-      { figmaToken: 'btn-bg-sec-hover', figmaValue: '#4F4F4F', jsonValue: '#4F4F4F', aliasTo: 'colors/secondary/accent/secondary-md' },
-      { figmaToken: 'btn-bg-sec-pressed', figmaValue: '#1A1A1A', jsonValue: '#1A1A1A', aliasTo: 'colors/secondary/accent/secondary-xl' },
-      { figmaToken: 'btn-bg-ter-default', figmaValue: '#FFFFFF', jsonValue: '#FFFFFF', aliasTo: 'colors/background/bg-default' },
-      { figmaToken: 'btn-bg-ter-hover', figmaValue: '#FAFAFA', jsonValue: '#FAFAFA', aliasTo: 'colors/secondary/soft-light' },
-      { figmaToken: 'btn-bg-ter-pressed', figmaValue: '#C9C9C9', jsonValue: '#C9C9C9', aliasTo: 'colors/secondary/light' },
-      { figmaToken: 'btn-fg-ter-default', figmaValue: '#262626', jsonValue: '#262626', aliasTo: 'colors/secondary/default' },
-      { figmaToken: 'btn-fg-link-default', figmaValue: '#3B82F6', jsonValue: '#3B82F6', aliasTo: 'colors/info/default' },
-      { figmaToken: 'btn-fg-link-hover', figmaValue: '#60A5FA', jsonValue: '#60A5FA', aliasTo: 'colors/info/accent/info-md' },
-      { figmaToken: 'btn-fg-link-pressed', figmaValue: '#1D4ED8', jsonValue: '#1D4ED8', aliasTo: 'colors/info/accent/info-xl' },
-    ];
+    const tr = tokenResult as any;
+    const cr = componentResult as any;
+    const comps = Object.entries(cr.components as Record<string, any>);
+    const withCorrections = comps.filter(([, c]) => c.verified && Object.keys(c.corrections || {}).length);
+    const withGaps = comps.filter(([, c]) => c.verified && Object.keys(c.gaps || {}).length);
+    const unverified = comps.filter(([, c]) => !c.verified);
 
-    // ── Typography: Scale Tokens (Figma resolved vs JSON) ──
-    const scaleRows: ScaleRow[] = [
-      { token: 'size/2xs', figmaMobile: 8, figmaDesktop: 10, figmaTablet: 10, jsonMobile: 8, jsonDesktop: 10, jsonTablet: 10 },
-      { token: 'size/xs', figmaMobile: 10, figmaDesktop: 12, figmaTablet: 12, jsonMobile: 10, jsonDesktop: 12, jsonTablet: 12 },
-      { token: 'size/s', figmaMobile: 12, figmaDesktop: 14, figmaTablet: 14, jsonMobile: 12, jsonDesktop: 14, jsonTablet: 14 },
-      { token: 'size/m', figmaMobile: 14, figmaDesktop: 16, figmaTablet: 16, jsonMobile: 14, jsonDesktop: 16, jsonTablet: 16 },
-      { token: 'size/l', figmaMobile: 16, figmaDesktop: 20, figmaTablet: 20, jsonMobile: 16, jsonDesktop: 20, jsonTablet: 20 },
-      { token: 'size/xl', figmaMobile: 20, figmaDesktop: 24, figmaTablet: 24, jsonMobile: 20, jsonDesktop: 24, jsonTablet: 24 },
-      { token: 'size/2xl', figmaMobile: 28, figmaDesktop: 32, figmaTablet: 32, jsonMobile: 28, jsonDesktop: 32, jsonTablet: 32 },
-      { token: 'size/3xl', figmaMobile: 32, figmaDesktop: 48, figmaTablet: 48, jsonMobile: 32, jsonDesktop: 48, jsonTablet: 48 },
-      { token: 'size/5xl', figmaMobile: 48, figmaDesktop: 64, figmaTablet: 64, jsonMobile: 48, jsonDesktop: 64, jsonTablet: 64 },
-      { token: 'line-height/2xs', figmaMobile: 12, figmaDesktop: 16, figmaTablet: 16, jsonMobile: 12, jsonDesktop: 16, jsonTablet: 16 },
-      { token: 'line-height/xs', figmaMobile: 16, figmaDesktop: 18, figmaTablet: 18, jsonMobile: 16, jsonDesktop: 18, jsonTablet: 18 },
-      { token: 'line-height/s', figmaMobile: 18, figmaDesktop: 22, figmaTablet: 22, jsonMobile: 18, jsonDesktop: 22, jsonTablet: 22 },
-      { token: 'line-height/m', figmaMobile: 22, figmaDesktop: 24, figmaTablet: 24, jsonMobile: 22, jsonDesktop: 24, jsonTablet: 24 },
-      { token: 'line-height/l', figmaMobile: 24, figmaDesktop: 36, figmaTablet: 36, jsonMobile: 24, jsonDesktop: 36, jsonTablet: 36 },
-      { token: 'line-height/xl', figmaMobile: 36, figmaDesktop: 42, figmaTablet: 42, jsonMobile: 36, jsonDesktop: 42, jsonTablet: 42 },
-      { token: 'line-height/2xl', figmaMobile: 42, figmaDesktop: 48, figmaTablet: 48, jsonMobile: 42, jsonDesktop: 48, jsonTablet: 48 },
-      { token: 'line-height/3xl', figmaMobile: 48, figmaDesktop: 54, figmaTablet: 54, jsonMobile: 48, jsonDesktop: 54, jsonTablet: 54 },
-      { token: 'line-height/5xl', figmaMobile: 60, figmaDesktop: 66, figmaTablet: 66, jsonMobile: 60, jsonDesktop: 66, jsonTablet: 66 },
-    ];
-
-    // ── Typography: Text Styles (Figma resolved vs JSON) ──
-    const typoRows: TypoRow[] = [
-      { figmaToken: 'display/5xl-semb', figmaSize: 48, figmaLH: 60, figmaWeight: 'Semibold', jsonSize: 48, jsonLH: 60, jsonWeight: 'Semibold' },
-      { figmaToken: 'display/4xl-semb', figmaSize: 40, figmaLH: 54, figmaWeight: 'Semibold', jsonSize: 40, jsonLH: 54, jsonWeight: 'Semibold' },
-      { figmaToken: 'display/3xl-semb', figmaSize: 32, figmaLH: 48, figmaWeight: 'Semibold', jsonSize: 32, jsonLH: 48, jsonWeight: 'Semibold' },
-      { figmaToken: 'display/2xl-semb', figmaSize: 28, figmaLH: 42, figmaWeight: 'Semibold', jsonSize: 28, jsonLH: 42, jsonWeight: 'Semibold' },
-      { figmaToken: 'display/xl-semb', figmaSize: 20, figmaLH: 36, figmaWeight: 'Semibold', jsonSize: 20, jsonLH: 36, jsonWeight: 'Semibold' },
-      { figmaToken: 'display/l-semb', figmaSize: 16, figmaLH: 24, figmaWeight: 'Semibold', jsonSize: 16, jsonLH: 24, jsonWeight: 'Semibold' },
-      { figmaToken: 'heading/h1-semb', figmaSize: 32, figmaLH: 48, figmaWeight: 'Semibold', jsonSize: 32, jsonLH: 48, jsonWeight: 'Semibold' },
-      { figmaToken: 'heading/h2-semb', figmaSize: 28, figmaLH: 42, figmaWeight: 'Semibold', jsonSize: 28, jsonLH: 42, jsonWeight: 'Semibold' },
-      { figmaToken: 'heading/h3-semb', figmaSize: 20, figmaLH: 36, figmaWeight: 'Semibold', jsonSize: 20, jsonLH: 36, jsonWeight: 'Semibold' },
-      { figmaToken: 'heading/h3-med', figmaSize: 20, figmaLH: 36, figmaWeight: 'Medium', jsonSize: 20, jsonLH: 36, jsonWeight: 'Medium' },
-      { figmaToken: 'heading/h4-semb', figmaSize: 16, figmaLH: 24, figmaWeight: 'Semibold', jsonSize: 16, jsonLH: 24, jsonWeight: 'Semibold' },
-      { figmaToken: 'heading/h4-med', figmaSize: 16, figmaLH: 24, figmaWeight: 'Medium', jsonSize: 16, jsonLH: 24, jsonWeight: 'Medium' },
-      { figmaToken: 'title/l-semb', figmaSize: 16, figmaLH: 24, figmaWeight: 'Semibold', jsonSize: 16, jsonLH: 24, jsonWeight: 'Semibold' },
-      { figmaToken: 'title/m-med', figmaSize: 14, figmaLH: 22, figmaWeight: 'Medium', jsonSize: 14, jsonLH: 22, jsonWeight: 'Medium' },
-      { figmaToken: 'sub-title/m-reg', figmaSize: 12, figmaLH: 18, figmaWeight: 'Regular', jsonSize: 12, jsonLH: 18, jsonWeight: 'Regular' },
-      { figmaToken: 'body/xl-semb', figmaSize: 20, figmaLH: 36, figmaWeight: 'Semibold', jsonSize: 20, jsonLH: 36, jsonWeight: 'Semibold' },
-      { figmaToken: 'body/xl-med', figmaSize: 20, figmaLH: 36, figmaWeight: 'Medium', jsonSize: 20, jsonLH: 36, jsonWeight: 'Medium' },
-      { figmaToken: 'body/xl-reg', figmaSize: 20, figmaLH: 36, figmaWeight: 'Regular', jsonSize: 20, jsonLH: 36, jsonWeight: 'Regular' },
-      { figmaToken: 'body/l-semb', figmaSize: 16, figmaLH: 24, figmaWeight: 'Semibold', jsonSize: 16, jsonLH: 24, jsonWeight: 'Semibold' },
-      { figmaToken: 'body/l-med', figmaSize: 16, figmaLH: 24, figmaWeight: 'Medium', jsonSize: 16, jsonLH: 24, jsonWeight: 'Medium' },
-      { figmaToken: 'body/l-reg', figmaSize: 16, figmaLH: 24, figmaWeight: 'Regular', jsonSize: 16, jsonLH: 24, jsonWeight: 'Regular' },
-      { figmaToken: 'body/m-semb', figmaSize: 14, figmaLH: 22, figmaWeight: 'Semibold', jsonSize: 14, jsonLH: 22, jsonWeight: 'Semibold' },
-      { figmaToken: 'body/m-med', figmaSize: 14, figmaLH: 22, figmaWeight: 'Medium', jsonSize: 14, jsonLH: 22, jsonWeight: 'Medium' },
-      { figmaToken: 'body/m-reg', figmaSize: 14, figmaLH: 22, figmaWeight: 'Regular', jsonSize: 14, jsonLH: 22, jsonWeight: 'Regular' },
-      { figmaToken: 'label/m-semb', figmaSize: 12, figmaLH: 18, figmaWeight: 'Semibold', jsonSize: 12, jsonLH: 18, jsonWeight: 'Semibold' },
-      { figmaToken: 'label/m-med', figmaSize: 12, figmaLH: 18, figmaWeight: 'Medium', jsonSize: 12, jsonLH: 18, jsonWeight: 'Medium' },
-      { figmaToken: 'label/m-reg', figmaSize: 12, figmaLH: 18, figmaWeight: 'Regular', jsonSize: 12, jsonLH: 18, jsonWeight: 'Regular' },
-      { figmaToken: 'caption/l-reg', figmaSize: 12, figmaLH: 18, figmaWeight: 'Regular', jsonSize: 12, jsonLH: 18, jsonWeight: 'Regular' },
-      { figmaToken: 'caption/m-reg', figmaSize: 10, figmaLH: 16, figmaWeight: 'Regular', jsonSize: 10, jsonLH: 16, jsonWeight: 'Regular' },
-      { figmaToken: 'button/m-semb', figmaSize: 14, figmaLH: 22, figmaWeight: 'Semibold', jsonSize: 14, jsonLH: 22, jsonWeight: 'Semibold' },
-      { figmaToken: 'button/m-med', figmaSize: 14, figmaLH: 22, figmaWeight: 'Medium', jsonSize: 14, jsonLH: 22, jsonWeight: 'Medium' },
-      { figmaToken: 'button/xs-med', figmaSize: 10, figmaLH: 18, figmaWeight: 'Medium', jsonSize: 10, jsonLH: 18, jsonWeight: 'Medium' },
-      { figmaToken: 'underline/m-med', figmaSize: 14, figmaLH: 22, figmaWeight: 'Medium', jsonSize: 14, jsonLH: 22, jsonWeight: 'Medium' },
-      { figmaToken: 'underline/m-reg', figmaSize: 14, figmaLH: 22, figmaWeight: 'Regular', jsonSize: 14, jsonLH: 22, jsonWeight: 'Regular' },
-    ];
-
-    const totalChecked = primitiveRows.length + semanticRows.length + componentRows.length + scaleRows.length + typoRows.length;
+    const chainClean = chain && chain.mismatches.length === 0;
+    const tokensClean = tr.counts.missing === 0 && tr.counts.drift === 0;
+    const allVerified = cr.counts.unverified === 0;
+    const everythingClean = chainClean && tokensClean && allVerified;
 
     return (
-      <div>
-        <div style={{
-          background: 'linear-gradient(135deg, #F0FDF4, #EFF6FF)',
-          borderRadius: 12, padding: 24, marginBottom: 32,
-          border: '1px solid #BBF7D0',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-            <span style={{ fontSize: 28 }}>&#x2705;</span>
-            <h2 style={{ margin: 0, fontSize: 22 }}>Figma Variables Verification Report</h2>
-          </div>
-          <p style={{ margin: '0 0 16px', fontSize: 13, color: '#404040' }}>
-            Compared resolved values from <strong>Figma Desktop Bridge</strong> (live connection) against <code>ltp-design-system.json</code>
+      <div ref={probe} style={{ fontFamily: sans, maxWidth: 960 }}>
+        <div
+          style={{
+            padding: '18px 22px',
+            borderRadius: sys('radius-xl'),
+            border: `1px solid ${sys('color-border-accent-gray-soft-light')}`,
+            borderLeft: `4px solid ${everythingClean ? ok() : bad()}`,
+            background: sys('color-background-soft-light'),
+            marginBottom: 34,
+          }}
+        >
+          <h1 style={{ margin: '0 0 4px', fontSize: 22 }}>Verification Report</h1>
+          <p style={{ margin: '0 0 16px', fontSize: 13, lineHeight: 1.75, color: sys('color-text-secondary-default'), maxWidth: 640 }}>
+            หน้านี้<strong>รายงาน</strong> ไม่ได้<strong>ยืนยัน</strong> — ทุกตัวเลขข้างล่างอ่านมาจากไฟล์ที่เครื่องมือเขียน
+            หรือคำนวณสดในเบราว์เซอร์ ไม่มีอันไหนพิมพ์มือ ถ้าค่าไหนเพี้ยน แถวนั้นจะแดงเอง
           </p>
-          <div style={{ display: 'flex', gap: 24 }}>
-            <div style={{ textAlign: 'center', padding: '12px 24px', backgroundColor: '#fff', borderRadius: 8, border: '1px solid #E5E5E5' }}>
-              <div style={{ fontSize: 28, fontWeight: 700, color: '#22C55E' }}>{totalChecked}</div>
-              <div style={{ fontSize: 11, color: '#737373' }}>Tokens Checked</div>
-            </div>
-            <div style={{ textAlign: 'center', padding: '12px 24px', backgroundColor: '#fff', borderRadius: 8, border: '1px solid #E5E5E5' }}>
-              <div style={{ fontSize: 28, fontWeight: 700, color: '#22C55E' }}>{totalChecked}</div>
-              <div style={{ fontSize: 11, color: '#737373' }}>Matches</div>
-            </div>
-            <div style={{ textAlign: 'center', padding: '12px 24px', backgroundColor: '#fff', borderRadius: 8, border: '1px solid #E5E5E5' }}>
-              <div style={{ fontSize: 28, fontWeight: 700, color: '#22C55E' }}>0</div>
-              <div style={{ fontSize: 11, color: '#737373' }}>Mismatches</div>
-            </div>
-            <div style={{ textAlign: 'center', padding: '12px 24px', backgroundColor: '#fff', borderRadius: 8, border: '1px solid #E5E5E5' }}>
-              <div style={{ fontSize: 28, fontWeight: 700, color: '#22C55E' }}>100%</div>
-              <div style={{ fontSize: 11, color: '#737373' }}>Pass Rate</div>
-            </div>
-          </div>
-          <div style={{ marginTop: 12, fontSize: 11, color: '#737373' }}>
-            Source: Figma "Design Systems Web App Lotteryplus V.7.1" &bull; File: inmmHQID7awAWFcEJzedZa &bull; Verified: {new Date().toISOString().split('T')[0]}
-          </div>
-        </div>
-
-        <div style={{ display: 'flex', gap: 16, marginBottom: 24 }}>
-          <div style={{ flex: 1, padding: 16, borderRadius: 8, border: '1px solid #E5E5E5', backgroundColor: '#FAFAFA' }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#737373', marginBottom: 4 }}>Collection</div>
-            <div style={{ fontSize: 14, fontWeight: 600 }}>.1-primitive</div>
-            <div style={{ fontSize: 12, color: '#737373' }}>489 variables &bull; mode: Value</div>
-          </div>
-          <div style={{ flex: 1, padding: 16, borderRadius: 8, border: '1px solid #E5E5E5', backgroundColor: '#FAFAFA' }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#737373', marginBottom: 4 }}>Collection</div>
-            <div style={{ fontSize: 14, fontWeight: 600 }}>2-semantic</div>
-            <div style={{ fontSize: 12, color: '#737373' }}>397 variables &bull; mode: LP-light-mode</div>
-          </div>
-          <div style={{ flex: 1, padding: 16, borderRadius: 8, border: '1px solid #E5E5E5', backgroundColor: '#FAFAFA' }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#737373', marginBottom: 4 }}>Collection</div>
-            <div style={{ fontSize: 14, fontWeight: 600 }}>3-component</div>
-            <div style={{ fontSize: 12, color: '#737373' }}>268 variables &bull; mode: LP-light-mode</div>
-          </div>
-          <div style={{ flex: 1, padding: 16, borderRadius: 8, border: '1px solid #E5E5E5', backgroundColor: '#FAFAFA' }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#737373', marginBottom: 4 }}>Collection</div>
-            <div style={{ fontSize: 14, fontWeight: 600 }}>typography</div>
-            <div style={{ fontSize: 12, color: '#737373' }}>168 variables &bull; 3 modes</div>
+          <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+            <Stat label="tokens re-read live" value={chain ? chain.checked : '…'} />
+            <Stat
+              label="chain mismatches"
+              value={chain ? chain.mismatches.length : '…'}
+              tone={chain ? (chain.mismatches.length ? 'bad' : 'ok') : 'plain'}
+            />
+            <Stat label="Figma colours checked" value={tr.counts.figmaColours} />
+            <Stat
+              label="drift + missing"
+              value={tr.counts.drift + tr.counts.missing}
+              tone={tokensClean ? 'ok' : 'bad'}
+            />
+            <Stat
+              label="components verified"
+              value={`${cr.counts.verified}/${cr.counts.overlays}`}
+              tone={allVerified ? 'ok' : 'bad'}
+            />
+            <Stat label="corrections made" value={cr.counts.corrections} />
+            <Stat label="open Figma gaps" value={cr.counts.openGaps} />
           </div>
         </div>
 
-        <ScaleVerificationTable title="Typography — Scale Tokens (responsive: mobile/desktop/Tablet)" rows={scaleRows} />
-        <TypoVerificationTable title="Typography — Text Styles (168 variables, font: Graphik TH)" rows={typoRows} />
-        <VerificationTable title="Primitive Colors (.1-primitive)" rows={primitiveRows} />
-        <VerificationTable title="Semantic Colors (2-semantic)" rows={semanticRows} />
-        <VerificationTable title="Component Tokens — Button (3-component)" rows={componentRows} />
+        {/* ── 1 ─────────────────────────────────────── */}
+        <Section
+          n={1}
+          title="Token chain — live"
+          source="getComputedStyle in this document  vs  UI Library/foundations/tokens.generated.ts"
+        >
+          <p style={{ margin: '0 0 12px', fontSize: 13, lineHeight: 1.75, color: muted(), maxWidth: 660 }}>
+            อ่านค่าที่หน้านี้ resolve จริงทุกตัว แล้วเทียบกับที่ generator เขียนไว้ — คนละแหล่งกัน
+            ถ้า token ถูกลบหรือถูก override ที่ไหน แถวจะโผล่ทันที
+          </p>
+          {chain && (
+            <p style={{ margin: '0 0 12px', fontSize: 12.5, lineHeight: 1.75, color: muted(), maxWidth: 660 }}>
+              typography เป็น responsive — {chain.responsive} token มีค่า desktop แยก หน้านี้กว้าง{' '}
+              <strong>{chain.desktopMode ? '≥768px' : '<768px'}</strong> จึงเทียบกับชุด{' '}
+              <code style={{ fontFamily: mono }}>{chain.desktopMode ? 'TOKEN_VALUES_DESKTOP' : 'TOKEN_VALUES'}</code>{' '}
+              ย่อ/ขยายหน้าต่างแล้วโหลดใหม่ จะสลับชุดเทียบเอง · ข้าม {chain.skippedAlpha} token ที่ CSS เป็น{' '}
+              <code style={{ fontFamily: mono }}>color-mix()</code> แต่ literal เป็น hex — สีเดียวกันแต่คนละสตริง
+              เทียบตรงๆ ไม่ได้
+            </p>
+          )}
+          {!chain ? (
+            <div style={{ fontSize: 13, color: muted() }}>กำลังอ่าน…</div>
+          ) : chain.mismatches.length === 0 ? (
+            <div style={{ fontSize: 14, fontWeight: 600, color: ok() }}>
+              {chain.checked} tokens — ตรงทั้งหมด
+            </div>
+          ) : (
+            <>
+              <div style={{ fontSize: 14, fontWeight: 600, color: bad(), marginBottom: 10 }}>
+                {chain.mismatches.length} / {chain.checked} ไม่ตรง
+              </div>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr>
+                    <th style={th}>Token</th>
+                    <th style={th}>Computed here</th>
+                    <th style={th}>Generated</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {chain.mismatches.map(([n, c, g]) => (
+                    <tr key={n}>
+                      <td style={{ ...td, fontFamily: mono, color: bad() }}>{n}</td>
+                      <td style={{ ...td, fontFamily: mono }}>{c}</td>
+                      <td style={{ ...td, fontFamily: mono, color: muted() }}>{g}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
+        </Section>
+
+        {/* ── 2 ─────────────────────────────────────── */}
+        <Section
+          n={2}
+          title="Tokens vs Figma"
+          source="design-library/lotteryplus/verification-result.json  ←  tools/verify-tokens.py"
+        >
+          <p style={{ margin: '0 0 12px', fontSize: 13, lineHeight: 1.75, color: muted(), maxWidth: 660 }}>
+            <strong>ไม่ได้ต่อ Figma สด</strong> — เบราว์เซอร์ต่อไม่ได้ ตัวเลขนี้มาจาก snapshot ที่ดึงผ่าน Desktop
+            Bridge เมื่อ <code style={{ fontFamily: mono }}>{tr.ranAgainst.snapshotPulledAt}</code> แล้ว{' '}
+            <code style={{ fontFamily: mono }}>check.sh</code> รันเทียบใหม่ทุกครั้ง ถ้าไม่ตรงคือ build พัง
+          </p>
+          <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 14 }}>
+            <tbody>
+              {[
+                ['Figma file', `${tr.ranAgainst.figmaFile} (${tr.ranAgainst.figmaFileKey})`],
+                ['Collection · mode', `${tr.ranAgainst.collection} · ${tr.ranAgainst.mode}`],
+                ['Snapshot pulled', tr.ranAgainst.snapshotPulledAt],
+                ['Compared against', tr.ranAgainst.css],
+                ['Matched', `${tr.counts.matched} / ${tr.counts.figmaColours}`],
+                ['Missing', String(tr.counts.missing)],
+                ['Drift', String(tr.counts.drift)],
+                ['Skipped', String(tr.counts.skipped)],
+              ].map(([k, v]) => (
+                <tr key={k}>
+                  <td style={{ ...td, width: 190, color: muted() }}>{k}</td>
+                  <td style={{ ...td, fontFamily: mono }}>{v}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {(tr.drift.length > 0 || tr.missing.length > 0) && (
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr>
+                  <th style={th}>Figma name</th>
+                  <th style={th}>CSS var</th>
+                  <th style={th}>Figma</th>
+                  <th style={th}>CSS</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tr.drift.map((d: any) => (
+                  <tr key={d.figma}>
+                    <td style={{ ...td, fontFamily: mono, color: bad() }}>{d.figma}</td>
+                    <td style={{ ...td, fontFamily: mono }}>{d.cssVar}</td>
+                    <td style={{ ...td, fontFamily: mono }}>{d.figmaValue}</td>
+                    <td style={{ ...td, fontFamily: mono }}>{d.cssValue}</td>
+                  </tr>
+                ))}
+                {tr.missing.map((m: any) => (
+                  <tr key={m.figma}>
+                    <td style={{ ...td, fontFamily: mono, color: bad() }}>{m.figma}</td>
+                    <td style={{ ...td, fontFamily: mono }}>{m.cssVar}</td>
+                    <td style={td} colSpan={2}>
+                      absent from tokens.css
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </Section>
+
+        {/* ── 3 ─────────────────────────────────────── */}
+        <Section
+          n={3}
+          title="Components vs Figma"
+          source="design-library/lotteryplus/component-verification.json  ←  tools/collect-verification.py"
+        >
+          <p style={{ margin: '0 0 14px', fontSize: 13, lineHeight: 1.75, color: muted(), maxWidth: 680 }}>
+            แต่ละแถวคือสิ่งที่ overlay ของ component นั้นบันทึกไว้จริง — node id ที่อ่าน, วันที่, ขอบเขต
+            component ไหนไม่มีบันทึกจะขึ้น <strong>unverified</strong> และ{' '}
+            <code style={{ fontFamily: mono }}>check.sh</code> จะ fail
+          </p>
+          {unverified.length > 0 && (
+            <div style={{ fontSize: 13, fontWeight: 600, color: bad(), marginBottom: 12 }}>
+              {unverified.length} unverified: {unverified.map(([n]) => n).join(', ')}
+            </div>
+          )}
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr>
+                <th style={th}>Component</th>
+                <th style={th}>Figma node</th>
+                <th style={th}>Checked</th>
+                <th style={th}>Fixes</th>
+                <th style={th}>Open gaps</th>
+              </tr>
+            </thead>
+            <tbody>
+              {comps.map(([name, c]) => (
+                <tr key={name}>
+                  <td style={{ ...td, fontFamily: mono, color: c.verified ? sys('color-primary-default') : bad() }}>
+                    {name}
+                  </td>
+                  <td style={{ ...td, fontFamily: mono, fontSize: 11, maxWidth: 330 }}>
+                    {c.verified ? c.node ?? '— (verified absent)' : 'never checked'}
+                  </td>
+                  <td style={{ ...td, fontFamily: mono, fontSize: 11 }}>{c.date ?? '—'}</td>
+                  <td style={{ ...td, fontFamily: mono, color: Object.keys(c.corrections || {}).length ? bad() : muted() }}>
+                    {Object.keys(c.corrections || {}).length || '—'}
+                  </td>
+                  <td style={{ ...td, fontFamily: mono, color: muted() }}>
+                    {Object.keys(c.gaps || {}).length || '—'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Section>
+
+        {/* ── 4 ─────────────────────────────────────── */}
+        <Section n={4} title="What was wrong, and what Figma still owes" source="same file, expanded">
+          <h3 style={{ fontSize: 14, margin: '0 0 8px' }}>
+            แก้ไปแล้ว {cr.counts.corrections} จุด
+          </h3>
+          <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 30 }}>
+            <tbody>
+              {withCorrections.map(([name, c]) =>
+                Object.entries(c.corrections as Record<string, string>).map(([k, v]) => (
+                  <tr key={name + k}>
+                    <td style={{ ...td, fontFamily: mono, width: 130, color: sys('color-primary-default') }}>{name}</td>
+                    <td style={{ ...td, fontFamily: mono, width: 190, fontSize: 11 }}>{k}</td>
+                    <td style={{ ...td, color: sys('color-text-secondary-default'), lineHeight: 1.7 }}>{v}</td>
+                  </tr>
+                )),
+              )}
+            </tbody>
+          </table>
+
+          <h3 style={{ fontSize: 14, margin: '0 0 8px' }}>
+            ค้างที่ฝั่ง Figma {cr.counts.openGaps} เรื่อง
+          </h3>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <tbody>
+              {withGaps.map(([name, c]) =>
+                Object.entries(c.gaps as Record<string, string>).map(([k, v]) => (
+                  <tr key={name + k}>
+                    <td style={{ ...td, fontFamily: mono, width: 130, color: sys('color-status-warning-default') }}>
+                      {name}
+                    </td>
+                    <td style={{ ...td, fontFamily: mono, width: 190, fontSize: 11 }}>{k}</td>
+                    <td style={{ ...td, color: sys('color-text-secondary-default'), lineHeight: 1.7 }}>{v}</td>
+                  </tr>
+                )),
+              )}
+            </tbody>
+          </table>
+        </Section>
+
+        {/* ── 5 ─────────────────────────────────────── */}
+        <Section n={5} title="What this page does not check" source="stated, so the gaps are not mistaken for passes">
+          <ul style={{ margin: 0, paddingLeft: 20, fontSize: 13, lineHeight: 1.9, color: sys('color-text-secondary-default'), maxWidth: 720 }}>
+            <li>
+              <strong>ไม่ได้ต่อ Figma สด</strong> — เทียบกับ snapshot ที่ดึงเมื่อ{' '}
+              <code style={{ fontFamily: mono }}>{tr.ranAgainst.snapshotPulledAt}</code> ถ้ามีคนแก้ Figma หลังจากนั้น
+              หน้านี้ไม่รู้ ต้องดึง snapshot ใหม่
+            </li>
+            <li>
+              section 2 เช็คเฉพาะ <strong>สี semantic</strong> ({tr.counts.figmaColours} ค่า) — typography, spacing,
+              radius ยังไม่มี snapshot ให้เทียบ
+            </li>
+            <li>
+              section 3 บอกว่า<strong>มีใครไปอ่าน Figma มาแล้ว</strong> ไม่ได้พิสูจน์ว่า pixel ตรง — การวัดจริงทำตอน
+              audit และบันทึกไว้ในช่อง result
+            </li>
+            <li>ยังไม่มี visual regression — ไม่มีอะไรจับได้ถ้า layout เพี้ยนโดยที่ token ไม่เปลี่ยน</li>
+          </ul>
+        </Section>
       </div>
     );
   },

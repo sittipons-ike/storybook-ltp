@@ -1,0 +1,33 @@
+{
+  "_comment": "No Figma component — in blocked_on_figma since 2026-08-19. Built from the Frontend per the amended authority rule (2026-08-20). A section heading: optional icon + title over a primary-red underline, then a secondary underline running the rest of the row.",
+  "figma_node": null,
+  "base": {
+    "gap": "{design.semantic.spacing.lg}",
+    "underline-padding": "{design.semantic.spacing.sm}",
+    "underline-width": "{design.semantic.border-width.hairline}",
+    "accent-color": "{design.semantic.colors.border.primary}",
+    "rule-color": "{design.semantic.colors.border.secondary}",
+    "title-size": "{design.semantic.typography.title.lg.semibold.size}",
+    "title-line-height": "{design.semantic.typography.title.lg.semibold.line-height}",
+    "title-weight": "{design.semantic.typography.title.lg.semibold.weight}",
+    "color-primary": "{design.semantic.colors.text.primary.default}",
+    "color-secondary": "{design.semantic.colors.text.secondary.default}",
+    "_source": {
+      "gap": "Frontend `gap-2` = 8px between icon and title.",
+      "underline-padding": "`pb-1` = 4px between text and its rule, on both segments.",
+      "accent-color / rule-color": "`border-primary` under the text, `border-secondary` under the rest of the row.",
+      "title": "TYPOGRAPHY_SIZE.title_l_semb = the system's title.lg.semibold role.",
+      "colors": "titleColor prop: primary | secondary, mapping to text.primary/secondary."
+    },
+    "_frontend_evidence": {
+      "component": "lotteryplus-frontend-main/src/components/common/title-with-underline — 12 usages",
+      "implementation": "flex items-end; [icon+title over border-primary] then [flex-1 border-secondary]"
+    },
+    "_verified_from": {
+      "node": null,
+      "date": "2026-08-20",
+      "scope": "token mirror searched for underline; frontend component read in full",
+      "result": "VERIFIED ABSENT in Figma. Frontend is the authority per the amended rule (user decision 2026-08-20)."
+    }
+  }
+}

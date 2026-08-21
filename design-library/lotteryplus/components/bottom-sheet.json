@@ -1,0 +1,58 @@
+{
+  "_comment": "Layout and motion for bottom-sheet. Colours come from the Figma colour mirror (colors/bottom sheet); these do not. VERIFIED against Figma component set `Bottom sheet` (20052:11505) on 2026-08-19 — the first build guessed several of these from the Frontend and got them wrong; see _corrections.",
+  "figma_node": "20052:11505",
+  "base": {
+    "radius-top": "{design.semantic.radius.4xl}",
+    "scrim": "{design.semantic.colors.overlay.default}",
+    "padding-x": "{design.semantic.spacing.2xl}",
+    "padding-bottom": "{design.semantic.spacing.2xl}",
+    "handle-padding-y": "{design.semantic.spacing.xl}",
+    "handle-padding-x": "{design.semantic.spacing.2xl}",
+    "handle-width": 54,
+    "handle-height": 4,
+    "handle-radius": 2.5,
+    "handle-icon-size": 16,
+    "max-height": "90dvh",
+    "dismiss-threshold": 100,
+    "transition-duration": "0.3s",
+    "transition-timing": "ease-out",
+    "_source": {
+      "handle-width": "54x4 with a 2.5px radius, measured from the Rectangle inside `Bottom sheet/Handlebar`. Not on any DS scale — the handle is a hit target people aim at, so it is kept verbatim rather than rounded to a spacing step.",
+      "handle-icon-size": "The handlebar row carries optional 16px leading and trailing icons in Figma. semantic.iconography.sizes is still 'tbd', so nothing backs this.",
+      "max-height": "A viewport unit, so no spacing token applies. `dvh` rather than `vh` so mobile browser chrome does not clip the sheet.",
+      "dismiss-threshold": "Drag distance in px past which the sheet closes. An interaction constant, not a design token.",
+      "transition-duration": "storybook-local — design.md has no motion group at any tier.",
+      "transition-timing": "storybook-local — same gap."
+    },
+    "_corrections": {
+      "elevation": "REMOVED. The first build bound elevation.modal. The Figma component carries no effect at all — `effects: []` — so the sheet reads against the scrim, not against a shadow.",
+      "handle-height": "Was 5, is 4.",
+      "handle-radius": "Was radius.full (9999). Figma draws 2.5, which is exactly half of a 4px bar — the same shape, but stated rather than approximated.",
+      "handle-colour": "Was foreground-gray (#A3A3A3), guessed from the token name. Figma binds `bottom sheet-fg-dark` (#000000) — the Frontend was right and the guess was wrong.",
+      "handle-padding": "Was 12 top / 8 bottom. Figma's Handlebar has 12 on both, and 16 on the sides."
+    },
+    "_verified_from": {
+      "node": "20052:11505 — component set `Bottom sheet`",
+      "date": "2026-08-19",
+      "scope": "frame, handle and effects",
+      "result": "Corrected against Figma in an earlier pass; see `_corrections`. The component carries no effect at all (`effects: []`), the handle is 54x4 with a 2.5 radius, and padding is 12/16."
+    },
+    "_figma_icons": {
+      "_comment": "The icons Figma instantiates for this component, read 2026-08-20 by walking the instance tree and keeping every main component whose parent set is `icons`. An icon Figma hides by default belongs in `icons` only when this component implements the state that reveals it; otherwise it is recorded under _figma_gaps instead, so the gate is not asking for a feature nobody built.",
+      "nodes": [
+        {
+          "node": "20052:11505",
+          "figma": "Bottom sheet",
+          "note": "Neither variant draws an icon: `Bottom sheet/Handlebar` holds two 16px `icons-size` wrappers whose own `visible` is false, so only the 54x4 bar shows. See _figma_gaps > handlebar-has-two-hidden-icon-slots.",
+          "sources": [
+            "BottomSheet.tsx"
+          ],
+          "icons": {}
+        }
+      ]
+    },
+    "_figma_gaps": {
+      "handlebar-has-two-hidden-icon-slots": "`Bottom sheet/Handlebar` (inside 20052:11505, both Modal=True and Modal=False) carries two 16px icon slots either side of the drag bar — `filled-Home` on the left at x=0 and `filled-close` on the right at x=342 — each wrapped in an `icons-size` instance whose `visible` is false. The design has drawn a header row for the sheet and switched it off. The library renders the bar alone, which matches every variant as shipped. If that row is meant to exist, Figma needs a variant that shows it, and these two move into _figma_icons. Read 2026-08-20."
+    }
+  }
+}

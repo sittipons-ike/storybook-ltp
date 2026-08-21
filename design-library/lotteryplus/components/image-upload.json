@@ -1,0 +1,47 @@
+{
+  "_comment": "No Figma component — used in the KYC and profile flows. Built from the Frontend per the amended authority rule (2026-08-20), stripped of its API coupling: the Frontend version owns upload polling (getUploadUrl/getUploadStatus); the library version is presentational and hands the file to the caller.",
+  "figma_node": null,
+  "base": {
+    "gap": "{design.semantic.spacing.2xl}",
+    "stack-gap": "{design.semantic.spacing.lg}",
+    "field-height": 40,
+    "field-radius": "{design.semantic.radius.md}",
+    "field-padding": "{design.semantic.spacing.lg}",
+    "field-border-width": "{design.semantic.border-width.hairline}",
+    "field-border-color": "{design.semantic.colors.border.accent.gray-light}",
+    "field-border-error": "{design.semantic.colors.border.error}",
+    "field-placeholder-color": "{design.semantic.colors.text.tertiary.default}",
+    "field-value-color": "{design.semantic.colors.text.secondary.default}",
+    "button-background": "{design.semantic.colors.primary.default}",
+    "button-foreground": "{design.semantic.colors.text.on-bgcolor}",
+    "dropzone-min-height": 170,
+    "dropzone-border-color": "{design.semantic.colors.border.secondary}",
+    "dropzone-background": "{design.semantic.colors.background.soft-light}",
+    "dropzone-hint-color": "{design.semantic.colors.text.tertiary.default}",
+    "chip-background": "{design.semantic.colors.background.dark}",
+    "chip-radius": "{design.semantic.radius.md}",
+    "error-color": "{design.semantic.colors.text.state.error}",
+    "title-color": "{design.semantic.colors.text.secondary.default}",
+    "text-size": "{design.semantic.typography.body.lg.regular.size}",
+    "text-line-height": "{design.semantic.typography.body.lg.regular.line-height}",
+    "text-weight": "{design.semantic.typography.body.lg.regular.weight}",
+    "_source": {
+      "field": "`h-10 rounded-l-md border p-2` — 40 / 6 / 8. Name box border `border-grey-light` = #d4d4d4 = border.accent.gray-light; warning state swaps it for border.error. Button is the primary-red block with rounded right corners.",
+      "dropzone": "`min-h-[170px] border-dashed border-secondary bg-soft-light rounded-md`.",
+      "chips": "edit / remove overlays on the preview: `bg-dark rounded-md` — background.dark is the same secondary-default the Frontend aliases as bg-dark.",
+      "icons": "filled-gallery (picker + empty state), filled-close (remove), filled-Warning-2 (name-box warning). The Frontend's warning-icon-filled has no exact twin in the set; filled-Warning-2 is the set's warning glyph and matches the alert's.",
+      "stripped": "Upload orchestration, status polling and the failure DialogModal stay app-side; the component exposes onSelect/onRemove/state instead.",
+      "icon-sizes": "The Frontend draws the field's warning glyph at 22 and the empty-state gallery at 40. 22 is not a stop on the icon scale (12/16/20/24/32/40/…), so it snaps to 20 — the size Alert gives the same glyph. 40 is already a stop (xl) and is kept."
+    },
+    "_frontend_evidence": {
+      "component": "lotteryplus-frontend-main/src/components/common/image-upload — 5 usages (KYC, profile, issue report)",
+      "states": "empty (dashed dropzone + hint) / uploading (spinner) / preview (image + edit + remove chips) / warning (red border + icon + message)"
+    },
+    "_verified_from": {
+      "node": null,
+      "date": "2026-08-20",
+      "scope": "token mirror searched for upload/gallery/attach; frontend component + module css read in full",
+      "result": "VERIFIED ABSENT in Figma. Frontend is the authority per the amended rule (user decision 2026-08-20)."
+    }
+  }
+}

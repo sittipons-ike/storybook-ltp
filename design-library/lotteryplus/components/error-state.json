@@ -1,0 +1,49 @@
+{
+  "_comment": "The full-page error and empty states. Figma models these as `noti-error` (15170:101685) — a component set, not artwork. It composes three things the library already has: a 280px illustration from the logo set, a heading and body, and the sticky action bar. Colours are borrowed from `colors/home`, so they are authored here against the semantic layer.",
+  "figma_node": "15170:101685",
+  "base": {
+    "width": 390,
+    "padding-x": "{design.semantic.spacing.2xl}",
+    "gap": "{design.semantic.spacing.4xl}",
+    "illustration-size": 280,
+    "text-gap": "{design.semantic.spacing.2xl}",
+    "title-size": "{design.semantic.typography.display.xl.semibold.size}",
+    "title-line-height": "{design.semantic.typography.display.xl.semibold.line-height}",
+    "title-weight": "{design.semantic.typography.display.xl.semibold.weight}",
+    "title-foreground": "{design.semantic.colors.primary.default}",
+    "body-size": "{design.semantic.typography.body.md.regular.size}",
+    "body-line-height": "{design.semantic.typography.body.md.regular.line-height}",
+    "body-weight": "{design.semantic.typography.body.md.regular.weight}",
+    "body-foreground": "{design.semantic.colors.secondary.default}",
+    "_verified_from": {
+      "node": "15170:101685 — component set `noti-error` on page `↳ logos-and-graphics ✅`",
+      "date": "2026-08-19",
+      "scope": "all 4 variants, depth-4 walk of type=a-lot-of-users, plus the bound text styles",
+      "result": "390 wide with 16 of side padding and a 24 gap. A 280px illustration, then a text block with a 16 gap, then `bottom-action-bar2`. Title is `typography/display/xl-semb` (20/36 Semibold) in `home-fg-red`; body is `typography/body/m-reg` (14/22 Regular) in `home-fg-dark`. Both centred. The action bar holds a 326x44 primary button and a hidden tertiary one.",
+      "composition": "Every part already existed: the three illustrations are in the logo manifest (`gp-jidrit-lot-of-users`, `gp-jidrit-error-occurred`, `gp-jidrit-system-down`) and `bottom-action-bar2` is what the library calls ActionBar. Nothing new had to be drawn — it is an arrangement, which is why it belongs with the components and not with the assets."
+    },
+    "_source": {
+      "illustration-size": "280, the size the instance is placed at. The marks themselves are 80x80 components; Figma scales them 3.5x here.",
+      "colours": "`colors/home/home-fg-red` and `home-fg-dark`, which resolve to primary.default and secondary.default. There is no `colors/error-state` group."
+    },
+    "_figma_gaps": {
+      "internet-error-reuses-an-illustration": "`type=internet error` shows `gp-jidrit-system-down`, the same mark as `type=system-down`. Either it needs its own artwork or the two states are the same picture on purpose.",
+      "shorter-variant": "`internet error` is 384 tall where the other three are 476. The content is the only difference, so the component hugs rather than pinning a height — but it is worth a designer confirming that is intended.",
+      "no-colour-group": "There is no `colors/error-state` group; the set borrows `colors/home`."
+    },
+    "_figma_icons": {
+      "_comment": "The icons Figma instantiates for this component, read 2026-08-20 by walking the instance tree and keeping every main component whose parent set is `icons`. An icon Figma hides by default belongs in `icons` only when this component implements the state that reveals it; otherwise it is recorded under _figma_gaps instead, so the gate is not asking for a feature nobody built.",
+      "nodes": [
+        {
+          "node": "15170:101685",
+          "figma": "noti-error",
+          "note": "This component draws no icon at all in Figma. Recorded so that one appearing later has to be justified rather than slipping in.",
+          "sources": [
+            "ErrorState.tsx"
+          ],
+          "icons": {}
+        }
+      ]
+    }
+  }
+}

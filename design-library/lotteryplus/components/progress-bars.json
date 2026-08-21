@@ -1,0 +1,53 @@
+{
+  "_comment": "Layout, sizing and typography for progress-bars. Colours come from the Figma colour mirror; these do not, so they are authored here. Figma: progress-bars-lottery component set (14291:136200) — HORIZONTAL auto layout, padding 0/8/0/8, circle 40x40, icon 24x24, connector stroke 2px.",
+  "base": {
+    "radius": "{design.semantic.radius.full}",
+    "padding-y": "{design.semantic.spacing.none}",
+    "padding-x": "{design.semantic.spacing.lg}",
+    "gap": "{design.semantic.spacing.sm}",
+    "circle-size": 40,
+    "_source-circle-size": "storybook-local, no Figma token backs it — 40x40 is a fixed frame size on the step circle; semantic.spacing has a 40 step but it is a spacing role, not a sizing one",
+    "icon-size": 24,
+    "_source-icon-size": "storybook-local, no Figma token backs it — semantic.iconography.sizes are still 'tbd' in design.md; Figma binds the icons-size component at Size=24",
+    "track-height": "{design.semantic.border-width.thin}",
+    "line-overhang": 6,
+    "typography-family": "{design.semantic.typography.label.md.medium.family}",
+    "typography-size": "{design.semantic.typography.label.md.medium.size}",
+    "typography-line-height": "{design.semantic.typography.label.md.medium.line-height}",
+    "typography-weight": "{design.semantic.typography.label.md.medium.weight}",
+    "typography-tracking": "{design.semantic.typography.label.md.medium.tracking}",
+    "_verified_from": {
+      "node": "14291:136200 `progress-bars-lottery` (5 variants) and 14291:136316 `progress-bars-nokcash` (4 variants), page `↳ progress-bar ✅`",
+      "date": "2026-08-19",
+      "scope": "variant list for both sets, depth-3 walk of lottery Step-1",
+      "result": "358x62, padding 0/8, step gap 4, circle 40 radius 999, icon 24, connector 2px tall. All match. Labels 12/18 Medium; done steps `progress-fg-dark`, upcoming `progress-fg-disable`.",
+      "gap_found": "There are two sets, not one. `progress-bars-nokcash` is a four-step flow (เติมนกแคช → ชำระเงิน → สำเร็จ) with its own Step-2-Extra and Step-2-Slip states; the library models the lottery flow only. Same geometry, different step list — a prop, not a new component."
+    },
+    "_figma_icons": {
+      "_comment": "The icons Figma instantiates for this component, read 2026-08-20 by walking the instance tree and keeping every main component whose parent set is `icons`. check-figma-icons.py holds the files in `sources` to exactly this set — an extra icon fails as loudly as a missing one, because an extra is one nobody compared. Files not listed in `sources` carry payload a caller passes, not a choice the design makes.",
+      "nodes": [
+        {
+          "node": "14291:136200 · 14291:136316",
+          "figma": "progress-bars-lottery / -nokcash",
+          "note": "Figma draws no generic progress bar — only these two named checkout flows. The file used to ship four steps labelled Step 1..4 carrying outline-check, which no Figma node contains. The stories show the flows; `steps` is still data.",
+          "sources": [
+            "ProgressBar.tsx"
+          ],
+          "icons": {
+            "filled-Added_Cart": "lottery step 1, ตะกร้า",
+            "filled-check_circle": "the final step, สำเร็จ, on both flows",
+            "filled-payment": "lottery step 3 and nokcash step 2, ชำระเงิน",
+            "filled-qrcode-scan": "lottery step 2, เลือกช่องทาง",
+            "filled-receipt": "replaces the payment step on State=Step-3-Slip (lottery) and State=Step-2-Slip (nokcash), แนบสลิปเพิ่ม",
+            "outline-NokPoints-W": "nokcash step 1, เติมนกแคช"
+          }
+        }
+      ]
+    },
+    "_source": {
+      "line-overhang": "6. Each `Line` frame is 60.7 wide but the `Line 1 (Stroke)` vector inside it is 73 wide at x=-6, so the rule deliberately runs under the circle on both sides instead of stopping at the gap. Read 2026-08-20.",
+      "circle-size": "40, and the `Step` frame is 40 too — never wider. The label does not size it: on the middle steps Figma sets the label to layoutPositioning ABSOLUTE with a fixed width and a negative x, so it centres over the circle and overflows both ways. Only the first and last steps keep the label in flow, FILL to 40, where it would wrap rather than overhang the row's edge. Building the label in flow everywhere is what made the connectors look broken: a wide label widened its step, and the connector then met the label's edge on one side and the circle on the other."
+    }
+  },
+  "figma_node": "14291:136200 (lottery) · 14291:136316 (nokcash)"
+}

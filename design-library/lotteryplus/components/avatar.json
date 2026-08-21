@@ -1,0 +1,59 @@
+{
+  "_comment": "Avatar. Figma has the component set but no `colors/avatar` variable group — every fill and stroke it uses belongs to `colors/top-and-footer`, so the colours are authored here against the semantic layer like Tooltip's.",
+  "figma_node": "14291:133618",
+  "base": {
+    "size": 40,
+    "ring-size": 33.5,
+    "ring-padding": 2.5,
+    "ring-border-width": 1.4,
+    "inner-size": 28.5,
+    "glyph-size": 16,
+    "edit-size": 12,
+    "edit-glyph-size": 8,
+    "ring-on-red": "{design.semantic.colors.foreground.white}",
+    "ring-on-light": "{design.semantic.colors.primary.default}",
+    "guest-background-on-red": "{design.semantic.colors.background.default}",
+    "guest-background-on-light": "{design.semantic.colors.primary.default}",
+    "guest-glyph-on-red": "{design.semantic.colors.primary.default}",
+    "guest-glyph-on-light": "{design.semantic.colors.foreground.white}",
+    "illustration-background": "{design.semantic.colors.background.default}",
+    "edit-background": "{design.semantic.colors.text.state.light-gray}",
+    "edit-glyph": "{design.semantic.colors.foreground.white}",
+    "_verified_from": {
+      "node": "14291:133618 — component set `avatar` on page `↳  Avatar ✅`",
+      "date": "2026-08-19",
+      "scope": "all 10 variants across the three axes (Type, On bg Red, Show Edit)",
+      "result": "Base frame 40x40. Inside it a 33.5x33.5 circle with 2.5 padding and a 1.4px INSIDE stroke, holding a 28.5x28.5 disc. Member fills that disc with an image; Guest fills it and drops a 16px `filled-user` on top; Avatar masks an illustration into it. Show Edit adds a 12x12 disc carrying an 8px `filled-Camera`.",
+      "scaling": "The profile header instances this at 56 and every inner value scales with it: 33.5 becomes 46.9, 2.5 becomes 3.5, 1.4 becomes 1.96, 28.5 becomes 39.9 — read unrounded from both the base and the instance. Exactly 1.4x throughout, which is why the component takes a size and multiplies rather than carrying a second set of numbers.",
+      "corrections": {
+        "half-pixel values": "First read had the ring at 34 and the disc at 29 — those were my own rounding of the dump, not Figma's numbers. Figma says 33.5 and 28.5, and the halves are what make the 56px instance land on 46.9 and 39.9.",
+        "ring stroke ate the padding": "The ring was a CSS `border`, which consumes the padding box: a 46.9 circle with 3.5 padding and a 1.96 border left a 36.7 disc instead of 39.9. Figma strokes INSIDE, which does not. Now an inset box-shadow."
+      }
+    },
+    "_source": {
+      "ring-padding / ring-border-width": "2.5 and 1.4 — fractional because they were drawn at 40 and are meant to scale. Neither is on the spacing or border-width ladder and neither should be: they are a ratio of the avatar, not a step in a scale.",
+      "colours": "Read off the variants. `On bg Red=Yes` puts a white ring around the avatar and a white disc under the guest glyph; `No` inverts both to brand red. Figma binds these to `colors/top-and-footer/*`, which resolve to the semantic roles referenced here.",
+      "edit-background": "#C9C9C9, which Figma calls `topfoot-bg-gray-light` and this system holds as text.state.light-gray. Same value, different name — the rename map covers it."
+    },
+    "_figma_gaps": {
+      "no-colour-group": "There is no `colors/avatar` variable group. The component borrows `colors/top-and-footer`, which is why its colours are authored against the semantic layer rather than mirrored.",
+      "illustration-not-portable": "The `Type=Avatar` variant masks an illustration that lives only in Figma. The component exposes the slot; the artwork has to be exported before it can render."
+    },
+    "_figma_icons": {
+      "_comment": "The icons Figma instantiates for this component, read 2026-08-20 by walking the instance tree and keeping every main component whose parent set is `icons`. check-figma-icons.py holds the files in `sources` to exactly this set — an extra icon fails as loudly as a missing one, because an extra is one nobody compared. Files not listed in `sources` carry payload a caller passes, not a choice the design makes.",
+      "nodes": [
+        {
+          "node": "14291:133618",
+          "figma": "avatar",
+          "sources": [
+            "Avatar.tsx"
+          ],
+          "icons": {
+            "filled-Camera": "the edit badge on Type=Member and Type=Avatar, `Frame 1000012443`, when Show Edit=Yes",
+            "filled-user": "the placeholder face on Type=Guest, inside `Avata`"
+          }
+        }
+      ]
+    }
+  }
+}

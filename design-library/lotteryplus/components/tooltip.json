@@ -1,0 +1,82 @@
+{
+  "_comment": "Tooltip has no `colors/tooltip` group in Figma V.7.1 and no component set either — but it IS drawn, as a plain FRAME on page `↳ tooltip ✅` (14964:58281). Colours here are authored against the semantic layer rather than mirrored, and the geometry is measured off that frame.",
+  "responsibility": "Explain an element on hover or focus, without taking focus itself",
+  "composition_level": "molecule",
+  "dependencies": [
+    "icon"
+  ],
+  "scope": "global",
+  "shared": true,
+  "folder": "global/components/tooltip",
+  "css_prefix": "tooltip",
+  "storybook": "Tooltip",
+  "figma_group": null,
+  "tokens": {
+    "_comment": "AUTHORED, NOT MIRRORED — see the file comment. Each maps to the semantic role whose value matches the Figma design's literal, so the alias chain still terminates in Figma.",
+    "background": "{design.semantic.colors.overlay.heavy}",
+    "foreground": "{design.semantic.colors.text.on-bgcolor}",
+    "arrow-background": "{design.semantic.colors.overlay.heavy}",
+    "trigger-icon-foreground": "{design.semantic.colors.text.secondary.default}",
+    "_source-trigger-icon-foreground": "Figma paints the trigger icon with colors/icon/icon-fg-secondary (#262626). design.md models no `icon` colour group, so this points at text.secondary.default — same primitive (midnight.500), same value."
+  },
+  "base": {
+    "radius": "{design.semantic.radius.lg}",
+    "padding": "{design.semantic.spacing.xl}",
+    "gap": "{design.semantic.spacing.none}",
+    "offset": "{design.semantic.spacing.sm}",
+    "shadow": "0 0 0 1px rgba(63,63,68,0.05), 0 1px 3px 0 rgba(63,63,68,0.15)",
+    "_source-shadow": "Nearest semantic elevation. The pre-token literal was `0 0 0 1px #0000000D, 0 1px 3px #0000001A`; elevation.card is `0 1px 3px #0000001A, 0 1px 2px #0000000F` — the 3px layer is identical, the 1px hairline ring layer is not modelled in design.md's shadow ladder.",
+    "max-width": 326,
+    "_source-max-width": "storybook-local, no Figma token backs it — 326px is a fixed frame width on the tooltip content in Figma, and no semantic scale carries it.",
+    "min-width": 120,
+    "_source-min-width": "storybook-local, no Figma token backs it — a legibility floor chosen in code, not a Figma measurement.",
+    "arrow-width": 16,
+    "arrow-height": 8,
+    "_source-arrow": "storybook-local, no Figma token backs them — the caret is a 16x8 vector in Figma, glyph geometry rather than spacing, so it is not expressed on the spacing ladder.",
+    "trigger-icon-size": 24,
+    "_source-trigger-icon-size": "storybook-local, no Figma token backs it — design.md's iconography.sizes are still 'tbd'; Figma binds the icons-size component at Size=24.",
+    "typography-title-family": "{design.semantic.typography.body.md.medium.family}",
+    "typography-title-size": "{design.semantic.typography.body.md.medium.size}",
+    "typography-title-line-height": "{design.semantic.typography.body.md.medium.line-height}",
+    "typography-title-weight": "{design.semantic.typography.body.md.medium.weight}",
+    "typography-title-tracking": "{design.semantic.typography.body.md.medium.tracking}",
+    "typography-body-family": "{design.semantic.typography.body.md.regular.family}",
+    "typography-body-size": "{design.semantic.typography.body.md.regular.size}",
+    "typography-body-line-height": "{design.semantic.typography.body.md.regular.line-height}",
+    "typography-body-weight": "{design.semantic.typography.body.md.regular.weight}",
+    "typography-body-tracking": "{design.semantic.typography.body.md.regular.tracking}",
+    "_source": {
+      "shadow": "Read off the frame: `0 0 0 1px #3F3F44 @5%` plus `0 1px 3px 0 #3F3F44 @15%`. The first is a hairline ring with no blur, not a shadow. #3F3F44 is in no palette in this system, and no elevation role carries this pair, so the value stands verbatim — Figma is the value authority.",
+      "offset / min-width / trigger-icon-size": "Library additions. Figma's frame states none of them: it draws one tooltip at one width with the arrow flush against the body."
+    },
+    "_verified_from": {
+      "node": "14964:58281 — FRAME `Tooltip` on page `↳ tooltip ✅`. Not a component and not a component set, which is why earlier notes said Figma had no tooltip. It has one; it was never componentised.",
+      "date": "2026-08-19",
+      "scope": "the whole frame, depth 4",
+      "result": "326x98 = a 90px body plus an 8px arrow row. Body padding 12, radius 8, fill `colors/overlay/overlay-black-80%` — which is what `overlay-heavy` (#000000CC) already resolves to. Title 14/22 Medium and body 14/22 Regular, both `Color/Text/Text-Onbgcolor`. Arrow 16x8 in the same overlay fill. All match.",
+      "corrections": {
+        "shadow": "Was elevation.card — `0 1px 3px #0000001A, 0 1px 2px #0000000F`. Figma uses a different colour (#3F3F44, not black), different alphas (5% and 15%), and a 1px spread ring instead of the second shadow. Replaced with Figma's pair."
+      }
+    },
+    "_figma_gaps": {
+      "not-a-component": "The tooltip is a loose FRAME. Nothing can instance it, so no page in the file can reuse it and any change has to be copied by hand. It should be a component set.",
+      "no-colour-group": "There is no `colors/tooltip` variable group. The frame borrows `colors/overlay` and `Color/Text`, so the tokens here are authored against the semantic layer.",
+      "shadow-colour-off-palette": "#3F3F44 appears nowhere else in the system. Kept because Figma is the value authority, but it looks like a default from a UI kit rather than a decision."
+    },
+    "_figma_icons": {
+      "_comment": "The icons Figma instantiates for this component, read 2026-08-20 by walking the instance tree and keeping every main component whose parent set is `icons`. check-figma-icons.py holds the files in `sources` to exactly this set — an extra icon fails as loudly as a missing one, because an extra is one nobody compared. Files not listed in `sources` carry payload a caller passes, not a choice the design makes.",
+      "nodes": [
+        {
+          "node": "14964:58281",
+          "figma": "tooltip (a FRAME, never componentised)",
+          "note": "Figma's tooltip draws no icon at all. The glyphs in Tooltip.stories.tsx are the demo payload a caller passes in, which is why the stories are not listed as a source: the component fixes nothing here, so there is nothing to hold it to.",
+          "sources": [
+            "Tooltip.tsx"
+          ],
+          "icons": {}
+        }
+      ]
+    }
+  },
+  "figma_node": "14964:58281"
+}

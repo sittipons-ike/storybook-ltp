@@ -1,0 +1,27 @@
+{
+  "_comment": "Icon sizes and the missing-icon placeholder. Colours come from the Figma colour mirror (colors/icon/*); these do not, so they are authored here.",
+  "figma_node": "14291:110788",
+  "base": {
+    "size-2xs": 12,
+    "size-xs": 16,
+    "size-sm": 20,
+    "size-md": 24,
+    "size-lg": 32,
+    "size-xl": 40,
+    "size-2xl": 48,
+    "size-3xl": 56,
+    "size-4xl": 64,
+    "size-5xl": 72,
+    "missing-foreground": "{design.semantic.colors.secondary.light}",
+    "_source": {
+      "size-*": "Figma models icon sizing as the `icons-size` component set (40 components = 10 sizes x 4 colours), not as variables, so there is nothing under {design.semantic.*} to reference. The ten steps are mirrored here as literals. When design.md's `iconography.sizes` stops being 'tbd' these become refs and this note goes away.",
+      "missing-foreground": "The placeholder shown when a name is not registered. Not a Figma token — Figma has no missing state, because in Figma an icon always exists. secondary.light (#C9C9C9) matches the grey the component already used."
+    },
+    "_verified_from": {
+      "node": "14291:110788 — the `icons-size` component set",
+      "date": "2026-08-19",
+      "scope": "size steps only",
+      "result": "The ten size steps match. The glyph set itself is checked continuously by tools/check-icons.py, which fails the build if any name a component uses is missing from icon-data.ts."
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "_comment": "Skeleton has no Figma component — checked 2026-08-19 (blocked_on_figma) and re-checked 2026-08-20 against the token mirror: no skeleton/shimmer/placeholder anywhere. Built from the Frontend per the amended authority rule (2026-08-20): Figma wins when it exists; when it does not, the Frontend is the authority.",
+  "figma_node": null,
+  "base": {
+    "radius": "{design.semantic.radius.md}",
+    "background": "{design.semantic.colors.background.gray-soft-light}",
+    "_source": {
+      "radius": "Frontend `rounded-md` = 6px = radius.md, exact.",
+      "background": "Frontend `bg-gray-soft-light` -> tailwind var(--neutral-gray-soft-light) -> the same neutral the system names background.gray-soft-light (#E5E5E5).",
+      "pulse": "Tailwind `animate-pulse`: opacity 1 -> 0.5 -> 1 over 2s, cubic-bezier(0.4,0,0.6,1), infinite. Held as bare values in Skeleton.css because the system has no motion tokens (design.md, Known Gaps) — same arrangement as Loading."
+    },
+    "_frontend_evidence": {
+      "component": "lotteryplus-frontend-main/src/components/common/skeleton — 9 usages",
+      "implementation": "one div: `animate-pulse rounded-md bg-gray-soft-light` + caller-supplied className for the shape"
+    },
+    "_verified_from": {
+      "node": null,
+      "date": "2026-08-20",
+      "scope": "token mirror searched for skeleton/shimmer/placeholder; frontend common/skeleton read in full",
+      "result": "VERIFIED ABSENT in Figma. Frontend is the authority per the amended rule (user decision 2026-08-20). When Figma draws one, Figma wins again and this record must be re-verified."
+    }
+  }
+}

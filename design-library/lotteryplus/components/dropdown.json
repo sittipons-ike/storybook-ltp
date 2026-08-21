@@ -1,0 +1,77 @@
+{
+  "_comment": "Layout, sizing and typography for dropdown. Colours come from the Figma colour mirror; these do not, so they are authored here.",
+  "base": {
+    "radius": "{design.semantic.radius.lg}",
+    "border-width": "{design.semantic.border-width.hairline}",
+    "border-width-active": "{design.semantic.border-width.thin}",
+    "elevation": "{design.semantic.elevation.card}",
+    "wrapper-gap": "{design.semantic.spacing.sm}",
+    "label-padding-left": "{design.semantic.spacing.sm}",
+    "label-gap": "{design.semantic.spacing.sm}",
+    "description-padding-left": "{design.semantic.spacing.sm}",
+    "field-padding-y": "{design.semantic.spacing.2lg}",
+    "field-padding-right": "{design.semantic.spacing.lg}",
+    "field-padding-left": "{design.semantic.spacing.2xl}",
+    "field-gap": "{design.semantic.spacing.lg}",
+    "list-offset": "{design.semantic.spacing.sm}",
+    "list-padding": "{design.semantic.spacing.lg}",
+    "list-gap": "{design.semantic.spacing.2lg}",
+    "option-padding-y": "{design.semantic.spacing.sm}",
+    "option-padding-x": "{design.semantic.spacing.2xl}",
+    "option-gap": "{design.semantic.spacing.lg}",
+    "icon-size": 24,
+    "_source-icon-size": "storybook-local, no Figma token backs it — design.md's semantic.iconography block is still `tbd`, so 24 is the Figma `icons-size Size=24` variant transcribed as a fixed pixel dimension",
+    "typography-label-family": "{design.semantic.typography.title.md.medium.family}",
+    "typography-label-size": "{design.semantic.typography.title.md.medium.size}",
+    "typography-label-line-height": "{design.semantic.typography.title.md.medium.line-height}",
+    "typography-label-weight": "{design.semantic.typography.title.md.medium.weight}",
+    "typography-label-tracking": "{design.semantic.typography.title.md.medium.tracking}",
+    "typography-required-family": "{design.semantic.typography.label.md.medium.family}",
+    "typography-required-size": "{design.semantic.typography.label.md.medium.size}",
+    "typography-required-line-height": "{design.semantic.typography.label.md.medium.line-height}",
+    "typography-required-weight": "{design.semantic.typography.label.md.medium.weight}",
+    "typography-required-tracking": "{design.semantic.typography.label.md.medium.tracking}",
+    "typography-value-family": "{design.semantic.typography.body.md.regular.family}",
+    "typography-value-size": "{design.semantic.typography.body.md.regular.size}",
+    "typography-value-line-height": "{design.semantic.typography.body.md.regular.line-height}",
+    "typography-value-weight": "{design.semantic.typography.body.md.regular.weight}",
+    "typography-value-tracking": "{design.semantic.typography.body.md.regular.tracking}",
+    "typography-option-family": "{design.semantic.typography.body.md.regular.family}",
+    "typography-option-size": "{design.semantic.typography.body.md.regular.size}",
+    "typography-option-line-height": "{design.semantic.typography.body.md.regular.line-height}",
+    "typography-option-weight": "{design.semantic.typography.body.md.regular.weight}",
+    "typography-option-tracking": "{design.semantic.typography.body.md.regular.tracking}",
+    "typography-option-selected-family": "{design.semantic.typography.body.md.medium.family}",
+    "typography-option-selected-size": "{design.semantic.typography.body.md.medium.size}",
+    "typography-option-selected-line-height": "{design.semantic.typography.body.md.medium.line-height}",
+    "typography-option-selected-weight": "{design.semantic.typography.body.md.medium.weight}",
+    "typography-option-selected-tracking": "{design.semantic.typography.body.md.medium.tracking}",
+    "typography-description-family": "{design.semantic.typography.caption.md.regular.family}",
+    "typography-description-size": "{design.semantic.typography.caption.md.regular.size}",
+    "typography-description-line-height": "{design.semantic.typography.caption.md.regular.line-height}",
+    "typography-description-weight": "{design.semantic.typography.caption.md.regular.weight}",
+    "typography-description-tracking": "{design.semantic.typography.caption.md.regular.tracking}",
+    "_verified_from": {
+      "node": "14291:131904 — component set `dropdown` on page `↳ dropdown ✅`",
+      "date": "2026-08-19",
+      "scope": "all 8 variants, plus a depth-2 walk of State=Active",
+      "result": "No discrepancies. Field 44 tall, radius 8, padding 10/8/10/16, gap 8; stack gap 4; label and description both inset 4 on the left. Border 1px in every state except Active, which is 2px — hairline and thin. The open list (`Tabs`) is padding 8, gap 10, radius 8, and carries `0,1 blur2 @6%` + `0,1 blur3 @10%`, which is exactly elevation.card. Label 14/22 Medium = title.md.medium; error 10/16 Regular = caption.md.regular; icon 24."
+    },
+    "_figma_icons": {
+      "_comment": "The icons Figma instantiates for this component, read 2026-08-20 by walking the instance tree and keeping every main component whose parent set is `icons`. check-figma-icons.py holds the files in `sources` to exactly this set — an extra icon fails as loudly as a missing one, because an extra is one nobody compared. Files not listed in `sources` carry payload a caller passes, not a choice the design makes.",
+      "nodes": [
+        {
+          "node": "14291:131904",
+          "figma": "dropdown",
+          "sources": [
+            "Dropdown.tsx"
+          ],
+          "icons": {
+            "arrow-down-S": "the chevron in `Field`, on every State"
+          }
+        }
+      ]
+    }
+  },
+  "figma_node": "14291:131904"
+}

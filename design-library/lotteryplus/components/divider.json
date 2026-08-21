@@ -1,0 +1,30 @@
+{
+  "_comment": "Divider has no Figma component set — checked 2026-08-19 across every page. What Figma does declare is a `colors/divider` semantic group with five roles, so the component is built on those rather than on a colour invented for it. Layout comes from the Frontend's `common/dash-line`, which 46 call sites use.",
+  "figma_node": null,
+  "base": {
+    "thickness": "{design.semantic.border-width.hairline}",
+    "color-light-gray": "{design.semantic.colors.divider.light-gray}",
+    "color-gray": "{design.semantic.colors.divider.gray}",
+    "color-dark-gray": "{design.semantic.colors.divider.dark-gray}",
+    "color-primary": "{design.semantic.colors.divider.primary}",
+    "color-inverse": "{design.semantic.colors.divider.inverse}",
+    "spacing": "{design.semantic.spacing.none}",
+    "_source": {
+      "thickness": "The Frontend renders `border-t`, which is 1px — exactly border-width.hairline.",
+      "colours": "The five roles are Figma's own `colors/divider` group, not chosen for this component. The tone axis is that group, one to one.",
+      "spacing": "Zero by default. The Frontend passes margin per call site (`my-2` and so on), so the divider owns no spacing of its own — the parent decides."
+    },
+    "_frontend_evidence": {
+      "component": "lotteryplus-frontend-main/src/components/common/dash-line — 46 usages",
+      "implementation": "`w-full border-t border-dashed` plus a colour class. Dashed is the default and the only style that component offers.",
+      "solid": "Figma's component tier already holds `carts-divider` and `orders-divider`, both solid, so a solid style has evidence on the Figma side even though the Frontend's component does not offer one.",
+      "colours_used": "border-grey (27) · border-disable (9) · border-grey-light (6) · border-grey-dark-green (4) · border-secondary · border-neutral-soft_light. Those are Tailwind greys — #B9B9B9 and friends — that predate this palette and appear nowhere in it, which is why the tone axis follows Figma's divider roles instead of copying them."
+    },
+    "_verified_from": {
+      "node": null,
+      "date": "2026-08-19",
+      "scope": "every page searched for a COMPONENT or COMPONENT_SET matching divider / dash / separator / rule",
+      "result": "VERIFIED ABSENT. Figma has no divider component. What it does have is a `colors/divider` semantic group with five roles, confirmed in the `2-semantic` collection, and two component-tier tokens (`carts-divider`, `orders-divider`). The component is built on those."
+    }
+  }
+}

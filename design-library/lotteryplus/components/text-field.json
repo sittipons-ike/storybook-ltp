@@ -1,0 +1,60 @@
+{
+  "_comment": "Layout, sizing and typography for text-field. Colours come from the Figma colour mirror; these do not, so they are authored here. Placeholder and input text share one Figma role (body/md/regular) and differ only in colour, so they share `typography-input-*`.",
+  "figma_node": "14291:131807",
+  "base": {
+    "radius": "{design.semantic.radius.lg}",
+    "border-width": "{design.semantic.border-width.hairline}",
+    "border-width-focus": "{design.semantic.border-width.thin}",
+    "padding-y": "{design.semantic.spacing.2lg}",
+    "padding-x": "{design.semantic.spacing.2xl}",
+    "gap": "{design.semantic.spacing.lg}",
+    "stack-gap": "{design.semantic.spacing.sm}",
+    "label-padding-x": "{design.semantic.spacing.sm}",
+    "label-gap": "{design.semantic.spacing.sm}",
+    "description-padding-x": "{design.semantic.spacing.sm}",
+    "clear-icon-size": 16,
+    "_source": "clear-icon-size is storybook-local, no Figma token backs it — design.md's iconography.sizes are still 'tbd', so the 16px from the Figma icons-size instance stays a literal.",
+    "typography-label-family": "{design.semantic.typography.title.md.medium.family}",
+    "typography-label-size": "{design.semantic.typography.title.md.medium.size}",
+    "typography-label-line-height": "{design.semantic.typography.title.md.medium.line-height}",
+    "typography-label-weight": "{design.semantic.typography.title.md.medium.weight}",
+    "typography-label-tracking": "{design.semantic.typography.title.md.medium.tracking}",
+    "typography-required-family": "{design.semantic.typography.label.md.medium.family}",
+    "typography-required-size": "{design.semantic.typography.label.md.medium.size}",
+    "typography-required-line-height": "{design.semantic.typography.label.md.medium.line-height}",
+    "typography-required-weight": "{design.semantic.typography.label.md.medium.weight}",
+    "typography-required-tracking": "{design.semantic.typography.label.md.medium.tracking}",
+    "typography-input-family": "{design.semantic.typography.body.md.regular.family}",
+    "typography-input-size": "{design.semantic.typography.body.md.regular.size}",
+    "typography-input-line-height": "{design.semantic.typography.body.md.regular.line-height}",
+    "typography-input-weight": "{design.semantic.typography.body.md.regular.weight}",
+    "typography-input-tracking": "{design.semantic.typography.body.md.regular.tracking}",
+    "typography-description-family": "{design.semantic.typography.caption.md.regular.family}",
+    "typography-description-size": "{design.semantic.typography.caption.md.regular.size}",
+    "typography-description-line-height": "{design.semantic.typography.caption.md.regular.line-height}",
+    "typography-description-weight": "{design.semantic.typography.caption.md.regular.weight}",
+    "typography-description-tracking": "{design.semantic.typography.caption.md.regular.tracking}",
+    "_verified_from": {
+      "node": "14291:131807 — component set `text-field` on page `↳ text-field ✅`",
+      "date": "2026-08-19",
+      "scope": "all 8 variants, plus a depth-3 walk of State=Default",
+      "result": "No discrepancies. Field 42 tall, radius 8, padding 10/16, gap 8; stack gap 4; label inset 4. Border 1px except State=Active at 2px. Label 14/22 Medium = title.md.medium; the required marker 12/18 Medium = label.md.medium; input and placeholder 14/22 Regular = body.md.regular; error 10/16 Regular = caption.md.regular; clear icon 16.",
+      "noted": "Each variant carries a hidden `Filled/Old/Check-circle` instance — a legacy leftover of the same kind that made the Checkbox build wrong twice. It is hidden and unused here, which is correct."
+    },
+    "_figma_icons": {
+      "_comment": "The icons Figma instantiates for this component, read 2026-08-20 by walking the instance tree and keeping every main component whose parent set is `icons`. check-figma-icons.py holds the files in `sources` to exactly this set — an extra icon fails as loudly as a missing one, because an extra is one nobody compared. Files not listed in `sources` carry payload a caller passes, not a choice the design makes.",
+      "nodes": [
+        {
+          "node": "14291:131807",
+          "figma": "text-field",
+          "sources": [
+            "TextField.tsx"
+          ],
+          "icons": {
+            "filled-close": "the clear affordance inside `Field`. Hidden on every variant — Figma ships it off, so it only appears once a value is typed. Recorded because the source must be able to draw it, not because a variant shows it."
+          }
+        }
+      ]
+    }
+  }
+}
