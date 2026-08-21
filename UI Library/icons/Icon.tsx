@@ -117,15 +117,30 @@ const Icon: React.FC<IconProps> = ({
       aria-label={ariaLabel}
       aria-hidden={!ariaLabel}
     >
-      {iconData.paths.map((d, i) => (
-        <path
-          key={i}
-          d={d}
-          fill={fill}
-          fillRule={iconData.fillRule || 'nonzero'}
-          clipRule={iconData.fillRule === 'evenodd' ? 'evenodd' : undefined}
-        />
-      ))}
+      {iconData.paths.map((d, i) =>
+        iconData.stroke ? (
+          // A stroked icon's `d` is a centreline, not an outline. Filling it produces a
+          // blob or nothing at all, so the same colour goes to `stroke` instead and the
+          // weight and joins come from Figma's own export.
+          <path
+            key={i}
+            d={d}
+            fill="none"
+            stroke={fill}
+            strokeWidth={iconData.stroke.width}
+            strokeLinecap={iconData.stroke.cap ?? 'round'}
+            strokeLinejoin={iconData.stroke.join ?? 'round'}
+          />
+        ) : (
+          <path
+            key={i}
+            d={d}
+            fill={fill}
+            fillRule={iconData.fillRule || 'nonzero'}
+            clipRule={iconData.fillRule === 'evenodd' ? 'evenodd' : undefined}
+          />
+        ),
+      )}
     </svg>
   );
 };
@@ -136,7 +151,17 @@ const Icon: React.FC<IconProps> = ({
 //  Frame: icons (14291:110788)
 // ═══════════════════════════════════════════
 
-type IconData = { paths: string[]; fillRule?: 'evenodd' | 'nonzero' };
+/**
+ * Most icons are outlined shapes — closed paths that get filled. A few are drawn as
+ * strokes, where `d` is the line's centre rather than its edge; those carry `stroke`, and
+ * the renderer sends the colour to `stroke` instead of `fill`. Filling a centreline gives
+ * a blob, so the distinction has to live in the data.
+ */
+export type IconData = {
+  paths: string[];
+  fillRule?: 'evenodd' | 'nonzero';
+  stroke?: { width: number; cap?: 'round' | 'butt' | 'square'; join?: 'round' | 'miter' | 'bevel' };
+};
 
 export const ICONS: Record<string, IconData> = {};
 

@@ -11,6 +11,7 @@ Usage:
 
 from __future__ import annotations
 
+import json
 import re
 import sys
 from pathlib import Path
@@ -87,7 +88,24 @@ def main() -> int:
     known = {n: v for n, v in missing.items() if n in KNOWN_GAPS}
     unknown = {n: v for n, v in missing.items() if n not in KNOWN_GAPS}
 
-    print(f"  registry   : {len(registry)} icons in icons/icon-data.ts")
+    # The registry must equal Figma's own list. Six icons sat in Figma unexported for
+    # weeks because "nothing in the code is missing" was the only question ever asked;
+    # the other direction — what Figma has that we do not — needs asking too.
+    manifest = REPO / "design-library" / "lotteryplus" / "figma-icon-names.json"
+    if manifest.exists():
+        names = set(json.loads(manifest.read_text(encoding="utf-8"))["names"])
+        missing = sorted(names - registry)
+        extra = sorted(registry - names)
+        for n in missing:
+            print(f"  Figma has '{n}' and icon-data.ts does not")
+        for n in extra:
+            print(f"  icon-data.ts has '{n}' and Figma does not")
+        if missing or extra:
+            print(f"  registry   : {len(registry)} icons · Figma: {len(names)} — they must match")
+            return 1
+        print(f"  registry   : {len(registry)} icons, exactly Figma's list")
+    else:
+        print(f"  registry   : {len(registry)} icons in icons/icon-data.ts")
     print(f"  scanned    : {scanned} source files")
     print(f"  unresolved : {len(unknown)}")
 
