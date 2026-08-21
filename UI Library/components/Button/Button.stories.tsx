@@ -423,13 +423,21 @@ export const FullMatrix: Story = {
 //  Color bindings — generated from the token chain
 // ═══════════════════════════════════════════
 
-/** Figma still uses abbreviated names; this reconstructs them for cross-referencing. */
+/**
+ * Figma still uses abbreviated names; this reconstructs them for cross-referencing.
+ *
+ * Two of them also disagree with the name on this side. On 2026-08-21 the variants were
+ * renamed here to match what they draw — `tertiary` declared six border tokens and
+ * `outline` declared none, so the two labels were the wrong way round. Figma keeps the old
+ * labels until Phase 3, which makes this map the bridge between them rather than a
+ * transliteration. See components.json → button._naming_correction.
+ */
 const figmaName = (variant: ButtonVariant, prop: string, state: string): string => {
   const v: Record<ButtonVariant, string> = {
     primary: 'pri',
     secondary: 'sec',
-    tertiary: 'ter',
-    outline: 'out',
+    outline: 'ter',   // Figma still calls the stroked one `tertiary`
+    ghost: 'out',     // Figma still calls the unstroked one `outline`
     link: 'link',
   };
   const s: Record<string, string> = {
@@ -473,18 +481,18 @@ export const VariantExtensions: StoryObj = {
   render: () => {
     const extensions = [
       {
-        name: 'outline',
-        extends: 'tertiary',
+        name: 'ghost',
+        extends: 'outline',
         expires: '2027-02-17',
         reason:
-          'Low-emphasis action that still needs a filled surface on light backgrounds. Used across Frontend order and cart flows.',
+          'Low-emphasis action on a light background, with no stroke. Canonical in the Standard as `ghost` — it was called `outline` here until 2026-08-21, when reading the values showed the name was the wrong way round.',
       },
       {
         name: 'link',
         extends: 'ghost',
         expires: '2027-02-17',
         reason:
-          'Inline navigational action styled as text. Never use for destructive actions — it reads as navigation.',
+          'Inline navigational action styled as text: status.info blue, underlined on hover, no surface of its own. Not a rename of anything on the Standard\u2019s list — `destructive` is a red confirm-delete action this product does not have. Never use for destructive actions; it reads as navigation.',
       },
     ];
 

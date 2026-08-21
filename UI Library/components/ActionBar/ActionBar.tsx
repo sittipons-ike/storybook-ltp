@@ -92,7 +92,7 @@ const ActionBar: React.FC<ActionBarProps> = ({
             {secondary && (
               <div className="ltp-action-bar__secondary" style={{ flexBasis: ACTION_BAR.secondaryBasis }}>
                 <Button
-                  variant="tertiary"
+                  variant="outline"
                   size="lg"
                   fullWidth
                   disabled={secondary.disabled}

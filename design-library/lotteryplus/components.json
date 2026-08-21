@@ -159,7 +159,7 @@
             }
           }
         },
-        "tertiary": {
+        "outline": {
           "shadow": "{design.semantic.colors.tertiary.default}@24%",
           "border": "{design.semantic.colors.border.accent.gray-light}",
           "states": {
@@ -196,9 +196,9 @@
         }
       },
       "variant_extensions": {
-        "outline": {
-          "extends": "tertiary",
-          "reason": "Low-emphasis action that still needs a filled surface on light backgrounds. Kept per Q0.3 decision 2026-08-17; used across Frontend order and cart flows.",
+        "ghost": {
+          "extends": "outline",
+          "reason": "Low-emphasis action on a light background, with no stroke. Canonical in the Standard as `ghost`; it was called `outline` here until 2026-08-21, when reading the values showed the name was the wrong way round — it declares no border token in any state. Kept per Q0.3 decision 2026-08-17; used across Frontend order and cart flows.",
           "expires": "2027-02-17",
           "review_owner": "Design lead",
           "states": {
@@ -226,7 +226,7 @@
         },
         "link": {
           "extends": "ghost",
-          "reason": "Inline navigational action styled as text. Kept per Q0.3 decision 2026-08-17. Never use for destructive actions — it reads as navigation.",
+          "reason": "Inline navigational action styled as text: `status.info` blue, underlined on hover, no surface of its own. Not on the Standard's list of five and not a rename of anything on it — `destructive` is a red confirm-delete action, which this product does not have yet. Never use for destructive actions; it reads as navigation.",
           "expires": "2027-02-17",
           "review_owner": "Design lead",
           "states": {
@@ -271,7 +271,24 @@
         },
         "checked_and_correct": "The no-icon variants report a gap of 8, but they hold a single child so the gap never applies. The icon variants — the ones where it matters — say 4, which is what the library already had. Worth recording because 8 looks like a mismatch until you see which variants it comes from."
       },
-      "storybook": "Button"
+      "storybook": "Button",
+      "_naming_correction": {
+        "date": "2026-08-21",
+        "decision": "A — rename to match what each variant draws",
+        "was": {
+          "tertiary": "had the stroke",
+          "outline": "had no stroke",
+          "link": "blue, underlined"
+        },
+        "now": {
+          "outline": "the one with the stroke (was tertiary)",
+          "ghost": "the one with no stroke (was outline)",
+          "link": "unchanged, registered as an extension of ghost"
+        },
+        "why": "The Standard's five are primary · secondary · tertiary · ghost · destructive. Reading the token values showed the two names were swapped: `tertiary` declared six border tokens and `outline` declared none, so the variant named for a stroke was the one without one. `outline` and `ghost` are both real and distinct — a stroke or no stroke — which is why the fix is a rename rather than a merge.",
+        "figma_still_says": "colors/button/tertiary/* and colors/button/outline/* — Figma is unchanged and now disagrees with the code on purpose. The old team named these years ago; the values are right and only the labels are wrong. Figma gets the same rename in Phase 3, and this record is what that phase reads to know why.",
+        "no_destructive": "Nothing in the product is a destructive action yet — no confirm-delete button exists. The variant is left unbuilt rather than invented."
+      }
     },
     "accordion": {
       "name": "accordion",

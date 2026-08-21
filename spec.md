@@ -1,5 +1,5 @@
 # Project Spec — Lotteryplus Design System
-_Last updated: 2026-08-21 12:30_
+_Last updated: 2026-08-21 16:40_
 
 ## Current State
 
@@ -181,6 +181,11 @@ UI Library/
 
 **หน้าแรกเสร็จแล้ว** `/profile` · 5 state (ปกติ · อายุไม่ถึง 20 · ไม่มีบัญชีธนาคาร · ปิด flag · ยอด 13 หลัก)
 ยืนยันแล้วว่ายอด `5,239,822,249,018` ไม่ทำการ์ดแตก
+
+- 2026-08-21 — **variant ปุ่มเปลี่ยนชื่อให้ตรงกับที่มันวาด** (ตัดสิน: ทางเลือก A)
+  `tertiary`→`outline` (มีเส้น 6 token) · `outline`→`ghost` (ไม่มีเส้นเลย) · `link` ขึ้นทะเบียน extension
+  **แก้ฝั่งโค้ดก่อน Figma ยังใช้ชื่อเก่า** — ตั้งใจให้ต่างกันชั่วคราว เหตุผลอยู่ใน `phase3-vocabulary.md`
+  และ `Button.stories.tsx → figmaName()` เป็นตัวเชื่อมระหว่างสองฝั่ง
 
 ## Next Up
 

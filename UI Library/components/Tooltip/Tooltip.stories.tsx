@@ -145,7 +145,7 @@ export const WithButton: Story = {
       </Tooltip>
 
       <Tooltip content="คุณต้องเข้าสู่ระบบก่อน" position="bottom">
-        <Button variant="outline" size="md" disabled>เข้าสู่ระบบ</Button>
+        <Button variant="ghost" size="md" disabled>เข้าสู่ระบบ</Button>
       </Tooltip>
     </div>
   ),

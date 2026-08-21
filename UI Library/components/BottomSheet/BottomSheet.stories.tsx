@@ -136,7 +136,7 @@ export const WithActions: StoryObj = {
               fullWidth
             />
             <div style={{ display: 'flex', gap: 10 }}>
-              <Button variant="tertiary" size="lg" fullWidth onClick={() => setOpen(false)}>
+              <Button variant="outline" size="lg" fullWidth onClick={() => setOpen(false)}>
                 ยกเลิก
               </Button>
               <Button variant="primary" size="lg" fullWidth onClick={() => setOpen(false)}>
@@ -187,7 +187,7 @@ export const Closed: StoryObj = {
         <BottomSheet open={open} onClose={() => setOpen(false)} contained title="ตัวอย่าง">
           <div style={{ paddingBottom: 8 }}>
             <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>เปิดแล้ว</div>
-            <Button variant="tertiary" size="md" fullWidth onClick={() => setOpen(false)}>
+            <Button variant="outline" size="md" fullWidth onClick={() => setOpen(false)}>
               ปิด
             </Button>
           </div>

@@ -207,7 +207,7 @@ const Modal: React.FC<ModalProps> = ({
         {show2Buttons && (
           <div style={{ flex: layoutVertical ? 1 : undefined, order: layoutVertical ? 0 : 1 }}>
             <Button
-              variant={layoutVertical ? 'tertiary' : 'outline'}
+              variant={layoutVertical ? 'outline' : 'ghost'}
               size="lg"
               fullWidth
               onClick={onSecondaryClick}

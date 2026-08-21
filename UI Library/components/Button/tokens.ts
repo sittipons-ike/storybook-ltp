@@ -15,7 +15,13 @@
 import { TOKEN_VALUES, type TokenName } from '../../foundations/tokens.generated';
 
 /** Canonical variants plus the two approved extensions (see components.json). */
-export type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'outline' | 'link';
+/**
+ * Renamed 2026-08-21 to match what each variant draws — see components.json →
+ * button._naming_correction. `tertiary` declared six border tokens and `outline` declared
+ * none, so the two names were the wrong way round. Figma still uses the old labels and
+ * catches up in Phase 3.
+ */
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'link';
 
 /** Canonical states, per the Design System Standard. */
 export type ButtonState = 'rest' | 'hover' | 'focus' | 'active' | 'disabled';
@@ -26,8 +32,8 @@ export type ButtonSize = 'lg' | 'md' | 'sm';
 export const BUTTON_VARIANTS: readonly ButtonVariant[] = [
   'primary',
   'secondary',
-  'tertiary',
   'outline',
+  'ghost',
   'link',
 ] as const;
 
