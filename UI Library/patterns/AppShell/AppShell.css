@@ -1,0 +1,29 @@
+/* ═══════════════════════════════════════════
+   AppShell — Lotteryplus Design System
+
+   Structure only. A pattern has no colours of its own: what it frames supplies them.
+   The one exception is the empty-slot placeholder, which is review chrome rather than
+   part of the shell, and is styled inline in AppShell.tsx from --sys-* tokens.
+   ═══════════════════════════════════════════ */
+
+.ltp-shell {
+  box-sizing: border-box;
+}
+
+.ltp-shell__slot {
+  flex-shrink: 0;
+}
+
+/* main is the only slot that takes the leftover height and scrolls */
+.ltp-shell__slot--main {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ltp-shell__placeholder {
+  box-sizing: border-box;
+  flex-shrink: 0;
+  user-select: none;
+}
