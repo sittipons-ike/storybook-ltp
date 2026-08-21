@@ -1,0 +1,12 @@
+/* ═══════════════════════════════════════════
+   Logo — Lotteryplus Design System
+
+   There is almost nothing to style: a mark is artwork served as a file, and the point of
+   rendering it as an <img> is that nothing here can change its colour.
+   ═══════════════════════════════════════════ */
+
+.ltp-logo {
+  display: block;
+  object-fit: contain;
+  flex: none;
+}
