@@ -1,5 +1,5 @@
 # Project Spec — Lotteryplus Design System
-_Last updated: 2026-08-21 21:30_
+_Last updated: 2026-08-21 22:40_
 
 ## Current State
 
@@ -186,6 +186,13 @@ UI Library/
   `tertiary`→`outline` (มีเส้น 6 token) · `outline`→`ghost` (ไม่มีเส้นเลย) · `link` ขึ้นทะเบียน extension
   **แก้ฝั่งโค้ดก่อน Figma ยังใช้ชื่อเก่า** — ตั้งใจให้ต่างกันชั่วคราว เหตุผลอยู่ใน `phase3-vocabulary.md`
   และ `Button.stories.tsx → figmaName()` เป็นตัวเชื่อมระหว่างสองฝั่ง
+
+- 2026-08-21 — **CI รัน `check.sh` ทุก PR** (`.github/workflows/design-system.yml`)
+  พิสูจน์บน clean clone แล้วว่าผ่าน 10 ด่าน และ **แดงจริง** เมื่อใส่ค่าแต่งเอง (exit 1)
+  build Storybook เป็นขั้นสุดท้าย — gate ที่ผ่านบน tree ที่ build ไม่ได้คือ gate ที่โกหก
+- 2026-08-21 — **deploy Storybook ขึ้น GitHub Pages** จาก build เดียวกับที่ผ่าน gate
+  (artifact เก็บทุก PR ให้ reviewer โหลดไปกดดูได้)
+- 2026-08-21 — **`CONTRIBUTING.md`** — กฎทั้งหมดพร้อมเหตุผลว่ากันบั๊กตัวไหน
 
 ## Next Up
 
