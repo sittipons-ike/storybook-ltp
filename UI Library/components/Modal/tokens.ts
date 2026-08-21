@@ -1,165 +1,125 @@
 // ═══════════════════════════════════════════
 // Modal Design Tokens
-// Source: Figma "Design Systems Web App Lotteryplus V.7.1"
-// Page: modal — "modal-state" component set (14610:24998)
-// 10 variants: state(5) × layout-vertical(2)
-// All values reference Foundation variables ONLY
+//
+// This file holds NO values. Every value lives in Figma, flows through design.md
+// and components.json (layout/typography via components/modal.json), and is
+// generated into foundations/tokens.css (CSS custom properties) and
+// foundations/tokens.generated.ts (resolved literals).
+//
+// What this file adds is types and lookup helpers, so Modal.tsx renders with CSS
+// variables while stories and tests can still read the literal a token resolves to.
+//
+// Regenerate the source values: python3 tools/gen-components.py && python3 tools/gen-tokens.py
+// Verify them against Figma:    python3 tools/verify-tokens.py
 // ═══════════════════════════════════════════
 
-// ── From Foundation: Spacing & Layout (2-semantic) ──
-export const SPACING = {
-  none: 0,       // spacing-none
-  lg: 8,         // spacing-lg → Wording internal gap (title↔subtitle)
-  '2xl': 16,     // spacing-2xl → icon↔wording gap, button session gap
-  '4xl': 24,     // spacing-4xl → Modal padding (all sides), main sections gap
-} as const;
+import { component } from '../../foundations/tokens';
 
-// ── From Foundation: Border Radius (2-semantic) ──
-export const RADIUS = {
-  lg: 8,         // radius-lg → Button corners
-  '2xl': 16,     // radius-2xl → Modal container corners
-  '5xl': 48,     // radius-5xl → Icon circle background (mapped to 48 in Figma)
-} as const;
+const t = component('modal');
 
-// ── From Foundation: Border Width (2-semantic) ──
-export const BORDER_WIDTH = {
-  1: 1,          // border-width/1 → Tertiary button stroke
-} as const;
-
-// ── From Foundation: Typography (typography collection) ──
-// Figma boundVariables confirmed:
-//   Title → title/l-semb/* (font-family, size, weight, line-height)
-//   Subtitle → body/m-reg/* + font-family/Graphik TH
-//   Button → button/m-semb/* (via Button component)
-export const TYPOGRAPHY = {
-  // Title: title/l-semb → 16px/24px Semibold (Graphik TH)
-  title: {
-    fontFamily: "'Graphik TH', sans-serif",  // title/l-semb/font-family → font-family/Graphik TH
-    fontSize: 16,       // title/l-semb/size → size/l
-    fontWeight: 600,     // title/l-semb/weight → weight/Semibold
-    lineHeight: '24px',  // title/l-semb/line-height → line-height/l (24px)
-  },
-  // Subtitle: body/m-reg → 14px/22px Regular (Graphik TH)
-  subtitle: {
-    fontFamily: "'Graphik TH', sans-serif",  // font-family/Graphik TH
-    fontSize: 14,       // body/m-reg/size → size/m
-    fontWeight: 400,     // body/m-reg/weight → weight/Regular
-    lineHeight: '22px',  // body/m-reg/line-height → line-height/m (22px)
-  },
-  // Button text: button/m-semb → 14px/22px Semibold (via Button component)
-  button: {
-    fontFamily: "'Graphik TH', sans-serif",
-    fontSize: 14,       // button/m-semb/size → size/m
-    fontWeight: 600,     // button/m-semb/weight → weight/Semibold
-    lineHeight: '22px',  // button/m-semb/line-height → line-height/m (22px)
-  },
-} as const;
-
-// ── From Foundation: Shadow (2-semantic) ──
-// Figma bound variable: dimension/shadow/md/color-2
-// Actual effects on modal container:
-//   DROP_SHADOW 1: offset(0, 2) blur(4) spread(-1) rgba(0,0,0,0.06)
-//   DROP_SHADOW 2: offset(0, 4) blur(6) spread(-1) rgba(0,0,0,0.10)
-// → Maps to Foundation shadow/md token
-export const SHADOW = {
-  md: '0px 2px 4px -1px rgba(0, 0, 0, 0.06), 0px 4px 6px -1px rgba(0, 0, 0, 0.10)',
-} as const;
-
-// ── From Foundation: Component Tokens (3-component / Modal) ──
+/** Figma variant property `state` — 5 stops. */
 export type ModalState = 'success' | 'warning' | 'warning-serious' | 'error' | 'info';
 
-interface ModalStateConfig {
-  iconName: string;      // Icon from Components/Icon library
-  iconColor: string;     // Icon SVG fill color
-  iconBg: string;        // Icon circle background
+export const MODAL_STATES: readonly ModalState[] = [
+  'success',
+  'warning',
+  'warning-serious',
+  'error',
+  'info',
+] as const;
+
+export interface ModalColorSet {
+  /** Icon glyph fill. */
+  foreground: string;
+  /** Icon circle background. */
+  background: string;
 }
 
-// All colors mapped from Foundation ComponentTokens → Modal section
-export const MODAL_STATES: Record<ModalState, ModalStateConfig> = {
-  success: {
-    iconName: 'outline-check_circle',
-    iconColor: '#22C55E',     // colors/modal/fg-green → success/default
-    iconBg: '#F0FDF4',        // colors/modal/bg-soft-green → success/soft-light
-  },
-  warning: {
-    iconName: 'outline-Warning-2',
-    iconColor: '#EAB308',     // colors/modal/fg-yellow → warning/default
-    iconBg: '#FEFCE8',        // colors/modal/bg-soft-yellow → warning/soft-light
-  },
-  'warning-serious': {
-    iconName: 'outline-Warning-2',
-    iconColor: '#E32321',     // colors/modal/fg-red → error/default (red warning)
-    iconBg: '#FEF2F2',        // colors/modal/bg-soft-red → error/soft-light
-  },
-  error: {
-    iconName: 'outline-Error-1',
-    iconColor: '#E32321',     // colors/modal/fg-red → error/default
-    iconBg: '#FEF2F2',        // colors/modal/bg-soft-red → error/soft-light
-  },
-  info: {
-    iconName: 'outline-info',
-    iconColor: '#262626',     // colors/modal/fg-dark → secondary/default
-    iconBg: '#FAFAFA',        // colors/modal/bg → neutral/50
-  },
+/**
+ * Which Tier 2 colour token each state reaches for.
+ *
+ * Figma models modal colours as a flat palette (`modal-fg-green`, `modal-bg-soft-green`)
+ * rather than a state matrix, so the state → token mapping is the component's own
+ * editorial decision and lives here. The values behind those names do not.
+ */
+const STATE_TOKENS: Record<ModalState, ModalColorSet> = {
+  success: { foreground: 'foreground-green', background: 'background-soft-green' },
+  warning: { foreground: 'foreground-yellow', background: 'background-soft-yellow' },
+  'warning-serious': { foreground: 'foreground-red', background: 'background-soft-red' },
+  error: { foreground: 'foreground-red', background: 'background-soft-red' },
+  info: { foreground: 'foreground-dark', background: 'background-soft-dark' },
 };
 
-// Modal container colors
-export const MODAL_COLORS = {
-  bg: '#FFFFFF',              // colors/modal/bg-white → base/white
-  titleText: '#262626',       // colors/modal/fg-dark → secondary/default
-  subtitleText: '#262626',    // colors/modal/fg-dark → secondary/default
+/** Icon glyph per state. A component-library name, not a design token. */
+export const MODAL_ICONS: Record<ModalState, string> = {
+  success: 'outline-check_circle',
+  warning: 'outline-Warning-2',
+  'warning-serious': 'outline-Warning-2',
+  error: 'outline-Error-1',
+  info: 'outline-info',
+};
 
-  // Primary button (confirm) — uses Button Primary tokens
-  primaryBtn: {
-    bg: '#E32321',            // colors/button/primary/btn-bg-pri-default
-    text: '#FFFFFF',          // colors/button/primary/btn-fg-pri-default
-  },
-  // Secondary button (cancel) — uses Button Tertiary tokens
-  secondaryBtn: {
-    bg: '#FFFFFF',            // colors/button/tertiary/btn-bg-ter-default
-    text: '#262626',          // colors/button/tertiary/btn-fg-ter-default
-    border: '#D4D4D4',        // colors/button/tertiary border
-  },
-  // Link button (cancel in vertical=no) — text only
-  linkBtn: {
-    text: '#262626',          // colors/button/outline fg
-  },
+/** The Tier 2 token names behind a state — for stories that print the chain. */
+export const modalStateTokens = (state: ModalState): ModalColorSet => STATE_TOKENS[state];
 
-  // Overlay background
-  overlay: '#00000099',       // overlay-default (black 60%)
+/** CSS variable references for one state — what Modal.tsx renders with. */
+export const modalColors = (state: ModalState): ModalColorSet => ({
+  foreground: t.ref(STATE_TOKENS[state].foreground),
+  background: t.ref(STATE_TOKENS[state].background),
+});
+
+/** Resolved literals for one state — for stories, tables and tests. */
+export const modalColorValues = (state: ModalState): ModalColorSet => ({
+  foreground: t.value(STATE_TOKENS[state].foreground),
+  background: t.value(STATE_TOKENS[state].background),
+});
+
+/** CSS variable reference for any Modal token. */
+export const modalRef = (token: string, fallback?: string): string => t.ref(token, fallback);
+
+/** The literal a Modal token resolves to. Empty string when it is not declared. */
+export const modalValue = (token: string): string => t.value(token);
+
+/** Every Tier 2 token declared for `modal`, sorted — what the token-chain story enumerates. */
+export const modalTokenNames = (): string[] => t.names();
+
+/** Container, layout and typography — shared by every state. */
+export const MODAL = {
+  width: t.ref('width'),
+  radius: t.ref('radius'),
+  padding: t.ref('padding'),
+  /** Gap between the content block and the button session. */
+  gap: t.ref('gap'),
+  /** Gap between the icon and the wording block. */
+  contentGap: t.ref('content-gap'),
+  /** Gap between title and subtitle. */
+  wordingGap: t.ref('wording-gap'),
+  /** Gap between the two buttons, in either layout direction. */
+  buttonGap: t.ref('button-gap'),
+  elevation: t.ref('elevation'),
+  scrim: t.ref('scrim'),
+  background: t.ref('background-white'),
+  text: t.ref('foreground-dark'),
+
+  iconCircleSize: t.ref('icon-circle-size'),
+  iconCirclePadding: t.ref('icon-circle-padding'),
+  iconCircleRadius: t.ref('icon-circle-radius'),
+
+  titleFamily: t.ref('typography-title-family'),
+  titleSize: t.ref('typography-title-size'),
+  titleLineHeight: t.ref('typography-title-line-height'),
+  titleWeight: t.ref('typography-title-weight'),
+  titleTracking: t.ref('typography-title-tracking'),
+
+  subtitleFamily: t.ref('typography-subtitle-family'),
+  subtitleSize: t.ref('typography-subtitle-size'),
+  subtitleLineHeight: t.ref('typography-subtitle-line-height'),
+  subtitleWeight: t.ref('typography-subtitle-weight'),
+  subtitleTracking: t.ref('typography-subtitle-tracking'),
 } as const;
 
-// ── Layout Dimensions from Figma ──
-export const MODAL_DIMENSIONS = {
-  // Modal container
-  width: 358,                 // Fixed width
-  padding: 24,               // spacing-4xl (all sides)
-  sectionGap: 24,            // spacing-4xl (between icon+wording and buttons)
-  cornerRadius: 16,          // radius-2xl
-
-  // Icon area
-  icon: {
-    containerSize: 64,       // 64×64px circle
-    iconSize: 48,            // icons-size: Size=48
-    padding: 8,              // (64-48)/2 = 8px spacing-lg
-    borderRadius: 48,        // radius-5xl (circle)
-  },
-
-  // Wording area
-  wording: {
-    iconToWording: 16,       // spacing-2xl
-    titleToSubtitle: 8,      // spacing-lg
-  },
-
-  // Button session — layout-vertical=yes (side by side)
-  buttonsHorizontal: {
-    gap: 16,                 // spacing-2xl
-    height: 44,              // Button L height
-  },
-
-  // Button session — layout-vertical=no (stacked)
-  buttonsVertical: {
-    gap: 16,                 // spacing-2xl
-    height: 44,              // Button L height
-  },
-} as const;
+/**
+ * Icon glyph size in points. Numeric because `<Icon size>` is a component prop, not a
+ * style — same treatment Button gives its own `icon-size`.
+ */
+export const MODAL_ICON_SIZE = Number(t.value('icon-size').replace('px', '')) || 48;

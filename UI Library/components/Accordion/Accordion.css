@@ -1,0 +1,39 @@
+/* ═══════════════════════════════════════════
+   Accordion — Lotteryplus Design System
+
+   Structure only. Every value is a token applied in Accordion.tsx.
+   ═══════════════════════════════════════════ */
+
+.ltp-accordion__trigger {
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.ltp-accordion__trigger:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* The Frontend flips the chevron with -scale-y-100. Same idea, but transitioned, and
+   held still for anyone who asked the OS for less motion. */
+.ltp-accordion__chevron {
+  display: inline-flex;
+  transition: transform 0.2s ease;
+}
+
+.ltp-accordion__chevron--open {
+  transform: scaleY(-1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ltp-accordion__chevron {
+    transition: none;
+  }
+}

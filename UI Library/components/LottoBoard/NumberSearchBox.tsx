@@ -1,10 +1,11 @@
 import React, { useRef, useCallback } from 'react';
+import '../../foundations/tokens.css';
 import {
-  SPACING,
   NUMBER_BOX,
-  TYPOGRAPHY,
   LOTTO_BOARD_COLORS,
-  SHADOW,
+  OPACITY,
+  lottoBoardText,
+  NUMBER_BOX_VARIANT_MAP,
   type NumberSearchBoxVariant,
 } from './tokens';
 import './LottoBoard.css';
@@ -14,9 +15,9 @@ export interface NumberSearchBoxProps {
   value?: string;
   /** Callback when value changes */
   onChange?: (value: string) => void;
-  /** Figma variant — controls which boxes appear selected (visual only if no value) */
+  /** Figma variant — controls which cells appear selected when there is no value */
   variant?: NumberSearchBoxVariant;
-  /** Disabled state */
+  /** Canonical state: disabled */
   disabled?: boolean;
 }
 
@@ -24,9 +25,13 @@ export interface NumberSearchBoxProps {
  * NumberSearchBox — Lotteryplus Design System
  *
  * Figma component: number-search-box-2
- * 6 digit input boxes in a row. Typing fills left-to-right, backspace removes.
- * Each box: 53x64px, padding 8, radius 8, border 1px, shadow sm
- * Variants: Empty, 6, Front 3, Back 3, Back 2, 1
+ * Six digit cells in a row. Typing fills left-to-right, backspace removes.
+ * Variants: Empty · 6 · Front 3 · Back 3 · Back 2 · 1
+ *
+ * Every style value is a CSS custom property from foundations/tokens.css. This is the
+ * one place the design system deliberately breaks "one primary action per screen" —
+ * every cell is an independent action — so the cells sit on their own `cell-*` gap
+ * rather than the card's spacing.
  */
 const NumberSearchBox: React.FC<NumberSearchBoxProps> = ({
   value = '',
@@ -36,6 +41,7 @@ const NumberSearchBox: React.FC<NumberSearchBoxProps> = ({
 }) => {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const digits = value.padEnd(6, '').slice(0, 6).split('');
+  const variantSelection = NUMBER_BOX_VARIANT_MAP[variant];
 
   const handleKeyDown = useCallback(
     (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -75,7 +81,7 @@ const NumberSearchBox: React.FC<NumberSearchBoxProps> = ({
   const handleClick = useCallback(
     (index: number) => {
       if (disabled) return;
-      // Find first empty box and focus it, or focus clicked box
+      // Find first empty cell and focus it, or focus the clicked cell
       const firstEmpty = digits.findIndex((d) => !d || d === ' ');
       const targetIndex = firstEmpty >= 0 ? Math.min(index, firstEmpty) : index;
       inputRefs.current[targetIndex]?.focus();
@@ -91,37 +97,41 @@ const NumberSearchBox: React.FC<NumberSearchBoxProps> = ({
         flexDirection: 'row',
         alignItems: 'center',
         gap: NUMBER_BOX.gap,
-        paddingLeft: NUMBER_BOX.wrapperPaddingLR,
-        paddingRight: NUMBER_BOX.wrapperPaddingLR,
+        paddingLeft: NUMBER_BOX.rowPaddingX,
+        paddingRight: NUMBER_BOX.rowPaddingX,
+        opacity: disabled ? OPACITY.disabled : undefined,
       }}
     >
       {[0, 1, 2, 3, 4, 5].map((i) => {
-        const hasDigit = digits[i] && digits[i] !== ' ';
-        const isSelected = hasDigit;
+        const hasDigit = Boolean(digits[i] && digits[i] !== ' ');
+        // A typed digit always selects; with no value the Figma variant drives the look.
+        const isSelected = hasDigit || (!value && variantSelection[i]);
 
         return (
           <div
             key={i}
+            className="ltp-number-box"
             onClick={() => handleClick(i)}
             style={{
               width: NUMBER_BOX.width,
               height: NUMBER_BOX.height,
               padding: NUMBER_BOX.padding,
-              borderRadius: NUMBER_BOX.borderRadius,
-              border: `${NUMBER_BOX.borderWidth}px solid ${
-                isSelected ? LOTTO_BOARD_COLORS.fgRed : LOTTO_BOARD_COLORS.border
+              borderRadius: NUMBER_BOX.radius,
+              border: `${NUMBER_BOX.borderWidth} solid ${
+                isSelected ? LOTTO_BOARD_COLORS.foregroundRed : LOTTO_BOARD_COLORS.border
               }`,
-              backgroundColor: LOTTO_BOARD_COLORS.bgWhite,
+              backgroundColor: LOTTO_BOARD_COLORS.backgroundWhite,
               boxShadow: NUMBER_BOX.shadow,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: disabled ? 'default' : 'pointer',
-              opacity: disabled ? 0.5 : 1,
             }}
           >
             <input
-              ref={(el) => { inputRefs.current[i] = el; }}
+              ref={(el) => {
+                inputRefs.current[i] = el;
+              }}
               className="ltp-number-box-input"
               type="text"
               inputMode="numeric"
@@ -132,13 +142,10 @@ const NumberSearchBox: React.FC<NumberSearchBoxProps> = ({
               disabled={disabled}
               aria-label={`Digit ${i + 1}`}
               style={{
+                ...lottoBoardText('number'),
                 width: '100%',
                 height: '100%',
-                fontFamily: TYPOGRAPHY.fontFamily,
-                fontSize: TYPOGRAPHY.numberBox.fontSize,
-                fontWeight: TYPOGRAPHY.numberBox.fontWeight,
-                lineHeight: TYPOGRAPHY.numberBox.lineHeight,
-                color: LOTTO_BOARD_COLORS.fgDark,
+                color: LOTTO_BOARD_COLORS.foregroundDark,
                 textAlign: 'center',
                 padding: 0,
                 margin: 0,

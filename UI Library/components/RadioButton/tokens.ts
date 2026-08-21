@@ -1,138 +1,229 @@
 // ═══════════════════════════════════════════
 // RadioButton Design Tokens
-// Source: Figma "Design Systems Web App Lotteryplus V.7.1"
-// Page: radio-buttons — Section 1
-// Components: "radio-buttons" (14457:1351) + "Gender select" (14291:132236)
-// All values reference Foundation variables ONLY
+//
+// This file holds NO values. Colours come from the Figma colour mirror
+// (`colors/radio-buttons` → components.json → `--radio-*`); layout, sizing and
+// typography come from the hand-authored overlay at
+// `design-library/lotteryplus/components/radio-buttons.json`. Both are generated into
+// foundations/tokens.css (CSS custom properties) and foundations/tokens.generated.ts
+// (resolved literals).
+//
+// What this file adds is types and lookups, so RadioButton.tsx renders with CSS
+// variables while stories and tests can still read the literal a token resolves to.
+//
+// Regenerate: python3 tools/gen-components.py && python3 tools/gen-tokens.py
+// Verify:     python3 tools/verify-tokens.py
 // ═══════════════════════════════════════════
 
-// ── From Foundation: Spacing & Layout (2-semantic) ──
-export const SPACING = {
-  none: 0,       // spacing-none
-  xs: 2,         // spacing-xs
-  sm: 4,         // spacing-sm → Label↔Options gap, Label internal gap, Label paddingLeft
-  lg: 8,         // spacing-lg → CheckBox internal itemSpacing
-  '2xl': 16,     // spacing-2xl → CheckBox padding, Options row gap
+import { component, sys, sysValue } from '../../foundations/tokens';
+
+/** Tier 2 binding — every token below is a `--radio-*` custom property. */
+const t = component('radio');
+
+// ── Types ──────────────────────────────────────────────────────────────────
+
+/** Canonical states, per the Design System Standard. */
+export type RadioState = 'rest' | 'hover' | 'active' | 'focus' | 'disabled' | 'selected';
+
+/**
+ * The five interaction states. `selected` is orthogonal to these — Figma models it as
+ * the component set's `type` property (none / selected), not its `status`.
+ */
+export type RadioInteractionState = Exclude<RadioState, 'selected'>;
+
+export const RADIO_STATES: readonly RadioState[] = [
+  'rest',
+  'hover',
+  'active',
+  'focus',
+  'disabled',
+  'selected',
+] as const;
+
+export const RADIO_INTERACTION_STATES: readonly RadioInteractionState[] = [
+  'rest',
+  'hover',
+  'active',
+  'focus',
+  'disabled',
+] as const;
+
+/** The five pieces of text the group renders, each with its own typography role. */
+export type RadioTextRole = 'label' | 'required' | 'optional' | 'option' | 'error';
+
+export const RADIO_TEXT_ROLES: readonly RadioTextRole[] = [
+  'label',
+  'required',
+  'optional',
+  'option',
+  'error',
+] as const;
+
+export interface RadioTextStyle {
+  fontFamily: string;
+  fontSize: string;
+  fontWeight: string;
+  lineHeight: string;
+}
+
+// ── Lookups ────────────────────────────────────────────────────────────────
+
+/** CSS reference for a RadioButton token — e.g. `var(--radio-card-radius)`. */
+export const radioRef = (token: string, fallback?: string): string => t.ref(token, fallback);
+
+/** The literal a RadioButton token resolves to. Empty string when it is not declared. */
+export const radioValue = (token: string): string => t.value(token);
+
+/** Every `--radio-*` token the generator declared — what the token-chain story enumerates. */
+export const radioTokenNames = (): string[] => t.names();
+
+// ── Layout, sizing and spacing ─────────────────────────────────────────────
+
+/** Layout the whole component renders with. Sourced from the radio-buttons overlay. */
+export const RADIO_LAYOUT = {
+  /** Radio circle — radius-full. */
+  radius: t.ref('radius'),
+  /** Radio circle — 20x20 (fixed in Figma, no semantic size scale backs it). */
+  size: t.ref('size'),
+  /** Check dot — 12x12 (fixed in Figma). */
+  dotSize: t.ref('dot-size'),
+  borderWidth: t.ref('border-width'),
+  /** Press / focus ripple thickness. Storybook-local — see the overlay's `_source`. */
+  ringWidth: t.ref('ring-width'),
+
+  /** Option card — radius-lg, fixed 44px height, spacing-2xl padding. */
+  cardRadius: t.ref('card-radius'),
+  cardHeight: t.ref('card-height'),
+  cardPadding: t.ref('card-padding'),
+  /** Gap between an option's text and its radio circle — spacing-lg. */
+  gap: t.ref('gap'),
+
+  /** Group wrapper — label to options, spacing-sm. */
+  groupGap: t.ref('group-gap'),
+  /** Gap between option cards — spacing-2xl. */
+  optionsGap: t.ref('options-gap'),
+  labelPaddingLeft: t.ref('label-padding-left'),
+  labelGap: t.ref('label-gap'),
 } as const;
 
-// ── From Foundation: Border Radius (2-semantic) ──
-export const RADIUS = {
-  lg: 8,         // radius-lg → Check Box Condition corner radius
-  full: 9999,    // radius-full → Radio circle
+/** The same layout as resolved literals — for stories, tables and tests. */
+export const RADIO_LAYOUT_VALUES: Record<keyof typeof RADIO_LAYOUT, string> = {
+  radius: t.value('radius'),
+  size: t.value('size'),
+  dotSize: t.value('dot-size'),
+  borderWidth: t.value('border-width'),
+  ringWidth: t.value('ring-width'),
+  cardRadius: t.value('card-radius'),
+  cardHeight: t.value('card-height'),
+  cardPadding: t.value('card-padding'),
+  gap: t.value('gap'),
+  groupGap: t.value('group-gap'),
+  optionsGap: t.value('options-gap'),
+  labelPaddingLeft: t.value('label-padding-left'),
+  labelGap: t.value('label-gap'),
+};
+
+/** The Tier 1 token each layout alias points at — the middle link of the chain. */
+export const RADIO_LAYOUT_CHAIN: Record<keyof typeof RADIO_LAYOUT, string> = {
+  radius: '--sys-radius-full',
+  size: '(fixed)',
+  dotSize: '(fixed)',
+  borderWidth: '--sys-border-width-hairline',
+  ringWidth: '(fixed)',
+  cardRadius: '--sys-radius-lg',
+  cardHeight: '(fixed)',
+  cardPadding: '--sys-spacing-2xl',
+  gap: '--sys-spacing-lg',
+  groupGap: '--sys-spacing-sm',
+  optionsGap: '--sys-spacing-2xl',
+  labelPaddingLeft: '--sys-spacing-sm',
+  labelGap: '--sys-spacing-sm',
+};
+
+// ── Typography ─────────────────────────────────────────────────────────────
+
+/** CSS references for one text role — what RadioButton.tsx renders with. */
+export const radioText = (role: RadioTextRole): RadioTextStyle => ({
+  fontFamily: t.ref(`typography-${role}-family`),
+  fontSize: t.ref(`typography-${role}-size`),
+  fontWeight: t.ref(`typography-${role}-weight`),
+  lineHeight: t.ref(`typography-${role}-line-height`),
+});
+
+/** Resolved literals for one text role — for stories, tables and tests. */
+export const radioTextValues = (role: RadioTextRole): RadioTextStyle => ({
+  fontFamily: t.value(`typography-${role}-family`),
+  fontSize: t.value(`typography-${role}-size`),
+  fontWeight: t.value(`typography-${role}-weight`),
+  lineHeight: t.value(`typography-${role}-line-height`),
+});
+
+/** The semantic typography role each piece of text is bound to. */
+export const RADIO_TEXT_CHAIN: Record<RadioTextRole, string> = {
+  label: 'typography.title.md.medium',
+  required: 'typography.label.md.medium',
+  optional: 'typography.label.md.medium',
+  option: 'typography.button.md.semibold',
+  error: 'typography.caption.md.regular',
+};
+
+// ── Colour ─────────────────────────────────────────────────────────────────
+
+/**
+ * Every colour the component renders, keyed by `<part>-<property>-<state>` and mapped
+ * to the `--radio-*` token behind it.
+ *
+ * The matrix is deliberately sparse: Figma's component set is type(none/selected) x
+ * status(default/focused/disabled), so `hover` and `active` reuse the rest colours and
+ * only the ripple changes.
+ */
+export const RADIO_COLOR_TOKENS = {
+  'dot-background-rest': 'background-white',
+  'dot-background-disabled': 'background-disable',
+  'dot-border-rest': 'border',
+  'dot-border-selected': 'background-green',
+  'dot-border-disabled': 'border',
+  'dot-check-rest': 'foreground-green',
+  'dot-check-disabled': 'foreground-disable',
+  'dot-ring-rest': 'ring-gray',
+  'dot-ring-selected': 'ring-green',
+
+  'card-background-rest': 'background-white',
+  'card-background-selected': 'background-soft-green',
+  'card-background-disabled': 'background-disable',
+  'card-border-rest': 'border',
+  'card-border-selected': 'background-green',
+  'card-border-disabled': 'border',
+  'card-foreground-rest': 'foreground-disable',
+  'card-foreground-selected': 'foreground-dark',
+  'card-foreground-disabled': 'foreground-disable',
+
+  'label-foreground-rest': 'foreground-dark',
+  'label-required-rest': 'foreground-red',
+  'error-foreground-rest': 'foreground-red',
 } as const;
 
-// ── From Foundation: Border Width (2-semantic) ──
-export const BORDER_WIDTH = {
-  1: 1,          // border-width/1 → Radio stroke, CheckBox stroke
-} as const;
+export type RadioColorRole = keyof typeof RADIO_COLOR_TOKENS;
 
-// ── From Foundation: Typography (typography collection) ──
-// All fonts: Graphik TH
-export const TYPOGRAPHY = {
-  label: {
-    fontFamily: "'Graphik TH', sans-serif",
-    fontSize: 14,       // size/m
-    fontWeight: 500,     // Medium
-    lineHeight: '22px',  // line-height/m
-  },
-  required: {
-    fontFamily: "'Graphik TH', sans-serif",
-    fontSize: 12,       // size/s (mapped to label size)
-    fontWeight: 500,     // Medium
-    lineHeight: '18px',  // line-height/s
-  },
-  optional: {
-    fontFamily: "'Graphik TH', sans-serif",
-    fontSize: 12,       // size/s
-    fontWeight: 500,     // Medium
-    lineHeight: '22px',  // line-height/m
-  },
-  optionText: {
-    fontFamily: "'Graphik TH', sans-serif",
-    fontSize: 14,       // size/m — button/m-semb/size
-    fontWeight: 600,     // Semibold — button/m-semb/weight
-    lineHeight: '22px',  // line-height/m — button/m-semb/line-height
-  },
-  error: {
-    fontFamily: "'Graphik TH', sans-serif",
-    fontSize: 10,       // size/2xs (caption/m-reg)
-    fontWeight: 500,     // Medium
-    lineHeight: '18px',  // line-height/xs
-  },
-} as const;
+export const RADIO_COLOR_ROLES = Object.keys(RADIO_COLOR_TOKENS) as RadioColorRole[];
 
-// ── From Foundation: Component Tokens (3-component / Radio Buttons) ──
-// Colors mapped from ComponentTokens.stories.tsx → Radio Buttons section
-export const RADIO_COLORS = {
-  // Radio circle
-  radio: {
-    bg: {
-      default: '#FFFFFF',     // colors/radio-buttons/bg-white
-      disabled: '#F5F5F5',    // colors/radio-buttons/bg-disable
-    },
-    border: {
-      default: '#D4D4D4',    // colors/radio-buttons/border
-      selected: '#22C55E',   // colors/radio-buttons/bg-green (success)
-      disabled: '#D4D4D4',   // colors/radio-buttons/border
-    },
-    check: {
-      default: '#22C55E',    // colors/radio-buttons/bg-green (success/default)
-      disabled: '#C9C9C9',   // colors/radio-buttons/fg-disable
-    },
-    focusRing: '#22C55E66',  // colors/radio-buttons/eff-bg-green (green 40% opacity)
-  },
+/** CSS reference for a colour role — e.g. `var(--radio-background-soft-green)`. */
+export const radioColor = (role: RadioColorRole): string => t.ref(RADIO_COLOR_TOKENS[role]);
 
-  // Check Box Condition (option card)
-  card: {
-    bg: {
-      default: '#FFFFFF',     // colors/radio-buttons/bg-white
-      selected: '#F0FDF4',    // success/soft-light (bg-green-s-light in semantic)
-      disabled: '#F5F5F5',    // colors/radio-buttons/bg-disable
-    },
-    border: {
-      default: '#D4D4D4',    // colors/radio-buttons/border
-      selected: '#22C55E',   // colors/radio-buttons/bg-green
-      disabled: '#D4D4D4',   // colors/radio-buttons/border
-    },
-    text: {
-      default: '#C9C9C9',    // colors/radio-buttons/fg-disable (unselected text)
-      selected: '#262626',   // colors/radio-buttons/fg-dark
-      disabled: '#C9C9C9',   // colors/radio-buttons/fg-disable
-    },
-  },
+/** Resolved literal for a colour role. */
+export const radioColorValue = (role: RadioColorRole): string => t.value(RADIO_COLOR_TOKENS[role]);
 
-  // Label area
-  label: {
-    text: '#262626',          // colors/radio-buttons/fg-dark
-    required: '#E32321',      // colors/radio-buttons/fg-red
-    optional: '#A3A3A3',      // neutral/400 (tertiary/accent/md)
-  },
+/** The `--radio-*` token name behind a colour role, for cross-referencing tables. */
+export const radioColorToken = (role: RadioColorRole): string =>
+  `--radio-${RADIO_COLOR_TOKENS[role]}`;
 
-  // Error description
-  error: '#E32321',           // colors/radio-buttons/fg-red
-} as const;
-
-// ── Layout dimensions from Figma ──
-export const RADIO_DIMENSIONS = {
-  // Radio circle: 20×20px
-  radioSize: 20,
-  // Check dot: 12×12px (centered in radio)
-  checkDotSize: 12,
-
-  // Check Box Condition card
-  card: {
-    height: 44,               // fixed height
-    padding: 16,              // spacing-2xl (all sides)
-    innerGap: 8,              // spacing-lg (SPACE_BETWEEN in inner frame)
-  },
-
-  // Options row
-  optionsGap: 16,             // spacing-2xl (gap between option cards)
-
-  // Gender select wrapper
-  wrapper: {
-    labelToOptions: 4,        // spacing-sm (VERTICAL gap)
-    labelPaddingLeft: 4,      // spacing-sm
-    labelInternalGap: 4,      // spacing-sm
-  },
-} as const;
+/**
+ * The "(ไม่จำเป็น)" hint.
+ *
+ * Figma's `colors/radio-buttons` group has no token for it, so this binds straight to
+ * the Tier 1 semantic the old hand-written comment named (`tertiary/accent/md`) rather
+ * than to a Tier 2 alias. Promote it to a real radio token if Figma ever adds one.
+ */
+export const RADIO_OPTIONAL_SYS_TOKEN = 'color-tertiary-accent-md';
+export const radioOptionalColor = (): string => sys(RADIO_OPTIONAL_SYS_TOKEN);
+export const radioOptionalColorValue = (): string => sysValue(RADIO_OPTIONAL_SYS_TOKEN);

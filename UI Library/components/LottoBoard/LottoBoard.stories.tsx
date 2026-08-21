@@ -5,32 +5,46 @@ import MenuButton from './MenuButton';
 import SetSelect from './SetSelect';
 import SearchCard from './SearchCard';
 import {
-  SPACING,
-  RADIUS,
-  BORDER_WIDTH,
-  SHADOW,
-  TYPOGRAPHY,
-  LOTTO_BOARD_COLORS,
-  BUTTON_COLORS,
-  NUMBER_BOX,
-  MENU_BUTTON,
-  SET_SELECT,
-  SEARCH_CARD,
+  lottoBoardValue,
+  lottoBoardTokenNames,
+  lottoBoardTextValues,
+  LOTTO_BOARD_TEXT_ROLES,
+  NUMBER_SEARCH_BOX_VARIANTS,
+  MENU_BUTTON_TYPES,
+  SET_SELECT_STATES,
+  type MenuButtonType,
 } from './tokens';
-import type { MenuButtonType } from './tokens';
+import { sysValue } from '../../foundations/tokens';
 import ColorBindingsTable from '../../system/ColorBindingsTable';
-import type { ColorBinding } from '../../system/ColorBindingsTable';
+import '../../foundations/tokens.css';
 
 // ═══════════════════════════════════════════
 //  LottoBoard Stories — Lotteryplus Design System
 //  Sub-components: NumberSearchBox, MenuButton, SetSelect, SearchCard
+//
+//  Values shown on this page are read from foundations/tokens.generated.ts, which is
+//  generated from Figma. Nothing here is typed by hand, so a table can never claim a
+//  value the components do not actually render.
 // ═══════════════════════════════════════════
+
+const sans = 'var(--lotto-board-typography-title-family)';
+const mono = 'ui-monospace, SFMono-Regular, Menlo, monospace';
+const muted = 'var(--sys-color-text-tertiary-default)';
+
+/** Small caption used to label demo blocks — token-driven, no literals. */
+const note: React.CSSProperties = {
+  fontFamily: sans,
+  fontSize: 'var(--sys-type-caption-lg-regular-size)',
+  lineHeight: 'var(--sys-type-caption-lg-regular-line-height)',
+  color: muted,
+  margin: 0,
+};
 
 // ─────────────────────────────────────────
 //  NumberSearchBox Stories
 // ─────────────────────────────────────────
 const numberSearchBoxMeta: Meta<typeof NumberSearchBox> = {
-  title: 'Components/LottoBoard/NumberSearchBox',
+  title: 'Organisms/LottoBoard/NumberSearchBox',
   component: NumberSearchBox,
   tags: ['autodocs'],
   argTypes: {
@@ -40,11 +54,12 @@ const numberSearchBoxMeta: Meta<typeof NumberSearchBox> = {
     },
     variant: {
       control: 'select',
-      options: ['Empty', '6', 'Front 3', 'Back 3', 'Back 2', '1'],
-      description: 'Figma variant',
+      options: NUMBER_SEARCH_BOX_VARIANTS,
+      description: 'Figma variant — which cells read as selected when there is no value',
     },
     disabled: {
       control: 'boolean',
+      description: 'Canonical state: disabled',
     },
   },
   args: {
@@ -75,16 +90,31 @@ export const NumberSearchBoxPartial: NumberSearchBoxStory = {
   args: { value: '789' },
 };
 
+export const NumberSearchBoxVariants: NumberSearchBoxStory = {
+  name: 'NumberSearchBox — All Figma Variants',
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, fontFamily: sans }}>
+      {NUMBER_SEARCH_BOX_VARIANTS.map((variant) => (
+        <div key={variant}>
+          <p style={{ ...note, marginBottom: 4, paddingLeft: 'var(--lotto-board-row-padding-x)' }}>
+            Variant = {variant}
+          </p>
+          <NumberSearchBox variant={variant} />
+        </div>
+      ))}
+    </div>
+  ),
+  parameters: { layout: 'padded', docs: { source: { type: 'code' } } },
+};
+
 const NumberSearchBoxInteractiveComponent = () => {
   const [val, setVal] = useState('');
   return (
-    <div style={{ fontFamily: TYPOGRAPHY.fontFamily }}>
-      <p style={{ fontSize: 13, color: '#737373', marginBottom: 8 }}>
-        Click a box and type digits. Backspace to delete.
-      </p>
+    <div style={{ fontFamily: sans }}>
+      <p style={{ ...note, marginBottom: 8 }}>Click a cell and type digits. Backspace to delete.</p>
       <NumberSearchBox value={val} onChange={setVal} />
-      <p style={{ fontSize: 12, color: '#737373', marginTop: 8 }}>
-        Current value: <code>{val || '(empty)'}</code>
+      <p style={{ ...note, marginTop: 8 }}>
+        Current value: <code style={{ fontFamily: mono }}>{val || '(empty)'}</code>
       </p>
     </div>
   );
@@ -104,10 +134,10 @@ export const MenuButtonAllTypes: NumberSearchBoxStory = {
     const MenuButtonDemo = () => {
       const [active, setActive] = useState<MenuButtonType>('All');
       return (
-        <div style={{ fontFamily: TYPOGRAPHY.fontFamily }}>
+        <div style={{ fontFamily: sans }}>
           <MenuButton activeType={active} onTypeChange={setActive} />
-          <p style={{ fontSize: 12, color: '#737373', marginTop: 8, paddingLeft: SPACING['2xl'] }}>
-            Active: <code>{active}</code>
+          <p style={{ ...note, marginTop: 8, paddingLeft: 'var(--lotto-board-menu-padding-x)' }}>
+            Selected: <code style={{ fontFamily: mono }}>{active}</code>
           </p>
         </div>
       );
@@ -120,15 +150,21 @@ export const MenuButtonAllTypes: NumberSearchBoxStory = {
 export const MenuButtonStates: NumberSearchBoxStory = {
   name: 'MenuButton — Each State',
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, fontFamily: TYPOGRAPHY.fontFamily }}>
-      {(['All', 'Single', 'Set'] as const).map((type) => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, fontFamily: sans }}>
+      {MENU_BUTTON_TYPES.map((type) => (
         <div key={type}>
-          <p style={{ fontSize: 12, color: '#737373', margin: '0 0 4px', paddingLeft: SPACING['2xl'] }}>
+          <p style={{ ...note, marginBottom: 4, paddingLeft: 'var(--lotto-board-menu-padding-x)' }}>
             Type = {type}
           </p>
           <MenuButton activeType={type} />
         </div>
       ))}
+      <div>
+        <p style={{ ...note, marginBottom: 4, paddingLeft: 'var(--lotto-board-menu-padding-x)' }}>
+          State = disabled
+        </p>
+        <MenuButton activeType="All" disabled />
+      </div>
     </div>
   ),
   parameters: { layout: 'centered', docs: { source: { type: 'code' } } },
@@ -143,10 +179,10 @@ export const SetSelectDefault: NumberSearchBoxStory = {
     const SetSelectDemo = () => {
       const [qty, setQty] = useState(1);
       return (
-        <div style={{ fontFamily: TYPOGRAPHY.fontFamily, width: 360 }}>
+        <div style={{ fontFamily: sans, width: 360 }}>
           <SetSelect quantity={qty} onQuantityChange={setQty} />
-          <p style={{ fontSize: 12, color: '#737373', marginTop: 8, paddingLeft: SPACING['2xl'] }}>
-            Quantity: <code>{qty}</code>
+          <p style={{ ...note, marginTop: 8, paddingLeft: 'var(--lotto-board-set-padding-x)' }}>
+            Quantity: <code style={{ fontFamily: mono }}>{qty}</code>
           </p>
         </div>
       );
@@ -156,10 +192,32 @@ export const SetSelectDefault: NumberSearchBoxStory = {
   parameters: { layout: 'centered', docs: { source: { type: 'code' } } },
 };
 
+export const SetSelectStates: NumberSearchBoxStory = {
+  name: 'SetSelect — Canonical States',
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: 360, fontFamily: sans }}>
+      <p style={{ ...note }}>
+        States use the canonical names from the Design System Standard:{' '}
+        <code style={{ fontFamily: mono }}>{SET_SELECT_STATES.join(' · ')}</code>. Figma still
+        calls them Default / Active / Actived — that rename is queued in figma-rename-map.md.
+      </p>
+      {SET_SELECT_STATES.map((state) => (
+        <div key={state}>
+          <p style={{ ...note, marginBottom: 4, paddingLeft: 'var(--lotto-board-set-padding-x)' }}>
+            State = {state}
+          </p>
+          <SetSelect quantity={2} state={state} />
+        </div>
+      ))}
+    </div>
+  ),
+  parameters: { layout: 'padded', docs: { source: { type: 'code' } } },
+};
+
 export const SetSelectDisabled: NumberSearchBoxStory = {
   name: 'SetSelect — Disabled',
   render: () => (
-    <div style={{ fontFamily: TYPOGRAPHY.fontFamily, width: 360 }}>
+    <div style={{ fontFamily: sans, width: 360 }}>
       <SetSelect quantity={3} disabled />
     </div>
   ),
@@ -172,7 +230,7 @@ export const SetSelectDisabled: NumberSearchBoxStory = {
 export const SearchCardAll: NumberSearchBoxStory = {
   name: 'SearchCard — Type: All',
   render: () => (
-    <div style={{ width: 390, fontFamily: TYPOGRAPHY.fontFamily }}>
+    <div style={{ width: 390, fontFamily: sans }}>
       <SearchCard type="All" />
     </div>
   ),
@@ -182,7 +240,7 @@ export const SearchCardAll: NumberSearchBoxStory = {
 export const SearchCardSingle: NumberSearchBoxStory = {
   name: 'SearchCard — Type: Single',
   render: () => (
-    <div style={{ width: 390, fontFamily: TYPOGRAPHY.fontFamily }}>
+    <div style={{ width: 390, fontFamily: sans }}>
       <SearchCard type="Single" />
     </div>
   ),
@@ -192,7 +250,7 @@ export const SearchCardSingle: NumberSearchBoxStory = {
 export const SearchCardSet: NumberSearchBoxStory = {
   name: 'SearchCard — Type: Set',
   render: () => (
-    <div style={{ width: 390, fontFamily: TYPOGRAPHY.fontFamily }}>
+    <div style={{ width: 390, fontFamily: sans }}>
       <SearchCard type="Set" />
     </div>
   ),
@@ -206,7 +264,7 @@ export const SearchCardInteractive: NumberSearchBoxStory = {
       const [log, setLog] = useState<string[]>([]);
       const addLog = (msg: string) => setLog((prev) => [...prev.slice(-4), msg]);
       return (
-        <div style={{ fontFamily: TYPOGRAPHY.fontFamily }}>
+        <div style={{ fontFamily: sans }}>
           <div style={{ width: 390 }}>
             <SearchCard
               type="Set"
@@ -216,7 +274,9 @@ export const SearchCardInteractive: NumberSearchBoxStory = {
             />
           </div>
           {log.length > 0 && (
-            <div style={{ marginTop: 16, fontSize: 12, color: '#737373', paddingLeft: SPACING['2xl'] }}>
+            <div
+              style={{ ...note, marginTop: 16, paddingLeft: 'var(--lotto-board-card-padding-x)' }}
+            >
               <strong>Event log:</strong>
               {log.map((l, i) => (
                 <div key={i}>{l}</div>
@@ -232,97 +292,242 @@ export const SearchCardInteractive: NumberSearchBoxStory = {
 };
 
 // ═══════════════════════════════════════════
-//  Token Verification — Figma vs Storybook
+//  Token Verification — the Tier 2 → Tier 1 chain
+//
+//  Both columns are read from the generated tokens, so this table cannot drift: if the
+//  overlay ref and the semantic token stop agreeing, the row fails on its own.
 // ═══════════════════════════════════════════
-export const TokenVerification: NumberSearchBoxStory = {
-  name: 'Token Verification',
-  render: () => {
-    const checks = [
-      // Spacing
-      { label: 'Spacing none', figmaVar: 'dimension/spacing/spacing-none', figma: '0px', storybook: `${SPACING.none}px` },
-      { label: 'Spacing sm', figmaVar: 'dimension/spacing/spacing-sm', figma: '4px', storybook: `${SPACING.sm}px` },
-      { label: 'Spacing lg', figmaVar: 'dimension/spacing/spacing-lg', figma: '8px', storybook: `${SPACING.lg}px` },
-      { label: 'Spacing xl', figmaVar: 'dimension/spacing/spacing-xl', figma: '12px', storybook: `${SPACING.xl}px` },
-      { label: 'Spacing 2xl', figmaVar: 'dimension/spacing/spacing-2xl', figma: '16px', storybook: `${SPACING['2xl']}px` },
-      // Radius
-      { label: 'Radius none', figmaVar: 'dimension/breakpoint/radius/radius-none', figma: '0px', storybook: `${RADIUS.none}px` },
-      { label: 'Radius lg', figmaVar: 'dimension/breakpoint/radius/radius-lg', figma: '8px', storybook: `${RADIUS.lg}px` },
-      // Border
-      { label: 'Border Width 1', figmaVar: 'dimension/border-width/1', figma: '1px', storybook: `${BORDER_WIDTH[1]}px` },
-      // Shadow
-      { label: 'Shadow sm', figmaVar: 'dimension/shadow/sm', figma: '0px 1px 2px 0px rgba(0,0,0,0.06), 0px 1px 3px 0px rgba(0,0,0,0.10)', storybook: SHADOW.sm },
-      // Typography
-      { label: 'Font Family', figmaVar: 'font-family/Graphik TH', figma: 'Graphik TH', storybook: TYPOGRAPHY.fontFamily },
-      { label: 'Title fontSize (title/l-semb)', figmaVar: 'title/l-semb/size', figma: '16px', storybook: `${TYPOGRAPHY.title.fontSize}px` },
-      { label: 'Title fontWeight', figmaVar: 'title/l-semb/weight', figma: '600', storybook: `${TYPOGRAPHY.title.fontWeight}` },
-      { label: 'Title lineHeight', figmaVar: 'title/l-semb/line-height', figma: '24px', storybook: TYPOGRAPHY.title.lineHeight },
-      { label: 'Button fontSize (button/m-semb)', figmaVar: 'button/m-semb/size', figma: '14px', storybook: `${TYPOGRAPHY.button.fontSize}px` },
-      { label: 'Button fontWeight', figmaVar: 'button/m-semb/weight', figma: '600', storybook: `${TYPOGRAPHY.button.fontWeight}` },
-      { label: 'Button lineHeight', figmaVar: 'button/m-semb/line-height', figma: '22px', storybook: TYPOGRAPHY.button.lineHeight },
-      { label: 'Number Box fontSize', figmaVar: '(visual ~24px bold)', figma: '24px', storybook: `${TYPOGRAPHY.numberBox.fontSize}px` },
-      // Component dimensions
-      { label: 'Number Box width', figmaVar: 'number-search-box-2 box width', figma: '53px', storybook: `${NUMBER_BOX.width}px` },
-      { label: 'Number Box height', figmaVar: 'number-search-box-2 box height', figma: '64px', storybook: `${NUMBER_BOX.height}px` },
-      { label: 'MenuButton width', figmaVar: 'menu-button btn width', figma: '114px', storybook: `${MENU_BUTTON.buttonWidth}px` },
-      { label: 'MenuButton height', figmaVar: 'menu-button btn height', figma: '44px', storybook: `${MENU_BUTTON.buttonHeight}px` },
-      { label: 'Stepper button size', figmaVar: 'set-select stepper btn', figma: '48px', storybook: `${SET_SELECT.stepperButtonSize}px` },
-      { label: 'Image width', figmaVar: 'set-select image', figma: '72px', storybook: `${SET_SELECT.imageWidth}px` },
-      { label: 'Image height', figmaVar: 'set-select image', figma: '69px', storybook: `${SET_SELECT.imageHeight}px` },
-      // Colors
-      { label: 'lotto-board-bg-white', figmaVar: 'colors/lotto-board/lotto-board-bg-white', figma: '#FFFFFF', storybook: LOTTO_BOARD_COLORS.bgWhite },
-      { label: 'lotto-board-bg-dark', figmaVar: 'colors/lotto-board/lotto-board-bg-dark', figma: '#262626', storybook: LOTTO_BOARD_COLORS.bgDark },
-      { label: 'lotto-board-bg-gray', figmaVar: 'colors/lotto-board/lotto-board-bg-gray', figma: '#C9C9C9', storybook: LOTTO_BOARD_COLORS.bgGray },
-      { label: 'lotto-board-border', figmaVar: 'colors/lotto-board/lotto-board-border', figma: '#D4D4D4', storybook: LOTTO_BOARD_COLORS.border },
-      { label: 'lotto-board-fg-dark', figmaVar: 'colors/lotto-board/lotto-board-fg-dark', figma: '#262626', storybook: LOTTO_BOARD_COLORS.fgDark },
-      { label: 'lotto-board-fg-red', figmaVar: 'colors/lotto-board/lotto-board-fg-red', figma: '#E32321', storybook: LOTTO_BOARD_COLORS.fgRed },
-      { label: 'btn-bg-pri-default', figmaVar: 'colors/button/primary/btn-bg-pri-default', figma: '#E32321', storybook: BUTTON_COLORS.primary.bg },
-      { label: 'btn-fg-pri-default', figmaVar: 'colors/button/primary/btn-fg-pri-default', figma: '#FFFFFF', storybook: BUTTON_COLORS.primary.fg },
-      { label: 'btn-bg-oncont-default', figmaVar: 'colors/button/on-container/btn-bg-oncont-default', figma: '#FFFFFF', storybook: BUTTON_COLORS.onContainer.bg },
-      { label: 'btn-fg-oncont-default', figmaVar: 'colors/button/on-container/btn-fg-oncont-default', figma: '#E32321', storybook: BUTTON_COLORS.onContainer.fg },
-    ];
 
-    return (
-      <div style={{ fontFamily: "'Graphik TH', sans-serif" }}>
-        <h2 style={{ margin: '0 0 8px', fontSize: 20 }}>LottoBoard Token Verification</h2>
-        <p style={{ margin: '0 0 16px', fontSize: 13, color: '#737373' }}>
-          Comparing Figma bound variables vs Storybook token values
-        </p>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-          <thead>
-            <tr style={{ borderBottom: '2px solid #E5E5E5', textAlign: 'left' }}>
-              <th style={{ padding: '8px 12px' }}>Token</th>
-              <th style={{ padding: '8px 12px' }}>Figma Variable Name</th>
-              <th style={{ padding: '8px 12px' }}>Figma Value</th>
-              <th style={{ padding: '8px 12px' }}>Storybook Value</th>
-              <th style={{ padding: '8px 12px' }}>Match</th>
-            </tr>
-          </thead>
-          <tbody>
-            {checks.map((c) => {
-              const figmaClean = c.figma.replace(/\s*\(.*\)/, '').trim();
-              const sbClean = c.storybook.replace(/'/g, '').replace(/, sans-serif/, '').trim();
-              const match =
-                figmaClean.toLowerCase() === sbClean.toLowerCase() ||
-                c.figma.includes(sbClean) ||
-                sbClean.includes(figmaClean);
+/** [component token, the --sys-* token its overlay ref points at, or null when fixed] */
+const LAYOUT_CHAIN: Array<[string, string | null]> = [
+  ['cell-gap', 'spacing-lg'],
+  ['cell-padding', 'spacing-lg'],
+  ['cell-radius', 'radius-lg'],
+  ['cell-border-width', 'border-width-hairline'],
+  ['cell-shadow', 'elevation-card'],
+  ['cell-width', null],
+  ['cell-height', null],
+  ['row-padding-x', 'spacing-2xl'],
+
+  ['menu-gap', 'spacing-lg'],
+  ['menu-padding-x', 'spacing-2xl'],
+  ['menu-item-padding-x', 'spacing-2xl'],
+  ['menu-item-radius', 'radius-lg'],
+  ['menu-item-border-width', 'border-width-hairline'],
+  ['menu-item-width', null],
+  ['menu-item-height', null],
+
+  ['set-gap', 'spacing-sm'],
+  ['set-padding-x', 'spacing-2xl'],
+  ['set-row-gap', 'spacing-2xl'],
+  ['set-image-radius', 'radius-lg'],
+  ['set-image-width', null],
+  ['set-image-height', null],
+  ['set-stepper-radius', 'radius-lg'],
+  ['set-stepper-padding', 'spacing-xl'],
+  ['set-stepper-border-width', 'border-width-hairline'],
+  ['set-stepper-size', null],
+  ['set-quantity-padding-x', 'spacing-2xl'],
+  ['set-quantity-min-width', null],
+  ['set-icon-size', null],
+
+  ['card-gap', 'spacing-2xl'],
+  ['card-padding-x', 'spacing-2xl'],
+  ['card-header-gap', 'spacing-sm'],
+  ['card-actions-gap', 'spacing-lg'],
+  ['card-max-width', null],
+
+  ['opacity-disabled', null],
+  ['opacity-limit-reached', null],
+];
+
+/** Text role → the semantic typography role it refs. `null` = no role backs it. */
+const TEXT_ROLE_CHAIN: Record<string, string | null> = {
+  title: 'title-lg-semibold',
+  menu: 'button-md-semibold',
+  link: 'underline-md-medium',
+  caption: 'label-md-medium',
+  number: null,
+};
+
+/** `number` borrows family + tracking from this role; every role shares both. */
+const NUMBER_SHARED_ROLE = 'body-xl-semibold';
+
+/** Colour token → the semantic colour it refs (as generated into components.json). */
+const COLOUR_CHAIN: Array<[string, string, string]> = [
+  ['background-white', 'color-background-default', 'Card / cell background'],
+  ['background-red', 'color-primary-default', 'Selected menu-button fill'],
+  ['background-dark', 'color-secondary-default', 'Stepper plus button fill'],
+  ['background-gray', 'color-secondary-light', 'Lottery thumbnail placeholder'],
+  ['background-soft-gray', 'color-tertiary-accent-xs', 'Soft surface (available, unused today)'],
+  ['background-dark-gray', 'color-tertiary-accent-md', 'Strong surface (available, unused today)'],
+  ['foreground-white', 'color-foreground-white', 'Text on red / dark fills'],
+  ['foreground-dark', 'color-secondary-default', 'Digit, label and quantity text'],
+  ['foreground-red', 'color-primary-default', 'Heading, clear link, selected cell border'],
+  ['foreground-gray', 'color-tertiary-default', 'Muted text (available, unused today)'],
+  ['foreground-dark-gray', 'color-tertiary-accent-lg', 'Strong muted text (available, unused today)'],
+  ['foreground-disable', 'color-secondary-light', 'Disabled text (available, unused today)'],
+  ['border', 'color-border-accent-gray-light', 'Cell and stepper hairline'],
+];
+
+const th: React.CSSProperties = {
+  textAlign: 'left',
+  padding: '8px 12px',
+  fontSize: 11,
+  fontWeight: 600,
+  color: muted,
+  borderBottom: '2px solid var(--sys-color-border-accent-gray-soft-light)',
+};
+
+const td: React.CSSProperties = {
+  padding: '6px 12px',
+  borderBottom: '1px solid var(--sys-color-background-light)',
+  fontFamily: mono,
+  fontSize: 11,
+};
+
+const ChainRow: React.FC<{ token: string; sysToken: string | null }> = ({ token, sysToken }) => {
+  const tier2 = lottoBoardValue(token);
+  const tier1 = sysToken ? sysValue(sysToken) : '';
+  const status = sysToken === null ? '📌' : tier1 && tier1 === tier2 ? '✅' : '❌';
+  return (
+    <tr>
+      <td style={{ ...td, color: 'var(--sys-color-primary-default)' }}>--lotto-board-{token}</td>
+      <td style={{ ...td, color: 'var(--sys-color-status-info-default)' }}>
+        {sysToken ? `--sys-${sysToken}` : '(fixed — no semantic token)'}
+      </td>
+      <td style={{ ...td, color: 'var(--sys-color-status-success-dark)' }}>{tier2}</td>
+      <td style={{ ...td, fontSize: 14 }}>{status}</td>
+    </tr>
+  );
+};
+
+export const TokenVerification: NumberSearchBoxStory = {
+  name: '🔍 Token Verification',
+  render: () => (
+    <div style={{ fontFamily: sans, maxWidth: 940 }}>
+      <h2 style={{ margin: '0 0 8px', fontSize: 20 }}>LottoBoard token chain</h2>
+      <p style={{ ...note, marginBottom: 20, lineHeight: 1.6 }}>
+        Every value flows Figma → design.md + components/lotto-board.json → components.json →
+        tokens.css. The components render the Tier 2 alias; the alias points at a Tier 1
+        semantic token; that resolves to the literal below. Both columns are read from the
+        generated tokens, so nothing here is hand-typed. 📌 marks a fixed pixel dimension that
+        no semantic token backs — each one is justified in components/lotto-board.json.
+      </p>
+
+      <h3 style={{ fontSize: 14, margin: '0 0 8px' }}>Layout &amp; sizing</h3>
+      <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 28 }}>
+        <thead>
+          <tr>
+            <th style={th}>Tier 2 — component</th>
+            <th style={th}>Tier 1 — semantic</th>
+            <th style={th}>Value</th>
+            <th style={th}>Match</th>
+          </tr>
+        </thead>
+        <tbody>
+          {LAYOUT_CHAIN.map(([token, sysToken]) => (
+            <ChainRow key={token} token={token} sysToken={sysToken} />
+          ))}
+        </tbody>
+      </table>
+
+      <h3 style={{ fontSize: 14, margin: '0 0 8px' }}>Typography</h3>
+      <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 28 }}>
+        <thead>
+          <tr>
+            <th style={th}>Tier 2 — component</th>
+            <th style={th}>Tier 1 — semantic</th>
+            <th style={th}>Value</th>
+            <th style={th}>Match</th>
+          </tr>
+        </thead>
+        <tbody>
+          {LOTTO_BOARD_TEXT_ROLES.flatMap((role) =>
+            (['family', 'size', 'line-height', 'weight', 'tracking'] as const).map((prop) => {
+              const semantic = TEXT_ROLE_CHAIN[role] ?? NUMBER_SHARED_ROLE;
+              // `number` only refs the two props every role shares; its size, line-height
+              // and weight are literals, justified in components/lotto-board.json.
+              const backed =
+                role === 'number' && prop !== 'family' && prop !== 'tracking'
+                  ? null
+                  : `type-${semantic}-${prop}`;
               return (
-                <tr key={c.label} style={{ borderBottom: '1px solid #F5F5F5' }}>
-                  <td style={{ padding: '6px 12px', fontWeight: 500 }}>{c.label}</td>
-                  <td style={{ padding: '6px 12px', fontFamily: 'monospace', fontSize: 11, color: '#737373' }}>
-                    {c.figmaVar}
-                  </td>
-                  <td style={{ padding: '6px 12px', fontFamily: 'monospace', color: '#E32321' }}>{c.figma}</td>
-                  <td style={{ padding: '6px 12px', fontFamily: 'monospace', color: '#3B82F6' }}>{c.storybook}</td>
-                  <td style={{ padding: '6px 12px', fontSize: 16 }}>{match ? '\u2705' : '\u274C'}</td>
-                </tr>
+                <ChainRow
+                  key={`${role}-${prop}`}
+                  token={`typography-${role}-${prop}`}
+                  sysToken={backed}
+                />
               );
-            })}
-          </tbody>
-        </table>
-      </div>
-    );
-  },
+            }),
+          )}
+        </tbody>
+      </table>
+
+      <h3 style={{ fontSize: 14, margin: '0 0 8px' }}>Colours</h3>
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <thead>
+          <tr>
+            <th style={th}>Tier 2 — component</th>
+            <th style={th}>Tier 1 — semantic</th>
+            <th style={th}>Value</th>
+            <th style={th}>Match</th>
+          </tr>
+        </thead>
+        <tbody>
+          {COLOUR_CHAIN.map(([token, sysToken]) => (
+            <ChainRow key={token} token={token} sysToken={sysToken} />
+          ))}
+        </tbody>
+      </table>
+
+      <p style={{ ...note, marginTop: 20 }}>
+        {lottoBoardTokenNames().length} tokens declared under the{' '}
+        <code style={{ fontFamily: mono }}>--lotto-board-*</code> prefix.
+      </p>
+    </div>
+  ),
   parameters: { layout: 'padded', docs: { source: { type: 'code' } } },
+};
+
+// ═══════════════════════════════════════════
+//  Text roles — what each role resolves to
+// ═══════════════════════════════════════════
+export const TextRoles: StoryObj = {
+  name: 'Text Roles',
+  render: () => (
+    <div style={{ fontFamily: sans, maxWidth: 760, display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <p style={{ ...note, lineHeight: 1.6 }}>
+        Five text roles. Four map onto a semantic typography role; <code style={{ fontFamily: mono }}>number</code>{' '}
+        does not — 24px/32px Bold has no equivalent in design.md, so only its family and
+        tracking are refs.
+      </p>
+      {LOTTO_BOARD_TEXT_ROLES.map((role) => {
+        const v = lottoBoardTextValues(role);
+        return (
+          <div key={role}>
+            <div style={{ ...note, marginBottom: 4 }}>
+              <code style={{ fontFamily: mono }}>{role}</code> — {v.size} / {v.lineHeight} /{' '}
+              {v.weight}
+            </div>
+            <div
+              style={{
+                fontFamily: `var(--lotto-board-typography-${role}-family)`,
+                fontSize: `var(--lotto-board-typography-${role}-size)`,
+                fontWeight: `var(--lotto-board-typography-${role}-weight)` as never,
+                lineHeight: `var(--lotto-board-typography-${role}-line-height)`,
+                letterSpacing: `var(--lotto-board-typography-${role}-tracking)`,
+                color: 'var(--lotto-board-foreground-dark)',
+              }}
+            >
+              ค้นหาเลขเด็ด 123456
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  ),
+  parameters: { layout: 'padded' },
 };
 
 // ── Color Bindings ──
@@ -331,19 +536,15 @@ export const ColorBindings: StoryObj = {
   render: () => (
     <ColorBindingsTable
       componentName="LottoBoard"
-      figmaId="14291:130847"
-      bindings={[
-        { token: 'lotto-board-bg-white', figmaVariable: 'colors/lotto-board/lotto-board-bg-white', hex: '#FFFFFF', usage: 'Card / input background' },
-        { token: 'lotto-board-bg-dark', figmaVariable: 'colors/lotto-board/lotto-board-bg-dark', hex: '#262626', usage: 'Dark background elements' },
-        { token: 'lotto-board-bg-gray', figmaVariable: 'colors/lotto-board/lotto-board-bg-gray', hex: '#C9C9C9', usage: 'Disabled / inactive bg' },
-        { token: 'lotto-board-border', figmaVariable: 'colors/lotto-board/lotto-board-border', hex: '#D4D4D4', usage: 'Input / card border' },
-        { token: 'lotto-board-fg-dark', figmaVariable: 'colors/lotto-board/lotto-board-fg-dark', hex: '#262626', usage: 'Primary text color' },
-        { token: 'lotto-board-fg-red', figmaVariable: 'colors/lotto-board/lotto-board-fg-red', hex: '#E32321', usage: 'Accent / active text color' },
-        { token: 'btn-bg-pri-default', figmaVariable: 'colors/button/primary/btn-bg-pri-default', hex: '#E32321', usage: 'Primary menu button bg' },
-        { token: 'btn-fg-pri-default', figmaVariable: 'colors/button/primary/btn-fg-pri-default', hex: '#FFFFFF', usage: 'Primary menu button text' },
-        { token: 'btn-bg-oncont-default', figmaVariable: 'colors/button/on-container/btn-bg-oncont-default', hex: '#FFFFFF', usage: 'On-container button bg' },
-        { token: 'btn-fg-oncont-default', figmaVariable: 'colors/button/on-container/btn-fg-oncont-default', hex: '#E32321', usage: 'On-container button text' },
-      ]}
+      figmaId="colors/lotto-board"
+      bindings={COLOUR_CHAIN.map(([token, , usage]) => ({
+        token: `--lotto-board-${token}`,
+        figmaVariable: `colors/lotto-board/lotto-board-${token
+          .replace(/^background-/, 'bg-')
+          .replace(/^foreground-/, 'fg-')}`,
+        hex: lottoBoardValue(token),
+        usage,
+      }))}
     />
   ),
 };

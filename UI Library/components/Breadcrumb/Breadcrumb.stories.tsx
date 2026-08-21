@@ -3,33 +3,93 @@ import React, { useState } from 'react';
 import Breadcrumb from './Breadcrumb';
 import type { BreadcrumbItem } from './Breadcrumb';
 import {
-  BREADCRUMB_COLORS,
-  BREADCRUMB_DIMENSIONS,
-  TYPOGRAPHY,
-  SPACING,
+  BREADCRUMB_BASE_VALUES,
+  BREADCRUMB_ICON_SIZE_VALUE,
+  BREADCRUMB_RENDERED_STATES,
+  BREADCRUMB_SEPARATOR_COLOR_VALUE,
+  BREADCRUMB_STATES,
+  breadcrumbColorValues,
+  breadcrumbFontWeightValue,
+  breadcrumbTokenNames,
+  breadcrumbValue,
 } from './tokens';
+import { sysValue } from '../../foundations/tokens';
+import { TOKEN_VALUES_DESKTOP as DESKTOP } from '../../foundations/tokens.generated';
 import ColorBindingsTable from '../../system/ColorBindingsTable';
-import type { ColorBinding } from '../../system/ColorBindingsTable';
 
 // ═══════════════════════════════════════════
 //  Breadcrumb Stories — Lotteryplus Design System
-//  Figma: "breadcrumb" (14291:136385)
-//  5 Variants: Step 1 through Step 5
+//  Figma: "breadcrumb" (14291:136385) — 5 variants, Step 1 through Step 5
+//
+//  Every value shown here is read from foundations/tokens.generated.ts, which is
+//  generated from Figma. Nothing on this page is typed by hand, so a table can never
+//  claim a value the component does not actually render.
 // ═══════════════════════════════════════════
 
+const sans = 'var(--sys-type-body-md-regular-family), sans-serif';
+const mono = 'ui-monospace, SFMono-Regular, Menlo, monospace';
+
+const muted = 'var(--sys-color-text-tertiary-default)';
+const hairline = '1px solid var(--sys-color-border-accent-gray-soft-light)';
+
+const th: React.CSSProperties = {
+  textAlign: 'left',
+  padding: '8px 12px',
+  fontSize: 11,
+  fontWeight: 600,
+  color: muted,
+  borderBottom: '2px solid var(--sys-color-border-accent-gray-soft-light)',
+};
+
+const td: React.CSSProperties = {
+  padding: '6px 12px',
+  borderBottom: hairline,
+  fontFamily: mono,
+  fontSize: 11,
+};
+
+const Swatch: React.FC<{ value: string }> = ({ value }) =>
+  value.startsWith('#') ? (
+    <span
+      style={{
+        display: 'inline-block',
+        width: 12,
+        height: 12,
+        borderRadius: 2,
+        marginLeft: 6,
+        verticalAlign: 'middle',
+        background: value,
+        border: hairline,
+      }}
+    />
+  ) : null;
+
 const meta: Meta<typeof Breadcrumb> = {
-  title: 'Components/Breadcrumb',
+  title: 'Molecules/Breadcrumb',
   component: Breadcrumb,
   tags: ['autodocs'],
+  argTypes: {
+    items: {
+      control: 'object',
+      description:
+        'Crumbs (1-5). Every crumb renders in the canonical `rest` state except the ' +
+        'last, which is the current page and renders `selected`.',
+    },
+    onItemClick: {
+      action: 'itemClick',
+      description: 'Fired for `rest` crumbs only — the `selected` crumb is not clickable.',
+    },
+    className: { control: 'text' },
+  },
   parameters: {
     layout: 'centered',
     docs: {
       description: {
         component:
-          'Breadcrumb component from Figma "Design Systems Web App Lotteryplus V.7.1". ' +
-          'Displays a navigation trail with 1-5 items. The last item is always the active/current page ' +
-          '(red text, red icon, semibold). Items support optional icons and text. ' +
-          'Separator uses arrow-right-S icon between items. Uses Icon component.',
+          'Breadcrumb from Figma "Design Systems Web App Lotteryplus V.7.1" (14291:136385). ' +
+          'A navigation trail of 1-5 crumbs. Canonical states: the last crumb is `selected` ' +
+          '(the current page — red label, red icon, semibold); the rest are `rest`. Crumbs ' +
+          'support optional icons and text; the separator is the arrow-right-S icon.',
       },
     },
   },
@@ -59,13 +119,10 @@ export const Default: Story = {
   render: () => {
     const [clicked, setClicked] = useState<string | null>(null);
     return (
-      <div style={{ fontFamily: "'Graphik TH', sans-serif" }}>
-        <Breadcrumb
-          items={items3}
-          onItemClick={(key) => setClicked(key)}
-        />
+      <div style={{ fontFamily: sans }}>
+        <Breadcrumb items={items3} onItemClick={(key) => setClicked(key)} />
         {clicked && (
-          <div style={{ marginTop: 12, fontSize: 12, color: '#737373' }}>
+          <div style={{ marginTop: 12, fontSize: 12, color: muted }}>
             Clicked: &quot;{clicked}&quot;
           </div>
         )}
@@ -78,13 +135,13 @@ export const Default: Story = {
 export const AllSteps: Story = {
   name: 'All Steps (1-5)',
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, fontFamily: "'Graphik TH', sans-serif" }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, fontFamily: sans }}>
       {[1, 2, 3, 4, 5].map((step) => {
         const stepItems = items5.slice(0, step);
         return (
           <div key={step}>
-            <div style={{ fontSize: 11, color: '#999', marginBottom: 4 }}>
-              Step {step} ({step} item{step > 1 ? 's' : ''})
+            <div style={{ fontSize: 11, color: muted, marginBottom: 4 }}>
+              Step {step} ({step} crumb{step > 1 ? 's' : ''})
             </div>
             <Breadcrumb items={stepItems} />
           </div>
@@ -103,8 +160,8 @@ export const WithoutIcons: Story = {
       showIcon: false,
     }));
     return (
-      <div style={{ fontFamily: "'Graphik TH', sans-serif" }}>
-        <div style={{ fontSize: 11, color: '#999', marginBottom: 4 }}>
+      <div style={{ fontFamily: sans }}>
+        <div style={{ fontSize: 11, color: muted, marginBottom: 4 }}>
           Text-only breadcrumb (showIcon=false)
         </div>
         <Breadcrumb items={noIconItems} />
@@ -113,124 +170,257 @@ export const WithoutIcons: Story = {
   },
 };
 
-// ── 4. Token Verification ──
+// ── 4. States (rest vs selected) ──
+export const States: Story = {
+  name: 'States',
+  render: () => (
+    <div style={{ fontFamily: sans, display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div style={{ fontSize: 12, color: muted, lineHeight: 1.6 }}>
+        Canonical states: {BREADCRUMB_STATES.join(' · ')}.
+        <br />
+        Breadcrumb renders {BREADCRUMB_RENDERED_STATES.join(' and ')} today — every crumb
+        is <code>rest</code> except the last, which is the current page and renders{' '}
+        <code>selected</code>.
+      </div>
+
+      <Breadcrumb items={items3} />
+
+      <table style={{ borderCollapse: 'collapse' }}>
+        <thead>
+          <tr>
+            <th style={th}>State</th>
+            <th style={th}>Label</th>
+            <th style={th}>Icon</th>
+            <th style={th}>Weight</th>
+          </tr>
+        </thead>
+        <tbody>
+          {BREADCRUMB_RENDERED_STATES.map((state) => {
+            const v = breadcrumbColorValues(state);
+            return (
+              <tr key={state}>
+                <td style={{ ...td, fontFamily: sans }}>{state}</td>
+                <td style={td}>
+                  {v.text}
+                  <Swatch value={v.text} />
+                </td>
+                <td style={td}>
+                  {v.icon}
+                  <Swatch value={v.icon} />
+                </td>
+                <td style={td}>{breadcrumbFontWeightValue(state)}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  ),
+  parameters: { layout: 'padded' },
+};
+
+// ═══════════════════════════════════════════
+//  Token chain — Figma → design.md → components.json → tokens.css → component
+//  Every "Value" cell is read from the generated literals, never hand-typed.
+// ═══════════════════════════════════════════
+
 export const TokenVerification: Story = {
-  name: 'Token Verification',
+  name: '🔍 Token Chain',
   render: () => {
-    const tokenRows = [
-      {
-        section: 'Layout / Spacing',
-        tokens: [
-          { token: 'Container gap (spacing-2xl)', figmaVar: 'dimension/spacing/spacing-2xl', value: `${BREADCRUMB_DIMENSIONS.containerGap}px`, actual: '16px' },
-          { token: 'Item internal gap (spacing-lg)', figmaVar: 'dimension/spacing/spacing-lg', value: `${BREADCRUMB_DIMENSIONS.itemGap}px`, actual: '8px' },
-          { token: 'Icon size', figmaVar: 'N/A (icons-size 24)', value: `${BREADCRUMB_DIMENSIONS.iconSize}px`, actual: '24px' },
-        ],
-      },
-      {
-        section: 'Spacing Tokens',
-        tokens: [
-          { token: 'spacing-none', figmaVar: 'dimension/spacing/spacing-none', value: `${SPACING.none}`, actual: '0' },
-          { token: 'spacing-lg', figmaVar: 'dimension/spacing/spacing-lg', value: `${SPACING.lg}px`, actual: '8px' },
-          { token: 'spacing-2xl', figmaVar: 'dimension/spacing/spacing-2xl', value: `${SPACING['2xl']}px`, actual: '16px' },
-        ],
-      },
-      {
-        section: 'Typography — Inactive (label/m-reg)',
-        tokens: [
-          { token: 'Font size (label/m-reg/size)', figmaVar: 'label/m-reg/size', value: `${TYPOGRAPHY.inactive.fontSize}px`, actual: '12px' },
-          { token: 'Font weight (label/m-reg/weight)', figmaVar: 'label/m-reg/weight', value: `${TYPOGRAPHY.inactive.fontWeight}`, actual: '400' },
-          { token: 'Line height (label/m-reg/line-height)', figmaVar: 'label/m-reg/line-height', value: TYPOGRAPHY.inactive.lineHeight, actual: '18px' },
-        ],
-      },
-      {
-        section: 'Typography — Active (label/m-semb)',
-        tokens: [
-          { token: 'Font size (label/m-semb/size)', figmaVar: 'label/m-semb/size', value: `${TYPOGRAPHY.active.fontSize}px`, actual: '12px' },
-          { token: 'Font weight (label/m-semb/weight)', figmaVar: 'label/m-semb/weight', value: `${TYPOGRAPHY.active.fontWeight}`, actual: '600' },
-          { token: 'Line height (label/m-semb/line-height)', figmaVar: 'label/m-semb/line-height', value: TYPOGRAPHY.active.lineHeight, actual: '18px' },
-        ],
-      },
-      {
-        section: 'Colors — Text',
-        tokens: [
-          { token: 'Inactive text (breadcrumb-fg-dark)', figmaVar: 'colors/breadcrumb/breadcrumb-fg-dark', value: BREADCRUMB_COLORS.text.inactive, actual: '#141414' },
-          { token: 'Active text (breadcrumb-fg-red)', figmaVar: 'colors/breadcrumb/breadcrumb-fg-red', value: BREADCRUMB_COLORS.text.active, actual: '#E32321' },
-        ],
-      },
-      {
-        section: 'Colors — Icons',
-        tokens: [
-          { token: 'Inactive icon (icon-fg-secondary)', figmaVar: 'colors/icon/icon-fg-secondary', value: BREADCRUMB_COLORS.icon.inactive, actual: '#262626' },
-          { token: 'Active icon (icon-fg-primary)', figmaVar: 'colors/icon/icon-fg-primary', value: BREADCRUMB_COLORS.icon.active, actual: '#E32321' },
-          { token: 'Separator icon (icon-fg-secondary)', figmaVar: 'colors/icon/icon-fg-secondary', value: BREADCRUMB_COLORS.icon.separator, actual: '#262626' },
-        ],
-      },
+    /** [Tier 2 component token, Tier 1 semantic token, resolved literal] */
+    const layout: Array<[string, string, string]> = [
+      ['--breadcrumb-gap', '--sys-spacing-2xl', breadcrumbValue('gap')],
+      ['--breadcrumb-item-gap', '--sys-spacing-lg', breadcrumbValue('item-gap')],
+      [
+        '--breadcrumb-typography-family',
+        '--sys-type-label-md-regular-family',
+        breadcrumbValue('typography-family'),
+      ],
+      [
+        '--breadcrumb-typography-size',
+        '--sys-type-label-md-regular-size',
+        breadcrumbValue('typography-size'),
+      ],
+      [
+        '--breadcrumb-typography-line-height',
+        '--sys-type-label-md-regular-line-height',
+        breadcrumbValue('typography-line-height'),
+      ],
+      [
+        '--breadcrumb-typography-tracking',
+        '--sys-type-label-md-regular-tracking',
+        breadcrumbValue('typography-tracking'),
+      ],
+      [
+        '--breadcrumb-typography-weight-rest',
+        '--sys-type-label-md-regular-weight',
+        breadcrumbValue('typography-weight-rest'),
+      ],
+      [
+        '--breadcrumb-typography-weight-selected',
+        '--sys-type-label-md-semibold-weight',
+        breadcrumbValue('typography-weight-selected'),
+      ],
+      ['--breadcrumb-icon-size', '(fixed — no Figma token)', breadcrumbValue('icon-size')],
+    ];
+
+    /** [what it paints, token the component references, resolved literal] */
+    const colors: Array<[string, string, string]> = [
+      [
+        'Label — rest',
+        '--breadcrumb-foreground-dark → --sys-color-secondary-dark',
+        breadcrumbColorValues('rest').text,
+      ],
+      [
+        'Label — selected',
+        '--breadcrumb-foreground-red → --sys-color-primary-default',
+        breadcrumbColorValues('selected').text,
+      ],
+      [
+        'Icon — rest',
+        '--sys-color-secondary-default (no breadcrumb token in Figma)',
+        breadcrumbColorValues('rest').icon,
+      ],
+      [
+        'Icon — selected',
+        '--sys-color-primary-default (no breadcrumb token in Figma)',
+        breadcrumbColorValues('selected').icon,
+      ],
+      [
+        'Separator chevron',
+        '--sys-color-secondary-default (no breadcrumb token in Figma)',
+        BREADCRUMB_SEPARATOR_COLOR_VALUE,
+      ],
     ];
 
     return (
-      <div style={{ padding: 32, maxWidth: 750, fontFamily: "'Graphik TH', sans-serif" }}>
-        <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>Breadcrumb Token Verification</h2>
-        <p style={{ fontSize: 14, color: '#999', marginBottom: 8 }}>
-          Comparing Figma component values vs Storybook token values with bound variable names
+      <div style={{ fontFamily: sans, maxWidth: 940 }}>
+        <h2 style={{ margin: '0 0 8px', fontSize: 20 }}>Breadcrumb token chain</h2>
+        <p style={{ margin: '0 0 20px', fontSize: 13, color: muted }}>
+          Every value flows Figma → design.md → components.json → tokens.css. The component
+          renders the Tier 2 alias; the alias points at a Tier 1 semantic token; that
+          resolves to the literal. Nothing below is hand-typed — the Value column is read
+          from <code>tokens.generated.ts</code>.
         </p>
-        <p style={{ fontSize: 13, fontWeight: 600, marginBottom: 24 }}>
+        <p style={{ margin: '0 0 20px', fontSize: 12, fontWeight: 600 }}>
           Figma: &quot;breadcrumb&quot; (14291:136385)
         </p>
 
         {/* Live previews */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: 24, background: '#F9F9F9', borderRadius: 8, marginBottom: 32, border: '1px solid #E5E5E5' }}>
-          <div style={{ fontSize: 12, fontWeight: 600 }}>Live Previews</div>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 16,
+            padding: 24,
+            marginBottom: 32,
+            background: 'var(--sys-color-background-light)',
+            border: hairline,
+            borderRadius: 8,
+          }}
+        >
+          <div style={{ fontSize: 12, fontWeight: 600 }}>Live previews</div>
           <div>
-            <div style={{ fontSize: 11, color: '#999', marginBottom: 4 }}>Step 3 (with icons)</div>
+            <div style={{ fontSize: 11, color: muted, marginBottom: 4 }}>Step 3 (with icons)</div>
             <Breadcrumb items={items3} />
           </div>
           <div>
-            <div style={{ fontSize: 11, color: '#999', marginBottom: 4 }}>Step 5 (with icons)</div>
+            <div style={{ fontSize: 11, color: muted, marginBottom: 4 }}>Step 5 (with icons)</div>
             <Breadcrumb items={items5} />
           </div>
           <div>
-            <div style={{ fontSize: 11, color: '#999', marginBottom: 4 }}>Step 3 (text only)</div>
+            <div style={{ fontSize: 11, color: muted, marginBottom: 4 }}>Step 3 (text only)</div>
             <Breadcrumb items={items3.map((i) => ({ ...i, showIcon: false }))} />
           </div>
         </div>
 
-        {tokenRows.map(({ section, tokens }) => (
-          <div key={section} style={{ marginBottom: 32 }}>
-            <h3 style={{ fontSize: 16, fontWeight: 600, color: '#E32321', marginBottom: 12, borderBottom: '2px solid #E32321', paddingBottom: 4 }}>
-              {section}
-            </h3>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-              <thead>
-                <tr>
-                  {['Token', 'Figma Variable', 'Value', 'Match'].map((h) => (
-                    <th key={h} style={{ textAlign: 'left', padding: '8px 12px', borderBottom: '2px solid #DDD', fontWeight: 600 }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {tokens.map(({ token, figmaVar, value, actual }) => {
-                  const match = value === actual;
-                  return (
-                    <tr key={token}>
-                      <td style={{ padding: '6px 12px', borderBottom: '1px solid #EEE' }}>{token}</td>
-                      <td style={{ padding: '6px 12px', borderBottom: '1px solid #EEE', color: '#8B8BF5', fontSize: 11, fontFamily: 'monospace' }}>{figmaVar}</td>
-                      <td style={{ padding: '6px 12px', borderBottom: '1px solid #EEE', color: '#22C55E', fontFamily: 'monospace' }}>
-                        {value}
-                        {value.startsWith('#') && (
-                          <span style={{ display: 'inline-block', width: 12, height: 12, backgroundColor: value, borderRadius: 2, marginLeft: 6, verticalAlign: 'middle', border: '1px solid rgba(0,0,0,0.1)' }} />
-                        )}
-                      </td>
-                      <td style={{ padding: '6px 12px', borderBottom: '1px solid #EEE', fontSize: 16 }}>{match ? '✅' : '❌'}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        ))}
+        <h3 style={{ fontSize: 14, margin: '0 0 8px' }}>Layout &amp; typography</h3>
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 28 }}>
+          <thead>
+            <tr>
+              <th style={th}>Tier 2 — component</th>
+              <th style={th}>Tier 1 — semantic</th>
+              <th style={th}>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {layout.map(([comp, semantic, value]) => (
+              <tr key={comp}>
+                <td style={{ ...td, color: 'var(--sys-color-primary-default)' }}>{comp}</td>
+                <td style={{ ...td, color: 'var(--sys-color-status-info-default)' }}>
+                  {semantic}
+                </td>
+                <td style={{ ...td, color: 'var(--sys-color-status-success-dark)' }}>{value}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <h3 style={{ fontSize: 14, margin: '0 0 8px' }}>Colours by state</h3>
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 28 }}>
+          <thead>
+            <tr>
+              <th style={th}>Paints</th>
+              <th style={th}>Token the component references</th>
+              <th style={th}>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {colors.map(([what, token, value]) => (
+              <tr key={what}>
+                <td style={{ ...td, fontFamily: sans }}>{what}</td>
+                <td style={{ ...td, color: 'var(--sys-color-status-info-default)' }}>{token}</td>
+                <td style={{ ...td, color: 'var(--sys-color-status-success-dark)' }}>
+                  {value}
+                  <Swatch value={value} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <h3 style={{ fontSize: 14, margin: '0 0 8px' }}>
+          Every declared <code>--breadcrumb-*</code> token
+        </h3>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <thead>
+            <tr>
+              <th style={th}>Token</th>
+              <th style={th}>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {breadcrumbTokenNames().map((name) => (
+              <tr key={name}>
+                <td style={{ ...td, color: 'var(--sys-color-primary-default)' }}>
+                  --breadcrumb-{name}
+                </td>
+                <td style={{ ...td, color: 'var(--sys-color-status-success-dark)' }}>
+                  {breadcrumbValue(name)}
+                  <Swatch value={breadcrumbValue(name)} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <p style={{ marginTop: 20, fontSize: 11, color: muted, lineHeight: 1.6 }}>
+          Base layer as rendered: gap {BREADCRUMB_BASE_VALUES.gap} · item-gap{' '}
+          {BREADCRUMB_BASE_VALUES.itemGap} · {BREADCRUMB_BASE_VALUES.fontFamily}{' '}
+          {BREADCRUMB_BASE_VALUES.fontSize}/{BREADCRUMB_BASE_VALUES.lineHeight} · icon{' '}
+          {BREADCRUMB_ICON_SIZE_VALUE}.
+          <br />
+          Typography size and line-height are responsive. The literals above are the
+          mobile mode ({sysValue('type-label-md-regular-size')}/
+          {sysValue('type-label-md-regular-line-height')}); from the{' '}
+          <code>md</code> breakpoint ({sysValue('breakpoint-md')}) up they resolve to{' '}
+          {DESKTOP['--sys-type-label-md-regular-size']}/
+          {DESKTOP['--sys-type-label-md-regular-line-height']}.
+        </p>
       </div>
     );
   },
+  parameters: { layout: 'padded' },
 };
 
 // ── Color Bindings ──
@@ -241,10 +431,30 @@ export const ColorBindings: StoryObj = {
       componentName="Breadcrumb"
       figmaId="14291:136385"
       bindings={[
-        { token: 'breadcrumb-fg-dark', figmaVariable: 'colors/breadcrumb/breadcrumb-fg-dark', hex: '#141414', usage: 'Inactive breadcrumb text' },
-        { token: 'breadcrumb-fg-red', figmaVariable: 'colors/breadcrumb/breadcrumb-fg-red', hex: '#E32321', usage: 'Active breadcrumb text (current page)' },
-        { token: 'icon-fg-secondary', figmaVariable: 'colors/icon/icon-fg-secondary', hex: '#262626', usage: 'Inactive icon & separator' },
-        { token: 'icon-fg-primary', figmaVariable: 'colors/icon/icon-fg-primary', hex: '#E32321', usage: 'Active icon' },
+        {
+          token: '--breadcrumb-foreground-dark',
+          figmaVariable: 'colors/breadcrumb/breadcrumb-fg-dark',
+          hex: breadcrumbColorValues('rest').text,
+          usage: 'Crumb label — rest',
+        },
+        {
+          token: '--breadcrumb-foreground-red',
+          figmaVariable: 'colors/breadcrumb/breadcrumb-fg-red',
+          hex: breadcrumbColorValues('selected').text,
+          usage: 'Crumb label — selected (current page)',
+        },
+        {
+          token: '--sys-color-secondary-default',
+          figmaVariable: 'colors/icon/icon-fg-secondary (no breadcrumb token)',
+          hex: breadcrumbColorValues('rest').icon,
+          usage: 'Crumb icon — rest, and the separator chevron',
+        },
+        {
+          token: '--sys-color-primary-default',
+          figmaVariable: 'colors/icon/icon-fg-primary (no breadcrumb token)',
+          hex: breadcrumbColorValues('selected').icon,
+          usage: 'Crumb icon — selected',
+        },
       ]}
     />
   ),

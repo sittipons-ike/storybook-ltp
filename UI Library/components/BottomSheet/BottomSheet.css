@@ -1,0 +1,55 @@
+/* ═══════════════════════════════════════════
+   BottomSheet — Lotteryplus Design System
+
+   Structure and motion only. Every colour and dimension is a token applied in
+   BottomSheet.tsx; duration and easing come from tokens too, set inline so the
+   drag can suppress them.
+   ═══════════════════════════════════════════ */
+
+.ltp-sheet {
+  box-sizing: border-box;
+  transition-property: transform, visibility;
+  will-change: transform;
+}
+
+.ltp-sheet__scrim {
+  opacity: 0;
+  transition-property: opacity;
+}
+
+.ltp-sheet__scrim--open {
+  opacity: 1;
+}
+
+.ltp-sheet__handle-area {
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  outline: none;
+}
+
+.ltp-sheet__handle-area:active {
+  cursor: grabbing;
+}
+
+.ltp-sheet__handle {
+  display: block;
+  flex-shrink: 0;
+}
+
+/* The handle is the only keyboard-reachable control in the sheet chrome, so it needs a
+   visible focus state — otherwise a keyboard user cannot see how to dismiss. */
+.ltp-sheet__handle-area:focus-visible .ltp-sheet__handle {
+  box-shadow: 0 0 0 var(--sys-border-width-thin) var(--sys-color-primary-default);
+}
+
+.ltp-sheet__content {
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ltp-sheet,
+  .ltp-sheet__scrim {
+    transition: none;
+  }
+}

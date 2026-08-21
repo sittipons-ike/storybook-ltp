@@ -1,0 +1,33 @@
+/* ═══════════════════════════════════════════
+   Checkbox — Lotteryplus Design System
+
+   Structure only. Every colour and dimension is a token applied in Checkbox.tsx.
+   ═══════════════════════════════════════════ */
+
+.ltp-checkbox {
+  box-sizing: border-box;
+  outline: none;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ltp-checkbox::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+.ltp-checkbox--disabled {
+  pointer-events: none;
+}
+
+.ltp-checkbox__box {
+  box-sizing: border-box;
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ltp-checkbox,
+  .ltp-checkbox__box {
+    transition: none;
+  }
+}

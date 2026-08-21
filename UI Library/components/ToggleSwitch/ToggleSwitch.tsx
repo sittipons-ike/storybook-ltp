@@ -1,11 +1,11 @@
 import React from 'react';
+import '../../foundations/tokens.css';
 import {
+  TOGGLE,
   TOGGLE_COLORS,
-  TOGGLE_DIMENSIONS,
-  TOGGLE_ANIMATION,
-  SHADOW,
-  RADIUS,
-  SPACING,
+  trackBackground,
+  knobOffset,
+  type ToggleSwitchState,
 } from './tokens';
 import './ToggleSwitch.css';
 
@@ -14,11 +14,14 @@ import './ToggleSwitch.css';
 //  Figma: "toggle-switch" component set (14291:131527)
 //  Variants: active=true (green/right) | active=false (gray/left)
 //  Structure: Track (pill) → Knob (circle)
-//  Knob has shadow-md and slides with CSS transition
+//
+//  Every style value is a CSS custom property from foundations/tokens.css, which is
+//  generated from Figma via design.md + components.json + the toggle-switch overlay.
+//  There are no literal colours, sizes, or font values in this file.
 // ═══════════════════════════════════════════
 
 export interface ToggleSwitchProps {
-  /** Current active state */
+  /** Current active (selected) state */
   active?: boolean;
   /** Change handler */
   onChange?: (active: boolean) => void;
@@ -42,58 +45,54 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
     onChange?.(!active);
   };
 
-  // Track background: green when ON, soft gray when OFF
-  const trackBg = active
-    ? TOGGLE_COLORS.track.on    // #22C55E → colors/toggle-switch/toggle-bg-green
-    : TOGGLE_COLORS.track.off;  // #E5E5E5 → colors/toggle-switch/toggle-bg-soft-gray
+  // Canonical state: disabled beats selected beats rest. Hover / active / focus are
+  // handled by CSS pseudo-classes — the switch has no colour change for them in Figma.
+  const state: ToggleSwitchState = disabled ? 'disabled' : active ? 'selected' : 'rest';
 
-  // Knob position: x:22 when ON, x:2 when OFF
-  const knobX = active
-    ? TOGGLE_DIMENSIONS.knobPosition.on   // 22px
-    : TOGGLE_DIMENSIONS.knobPosition.off; // 2px
+  const transition = `${TOGGLE.transitionDuration} ${TOGGLE.transitionTiming}`;
 
   return (
     <button
       type="button"
-      className={`ltp-toggle-switch ${className}`}
+      className={`ltp-toggle-switch ltp-toggle-switch--${state} ${className}`}
       onClick={handleClick}
       disabled={disabled}
       role="switch"
       aria-checked={active}
       aria-label={ariaLabel}
+      data-state={state}
     >
       {/* ── Track (pill shape) ──
-          Figma: "Toggle" frame 51×31
-          Fill: toggle-bg-green (ON) / toggle-bg-soft-gray (OFF)
-          CornerRadius: radius-full (9999) */}
+          Figma: "Toggle" frame — --toggle-track-width x --toggle-track-height
+          Fill: --toggle-background-green (ON) / --toggle-background-soft-gray (OFF)
+          Corner radius: --toggle-radius → --sys-radius-full */}
       <div
         className="ltp-toggle-switch__track"
         style={{
-          width: TOGGLE_DIMENSIONS.track.width,   // 51px
-          height: TOGGLE_DIMENSIONS.track.height,  // 31px
-          borderRadius: RADIUS.full,               // 9999 → radius-full
-          backgroundColor: trackBg,
+          width: TOGGLE.trackWidth,
+          height: TOGGLE.trackHeight,
+          borderRadius: TOGGLE.radius,
+          backgroundColor: trackBackground(active),
           position: 'relative',
-          transition: `background-color ${TOGGLE_ANIMATION.duration} ${TOGGLE_ANIMATION.timingFunction}`,
+          transition: `background-color ${transition}`,
         }}
       >
         {/* ── Knob (circle) ──
-            Figma: "Knob" frame 27×27
-            Fill: toggle-fg-white (#FFFFFF)
-            Shadow: dimension/shadow/md (2× DROP_SHADOW)
-            Position: x:2,y:2 (OFF) → x:22,y:2 (ON) */}
+            Figma: "Knob" frame — --toggle-knob-size, inset --toggle-knob-inset
+            Fill: --toggle-foreground-white
+            Shadow: --toggle-knob-shadow → --sys-elevation-floating */}
         <div
           className="ltp-toggle-switch__knob"
           style={{
-            width: TOGGLE_DIMENSIONS.knob.size,    // 27px
-            height: TOGGLE_DIMENSIONS.knob.size,   // 27px
-            borderRadius: RADIUS.full,             // 9999 → radius-full
-            backgroundColor: TOGGLE_COLORS.knob.fill, // #FFFFFF → toggle-fg-white
-            boxShadow: SHADOW.md,                  // dimension/shadow/md
+            width: TOGGLE.knobSize,
+            height: TOGGLE.knobSize,
+            borderRadius: TOGGLE.radius,
+            backgroundColor: TOGGLE_COLORS.knob,
+            boxShadow: TOGGLE.knobShadow,
             position: 'absolute',
-            top: TOGGLE_DIMENSIONS.knobPosition.y,  // 2px
-            left: knobX,                            // 2px (OFF) or 22px (ON)
-            transition: `left ${TOGGLE_ANIMATION.duration} ${TOGGLE_ANIMATION.timingFunction}`,
+            top: TOGGLE.knobInset,
+            left: knobOffset(active),
+            transition: `left ${transition}`,
           }}
         />
       </div>

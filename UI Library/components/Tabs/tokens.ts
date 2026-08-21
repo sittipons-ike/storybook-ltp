@@ -1,100 +1,174 @@
 // ═══════════════════════════════════════════
 // Tabs Design Tokens
-// Source: Figma "Design Systems Web App Lotteryplus V.7.1"
-// Component sets:
-//   - "horizontal-tabs-underline" (14370:9654) — underline style
-//   - "horizontal-tabs_button" (14370:9710) — button/pill style
-// All values reference Foundation variables ONLY
+//
+// This file holds NO values. Every value lives in Figma, flows through design.md and
+// components.json (+ the layout overlay at design-library/lotteryplus/components/tabs.json),
+// and is generated into foundations/tokens.css (CSS custom properties) and
+// foundations/tokens.generated.ts (resolved literals).
+//
+// What this file adds is types and lookup helpers, so Tabs.tsx renders with CSS
+// variables while stories and tests can still read the literal a token resolves to.
+//
+// Figma component sets:
+//   - "horizontal-tabs-underline" (14370:9654)
+//   - "horizontal-tabs_button"    (14370:9710)
+//
+// Regenerate the source values: python3 tools/gen-components.py && python3 tools/gen-tokens.py
+// Verify them against Figma:    python3 tools/verify-tokens.py
 // ═══════════════════════════════════════════
 
-// ── From Foundation: Spacing (2-semantic) ──
-export const SPACING = {
-  none: 0,   // spacing-none → component padding
-  sm: 4,     // spacing-sm → button-style tab gap between items
-  lg: 8,     // spacing-lg → internal gap (text ↔ badge), button-style outer gap
+import { component, sys, sysValue } from '../../foundations/tokens';
+
+const t = component('tabs');
+
+// ── Vocabulary ──────────────────────────────────────────────────────────────
+
+/** Visual styles, one per Figma component set. */
+export type TabsVariant = 'underline' | 'button';
+
+/**
+ * Colour scheme for the button style. Figma spells the variant property `colors=red|black`;
+ * the tokens it binds are `tabs-bg-primary` / `tabs-bg-secondary`, so the Standard's
+ * primary/secondary vocabulary is what the props use. Queued in figma-rename-map.md terms:
+ * red → primary, black → secondary.
+ */
+export type TabsColorScheme = 'primary' | 'secondary';
+
+/** Canonical states, per the Design System Standard. */
+export type TabsState = 'rest' | 'hover' | 'active' | 'focus' | 'disabled' | 'selected';
+
+export const TABS_VARIANTS: readonly TabsVariant[] = ['underline', 'button'] as const;
+
+export const TABS_COLOR_SCHEMES: readonly TabsColorScheme[] = ['primary', 'secondary'] as const;
+
+export const TABS_STATES: readonly TabsState[] = [
+  'rest',
+  'hover',
+  'active',
+  'focus',
+  'disabled',
+  'selected',
+] as const;
+
+// ── Lookups ─────────────────────────────────────────────────────────────────
+
+/** The literal a Tabs token resolves to. Empty string when it is not declared. */
+export const tabsValue = (token: string): string => t.value(token);
+
+/** CSS variable reference for a Tabs token. */
+export const tabsRef = (token: string, fallback?: string): string => t.ref(token, fallback);
+
+/** Every `--tabs-*` token the generator declared — what the token-chain story enumerates. */
+export const tabsTokenNames = (): string[] => t.names();
+
+// ── Layout and typography, shared by both variants ──────────────────────────
+
+export const TABS_BASE = {
+  height: t.ref('height'),
+  radius: t.ref('radius'),
+  radiusActive: t.ref('radius-active'),
+  paddingX: t.ref('padding-x'),
+  paddingY: t.ref('padding-y'),
+  gap: t.ref('gap'),
+  itemGap: t.ref('item-gap'),
+  borderWidth: t.ref('border-width'),
+  indicatorWidth: t.ref('indicator-width'),
+  fontFamily: t.ref('typography-family'),
+  fontSize: t.ref('typography-size'),
+  fontWeight: t.ref('typography-weight'),
+  lineHeight: t.ref('typography-line-height'),
+  tracking: t.ref('typography-tracking'),
 } as const;
 
-// ── From Foundation: Border Radius (2-semantic) ──
-export const RADIUS = {
-  none: 0,   // radius-none → underline tabs, inactive button tabs
-  md: 6,     // radius-md → active button tab inner corners
-  lg: 8,     // radius-lg → button-style outer container
+/** Resolved literals for the same set — for stories, tables and tests. */
+export const TABS_BASE_VALUES = {
+  height: t.value('height'),
+  radius: t.value('radius'),
+  radiusActive: t.value('radius-active'),
+  paddingX: t.value('padding-x'),
+  paddingY: t.value('padding-y'),
+  gap: t.value('gap'),
+  itemGap: t.value('item-gap'),
+  borderWidth: t.value('border-width'),
+  indicatorWidth: t.value('indicator-width'),
+  fontFamily: t.value('typography-family'),
+  fontSize: t.value('typography-size'),
+  fontWeight: t.value('typography-weight'),
+  lineHeight: t.value('typography-line-height'),
+  tracking: t.value('typography-tracking'),
 } as const;
 
-// ── From Foundation: Border Width (2-semantic) ──
-export const BORDER_WIDTH = {
-  1: 1, // dimension/border-width/1 → button-style outer border, underline bottom border
+/**
+ * Badge icon size. Numeric because `<Icon size>` is a component prop, not a style —
+ * same treatment Button gives its icon size.
+ */
+export const TABS_BADGE_SIZE = Number(t.value('badge-size').replace('px', '')) || 16;
+
+// ── Colours ─────────────────────────────────────────────────────────────────
+
+export const TABS_COLORS = {
+  /** Underline container's bottom rule — colors/tabs/tabs-fg-disable. */
+  rule: t.ref('foreground-disable'),
+  /** Vertical divider between underline tabs — see tabs.json `_source-separator`. */
+  separator: t.ref('separator'),
+  /** Button container surface — colors/tabs/tabs-bg-white. */
+  surface: t.ref('background-white'),
+  /** Label of a tab that is not selected — colors/tabs/tabs-fg-secondary. */
+  labelRest: t.ref('foreground-secondary'),
+  /** Selected label, underline style — colors/tabs/tabs-fg-primary. */
+  labelSelectedUnderline: t.ref('foreground-primary'),
+  /** Selected label, button style — colors/tabs/tabs-fg-white. */
+  labelSelectedButton: t.ref('foreground-white'),
+  /** Selected underline indicator — colors/tabs/tabs-fg-primary. */
+  indicator: t.ref('foreground-primary'),
+  /** Badge pictogram in the underline style — colors/tabs/tabs-fg-primary. */
+  badgeUnderline: t.ref('foreground-primary'),
 } as const;
 
-// ── From Foundation: Typography (typography collection) ──
-// button/m-semb → 14px Medium, lineHeight 22px
-export const TYPOGRAPHY = {
-  tab: {
-    fontFamily: "'Graphik TH', sans-serif",
-    fontSize: 14,       // button/m-semb/size
-    fontWeight: 500,     // button/m-med/weight → Medium
-    lineHeight: '22px',  // button/m-semb/line-height
-  },
+export const TABS_COLOR_VALUES = {
+  rule: t.value('foreground-disable'),
+  separator: t.value('separator'),
+  surface: t.value('background-white'),
+  labelRest: t.value('foreground-secondary'),
+  labelSelectedUnderline: t.value('foreground-primary'),
+  labelSelectedButton: t.value('foreground-white'),
+  indicator: t.value('foreground-primary'),
+  badgeUnderline: t.value('foreground-primary'),
 } as const;
 
-// ── From Foundation: Colors (3-component / Tabs) ──
-export const TAB_COLORS = {
-  // === Shared text colors ===
-  text: {
-    primary: '#E32321',   // colors/tabs/tabs-fg-primary (selected text underline, selected border underline)
-    secondary: '#262626',  // colors/tabs/tabs-fg-secondary (unselected text)
-    white: '#FFFFFF',      // colors/tabs/tabs-fg-white (selected text in button-style)
-    disable: '#C9C9C9',   // colors/tabs/tabs-fg-disable (bottom border underline)
-  },
+export interface TabsSchemeColors {
+  /** Fill behind the selected tab. */
+  background: string;
+  /** Outer border of the button container, and the badge pictogram. */
+  accent: string;
+}
 
-  // === Button-style tab backgrounds ===
-  bg: {
-    white: '#FFFFFF',      // colors/tabs/tabs-bg-white (button container bg)
-    primary: '#E32321',    // colors/tabs/tabs-bg-primary (active tab bg - red)
-    secondary: '#262626',  // colors/tabs/tabs-bg-secondary (active tab bg - black)
-  },
+/** CSS variable references for one button-style colour scheme — what Tabs.tsx renders with. */
+export const tabsScheme = (scheme: TabsColorScheme): TabsSchemeColors => ({
+  background: t.ref(`background-${scheme}`),
+  accent: t.ref(`foreground-${scheme}`),
+});
 
-  // === Borders ===
-  border: {
-    primary: '#E32321',    // colors/tabs/tabs-fg-primary → button outer border (red)
-    secondary: '#262626',  // colors/tabs/tabs-bg-secondary → button outer border (black)
-    disable: '#E5E5E5',    // Color/Border/Border-Disable → separator line in underline
-    underline: '#C9C9C9',  // colors/tabs/tabs-fg-disable → bottom border underline style
-    activeUnderline: '#E32321', // Color/Border/Border-Primary → selected tab underline
-  },
+/** Resolved literals for the same scheme — for stories, tables and tests. */
+export const tabsSchemeValues = (scheme: TabsColorScheme): TabsSchemeColors => ({
+  background: t.value(`background-${scheme}`),
+  accent: t.value(`foreground-${scheme}`),
+});
+
+// ── Focus ring ──────────────────────────────────────────────────────────────
+
+/**
+ * Focus affordance. Tabs has no Figma token of its own for it, so it borrows the
+ * semantic radius that the rest of the system uses for small inner corners.
+ */
+export const TABS_FOCUS = {
+  ringColor: t.ref('foreground-primary'),
+  ringWidth: t.ref('indicator-width'),
+  radius: sys('radius-sm'),
 } as const;
 
-// ── Layout Dimensions from Figma ──
-export const TAB_DIMENSIONS = {
-  // === Underline style ===
-  underline: {
-    height: 40,             // each tab item height
-    paddingTop: 8,          // spacing-lg
-    paddingRight: 16,       // spacing-2xl
-    paddingBottom: 8,       // spacing-lg
-    paddingLeft: 16,        // spacing-2xl
-    gap: 8,                 // spacing-lg (text ↔ badge)
-    bottomBorderWidth: 1,   // underline bottom border
-    selectedBorderWidth: 2, // selected tab underline (thicker)
-  },
-
-  // === Button style ===
-  button: {
-    height: 40,
-    outerRadius: 8,         // radius-lg
-    outerBorderWidth: 1,    // dimension/border-width/1
-    itemGap: 4,             // spacing-sm between tab buttons
-    // Each tab item
-    item: {
-      paddingTop: 8,        // spacing-lg
-      paddingRight: 16,     // spacing-2xl
-      paddingBottom: 8,     // spacing-lg
-      paddingLeft: 16,      // spacing-2xl
-      gap: 8,               // spacing-lg (text ↔ badge)
-      activeRadius: 6,      // radius-md → active tab inner corners
-    },
-  },
-
-  // === Badge icon ===
-  badgeSize: 16,            // icons-size 16px
+export const TABS_FOCUS_VALUES = {
+  ringColor: t.value('foreground-primary'),
+  ringWidth: t.value('indicator-width'),
+  radius: sysValue('radius-sm'),
 } as const;

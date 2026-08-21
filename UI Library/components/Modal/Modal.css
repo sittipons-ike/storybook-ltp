@@ -1,33 +1,14 @@
 /* ═══════════════════════════════════════════
    Modal Component — Lotteryplus Design System
-   All values reference Foundation tokens
+
+   Structure and motion only. Every colour, size and font value is a CSS custom
+   property applied in Modal.tsx, generated from Figma into foundations/tokens.css.
    ═══════════════════════════════════════════ */
 
 .ltp-modal {
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-/* Button resets */
-.ltp-modal__btn {
-  outline: none;
-  text-decoration: none;
-  user-select: none;
-  transition: opacity 0.15s ease;
-}
-
-.ltp-modal__btn:hover {
-  opacity: 0.9;
-}
-
-.ltp-modal__btn:active {
-  opacity: 0.8;
-}
-
-.ltp-modal__btn::-moz-focus-inner {
-  border: 0;
-  padding: 0;
 }
 
 /* Overlay */

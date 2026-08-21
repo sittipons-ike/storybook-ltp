@@ -1,0 +1,16 @@
+/* ═══════════════════════════════════════════
+   ImageUpload — Lotteryplus Design System
+
+   Structure only. Every value is a token applied in ImageUpload.tsx.
+
+   `box-sizing` is the whole point of this file. The Frontend runs under Tailwind's
+   preflight, where everything is border-box, so `h-10` on a padded, bordered field is
+   40px total. A bare span in Storybook is content-box, which turned 40 into
+   40 + 8 + 8 + 1 + 1 = 58 and made the field 18px taller than the button beside it.
+   Same failure the Header's action wells hit with a 1px border.
+   ═══════════════════════════════════════════ */
+
+.ltp-upload,
+.ltp-upload * {
+  box-sizing: border-box;
+}

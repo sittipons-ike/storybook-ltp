@@ -1,19 +1,17 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import {
-  TOOLTIP_COLORS,
-  TOOLTIP_DIMENSIONS,
-  TYPOGRAPHY,
-  RADIUS,
-  SHADOW,
-} from './tokens';
-import type { TooltipPosition } from './tokens';
+import React, { useState } from 'react';
+import '../../foundations/tokens.css';
+import { TOOLTIP, TOOLTIP_ARROW, type TooltipPosition } from './tokens';
 
 // ═══════════════════════════════════════════
 //  Tooltip — Lotteryplus Design System
 //  Figma: tool-tip page
 //  Structure: Content (bg + title + body) + Arrow
 //  Positioning: top | bottom | left | right
-//  Uses Icon component for trigger
+//
+//  Every style value is a CSS custom property from foundations/tokens.css. There are no
+//  literal colours, sizes or font values in this file. Note the exception this component
+//  carries: Figma has no `colors/tooltip` group, so the colour tokens behind these vars
+//  are authored against the semantic layer rather than mirrored — see ./tokens.ts.
 // ═══════════════════════════════════════════
 
 export interface TooltipProps {
@@ -27,19 +25,21 @@ export interface TooltipProps {
   children?: React.ReactNode;
   /** Show tooltip (controlled) */
   visible?: boolean;
-  /** Max width */
+  /** Max width, in px. Defaults to the `--tooltip-max-width` token. */
   maxWidth?: number;
   /** Additional className */
   className?: string;
 }
 
-// Arrow SVG component matching Figma's 16×8 arrow
+/** Stacking order, not a design token — design.md models no z-index scale. */
+const BUBBLE_Z_INDEX = 1000;
+
+/** Caret — an SVG path, so its geometry is numeric (see TOOLTIP_ARROW in ./tokens). */
 const Arrow: React.FC<{ position: TooltipPosition }> = ({ position }) => {
-  const { width: w, height: h } = TOOLTIP_DIMENSIONS.arrow; // 16×8
-  const color = TOOLTIP_COLORS.arrow;
+  const { width: w, height: h } = TOOLTIP_ARROW;
   const isHorizontal = position === 'left' || position === 'right';
 
-  // For top/bottom: 16×8 SVG, for left/right: 8×16 SVG (swapped)
+  // For top/bottom: w×h SVG, for left/right: h×w SVG (swapped)
   const svgW = isHorizontal ? h : w;
   const svgH = isHorizontal ? w : h;
 
@@ -59,7 +59,7 @@ const Arrow: React.FC<{ position: TooltipPosition }> = ({ position }) => {
       fill="none"
       style={{ display: 'block', flexShrink: 0 }}
     >
-      <path d={paths[position]} fill={color} />
+      <path d={paths[position]} style={{ fill: TOOLTIP.arrowBackground }} />
     </svg>
   );
 };
@@ -69,7 +69,7 @@ const TooltipBubble: React.FC<{
   title?: string;
   content: string;
   position: TooltipPosition;
-  maxWidth: number;
+  maxWidth?: number;
 }> = ({ title, content, position, maxWidth }) => {
   const isVertical = position === 'top' || position === 'bottom';
   // Arrow goes between content and trigger:
@@ -79,42 +79,36 @@ const TooltipBubble: React.FC<{
 
   const arrowEl = <Arrow position={position} />;
 
+  const textStyle = (role: typeof TOOLTIP.title | typeof TOOLTIP.body): React.CSSProperties => ({
+    fontFamily: role.fontFamily,
+    fontSize: role.fontSize,
+    fontWeight: role.fontWeight as unknown as React.CSSProperties['fontWeight'],
+    lineHeight: role.lineHeight,
+    letterSpacing: role.letterSpacing,
+    color: TOOLTIP.foreground,
+  });
+
   const contentEl = (
     <div
+      className="ltp-tooltip__content"
       style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: 0,
-        padding: TOOLTIP_DIMENSIONS.content.padding,
-        borderRadius: RADIUS.s,
-        backgroundColor: TOOLTIP_COLORS.bg,
-        maxWidth,
-        minWidth: TOOLTIP_DIMENSIONS.content.minWidth,
-        boxShadow: SHADOW.tooltip,
+        gap: TOOLTIP.gap,
+        padding: TOOLTIP.padding,
+        borderRadius: TOOLTIP.radius,
+        backgroundColor: TOOLTIP.background,
+        maxWidth: maxWidth ?? TOOLTIP.maxWidth,
+        minWidth: TOOLTIP.minWidth,
+        boxShadow: TOOLTIP.shadow,
       }}
     >
       {title && (
-        <span
-          style={{
-            fontFamily: TYPOGRAPHY.title.fontFamily,
-            fontSize: TYPOGRAPHY.title.fontSize,
-            fontWeight: TYPOGRAPHY.title.fontWeight,
-            lineHeight: TYPOGRAPHY.title.lineHeight,
-            color: TOOLTIP_COLORS.text,
-          }}
-        >
+        <span className="ltp-tooltip__title" style={textStyle(TOOLTIP.title)}>
           {title}
         </span>
       )}
-      <span
-        style={{
-          fontFamily: TYPOGRAPHY.body.fontFamily,
-          fontSize: TYPOGRAPHY.body.fontSize,
-          fontWeight: TYPOGRAPHY.body.fontWeight,
-          lineHeight: TYPOGRAPHY.body.lineHeight,
-          color: TOOLTIP_COLORS.text,
-        }}
-      >
+      <span className="ltp-tooltip__body" style={textStyle(TOOLTIP.body)}>
         {content}
       </span>
     </div>
@@ -141,7 +135,7 @@ const Tooltip: React.FC<TooltipProps> = ({
   position = 'top',
   children,
   visible: controlledVisible,
-  maxWidth = TOOLTIP_DIMENSIONS.content.maxWidth,
+  maxWidth,
   className = '',
 }) => {
   const [hovered, setHovered] = useState(false);
@@ -159,12 +153,32 @@ const Tooltip: React.FC<TooltipProps> = ({
     );
   }
 
-  // Position offsets
+  // Position offsets — the gap to the trigger is `--tooltip-offset`.
   const positionStyles: Record<TooltipPosition, React.CSSProperties> = {
-    top: { bottom: '100%', left: '50%', transform: 'translateX(-50%)', marginBottom: 4 },
-    bottom: { top: '100%', left: '50%', transform: 'translateX(-50%)', marginTop: 4 },
-    left: { right: '100%', top: '50%', transform: 'translateY(-50%)', marginRight: 4 },
-    right: { left: '100%', top: '50%', transform: 'translateY(-50%)', marginLeft: 4 },
+    top: {
+      bottom: '100%',
+      left: '50%',
+      transform: 'translateX(-50%)',
+      marginBottom: TOOLTIP.offset,
+    },
+    bottom: {
+      top: '100%',
+      left: '50%',
+      transform: 'translateX(-50%)',
+      marginTop: TOOLTIP.offset,
+    },
+    left: {
+      right: '100%',
+      top: '50%',
+      transform: 'translateY(-50%)',
+      marginRight: TOOLTIP.offset,
+    },
+    right: {
+      left: '100%',
+      top: '50%',
+      transform: 'translateY(-50%)',
+      marginLeft: TOOLTIP.offset,
+    },
   };
 
   return (
@@ -182,7 +196,7 @@ const Tooltip: React.FC<TooltipProps> = ({
         <div
           style={{
             position: 'absolute',
-            zIndex: 1000,
+            zIndex: BUBBLE_Z_INDEX,
             ...positionStyles[position],
             pointerEvents: 'none',
           }}

@@ -1,27 +1,56 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import NavigationBar from './NavigationBar';
-import type { NavItem } from './NavigationBar';
 import {
-  SPACING,
-  RADIUS,
-  BORDER_WIDTH,
-  TYPOGRAPHY,
-  NAV_COLORS,
-  NAV_DIMENSIONS,
-  CART_GRADIENT,
+  NAVIGATION_KEYS,
+  NAVIGATION_STATES,
+  navigationColorTokens,
+  navigationColorValues,
+  navigationValue,
+  sys,
+  sysValue,
 } from './tokens';
 import ColorBindingsTable from '../../system/ColorBindingsTable';
-import type { ColorBinding } from '../../system/ColorBindingsTable';
 
 // ═══════════════════════════════════════════
 //  NavigationBar Stories — Lotteryplus Design System
 //  Figma: "navigation-bar-v2" (14291:135864)
-//  10 variants: 5 states x 2 add-to-cart modes
+//  10 variants: 5 selected states x 2 add-to-cart modes
+//
+//  Values shown here are read from foundations/tokens.generated.ts, which is generated
+//  from Figma. Nothing on this page is typed by hand, so a table can never claim a value
+//  the component does not actually render.
 // ═══════════════════════════════════════════
 
+const sans = sys('type-button-xs-medium-family');
+const mono = 'ui-monospace, SFMono-Regular, Menlo, monospace';
+
+/** Neutral stage behind the bar, so the white surface reads as a surface. */
+const stage: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: sys('spacing-4xl'),
+  padding: sys('spacing-4xl'),
+  background: sys('color-background-light'),
+  borderRadius: sys('radius-xl'),
+  fontFamily: sans,
+};
+
+const caption: React.CSSProperties = {
+  fontFamily: sans,
+  fontSize: sys('type-caption-md-regular-size'),
+  color: sys('color-text-tertiary-default'),
+  marginBottom: sys('spacing-sm'),
+};
+
+const sectionTitle: React.CSSProperties = {
+  fontFamily: sans,
+  fontSize: sys('type-label-md-semibold-size'),
+  fontWeight: 600,
+};
+
 const meta: Meta<typeof NavigationBar> = {
-  title: 'Components/NavigationBar',
+  title: 'Organisms/NavigationBar',
   component: NavigationBar,
   tags: ['autodocs'],
   parameters: {
@@ -31,17 +60,18 @@ const meta: Meta<typeof NavigationBar> = {
         component:
           'Bottom navigation bar from Figma "Design Systems Web App Lotteryplus V.7.1". ' +
           'Component set: "navigation-bar-v2" (14291:135864). ' +
-          '10 variants: 5 active states (home, order, cart, safe, profile) x 2 add-to-cart modes (no/yes). ' +
-          'Features icon + label tabs, active selector bar, notification badges, and a special ' +
-          'gradient cart button with countdown timer in add-to-cart mode. Uses Icon component.',
+          '10 variants: 5 selected keys (home, order, cart, safe, profile) x 2 add-to-cart modes (no/yes). ' +
+          'Features icon + label tabs, a selector bar on the selected tab, notification badges, and a ' +
+          'gradient cart button with countdown timer in add-to-cart mode. Uses the Icon component. ' +
+          'Every style value is a `--navigation-*` custom property generated from Figma.',
       },
     },
   },
   argTypes: {
-    activeKey: {
+    selectedKey: {
       control: 'select',
-      options: ['home', 'order', 'cart', 'safe', 'profile'],
-      description: 'Active navigation tab key',
+      options: NAVIGATION_KEYS,
+      description: 'Canonical `selected` state — which top-level area is current',
     },
     showAddToCart: {
       control: 'boolean',
@@ -65,7 +95,7 @@ const meta: Meta<typeof NavigationBar> = {
     },
     width: {
       control: { type: 'number', min: 320, max: 430, step: 1 },
-      description: 'Container width (default 390px mobile)',
+      description: 'Container width (defaults to the --navigation-width token)',
     },
   },
 };
@@ -73,116 +103,80 @@ const meta: Meta<typeof NavigationBar> = {
 export default meta;
 type Story = StoryObj<typeof NavigationBar>;
 
-// ── 1. Default (Home Active, Interactive) ──
+// ── 1. Default (Home selected, interactive) ──
 export const Default: Story = {
   name: 'Default',
   render: (args) => {
-    const [active, setActive] = useState(args.activeKey || 'home');
+    const [selected, setSelected] = useState(args.selectedKey || 'home');
     return (
-      <div style={{ background: '#F0F0F0', padding: 24, borderRadius: 12 }}>
-        <div style={{ fontSize: 12, color: '#999', marginBottom: 8, fontFamily: "'Graphik TH', sans-serif" }}>
-          Tap to switch tabs (interactive)
-        </div>
+      <div style={stage}>
+        <div style={caption}>Tap to switch tabs (interactive)</div>
         <NavigationBar
           {...args}
-          activeKey={active}
-          onItemClick={(key) => setActive(key)}
+          selectedKey={selected}
+          onItemClick={(key) => setSelected(key)}
         />
       </div>
     );
   },
   args: {
-    activeKey: 'home',
-    width: 390,
+    selectedKey: 'home',
   },
 };
 
-// ── 2. All States (show all 5 active states) ──
+// ── 2. All Selected Keys (the 5 states of the Figma `state` axis) ──
 export const AllStates: Story = {
   name: 'All States',
-  render: () => {
-    const states = ['home', 'order', 'cart', 'safe', 'profile'];
-    const labels = [
-      'state=home',
-      'state=order',
-      'state=cart (not)',
-      'state=safe',
-      'state=profile',
-    ];
-
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 24, padding: 24, background: '#F0F0F0', borderRadius: 12 }}>
-        <div style={{ fontSize: 14, fontWeight: 600, fontFamily: "'Graphik TH', sans-serif" }}>
-          All 5 Active States (add-to-cart=no)
+  render: () => (
+    <div style={stage}>
+      <div style={sectionTitle}>All 5 selected keys (add-to-cart=no)</div>
+      {NAVIGATION_KEYS.map((key) => (
+        <div key={key}>
+          <div style={caption}>selected={key}</div>
+          <NavigationBar selectedKey={key} />
         </div>
-        {states.map((state, i) => (
-          <div key={state}>
-            <div style={{ fontSize: 11, color: '#999', marginBottom: 4, fontFamily: "'Graphik TH', sans-serif" }}>
-              {labels[i]}
-            </div>
-            <NavigationBar activeKey={state} />
-          </div>
-        ))}
-      </div>
-    );
-  },
+      ))}
+    </div>
+  ),
 };
 
 // ── 3. With Add-to-Cart (cart mode with timer) ──
 export const WithAddToCart: Story = {
   name: 'With Add-to-Cart',
-  render: () => {
-    const states = ['home', 'order', 'cart', 'safe', 'profile'];
-
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 24, padding: 24, background: '#F0F0F0', borderRadius: 12 }}>
-        <div style={{ fontSize: 14, fontWeight: 600, fontFamily: "'Graphik TH', sans-serif" }}>
-          Add-to-Cart Mode (add-to-cart=yes)
+  render: () => (
+    <div style={stage}>
+      <div style={sectionTitle}>Add-to-cart mode (add-to-cart=yes)</div>
+      {NAVIGATION_KEYS.map((key) => (
+        <div key={key}>
+          <div style={caption}>selected={key}, add-to-cart=yes</div>
+          <NavigationBar
+            selectedKey={key}
+            showAddToCart
+            cartTimer="00:14:59"
+            cartBadgeCount={3}
+          />
         </div>
-        {states.map((state) => (
-          <div key={state}>
-            <div style={{ fontSize: 11, color: '#999', marginBottom: 4, fontFamily: "'Graphik TH', sans-serif" }}>
-              state={state}, add-to-cart=yes
-            </div>
-            <NavigationBar
-              activeKey={state}
-              showAddToCart
-              cartTimer="00:14:59"
-              cartBadgeCount={3}
-            />
-          </div>
-        ))}
-      </div>
-    );
-  },
+      ))}
+    </div>
+  ),
 };
 
-// ── 4. With Badges (showing notification badges) ──
+// ── 4. With Badges ──
 export const WithBadges: Story = {
   name: 'With Badges',
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, padding: 24, background: '#F0F0F0', borderRadius: 12 }}>
-      <div style={{ fontSize: 14, fontWeight: 600, fontFamily: "'Graphik TH', sans-serif" }}>
-        Badge Variations
+    <div style={stage}>
+      <div style={sectionTitle}>Badge variations</div>
+
+      <div>
+        <div style={caption}>Order badge, safe badge=2 (normal mode)</div>
+        <NavigationBar selectedKey="home" showOrderBadge safeBadgeCount={2} />
       </div>
 
       <div>
-        <div style={{ fontSize: 11, color: '#999', marginBottom: 4, fontFamily: "'Graphik TH', sans-serif" }}>
-          Order badge=1, Safe badge=2 (normal mode)
-        </div>
+        <div style={caption}>All badges: order, cart=3, safe=12</div>
         <NavigationBar
-          activeKey="home"
-          showOrderBadge
-          safeBadgeCount={2}
-        />
-      </div>
-
-      <div>
-        <div style={{ fontSize: 11, color: '#999', marginBottom: 4, fontFamily: "'Graphik TH', sans-serif" }}>
-          All badges: order=5, cart=3, safe=12
-        </div>
-        <NavigationBar
-          activeKey="home"
+          selectedKey="home"
           showOrderBadge
           cartBadgeCount={3}
           safeBadgeCount={12}
@@ -190,11 +184,9 @@ export const WithBadges: Story = {
       </div>
 
       <div>
-        <div style={{ fontSize: 11, color: '#999', marginBottom: 4, fontFamily: "'Graphik TH', sans-serif" }}>
-          Add-to-cart mode with order=1, cart badge=3, safe=2
-        </div>
+        <div style={caption}>Add-to-cart mode with order, cart badge=3, safe=2</div>
         <NavigationBar
-          activeKey="home"
+          selectedKey="home"
           showAddToCart
           cartTimer="00:14:59"
           showOrderBadge
@@ -206,100 +198,189 @@ export const WithBadges: Story = {
   ),
 };
 
-// ── 5. Token Verification ──
-export const TokenVerification: Story = {
-  name: 'Token Verification',
+// ── 5. Disabled item (canonical `disabled` state) ──
+export const DisabledItem: Story = {
+  name: 'Disabled Item',
+  render: () => (
+    <div style={stage}>
+      <div style={sectionTitle}>Canonical `disabled` state on one item</div>
+      <div style={caption}>
+        The safe tab is disabled — it takes --navigation-foreground-disable and stops
+        responding to hover, focus and click.
+      </div>
+      <NavigationBar
+        selectedKey="home"
+        items={[
+          { key: 'home', label: 'หน้าแรก', icon: 'outline-Home', filledIcon: 'filled-Home' },
+          { key: 'order', label: 'คำสั่งซื้อ', icon: 'outline-order', filledIcon: 'filled-order' },
+          {
+            key: 'cart',
+            label: 'ตะกร้า',
+            icon: 'outline-cart',
+            // outline in both states, like every Figma variant — see NavigationBar.tsx
+            filledIcon: 'outline-cart',
+            cartLabel: 'ไปที่ตะกร้า',
+          },
+          {
+            key: 'safe',
+            label: 'ตู้เซฟ',
+            icon: 'outline-safe',
+            filledIcon: 'filled-safe',
+            disabled: true,
+          },
+          { key: 'profile', label: 'สมาชิก', icon: 'outline-member', filledIcon: 'filled-member' },
+        ]}
+      />
+    </div>
+  ),
+};
+
+// ── 6. Token Chain ──
+//
+// Every row reads its value through navigationValue() / sysValue(), so the table cannot
+// drift from what the component renders.
+export const TokenChain: StoryObj = {
+  name: '🔍 Token Chain',
   render: () => {
-    const tokenRows = [
+    type Row = [component: string, semantic: string];
+
+    const groups: Array<{ title: string; rows: Row[] }> = [
       {
-        section: 'Spacing & Padding',
-        tokens: [
-          { token: 'Item padding top (spacing-none)', figmaVar: 'dimension/spacing/spacing-none', value: `${SPACING.none}px`, actual: '0px' },
-          { token: 'Item padding right/left (spacing-sm)', figmaVar: 'dimension/spacing/spacing-sm', value: `${SPACING.sm}px`, actual: '4px' },
-          { token: 'Item padding bottom (spacing-xl)', figmaVar: 'dimension/spacing/spacing-xl', value: `${SPACING.xl}px`, actual: '12px' },
-          { token: 'Item internal gap (spacing-2lg)', figmaVar: 'dimension/spacing/spacing-2lg', value: `${SPACING['2lg']}px`, actual: '10px' },
-          { token: 'Cart button padding (spacing-sm)', figmaVar: 'dimension/spacing/spacing-sm', value: `${NAV_DIMENSIONS.cartButtonPadding}px`, actual: '4px' },
+        title: 'Shell',
+        rows: [
+          ['width', '(fixed)'],
+          ['height', '(fixed)'],
+          ['bar-height', '(fixed)'],
+          ['border-width', '--sys-border-width-hairline'],
         ],
       },
       {
-        section: 'Border Radius',
-        tokens: [
-          { token: 'Cart button radius (radius-lg)', figmaVar: 'dimension/breakpoint/radius/radius-lg', value: `${RADIUS.lg}px`, actual: '8px' },
-          { token: 'Badge radius (radius-full)', figmaVar: 'dimension/breakpoint/radius/radius-full', value: `${RADIUS.full}px`, actual: '100px' },
-          { token: 'Home indicator radius', figmaVar: 'dimension/breakpoint/radius/radius-full', value: `${NAV_DIMENSIONS.homeIndicatorRadius}px`, actual: '100px' },
-          { token: 'Timer pill radius', figmaVar: 'dimension/breakpoint/radius/radius-full', value: `${NAV_DIMENSIONS.timerPillRadius}px`, actual: '100px' },
+        title: 'Nav item',
+        rows: [
+          ['item-height', '(fixed)'],
+          ['item-padding-top', '--sys-spacing-none'],
+          ['item-padding-x', '--sys-spacing-sm'],
+          ['item-padding-bottom', '--sys-spacing-xl'],
+          ['item-gap', '--sys-spacing-none'],
+          ['selector-width', '(fixed)'],
+          ['selector-height', '(fixed)'],
+          ['selector-radius', '--sys-radius-xs'],
+          ['content-width', '(fixed)'],
+          ['content-height', '(fixed)'],
+          ['content-offset', '--sys-spacing-2lg'],
+          ['icon-size', '(fixed)'],
         ],
       },
       {
-        section: 'Border Width',
-        tokens: [
-          { token: 'Top border (border-width/1)', figmaVar: 'dimension/border-width/1', value: `${BORDER_WIDTH[1]}px`, actual: '1px' },
-          { token: 'Timer pill border', figmaVar: 'dimension/border-width/1', value: `${NAV_DIMENSIONS.timerPillBorderWidth}px`, actual: '1px' },
+        title: 'Badges',
+        rows: [
+          ['order-badge-icon-size', '(fixed)'],
+          ['order-badge-offset-top', '(fixed)'],
+          ['order-badge-offset-right', '(fixed)'],
+          ['badge-size', '(fixed)'],
+          ['badge-radius', '--sys-radius-full'],
+          ['badge-border-width', '(storybook-local — Figma strokes 1.5px)'],
+          ['badge-line-height', '(storybook-local — unitless)'],
+          ['badge-offset-top', '(fixed)'],
+          ['badge-offset-right', '(fixed)'],
         ],
       },
       {
-        section: 'Dimensions',
-        tokens: [
-          { token: 'Outer width', figmaVar: 'N/A (390px default)', value: `${NAV_DIMENSIONS.outerWidth}px`, actual: '390px' },
-          { token: 'Outer height', figmaVar: 'N/A (fixed)', value: `${NAV_DIMENSIONS.outerHeight}px`, actual: '124px' },
-          { token: 'Navbar height', figmaVar: 'N/A (fixed)', value: `${NAV_DIMENSIONS.navbarHeight}px`, actual: '90px' },
-          { token: 'Item width', figmaVar: 'N/A (78px)', value: `${NAV_DIMENSIONS.itemWidth}px`, actual: '78px' },
-          { token: 'Item height', figmaVar: 'N/A (68px)', value: `${NAV_DIMENSIONS.itemHeight}px`, actual: '68px' },
-          { token: 'Selector bar width', figmaVar: 'N/A (70px)', value: `${NAV_DIMENSIONS.selectorBarWidth}px`, actual: '70px' },
-          { token: 'Selector bar height', figmaVar: 'N/A (4px)', value: `${NAV_DIMENSIONS.selectorBarHeight}px`, actual: '4px' },
-          { token: 'Icon size', figmaVar: 'icons-size/24', value: `${NAV_DIMENSIONS.iconSize}px`, actual: '24px' },
-          { token: 'Home indicator: 134 x 5', figmaVar: 'N/A (fixed)', value: `${NAV_DIMENSIONS.homeIndicatorWidth}x${NAV_DIMENSIONS.homeIndicatorHeight}px`, actual: '134x5px' },
-          { token: 'Cart button height', figmaVar: 'N/A (90px)', value: `${NAV_DIMENSIONS.cartButtonHeight}px`, actual: '90px' },
+        title: 'Cart button & timer',
+        rows: [
+          ['cart-height', '(fixed)'],
+          ['cart-radius', '--sys-radius-lg'],
+          ['cart-padding', '--sys-spacing-sm'],
+          ['cart-padding-bottom', '--sys-spacing-none'],
+          ['cart-gap', '--sys-spacing-xs'],
+          ['cart-gradient', '(storybook-local — raw Figma gradient fill)'],
+          ['cart-badge-offset-top', '(fixed)'],
+          ['cart-badge-offset-right', '(fixed)'],
+          ['timer-border-width', '--sys-border-width-hairline'],
+          ['timer-radius', '--sys-radius-full'],
+          ['timer-padding-x', '--sys-spacing-lg'],
+          ['timer-padding-y', '--sys-spacing-xs'],
+          ['timer-line-height', '(storybook-local — unitless)'],
         ],
       },
       {
-        section: 'Colors',
-        tokens: [
-          { token: 'Background (navigation-bg-white)', figmaVar: 'colors/navigation-bar/navigation-bg-white', value: NAV_COLORS.bgWhite, actual: '#FFFFFF' },
-          { token: 'Active text/selector (navigation-fg-red)', figmaVar: 'colors/navigation-bar/navigation-fg-red', value: NAV_COLORS.fgRed, actual: '#E32321' },
-          { token: 'Inactive text (navigation-fg-dark)', figmaVar: 'colors/navigation-bar/navigation-fg-dark', value: NAV_COLORS.fgDark, actual: '#262626' },
-          { token: 'White text (navigation-fg-white)', figmaVar: 'colors/navigation-bar/navigation-fg-white', value: NAV_COLORS.fgWhite, actual: '#FFFFFF' },
-          { token: 'Top border (navigation-border)', figmaVar: 'colors/navigation-bar/navigation-border', value: NAV_COLORS.border, actual: '#F5F5F5' },
+        title: 'Home indicator',
+        rows: [
+          ['home-indicator-container-height', '(fixed)'],
+          ['home-indicator-padding-bottom', '--sys-spacing-lg'],
+          ['home-indicator-width', '(fixed)'],
+          ['home-indicator-height', '(fixed)'],
+          ['home-indicator-radius', '--sys-radius-full'],
+          ['foreground-home-indicator', '--sys-color-foreground-black'],
         ],
       },
       {
-        section: 'Cart Gradient',
-        tokens: [
-          { token: 'Cart gradient', figmaVar: 'N/A (rgba(248,92,42,1) -> rgba(216,15,13,1))', value: CART_GRADIENT, actual: 'linear-gradient(180deg, #F85C2A 0%, #D80F0D 100%)' },
-        ],
-      },
-      {
-        section: 'Typography',
-        tokens: [
-          { token: 'Font family', figmaVar: 'button/xs-med/font-family', value: TYPOGRAPHY.fontFamily, actual: "'Graphik TH', sans-serif" },
-          { token: 'Font size (button/xs-med/size)', figmaVar: 'button/xs-med/size', value: `${TYPOGRAPHY.fontSize}px`, actual: '10px' },
-          { token: 'Font weight (button/xs-med/weight)', figmaVar: 'button/xs-med/weight', value: `${TYPOGRAPHY.fontWeight}`, actual: '500' },
-          { token: 'Line height (button/xs-med/line-height)', figmaVar: 'button/xs-med/line-height', value: TYPOGRAPHY.lineHeight, actual: '18px' },
+        title: 'Typography — typography/button/xs/medium',
+        rows: [
+          ['typography-family', '--sys-type-button-xs-medium-family'],
+          ['typography-size', '--sys-type-button-xs-medium-size'],
+          ['typography-weight', '--sys-type-button-xs-medium-weight'],
+          ['typography-line-height', '--sys-type-button-xs-medium-line-height'],
+          ['typography-tracking', '--sys-type-button-xs-medium-tracking'],
         ],
       },
     ];
 
+    const th: React.CSSProperties = {
+      textAlign: 'left',
+      padding: `${sysValue('spacing-lg')} ${sysValue('spacing-xl')}`,
+      fontSize: sys('type-caption-md-regular-size'),
+      fontWeight: 600,
+      color: sys('color-text-tertiary-default'),
+      borderBottom: `${sys('border-width-thin')} solid ${sys('color-border-accent-gray-soft-light')}`,
+    };
+    const td: React.CSSProperties = {
+      padding: `${sysValue('spacing-md')} ${sysValue('spacing-xl')}`,
+      borderBottom: `${sys('border-width-hairline')} solid ${sys('color-background-light')}`,
+      fontFamily: mono,
+      fontSize: sys('type-caption-md-regular-size'),
+    };
+
     return (
-      <div style={{ padding: 32, maxWidth: 800, fontFamily: "'Graphik TH', sans-serif" }}>
-        <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>NavigationBar Token Verification</h2>
-        <p style={{ fontSize: 14, color: '#999', marginBottom: 8 }}>
-          Comparing Figma component values vs Storybook token values with bound variable names
-        </p>
-        <p style={{ fontSize: 13, fontWeight: 600, marginBottom: 24 }}>
-          Figma: &quot;navigation-bar-v2&quot; (14291:135864)
+      <div style={{ fontFamily: sans, maxWidth: 900, padding: sys('spacing-5xl') }}>
+        <h2 style={{ margin: 0, fontSize: sys('type-heading-h3-semibold-size') }}>
+          NavigationBar token chain
+        </h2>
+        <p
+          style={{
+            margin: `${sysValue('spacing-lg')} 0 ${sysValue('spacing-4xl')}`,
+            fontSize: sys('type-sub-title-md-regular-size'),
+            color: sys('color-text-tertiary-default'),
+          }}
+        >
+          Every value flows Figma → design.md + components/navigation-bar.json →
+          components.json → tokens.css. The component renders the Tier 2 alias; the alias
+          points at a Tier 1 semantic token; that resolves to the literal. Nothing below is
+          hand-typed.
         </p>
 
-        {/* Live previews */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: 24, background: '#F9F9F9', borderRadius: 8, marginBottom: 32, border: '1px solid #E5E5E5' }}>
-          <div style={{ fontSize: 12, fontWeight: 600 }}>Live Previews</div>
+        {/* Live previews — the same tokens, rendered */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: sys('spacing-2xl'),
+            padding: sys('spacing-4xl'),
+            background: sys('color-background-soft-light'),
+            borderRadius: sys('radius-lg'),
+            marginBottom: sys('spacing-5xl'),
+            border: `${sys('border-width-hairline')} solid ${sys('color-border-accent-gray-soft-light')}`,
+          }}
+        >
+          <div style={sectionTitle}>Live previews</div>
           <div>
-            <div style={{ fontSize: 11, color: '#999', marginBottom: 4 }}>state=home, add-to-cart=no</div>
-            <NavigationBar activeKey="home" />
+            <div style={caption}>selected=home, add-to-cart=no</div>
+            <NavigationBar selectedKey="home" />
           </div>
           <div>
-            <div style={{ fontSize: 11, color: '#999', marginBottom: 4 }}>state=home, add-to-cart=yes, badges</div>
+            <div style={caption}>selected=home, add-to-cart=yes, badges</div>
             <NavigationBar
-              activeKey="home"
+              selectedKey="home"
               showAddToCart
               cartTimer="00:14:59"
               cartBadgeCount={3}
@@ -309,46 +390,87 @@ export const TokenVerification: Story = {
           </div>
         </div>
 
-        {tokenRows.map(({ section, tokens }) => (
-          <div key={section} style={{ marginBottom: 32 }}>
-            <h3 style={{ fontSize: 16, fontWeight: 600, color: '#E32321', marginBottom: 12, borderBottom: '2px solid #E32321', paddingBottom: 4 }}>
-              {section}
+        {groups.map(({ title, rows }) => (
+          <div key={title} style={{ marginBottom: sysValue('spacing-5xl') }}>
+            <h3 style={{ fontSize: sysValue('type-body-md-semibold-size'), margin: `0 0 ${sysValue('spacing-lg')}` }}>
+              {title}
             </h3>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
-                  {['Token', 'Figma Variable', 'Value', 'Match'].map((h) => (
-                    <th key={h} style={{ textAlign: 'left', padding: '8px 12px', borderBottom: '2px solid #DDD', fontWeight: 600 }}>{h}</th>
-                  ))}
+                  <th style={th}>Tier 2 — component</th>
+                  <th style={th}>Tier 1 — semantic</th>
+                  <th style={th}>Value</th>
                 </tr>
               </thead>
               <tbody>
-                {tokens.map(({ token, figmaVar, value, actual }) => {
-                  const match = value === actual;
-                  return (
-                    <tr key={token}>
-                      <td style={{ padding: '6px 12px', borderBottom: '1px solid #EEE' }}>{token}</td>
-                      <td style={{ padding: '6px 12px', borderBottom: '1px solid #EEE', color: '#8B8BF5', fontSize: 11, fontFamily: 'monospace' }}>{figmaVar}</td>
-                      <td style={{ padding: '6px 12px', borderBottom: '1px solid #EEE', color: '#22C55E', fontFamily: 'monospace' }}>
-                        {value}
-                        {value.startsWith('#') && (
-                          <span style={{ display: 'inline-block', width: 12, height: 12, backgroundColor: value, borderRadius: 2, marginLeft: 6, verticalAlign: 'middle', border: '1px solid rgba(0,0,0,0.1)' }} />
-                        )}
-                      </td>
-                      <td style={{ padding: '6px 12px', borderBottom: '1px solid #EEE', fontSize: 16 }}>{match ? '✅' : '❌'}</td>
-                    </tr>
-                  );
-                })}
+                {rows.map(([token, semantic]) => (
+                  <tr key={token}>
+                    <td style={{ ...td, color: sys('color-primary-default') }}>
+                      {`--navigation-${token}`}
+                    </td>
+                    <td style={{ ...td, color: sys('color-status-info-default') }}>{semantic}</td>
+                    <td style={{ ...td, color: sys('color-status-success-dark') }}>
+                      {navigationValue(token)}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
         ))}
+
+        <h3 style={{ fontSize: sysValue('type-body-md-semibold-size'), margin: `0 0 ${sysValue('spacing-lg')}` }}>
+          Colours by state
+        </h3>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <thead>
+            <tr>
+              <th style={th}>State</th>
+              <th style={th}>Label</th>
+              <th style={th}>Icon</th>
+              <th style={th}>Selector bar</th>
+            </tr>
+          </thead>
+          <tbody>
+            {NAVIGATION_STATES.map((state) => {
+              const tokens = navigationColorTokens(state);
+              const values = navigationColorValues(state);
+              return (
+                <tr key={state}>
+                  <td style={{ ...td, color: sys('color-primary-default') }}>{state}</td>
+                  {(['foreground', 'icon', 'selector'] as const).map((slot) => (
+                    <td key={slot} style={td}>
+                      <span style={{ color: sys('color-status-info-default') }}>
+                        {`--navigation-${tokens[slot]}`}
+                      </span>
+                      <br />
+                      <span style={{ color: sys('color-status-success-dark') }}>{values[slot]}</span>
+                      <span
+                        style={{
+                          display: 'inline-block',
+                          width: sys('spacing-xl'),
+                          height: sys('spacing-xl'),
+                          backgroundColor: values[slot],
+                          borderRadius: sys('radius-xs'),
+                          marginLeft: sys('spacing-md'),
+                          verticalAlign: 'middle',
+                          border: `${sys('border-width-hairline')} solid ${sys('color-border-accent-gray-soft-light')}`,
+                        }}
+                      />
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     );
   },
 };
 
-// ── Color Bindings ──
+// ── 7. Color Bindings ──
 export const ColorBindings: StoryObj = {
   name: 'Color Bindings',
   render: () => (
@@ -356,14 +478,60 @@ export const ColorBindings: StoryObj = {
       componentName="NavigationBar"
       figmaId="14291:135864"
       bindings={[
-        { token: 'navigation-bg-white', figmaVariable: 'colors/navigation-bar/navigation-bg-white', hex: '#FFFFFF', usage: 'Nav bar background' },
-        { token: 'navigation-fg-red', figmaVariable: 'colors/navigation-bar/navigation-fg-red', hex: '#E32321', usage: 'Active text & selector bar' },
-        { token: 'navigation-fg-dark', figmaVariable: 'colors/navigation-bar/navigation-fg-dark', hex: '#262626', usage: 'Inactive text' },
-        { token: 'navigation-fg-white', figmaVariable: 'colors/navigation-bar/navigation-fg-white', hex: '#FFFFFF', usage: 'Cart button text, badge text' },
-        { token: 'navigation-border', figmaVariable: 'colors/navigation-bar/navigation-border', hex: '#F5F5F5', usage: 'Top border' },
-        { token: 'cart-gradient-start', figmaVariable: 'colors/navigation-bar/cart-gradient', hex: '#F85C2A', usage: 'Cart button gradient start' },
-        { token: 'cart-gradient-end', figmaVariable: 'colors/navigation-bar/cart-gradient', hex: '#D80F0D', usage: 'Cart button gradient end' },
-        { token: 'home-indicator', figmaVariable: 'colors/navigation-bar/home-indicator', hex: '#000000', usage: 'Home indicator pill' },
+        {
+          token: '--navigation-background-white',
+          figmaVariable: 'colors/navigation-bar/navigation-bg-white',
+          hex: navigationValue('background-white'),
+          usage: 'Nav bar background, unselected selector bar, badge disc',
+        },
+        {
+          token: '--navigation-foreground-red',
+          figmaVariable: 'colors/navigation-bar/navigation-fg-red',
+          hex: navigationValue('foreground-red'),
+          usage: 'Selected label & icon, selector bar, badge ring and numeral',
+        },
+        {
+          token: '--navigation-foreground-dark',
+          figmaVariable: 'colors/navigation-bar/navigation-fg-dark',
+          hex: navigationValue('foreground-dark'),
+          usage: 'Unselected label',
+        },
+        {
+          token: '--navigation-foreground-gray',
+          figmaVariable: 'colors/navigation-bar/navigation-fg-gray',
+          hex: navigationValue('foreground-gray'),
+          usage: 'Unselected icon',
+        },
+        {
+          token: '--navigation-foreground-disable',
+          figmaVariable: 'colors/navigation-bar/navigation-fg-disable',
+          hex: navigationValue('foreground-disable'),
+          usage: 'Disabled label & icon',
+        },
+        {
+          token: '--navigation-foreground-white',
+          figmaVariable: 'colors/navigation-bar/navigation-fg-white',
+          hex: navigationValue('foreground-white'),
+          usage: 'Cart button label, cart icon, timer pill border and text',
+        },
+        {
+          token: '--navigation-border',
+          figmaVariable: 'colors/navigation-bar/navigation-border',
+          hex: navigationValue('border'),
+          usage: 'Top border of the bar',
+        },
+        {
+          token: '--navigation-foreground-home-indicator',
+          figmaVariable: '(none — mapped to foreground/fg-black)',
+          hex: navigationValue('foreground-home-indicator'),
+          usage: 'Home indicator pill',
+        },
+        {
+          token: '--navigation-cart-gradient',
+          figmaVariable: '(none — raw gradient fill on the add-to-cart button)',
+          hex: navigationValue('cart-gradient'),
+          usage: 'Cart button background',
+        },
       ]}
     />
   ),

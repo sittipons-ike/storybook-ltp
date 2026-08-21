@@ -1,13 +1,12 @@
 import React from 'react';
 import Icon from '../../icons/Icon';
 import '../../icons/icon-data'; // register all icons
+import '../../foundations/tokens.css';
 import {
-  BUTTON_COLORS,
-  SIZE_CONFIG,
-  TYPOGRAPHY,
-  RADIUS,
-  BORDER_WIDTH,
-  type ButtonType,
+  buttonColors,
+  buttonSize,
+  BUTTON_BASE,
+  type ButtonVariant,
   type ButtonSize,
   type ButtonState,
 } from './tokens';
@@ -16,9 +15,9 @@ import './Button.css';
 export interface ButtonProps {
   /** Button label text */
   children?: string;
-  /** Visual type — matches Figma "Type" variant property */
-  type?: ButtonType;
-  /** Size — matches Figma "Size" variant property (L/M/S) */
+  /** Visual variant. `outline` and `link` are approved extensions — see components.json */
+  variant?: ButtonVariant;
+  /** Size — lg (44px) / md (36px) / sm (28px) */
   size?: ButtonSize;
   /** Show icon — matches Figma "Show icon" variant property */
   showIcon?: boolean;
@@ -39,25 +38,27 @@ export interface ButtonProps {
 }
 
 /**
- * Button Component — Lotteryplus Design System
+ * Button — Lotteryplus Design System
  *
- * Built from Figma component set "button" (14291:130847)
- * 195 variants: Size(L/M/S) × Type(5) × Show icon(2) × Show Text(2) × State(5)
+ * Built from the Figma component set "button" (14291:130847).
+ * 195 variants: Size(3) x Variant(5) x Show icon(2) x Show Text(2) x State(5)
  *
- * All values are bound to Foundation variables:
- * - Spacing: dimension/spacing/* (2-semantic)
- * - Radius: dimension/breakpoint/radius/* (2-semantic)
- * - Typography: button/m-semb/* (typography collection)
- * - Colors: colors/button/* (3-component collection)
- * - Icons: icons-size component (Size=24, Colors=On BG)
+ * Every style value is a CSS custom property from foundations/tokens.css, which is
+ * generated from Figma via design.md + components.json. There are no literal colours,
+ * sizes, or font values in this file — changing one means changing Figma and
+ * regenerating, which is what keeps design and code from drifting apart.
  */
 const Button: React.FC<ButtonProps> = ({
   children = 'BUTTON',
-  type = 'primary',
-  size = 'L',
+  variant = 'primary',
+  size = 'lg',
   showIcon = false,
   showText = true,
-  iconName = 'outline-Home',
+  // Figma's own placeholder in the `button` set (14291:130847): every Show icon=Yes
+  // variant instantiates `outline-document-copy`. The icon is a slot, so this only
+  // matters when a caller turns the icon on without naming one — but the default it
+  // used to carry, `outline-Home`, came from nowhere.
+  iconName = 'outline-document-copy',
   disabled = false,
   onClick,
   fullWidth = false,
@@ -66,102 +67,71 @@ const Button: React.FC<ButtonProps> = ({
 }) => {
   const [hovered, setHovered] = React.useState(false);
   const [focused, setFocused] = React.useState(false);
-  const [pressed, setPressed] = React.useState(false);
+  const [active, setActive] = React.useState(false);
 
-  // Determine current state (matches Figma "State" variant property)
-  const currentState: ButtonState = disabled
+  // Canonical state precedence: disabled beats active beats focus beats hover.
+  const state: ButtonState = disabled
     ? 'disabled'
-    : pressed
-    ? 'pressed'
+    : active
+    ? 'active'
     : focused
-    ? 'focused'
+    ? 'focus'
     : hovered
     ? 'hover'
-    : 'default';
+    : 'rest';
 
-  const colors = BUTTON_COLORS[type][currentState];
-  const sizeConfig = SIZE_CONFIG[size];
+  const colors = buttonColors(variant, state);
+  const dimensions = buttonSize(size);
   const isIconOnly = showIcon && !showText;
 
-  // ── Auto Layout mapping from Figma ──
-  // layoutMode: HORIZONTAL
-  // primaryAxisAlignItems: CENTER
-  // counterAxisAlignItems: CENTER
   const containerStyle: React.CSSProperties = {
-    // Auto Layout: HORIZONTAL, CENTER/CENTER
+    // Auto Layout: HORIZONTAL, CENTER / CENTER
     display: 'inline-flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
 
-    // Dimensions (counterAxisSizingMode: FIXED, primaryAxisSizingMode: FIXED in Figma → we use auto width)
-    height: sizeConfig.height,
-    width: fullWidth ? '100%' : undefined,
+    height: dimensions.height,
+    // Figma draws the icon-only button as a square — 44, 36 or 28 on a side. Letting the
+    // width come from content made it 2px wider than tall, because the transparent 1px
+    // border every variant carries counts toward an auto width under border-box.
+    width: fullWidth ? '100%' : isIconOnly ? dimensions.height : undefined,
 
-    // Padding from Foundation spacing tokens
-    paddingTop: sizeConfig.paddingY,     // dimension/spacing/spacing-none = 0
-    paddingBottom: sizeConfig.paddingY,  // dimension/spacing/spacing-none = 0
+    paddingTop: BUTTON_BASE.paddingY,
+    paddingBottom: BUTTON_BASE.paddingY,
     paddingLeft: isIconOnly
-      ? sizeConfig.iconOnlyPadding
+      ? dimensions.iconOnlyPadding
       : showIcon
-      ? sizeConfig.iconPaddingLeft       // dimension/spacing/spacing-xl = 12
-      : sizeConfig.paddingX,             // dimension/spacing/spacing-2xl = 16
-    paddingRight: isIconOnly
-      ? sizeConfig.iconOnlyPadding
-      : sizeConfig.paddingX,             // dimension/spacing/spacing-2xl = 16
+      ? BUTTON_BASE.paddingLeftWithIcon
+      : BUTTON_BASE.paddingX,
+    paddingRight: isIconOnly ? dimensions.iconOnlyPadding : BUTTON_BASE.paddingX,
 
-    // Gap from Foundation spacing tokens
-    gap: showIcon && showText
-      ? sizeConfig.itemSpacing           // dimension/spacing/spacing-sm = 4
-      : 0,
+    gap: showIcon && showText ? BUTTON_BASE.gap : 0,
 
-    // Border Radius from Foundation
-    borderRadius: RADIUS.lg,             // dimension/breakpoint/radius/radius-lg = 8
+    borderRadius: BUTTON_BASE.radius,
+    backgroundColor: colors.background,
+    color: colors.foreground,
+    border: `${BUTTON_BASE.borderWidth} solid ${colors.border}`,
 
-    // Colors from Component Tokens (3-component)
-    backgroundColor: colors.bg,
-    color: colors.fg,
-
-    // Border (Tertiary type uses stroke)
-    border: colors.border
-      ? `${BORDER_WIDTH[1]}px solid ${colors.border}`  // dimension/border-width/1 = 1px
-      : type === 'tertiary'
-      ? `${BORDER_WIDTH[1]}px solid transparent`
-      : 'none',
-
-    // Cursor
     cursor: disabled ? 'not-allowed' : 'pointer',
-
-    // Transition
     transition: 'background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease',
-
-    // No text selection
     userSelect: 'none',
   };
 
-  // ── Typography from Foundation ──
-  // button/m-semb: font-family/Graphik TH, size/m=14, weight/Semibold=600, line-height/m=22px
   const textStyle: React.CSSProperties = {
-    fontFamily: TYPOGRAPHY.fontFamily,
-    fontSize: TYPOGRAPHY.fontSize,
-    fontWeight: TYPOGRAPHY.fontWeight,
-    lineHeight: TYPOGRAPHY.lineHeight,
-    color: colors.fg,
+    fontFamily: BUTTON_BASE.fontFamily,
+    fontSize: BUTTON_BASE.fontSize,
+    fontWeight: BUTTON_BASE.fontWeight as unknown as React.CSSProperties['fontWeight'],
+    lineHeight: BUTTON_BASE.lineHeight,
+    letterSpacing: BUTTON_BASE.tracking,
+    color: colors.foreground,
     whiteSpace: 'nowrap',
-    letterSpacing: 0, // Figma: 0%
-  };
-
-  // ── Icon color mapping ──
-  // Figma uses icons-size component with Colors="On BG" for primary/secondary
-  // For tertiary/outline/link, icon inherits text color
-  const getIconColor = (): string => {
-    return colors.fg;
   };
 
   return (
     <button
       type={htmlType}
-      className={`ltp-button ltp-button--${type} ltp-button--${size.toLowerCase()} ${
+      className={`ltp-button ltp-button--${variant} ltp-button--${size} ${
         isIconOnly ? 'ltp-button--icon-only' : ''
       } ${disabled ? 'ltp-button--disabled' : ''} ${className}`}
       style={containerStyle}
@@ -171,24 +141,24 @@ const Button: React.FC<ButtonProps> = ({
       onMouseLeave={() => {
         if (!disabled) {
           setHovered(false);
-          setPressed(false);
+          setActive(false);
         }
       }}
       onFocus={() => !disabled && setFocused(true)}
       onBlur={() => !disabled && setFocused(false)}
-      onMouseDown={() => !disabled && setPressed(true)}
-      onMouseUp={() => !disabled && setPressed(false)}
+      onMouseDown={() => !disabled && setActive(true)}
+      onMouseUp={() => !disabled && setActive(false)}
     >
-      {/* Icon — uses design system Icon component (icons-size: Size=24, Colors=On BG) */}
+      {/* Icon — icons-size component (Size=24, Colors=On BG) */}
       {showIcon && (
         <Icon
           name={iconName}
-          size={sizeConfig.iconSize as any}
-          customColor={getIconColor()}
+          size={dimensions.iconSize as any}
+          customColor={colors.foreground}
         />
       )}
 
-      {/* Text — Typography: button/m-semb */}
+      {/* Text — typography/button/md/semibold */}
       {showText && (
         <span className="ltp-button__text" style={textStyle}>
           {children}

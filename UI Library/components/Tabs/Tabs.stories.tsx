@@ -3,24 +3,35 @@ import React, { useState } from 'react';
 import Tabs from './Tabs';
 import type { TabItem } from './Tabs';
 import {
-  TAB_COLORS,
-  TAB_DIMENSIONS,
-  TYPOGRAPHY,
-  SPACING,
-  RADIUS,
-  BORDER_WIDTH,
+  TABS_COLOR_SCHEMES,
+  TABS_VARIANTS,
+  TABS_BADGE_SIZE,
+  tabsValue,
+  tabsSchemeValues,
+  type TabsColorScheme,
 } from './tokens';
+import { sysValue } from '../../foundations/tokens';
 import ColorBindingsTable from '../../system/ColorBindingsTable';
-import type { ColorBinding } from '../../system/ColorBindingsTable';
 
 // ═══════════════════════════════════════════
 //  Tabs Stories — Lotteryplus Design System
 //  Figma: "horizontal-tabs-underline" (14370:9654)
 //         "horizontal-tabs_button" (14370:9710)
+//
+//  Every literal shown below is read back from the generated tokens, never typed in.
 // ═══════════════════════════════════════════
 
+const sans = 'var(--sys-type-body-md-regular-family), sans-serif';
+const mono = 'ui-monospace, SFMono-Regular, Menlo, monospace';
+const caption: React.CSSProperties = {
+  fontSize: 11,
+  color: 'var(--sys-color-text-tertiary-default)',
+  marginBottom: 4,
+  fontFamily: sans,
+};
+
 const meta: Meta<typeof Tabs> = {
-  title: 'Components/Tabs',
+  title: 'Organisms/Tabs',
   component: Tabs,
   tags: ['autodocs'],
   parameters: {
@@ -29,22 +40,23 @@ const meta: Meta<typeof Tabs> = {
       description: {
         component:
           'Tabs component from Figma "Design Systems Web App Lotteryplus V.7.1". ' +
-          'Two visual styles: "underline" (red bottom border) and "button" (filled pill). ' +
-          'Button style supports "red" and "black" color schemes. ' +
-          'Supports 2-5 tabs with optional badge indicators. Uses Icon component.',
+          'Two visual styles: "underline" (indicator rule) and "button" (filled pill). ' +
+          'The button style takes a `primary` or `secondary` colour scheme — Figma still ' +
+          'spells those `red` and `black`. Supports 2-5 tabs with optional badge ' +
+          'indicators. Uses the Icon component.',
       },
     },
   },
   argTypes: {
     variant: {
       control: 'select',
-      options: ['underline', 'button'],
+      options: TABS_VARIANTS,
       description: 'Visual style variant',
     },
     colorScheme: {
       control: 'select',
-      options: ['red', 'black'],
-      description: 'Color scheme (button variant only)',
+      options: TABS_COLOR_SCHEMES,
+      description: 'Colour scheme (button variant only)',
     },
   },
 };
@@ -68,16 +80,8 @@ const tabs4: TabItem[] = [
   { key: 'tab4', label: 'name-4', showBadge: true },
 ];
 
-const tabs3: TabItem[] = [
-  { key: 'tab1', label: 'name-1', showBadge: true },
-  { key: 'tab2', label: 'name-2', showBadge: true },
-  { key: 'tab3', label: 'name-3', showBadge: true },
-];
-
-const tabs2: TabItem[] = [
-  { key: 'tab1', label: 'name-1', showBadge: true },
-  { key: 'tab2', label: 'name-2', showBadge: true },
-];
+const tabs3: TabItem[] = tabs4.slice(0, 3);
+const tabs2: TabItem[] = tabs4.slice(0, 2);
 
 // ── 1. Underline Default (Interactive) ──
 export const UnderlineDefault: Story = {
@@ -92,16 +96,14 @@ export const UnderlineDefault: Story = {
   },
 };
 
-// ── 2. Underline — All Selected States ──
+// ── 2. Underline — Every tab selected in turn ──
 export const UnderlineAllStates: Story = {
   name: 'Underline — All Selected States',
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: 488 }}>
       {tabs5.map((tab) => (
         <div key={tab.key}>
-          <div style={{ fontSize: 11, color: '#999', marginBottom: 4, fontFamily: "'Graphik TH', sans-serif" }}>
-            state=select-{tabs5.indexOf(tab) + 1}
-          </div>
+          <div style={caption}>selected={tab.key}</div>
           <Tabs variant="underline" items={tabs5} activeKey={tab.key} />
         </div>
       ))}
@@ -115,76 +117,82 @@ export const UnderlineTabCounts: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: 488 }}>
       {[
-        { label: '5 tabs', items: tabs5, active: 'lottery' },
-        { label: '4 tabs', items: tabs5.slice(0, 4), active: 'lottery' },
-        { label: '3 tabs', items: tabs5.slice(0, 3), active: 'lottery' },
-        { label: '2 tabs', items: tabs5.slice(0, 2), active: 'lottery' },
-      ].map(({ label, items, active }) => (
+        { label: '5 tabs', items: tabs5 },
+        { label: '4 tabs', items: tabs5.slice(0, 4) },
+        { label: '3 tabs', items: tabs5.slice(0, 3) },
+        { label: '2 tabs', items: tabs5.slice(0, 2) },
+      ].map(({ label, items }) => (
         <div key={label}>
-          <div style={{ fontSize: 11, color: '#999', marginBottom: 4, fontFamily: "'Graphik TH', sans-serif" }}>
-            menu={label}
-          </div>
-          <Tabs variant="underline" items={items} activeKey={active} />
+          <div style={caption}>menu={label}</div>
+          <Tabs variant="underline" items={items} activeKey="lottery" />
         </div>
       ))}
     </div>
   ),
 };
 
-// ── 4. Button — Red (Interactive) ──
-export const ButtonRed: Story = {
-  name: 'Button — Red (Interactive)',
+// ── 4. Button — Primary (Interactive) ──
+export const ButtonPrimary: Story = {
+  name: 'Button — Primary (Interactive)',
   render: () => {
     const [active, setActive] = useState('tab1');
     return (
       <div style={{ width: 358 }}>
-        <Tabs variant="button" items={tabs4} activeKey={active} onChange={setActive} colorScheme="red" />
+        <Tabs
+          variant="button"
+          items={tabs4}
+          activeKey={active}
+          onChange={setActive}
+          colorScheme="primary"
+        />
       </div>
     );
   },
 };
 
-// ── 5. Button — Black (Interactive) ──
-export const ButtonBlack: Story = {
-  name: 'Button — Black (Interactive)',
+// ── 5. Button — Secondary (Interactive) ──
+export const ButtonSecondary: Story = {
+  name: 'Button — Secondary (Interactive)',
   render: () => {
     const [active, setActive] = useState('tab1');
     return (
       <div style={{ width: 358 }}>
-        <Tabs variant="button" items={tabs4} activeKey={active} onChange={setActive} colorScheme="black" />
+        <Tabs
+          variant="button"
+          items={tabs4}
+          activeKey={active}
+          onChange={setActive}
+          colorScheme="secondary"
+        />
       </div>
     );
   },
 };
 
-// ── 6. Button — All States (Red) ──
-export const ButtonAllStatesRed: Story = {
-  name: 'Button — All States (Red)',
+// ── 6. Button — All selected states (Primary) ──
+export const ButtonAllStatesPrimary: Story = {
+  name: 'Button — All Selected States (Primary)',
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: 358 }}>
       {tabs4.map((tab) => (
         <div key={tab.key}>
-          <div style={{ fontSize: 11, color: '#999', marginBottom: 4, fontFamily: "'Graphik TH', sans-serif" }}>
-            status={tab.key}, colors=red
-          </div>
-          <Tabs variant="button" items={tabs4} activeKey={tab.key} colorScheme="red" />
+          <div style={caption}>selected={tab.key}, colorScheme=primary</div>
+          <Tabs variant="button" items={tabs4} activeKey={tab.key} colorScheme="primary" />
         </div>
       ))}
     </div>
   ),
 };
 
-// ── 7. Button — All States (Black) ──
-export const ButtonAllStatesBlack: Story = {
-  name: 'Button — All States (Black)',
+// ── 7. Button — All selected states (Secondary) ──
+export const ButtonAllStatesSecondary: Story = {
+  name: 'Button — All Selected States (Secondary)',
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: 358 }}>
       {tabs4.map((tab) => (
         <div key={tab.key}>
-          <div style={{ fontSize: 11, color: '#999', marginBottom: 4, fontFamily: "'Graphik TH', sans-serif" }}>
-            status={tab.key}, colors=black
-          </div>
-          <Tabs variant="button" items={tabs4} activeKey={tab.key} colorScheme="black" />
+          <div style={caption}>selected={tab.key}, colorScheme=secondary</div>
+          <Tabs variant="button" items={tabs4} activeKey={tab.key} colorScheme="secondary" />
         </div>
       ))}
     </div>
@@ -197,142 +205,233 @@ export const ButtonTabCounts: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       {[
-        { label: '4-tabs', items: tabs4, w: 358 },
-        { label: '3-tabs', items: tabs3, w: 358 },
-        { label: '2-tabs', items: tabs2, w: 358 },
-      ].map(({ label, items, w }) => (
-        <div key={label}>
-          <div style={{ fontSize: 11, color: '#999', marginBottom: 4, fontFamily: "'Graphik TH', sans-serif" }}>
-            menu={label}, colors=red
-          </div>
-          <div style={{ width: w }}>
-            <Tabs variant="button" items={items} activeKey="tab1" colorScheme="red" />
-          </div>
-          <div style={{ marginTop: 8, width: w }}>
-            <Tabs variant="button" items={items} activeKey="tab1" colorScheme="black" />
-          </div>
+        { label: '4-tabs', items: tabs4 },
+        { label: '3-tabs', items: tabs3 },
+        { label: '2-tabs', items: tabs2 },
+      ].map(({ label, items }) => (
+        <div key={label} style={{ width: 358 }}>
+          <div style={caption}>menu={label}</div>
+          {TABS_COLOR_SCHEMES.map((scheme) => (
+            <div key={scheme} style={{ marginTop: 8 }}>
+              <Tabs variant="button" items={items} activeKey="tab1" colorScheme={scheme} />
+            </div>
+          ))}
         </div>
       ))}
     </div>
   ),
 };
 
-// ── 9. Token Verification ──
+// ═══════════════════════════════════════════
+//  9. Token chain — Figma vs Storybook
+//
+//  Both columns are read from the generated tokens: the Tier 2 literal from
+//  `tabsValue()`, the Tier 1 literal from `sysValue()`. A mismatch means the alias
+//  stopped pointing where the table says it points — it cannot be papered over by
+//  editing a string here, because there are no strings to edit.
+// ═══════════════════════════════════════════
+type ChainRow = {
+  /** Tier 2 token, without the `--tabs-` prefix. */
+  token: string;
+  /** Tier 1 semantic token, without the `--sys-` prefix. `null` = fixed pixel value. */
+  semantic: string | null;
+  /** Where the value is authored in Figma. */
+  figma: string;
+};
+
+const layoutChain: ChainRow[] = [
+  { token: 'height', semantic: null, figma: 'frame height (fixed)' },
+  { token: 'radius', semantic: 'radius-lg', figma: 'dimension/radius/radius-lg' },
+  { token: 'radius-active', semantic: 'radius-md', figma: 'dimension/radius/radius-md' },
+  { token: 'padding-x', semantic: 'spacing-2xl', figma: 'dimension/spacing/spacing-2xl' },
+  { token: 'padding-y', semantic: 'spacing-lg', figma: 'dimension/spacing/spacing-lg' },
+  { token: 'gap', semantic: 'spacing-lg', figma: 'dimension/spacing/spacing-lg' },
+  { token: 'item-gap', semantic: 'spacing-sm', figma: 'dimension/spacing/spacing-sm' },
+  { token: 'border-width', semantic: 'border-width-hairline', figma: 'dimension/border-width/1' },
+  { token: 'indicator-width', semantic: 'border-width-thin', figma: 'dimension/border-width/2' },
+  { token: 'badge-size', semantic: null, figma: 'icons-size 16 (fixed)' },
+];
+
+const typographyChain: ChainRow[] = [
+  { token: 'typography-family', semantic: 'type-button-md-medium-family', figma: 'button/m-med/family' },
+  { token: 'typography-size', semantic: 'type-button-md-medium-size', figma: 'button/m-semb/size' },
+  { token: 'typography-line-height', semantic: 'type-button-md-medium-line-height', figma: 'button/m-semb/line-height' },
+  { token: 'typography-weight', semantic: 'type-button-md-medium-weight', figma: 'button/m-med/weight' },
+  { token: 'typography-tracking', semantic: 'type-button-md-medium-tracking', figma: 'button/m-med/tracking' },
+];
+
+const colourChain: ChainRow[] = [
+  { token: 'foreground-primary', semantic: 'color-primary-default', figma: 'colors/tabs/tabs-fg-primary' },
+  { token: 'foreground-secondary', semantic: 'color-secondary-default', figma: 'colors/tabs/tabs-fg-secondary' },
+  { token: 'foreground-white', semantic: 'color-foreground-white', figma: 'colors/tabs/tabs-fg-white' },
+  { token: 'foreground-disable', semantic: 'color-secondary-light', figma: 'colors/tabs/tabs-fg-disable' },
+  { token: 'background-primary', semantic: 'color-primary-default', figma: 'colors/tabs/tabs-bg-primary' },
+  { token: 'background-secondary', semantic: 'color-secondary-default', figma: 'colors/tabs/tabs-bg-secondary' },
+  { token: 'background-white', semantic: 'color-background-default', figma: 'colors/tabs/tabs-bg-white' },
+  { token: 'background-disable', semantic: 'color-secondary-light', figma: 'colors/tabs/tabs-bg-disable' },
+  {
+    token: 'separator',
+    semantic: 'color-border-accent-gray-soft-light',
+    figma: 'Color/Border/Border-Gray-Soft-Light',
+  },
+];
+
+const th: React.CSSProperties = {
+  textAlign: 'left',
+  padding: '8px 12px',
+  fontSize: 11,
+  fontWeight: 600,
+  color: 'var(--sys-color-text-tertiary-default)',
+  borderBottom: '2px solid var(--sys-color-border-accent-gray-soft-light)',
+};
+const td: React.CSSProperties = {
+  padding: '6px 12px',
+  borderBottom: '1px solid var(--sys-color-background-light)',
+  fontFamily: mono,
+  fontSize: 11,
+};
+
+const Swatch: React.FC<{ value: string }> = ({ value }) =>
+  value.startsWith('#') ? (
+    <span
+      style={{
+        display: 'inline-block',
+        width: 12,
+        height: 12,
+        backgroundColor: value,
+        borderRadius: 2,
+        marginLeft: 6,
+        verticalAlign: 'middle',
+        border: '1px solid var(--sys-color-border-accent-gray-light)',
+      }}
+    />
+  ) : null;
+
+const ChainTable: React.FC<{ title: string; rows: ChainRow[] }> = ({ title, rows }) => (
+  <>
+    <h3 style={{ fontSize: 14, margin: '0 0 8px' }}>{title}</h3>
+    <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 28 }}>
+      <thead>
+        <tr>
+          <th style={th}>Figma</th>
+          <th style={th}>Tier 1 — semantic</th>
+          <th style={th}>Tier 2 — component</th>
+          <th style={th}>Value</th>
+          <th style={th}>Match</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map(({ token, semantic, figma }) => {
+          const value = tabsValue(token);
+          const expected = semantic ? sysValue(semantic) : value;
+          const match = value !== '' && value === expected;
+          return (
+            <tr key={token}>
+              <td style={{ ...td, color: 'var(--sys-color-text-tertiary-default)' }}>{figma}</td>
+              <td style={{ ...td, color: 'var(--sys-color-status-info-default)' }}>
+                {semantic ? `--sys-${semantic}` : '(fixed)'}
+              </td>
+              <td style={{ ...td, color: 'var(--sys-color-primary-default)' }}>{`--tabs-${token}`}</td>
+              <td style={{ ...td, color: 'var(--sys-color-status-success-dark)' }}>
+                {value || '—'}
+                <Swatch value={value} />
+              </td>
+              <td style={{ ...td, fontSize: 14 }}>{match ? '✅' : '❌'}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </>
+);
+
 export const TokenVerification: Story = {
-  name: 'Token Verification',
-  render: () => {
-    const tokenRows = [
-      {
-        section: 'Underline Style — Layout',
-        tokens: [
-          { token: 'Tab height', figmaVar: 'N/A (fixed)', value: `${TAB_DIMENSIONS.underline.height}px`, actual: '40px' },
-          { token: 'Padding top/bottom (spacing-lg)', figmaVar: 'dimension/spacing/spacing-lg', value: `${TAB_DIMENSIONS.underline.paddingTop}px`, actual: '8px' },
-          { token: 'Padding left/right', figmaVar: 'N/A (16px)', value: `${TAB_DIMENSIONS.underline.paddingRight}px`, actual: '16px' },
-          { token: 'Internal gap (spacing-lg)', figmaVar: 'dimension/spacing/spacing-lg', value: `${TAB_DIMENSIONS.underline.gap}px`, actual: '8px' },
-          { token: 'Bottom border width', figmaVar: 'dimension/border-width/1', value: `${TAB_DIMENSIONS.underline.bottomBorderWidth}px`, actual: '1px' },
-          { token: 'Selected underline width', figmaVar: 'N/A (2px)', value: `${TAB_DIMENSIONS.underline.selectedBorderWidth}px`, actual: '2px' },
-        ],
-      },
-      {
-        section: 'Button Style — Layout',
-        tokens: [
-          { token: 'Container height', figmaVar: 'N/A (fixed)', value: `${TAB_DIMENSIONS.button.height}px`, actual: '40px' },
-          { token: 'Container radius (radius-lg)', figmaVar: 'dimension/breakpoint/radius/radius-lg', value: `${TAB_DIMENSIONS.button.outerRadius}px`, actual: '8px' },
-          { token: 'Container border (border-width/1)', figmaVar: 'dimension/border-width/1', value: `${TAB_DIMENSIONS.button.outerBorderWidth}px`, actual: '1px' },
-          { token: 'Tab item gap (spacing-sm)', figmaVar: 'dimension/spacing/spacing-sm', value: `${TAB_DIMENSIONS.button.itemGap}px`, actual: '4px' },
-          { token: 'Item padding TB (spacing-lg)', figmaVar: 'dimension/spacing/spacing-lg', value: `${TAB_DIMENSIONS.button.item.paddingTop}px`, actual: '8px' },
-          { token: 'Item padding LR (spacing-2xl)', figmaVar: 'dimension/spacing/spacing-2xl', value: `${TAB_DIMENSIONS.button.item.paddingRight}px`, actual: '16px' },
-          { token: 'Active item radius (radius-md)', figmaVar: 'N/A (6px)', value: `${TAB_DIMENSIONS.button.item.activeRadius}px`, actual: '6px' },
-        ],
-      },
-      {
-        section: 'Colors',
-        tokens: [
-          { token: 'Selected text (tabs-fg-primary)', figmaVar: 'colors/tabs/tabs-fg-primary', value: TAB_COLORS.text.primary, actual: '#E32321' },
-          { token: 'Unselected text (tabs-fg-secondary)', figmaVar: 'colors/tabs/tabs-fg-secondary', value: TAB_COLORS.text.secondary, actual: '#262626' },
-          { token: 'Active text white (tabs-fg-white)', figmaVar: 'colors/tabs/tabs-fg-white', value: TAB_COLORS.text.white, actual: '#FFFFFF' },
-          { token: 'Bottom border (tabs-fg-disable)', figmaVar: 'colors/tabs/tabs-fg-disable', value: TAB_COLORS.text.disable, actual: '#C9C9C9' },
-          { token: 'Active bg red (tabs-bg-primary)', figmaVar: 'colors/tabs/tabs-bg-primary', value: TAB_COLORS.bg.primary, actual: '#E32321' },
-          { token: 'Active bg black (tabs-bg-secondary)', figmaVar: 'colors/tabs/tabs-bg-secondary', value: TAB_COLORS.bg.secondary, actual: '#262626' },
-          { token: 'Container bg (tabs-bg-white)', figmaVar: 'colors/tabs/tabs-bg-white', value: TAB_COLORS.bg.white, actual: '#FFFFFF' },
-          { token: 'Separator (Border-Disable)', figmaVar: 'Color/Border/Border-Disable', value: TAB_COLORS.border.disable, actual: '#E5E5E5' },
-        ],
-      },
-      {
-        section: 'Typography',
-        tokens: [
-          { token: 'Font size (button/m-semb/size)', figmaVar: 'button/m-semb/size', value: `${TYPOGRAPHY.tab.fontSize}px`, actual: '14px' },
-          { token: 'Font weight (button/m-med)', figmaVar: 'button/m-med/weight', value: `${TYPOGRAPHY.tab.fontWeight}`, actual: '500' },
-          { token: 'Line height (button/m-semb)', figmaVar: 'button/m-semb/line-height', value: TYPOGRAPHY.tab.lineHeight, actual: '22px' },
-          { token: 'Badge icon size', figmaVar: 'N/A (icons-size 16)', value: `${TAB_DIMENSIONS.badgeSize}px`, actual: '16px' },
-        ],
-      },
-    ];
+  name: '🔍 Token Chain',
+  parameters: { layout: 'padded' },
+  render: () => (
+    <div style={{ fontFamily: sans, maxWidth: 940 }}>
+      <h2 style={{ margin: '0 0 8px', fontSize: 20 }}>Tabs token chain</h2>
+      <p
+        style={{
+          margin: '0 0 20px',
+          fontSize: 13,
+          color: 'var(--sys-color-text-tertiary-default)',
+        }}
+      >
+        Every value flows Figma → design.md → components.json (+ components/tabs.json) →
+        tokens.css. The component renders the Tier 2 alias; the alias points at a Tier 1
+        semantic token; that resolves to the literal. Nothing below is hand-typed — the
+        Value column is read from the generated tokens and Match compares it against the
+        Tier 1 literal, so the table cannot drift from what the component renders.
+      </p>
 
-    return (
-      <div style={{ padding: 32, maxWidth: 750, fontFamily: "'Graphik TH', sans-serif" }}>
-        <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>Tabs Token Verification</h2>
-        <p style={{ fontSize: 14, color: '#999', marginBottom: 8 }}>
-          Comparing Figma component values vs Storybook token values with bound variable names
-        </p>
-        <p style={{ fontSize: 13, fontWeight: 600, marginBottom: 24 }}>
-          Figma: &quot;horizontal-tabs-underline&quot; (14370:9654) &amp; &quot;horizontal-tabs_button&quot; (14370:9710)
-        </p>
-
-        {/* Live previews */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: 24, background: '#F9F9F9', borderRadius: 8, marginBottom: 32, border: '1px solid #E5E5E5' }}>
-          <div style={{ fontSize: 12, fontWeight: 600 }}>Live Previews</div>
-          <div style={{ width: 400 }}>
-            <Tabs variant="underline" items={tabs5.slice(0, 4)} activeKey="lottery" />
-          </div>
-          <div style={{ width: 358 }}>
-            <Tabs variant="button" items={tabs4} activeKey="tab1" colorScheme="red" />
-          </div>
-          <div style={{ width: 358 }}>
-            <Tabs variant="button" items={tabs4} activeKey="tab1" colorScheme="black" />
-          </div>
+      {/* Live previews */}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 16,
+          padding: 24,
+          background: 'var(--sys-color-background-soft-light)',
+          borderRadius: 8,
+          marginBottom: 32,
+          border: '1px solid var(--sys-color-border-accent-gray-soft-light)',
+        }}
+      >
+        <div style={{ fontSize: 12, fontWeight: 600 }}>Live previews</div>
+        <div style={{ width: 400 }}>
+          <Tabs variant="underline" items={tabs5.slice(0, 4)} activeKey="lottery" />
         </div>
-
-        {tokenRows.map(({ section, tokens }) => (
-          <div key={section} style={{ marginBottom: 32 }}>
-            <h3 style={{ fontSize: 16, fontWeight: 600, color: '#E32321', marginBottom: 12, borderBottom: '2px solid #E32321', paddingBottom: 4 }}>
-              {section}
-            </h3>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-              <thead>
-                <tr>
-                  {['Token', 'Figma Variable', 'Value', 'Match'].map((h) => (
-                    <th key={h} style={{ textAlign: 'left', padding: '8px 12px', borderBottom: '2px solid #DDD', fontWeight: 600 }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {tokens.map(({ token, figmaVar, value, actual }) => {
-                  const match = value === actual;
-                  return (
-                    <tr key={token}>
-                      <td style={{ padding: '6px 12px', borderBottom: '1px solid #EEE' }}>{token}</td>
-                      <td style={{ padding: '6px 12px', borderBottom: '1px solid #EEE', color: '#8B8BF5', fontSize: 11, fontFamily: 'monospace' }}>{figmaVar}</td>
-                      <td style={{ padding: '6px 12px', borderBottom: '1px solid #EEE', color: '#22C55E', fontFamily: 'monospace' }}>
-                        {value}
-                        {value.startsWith('#') && (
-                          <span style={{ display: 'inline-block', width: 12, height: 12, backgroundColor: value, borderRadius: 2, marginLeft: 6, verticalAlign: 'middle', border: '1px solid rgba(0,0,0,0.1)' }} />
-                        )}
-                      </td>
-                      <td style={{ padding: '6px 12px', borderBottom: '1px solid #EEE', fontSize: 16 }}>{match ? '✅' : '❌'}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+        {TABS_COLOR_SCHEMES.map((scheme) => (
+          <div key={scheme} style={{ width: 358 }}>
+            <Tabs variant="button" items={tabs4} activeKey="tab1" colorScheme={scheme} />
           </div>
         ))}
       </div>
-    );
-  },
+
+      <ChainTable title="Layout and sizing" rows={layoutChain} />
+      <ChainTable title="Typography" rows={typographyChain} />
+      <ChainTable title="Colours" rows={colourChain} />
+
+      <h3 style={{ fontSize: 14, margin: '0 0 8px' }}>Colour schemes (button style)</h3>
+      <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 28 }}>
+        <thead>
+          <tr>
+            <th style={th}>Scheme</th>
+            <th style={th}>Selected background</th>
+            <th style={th}>Border &amp; badge accent</th>
+          </tr>
+        </thead>
+        <tbody>
+          {TABS_COLOR_SCHEMES.map((scheme: TabsColorScheme) => {
+            const v = tabsSchemeValues(scheme);
+            return (
+              <tr key={scheme}>
+                <td style={{ ...td, fontFamily: sans, textTransform: 'capitalize' }}>{scheme}</td>
+                <td style={td}>
+                  {v.background}
+                  <Swatch value={v.background} />
+                </td>
+                <td style={td}>
+                  {v.accent}
+                  <Swatch value={v.accent} />
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+
+      <p style={{ fontSize: 12, color: 'var(--sys-color-text-tertiary-default)' }}>
+        Badge icon renders at {TABS_BADGE_SIZE}px, read from <code>--tabs-badge-size</code>.
+        Typography size and line-height are responsive: the literals above are the mobile
+        mode; the desktop mode takes over from the <code>md</code> breakpoint up.
+      </p>
+    </div>
+  ),
 };
 
-// ── Color Bindings ──
+// ── 10. Color Bindings ──
 export const ColorBindings: StoryObj = {
   name: 'Color Bindings',
   render: () => (
@@ -340,15 +439,60 @@ export const ColorBindings: StoryObj = {
       componentName="Tabs"
       figmaId="14370:9654"
       bindings={[
-        { token: 'tabs-fg-primary', figmaVariable: 'colors/tabs/tabs-fg-primary', hex: '#E32321', usage: 'Selected text (underline), selected border' },
-        { token: 'tabs-fg-secondary', figmaVariable: 'colors/tabs/tabs-fg-secondary', hex: '#262626', usage: 'Unselected text' },
-        { token: 'tabs-fg-white', figmaVariable: 'colors/tabs/tabs-fg-white', hex: '#FFFFFF', usage: 'Selected text in button-style' },
-        { token: 'tabs-fg-disable', figmaVariable: 'colors/tabs/tabs-fg-disable', hex: '#C9C9C9', usage: 'Bottom border underline' },
-        { token: 'tabs-bg-white', figmaVariable: 'colors/tabs/tabs-bg-white', hex: '#FFFFFF', usage: 'Button container bg' },
-        { token: 'tabs-bg-primary', figmaVariable: 'colors/tabs/tabs-bg-primary', hex: '#E32321', usage: 'Active tab bg (red scheme)' },
-        { token: 'tabs-bg-secondary', figmaVariable: 'colors/tabs/tabs-bg-secondary', hex: '#262626', usage: 'Active tab bg (black scheme)' },
-        { token: 'border-disable', figmaVariable: 'Color/Border/Border-Disable', hex: '#E5E5E5', usage: 'Separator line in underline style' },
-        { token: 'border-primary', figmaVariable: 'Color/Border/Border-Primary', hex: '#E32321', usage: 'Active underline indicator' },
+        {
+          token: 'tabs-foreground-primary',
+          figmaVariable: 'colors/tabs/tabs-fg-primary',
+          hex: tabsValue('foreground-primary'),
+          usage: 'Selected label (underline), indicator, badge',
+        },
+        {
+          token: 'tabs-foreground-secondary',
+          figmaVariable: 'colors/tabs/tabs-fg-secondary',
+          hex: tabsValue('foreground-secondary'),
+          usage: 'Unselected label',
+        },
+        {
+          token: 'tabs-foreground-white',
+          figmaVariable: 'colors/tabs/tabs-fg-white',
+          hex: tabsValue('foreground-white'),
+          usage: 'Selected label in the button style',
+        },
+        {
+          token: 'tabs-foreground-disable',
+          figmaVariable: 'colors/tabs/tabs-fg-disable',
+          hex: tabsValue('foreground-disable'),
+          usage: 'Bottom rule of the underline style',
+        },
+        {
+          token: 'tabs-background-white',
+          figmaVariable: 'colors/tabs/tabs-bg-white',
+          hex: tabsValue('background-white'),
+          usage: 'Button container surface',
+        },
+        {
+          token: 'tabs-background-primary',
+          figmaVariable: 'colors/tabs/tabs-bg-primary',
+          hex: tabsValue('background-primary'),
+          usage: 'Selected tab fill (primary scheme)',
+        },
+        {
+          token: 'tabs-background-secondary',
+          figmaVariable: 'colors/tabs/tabs-bg-secondary',
+          hex: tabsValue('background-secondary'),
+          usage: 'Selected tab fill (secondary scheme)',
+        },
+        {
+          token: 'tabs-background-disable',
+          figmaVariable: 'colors/tabs/tabs-bg-disable',
+          hex: tabsValue('background-disable'),
+          usage: 'Declared in Figma; not yet rendered by any state',
+        },
+        {
+          token: 'tabs-separator',
+          figmaVariable: 'Color/Border/Border-Gray-Soft-Light',
+          hex: tabsValue('separator'),
+          usage: 'Divider between underline tabs',
+        },
       ]}
     />
   ),

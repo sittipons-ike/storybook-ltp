@@ -1,0 +1,28 @@
+/* ═══════════════════════════════════════════
+   Skeleton — Lotteryplus Design System
+
+   The pulse is Tailwind's `animate-pulse` verbatim, because that is what the
+   Frontend ships. Bare values, not tokens: the system has no motion group
+   (design.md, Known Gaps) — same arrangement as Loading.
+   ═══════════════════════════════════════════ */
+
+@keyframes ltp-skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* `flex: none` because a skeleton states a shape: the size it is given is the size the
+   real content will be. As a default flex item it shrinks below that and stops standing
+   in for anything — a 56px avatar placeholder in a tight row collapses to a sliver.
+   Callers who want it to flex can still say so through `style`. */
+.ltp-skeleton {
+  display: block;
+  flex: none;
+  animation: ltp-skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ltp-skeleton {
+    animation: none;
+  }
+}

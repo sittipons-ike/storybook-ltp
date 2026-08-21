@@ -1,14 +1,16 @@
 import React from 'react';
-import {
-  TAB_COLORS,
-  TAB_DIMENSIONS,
-  TYPOGRAPHY,
-  SPACING,
-  RADIUS,
-  BORDER_WIDTH,
-} from './tokens';
 import Icon from '../../icons/Icon';
-import '../../icons/icon-data';
+import '../../icons/icon-data'; // register all icons
+import '../../foundations/tokens.css';
+import {
+  TABS_BASE,
+  TABS_BADGE_SIZE,
+  TABS_COLORS,
+  tabsScheme,
+  type TabsVariant,
+  type TabsColorScheme,
+} from './tokens';
+import { sys } from '../../foundations/tokens';
 import './Tabs.css';
 
 // ═══════════════════════════════════════════
@@ -16,8 +18,10 @@ import './Tabs.css';
 //  Figma component sets:
 //    - "horizontal-tabs-underline" (14370:9654)
 //    - "horizontal-tabs_button" (14370:9710)
-//  Two visual styles: "underline" and "button"
-//  Uses Icon component for badge indicators
+//
+//  Every style value is a CSS custom property from foundations/tokens.css, which is
+//  generated from Figma via design.md + components.json + components/tabs.json. There
+//  are no literal colours, sizes or font values in this file.
 // ═══════════════════════════════════════════
 
 export interface TabItem {
@@ -29,20 +33,19 @@ export interface TabItem {
   showBadge?: boolean;
 }
 
-export type TabVariant = 'underline' | 'button';
-export type TabColorScheme = 'red' | 'black';
+export type { TabsVariant, TabsColorScheme } from './tokens';
 
 export interface TabsProps {
   /** Visual style variant */
-  variant?: TabVariant;
+  variant?: TabsVariant;
   /** Tab items (2-5 tabs) */
   items: TabItem[];
   /** Currently active tab key */
   activeKey: string;
   /** Tab change handler */
   onChange?: (key: string) => void;
-  /** Color scheme (button variant only): red or black */
-  colorScheme?: TabColorScheme;
+  /** Colour scheme (button variant only). Figma spells these `red` / `black`. */
+  colorScheme?: TabsColorScheme;
   /** Additional className */
   className?: string;
 }
@@ -52,7 +55,7 @@ const Tabs: React.FC<TabsProps> = ({
   items,
   activeKey,
   onChange,
-  colorScheme = 'red',
+  colorScheme = 'primary',
   className = '',
 }) => {
   if (variant === 'button') {
@@ -77,6 +80,32 @@ const Tabs: React.FC<TabsProps> = ({
   );
 };
 
+/** Label typography — typography/button/md/medium, shared by both variants. */
+const labelStyle = (color: string): React.CSSProperties => ({
+  fontFamily: TABS_BASE.fontFamily,
+  fontSize: TABS_BASE.fontSize,
+  fontWeight: TABS_BASE.fontWeight as unknown as React.CSSProperties['fontWeight'],
+  lineHeight: TABS_BASE.lineHeight,
+  letterSpacing: TABS_BASE.tracking,
+  color,
+  whiteSpace: 'nowrap',
+});
+
+/** Auto Layout: HORIZONTAL, CENTER / CENTER, fill container. */
+const itemLayout: React.CSSProperties = {
+  position: 'relative',
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flex: 1,
+  paddingTop: TABS_BASE.paddingY,
+  paddingRight: TABS_BASE.paddingX,
+  paddingBottom: TABS_BASE.paddingY,
+  paddingLeft: TABS_BASE.paddingX,
+  gap: TABS_BASE.gap,
+};
+
 // ═══════════════════════════════════════════
 //  Underline Style Tabs
 //  Figma: "horizontal-tabs-underline"
@@ -86,113 +115,89 @@ const UnderlineTabs: React.FC<Omit<TabsProps, 'variant' | 'colorScheme'>> = ({
   activeKey,
   onChange,
   className = '',
-}) => {
-  return (
-    <div
-      className={`ltp-tabs ltp-tabs--underline ${className}`}
-      role="tablist"
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        // Bottom border: colors/tabs/tabs-fg-disable → #C9C9C9
-        borderBottom: `${BORDER_WIDTH[1]}px solid ${TAB_COLORS.border.underline}`,
-      }}
-    >
-      {items.map((item, index) => {
-        const isActive = item.key === activeKey;
+}) => (
+  <div
+    className={`ltp-tabs ltp-tabs--underline ${className}`}
+    role="tablist"
+    style={{
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      // Bottom rule: colors/tabs/tabs-fg-disable. Figma strokes it INSIDE the 40px frame,
+      // so the border must not add to the height.
+      borderBottom: `${TABS_BASE.borderWidth} solid ${TABS_COLORS.rule}`,
+      boxSizing: 'border-box',
+    }}
+  >
+    {items.map((item, index) => {
+      const isSelected = item.key === activeKey;
 
-        return (
-          <React.Fragment key={item.key}>
-            {/* Separator line between tabs (except before first) */}
-            {/* Figma: "Line" node, stroke Color/Border/Border-Disable #E5E5E5 */}
-            {index > 0 && (
-              <div
-                style={{
-                  width: 1,
-                  height: TAB_DIMENSIONS.underline.height,
-                  backgroundColor: TAB_COLORS.border.disable,
-                }}
-              />
-            )}
-
-            {/* Tab item — position:relative for badge positioning */}
-            <button
-              type="button"
-              className="ltp-tabs__item"
-              role="tab"
-              aria-selected={isActive}
-              onClick={() => onChange?.(item.key)}
+      return (
+        <React.Fragment key={item.key}>
+          {/* Divider between tabs (never before the first) — Figma "Line" node */}
+          {index > 0 && (
+            <div
+              aria-hidden="true"
               style={{
-                position: 'relative',
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flex: 1,
-
-                // Padding: 8/16/8/16 → spacing-lg / spacing-2xl
-                paddingTop: TAB_DIMENSIONS.underline.paddingTop,
-                paddingRight: TAB_DIMENSIONS.underline.paddingRight,
-                paddingBottom: TAB_DIMENSIONS.underline.paddingBottom,
-                paddingLeft: TAB_DIMENSIONS.underline.paddingLeft,
-
-                gap: TAB_DIMENSIONS.underline.gap, // spacing-lg = 8px
-
-                height: TAB_DIMENSIONS.underline.height,
-
-                // Selected: red bottom border (thicker)
-                // Unselected: transparent bottom border
-                borderBottom: isActive
-                  ? `${TAB_DIMENSIONS.underline.selectedBorderWidth}px solid ${TAB_COLORS.border.activeUnderline}`
-                  : `${TAB_DIMENSIONS.underline.selectedBorderWidth}px solid transparent`,
-
-                // Shift content up to compensate for thicker border
-                marginBottom: isActive ? -1 : -1,
+                width: TABS_BASE.borderWidth,
+                height: TABS_BASE.height,
+                backgroundColor: TABS_COLORS.separator,
               }}
+            />
+          )}
+
+          <button
+            type="button"
+            className="ltp-tabs__item"
+            role="tab"
+            aria-selected={isSelected}
+            onClick={() => onChange?.(item.key)}
+            style={{
+              ...itemLayout,
+              height: TABS_BASE.height,
+
+              // Selected draws the indicator; unselected reserves the same space.
+              borderBottom: `${TABS_BASE.indicatorWidth} solid ${
+                isSelected ? TABS_COLORS.indicator : 'transparent'
+              }`,
+
+              // Sit the indicator on top of the container's bottom rule.
+              marginBottom: `calc(${TABS_BASE.borderWidth} * -1)`,
+            }}
+          >
+            <span
+              style={labelStyle(
+                isSelected ? TABS_COLORS.labelSelectedUnderline : TABS_COLORS.labelRest,
+              )}
             >
-              {/* Tab text */}
+              {item.label}
+            </span>
+
+            {/* Badge — filled/Error-2, pinned to the top-right corner */}
+            {item.showBadge && (
               <span
                 style={{
-                  fontFamily: TYPOGRAPHY.tab.fontFamily,
-                  fontSize: TYPOGRAPHY.tab.fontSize,
-                  fontWeight: TYPOGRAPHY.tab.fontWeight,
-                  lineHeight: TYPOGRAPHY.tab.lineHeight,
-                  color: isActive
-                    ? TAB_COLORS.text.primary    // tabs-fg-primary → #E32321
-                    : TAB_COLORS.text.secondary, // tabs-fg-secondary → #262626
-                  whiteSpace: 'nowrap',
+                  position: 'absolute',
+                  top: sys('spacing-xs'),
+                  right: sys('spacing-sm'),
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                {item.label}
+                <Icon
+                  name="filled-Error-2"
+                  size={TABS_BADGE_SIZE as any}
+                  customColor={TABS_COLORS.badgeUnderline}
+                />
               </span>
-
-              {/* Badge icon: filled/Error-2, absolute top-right corner */}
-              {item.showBadge && (
-                <span
-                  style={{
-                    position: 'absolute',
-                    top: 2,
-                    right: 4,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Icon
-                    name="filled-Error-2"
-                    size={TAB_DIMENSIONS.badgeSize}
-                    customColor={TAB_COLORS.text.primary}
-                  />
-                </span>
-              )}
-            </button>
-          </React.Fragment>
-        );
-      })}
-    </div>
-  );
-};
+            )}
+          </button>
+        </React.Fragment>
+      );
+    })}
+  </div>
+);
 
 // ═══════════════════════════════════════════
 //  Button Style Tabs
@@ -202,13 +207,10 @@ const ButtonTabs: React.FC<Omit<TabsProps, 'variant'>> = ({
   items,
   activeKey,
   onChange,
-  colorScheme = 'red',
+  colorScheme = 'primary',
   className = '',
 }) => {
-  // Determine color scheme
-  const isRed = colorScheme === 'red';
-  const activeBg = isRed ? TAB_COLORS.bg.primary : TAB_COLORS.bg.secondary;
-  const outerBorder = isRed ? TAB_COLORS.border.primary : TAB_COLORS.border.secondary;
+  const scheme = tabsScheme(colorScheme);
 
   return (
     <div
@@ -219,20 +221,17 @@ const ButtonTabs: React.FC<Omit<TabsProps, 'variant'>> = ({
         flexDirection: 'row',
         alignItems: 'stretch',
 
-        // Outer container: radius-lg, 1px border, white bg
-        borderRadius: TAB_DIMENSIONS.button.outerRadius,
-        border: `${TAB_DIMENSIONS.button.outerBorderWidth}px solid ${outerBorder}`,
-        backgroundColor: TAB_COLORS.bg.white,
+        borderRadius: TABS_BASE.radius,
+        border: `${TABS_BASE.borderWidth} solid ${scheme.accent}`,
+        backgroundColor: TABS_COLORS.surface,
         overflow: 'hidden',
 
-        // Gap between tab items: spacing-sm = 4px
-        gap: TAB_DIMENSIONS.button.itemGap,
-
-        height: TAB_DIMENSIONS.button.height,
+        gap: TABS_BASE.itemGap,
+        height: TABS_BASE.height,
       }}
     >
       {items.map((item) => {
-        const isActive = item.key === activeKey;
+        const isSelected = item.key === activeKey;
 
         return (
           <button
@@ -240,54 +239,29 @@ const ButtonTabs: React.FC<Omit<TabsProps, 'variant'>> = ({
             type="button"
             className="ltp-tabs__item"
             role="tab"
-            aria-selected={isActive}
+            aria-selected={isSelected}
             onClick={() => onChange?.(item.key)}
             style={{
-              position: 'relative',
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flex: 1,
-
-              // Padding: 8/16/8/16 → spacing-lg / spacing-2xl
-              paddingTop: 8,
-              paddingRight: 16,
-              paddingBottom: 8,
-              paddingLeft: 16,
-
-              gap: TAB_DIMENSIONS.button.item.gap, // spacing-lg = 8px
-
-              // Active: colored bg + inner radius
-              backgroundColor: isActive ? activeBg : 'transparent',
-              borderRadius: isActive
-                ? TAB_DIMENSIONS.button.item.activeRadius  // radius-md = 6
-                : 0,
+              ...itemLayout,
+              backgroundColor: isSelected ? scheme.background : 'transparent',
+              borderRadius: isSelected ? TABS_BASE.radiusActive : sys('radius-none'),
             }}
           >
-            {/* Tab text */}
             <span
-              style={{
-                fontFamily: TYPOGRAPHY.tab.fontFamily,
-                fontSize: TYPOGRAPHY.tab.fontSize,
-                fontWeight: TYPOGRAPHY.tab.fontWeight,
-                lineHeight: TYPOGRAPHY.tab.lineHeight,
-                color: isActive
-                  ? TAB_COLORS.text.white      // tabs-fg-white → #FFFFFF
-                  : TAB_COLORS.text.secondary,  // tabs-fg-secondary → #262626
-                whiteSpace: 'nowrap',
-              }}
+              style={labelStyle(
+                isSelected ? TABS_COLORS.labelSelectedButton : TABS_COLORS.labelRest,
+              )}
             >
               {item.label}
             </span>
 
-            {/* Badge icon — absolute top-right corner (only on inactive tabs) */}
-            {item.showBadge && !isActive && (
+            {/* Badge — pinned to the top-right corner, unselected tabs only */}
+            {item.showBadge && !isSelected && (
               <span
                 style={{
                   position: 'absolute',
-                  top: 0,
-                  right: 2,
+                  top: sys('spacing-none'),
+                  right: sys('spacing-xs'),
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -295,8 +269,8 @@ const ButtonTabs: React.FC<Omit<TabsProps, 'variant'>> = ({
               >
                 <Icon
                   name="filled-Error-2"
-                  size={TAB_DIMENSIONS.badgeSize}
-                  customColor={isRed ? TAB_COLORS.text.primary : TAB_COLORS.text.secondary}
+                  size={TABS_BADGE_SIZE as any}
+                  customColor={scheme.accent}
                 />
               </span>
             )}

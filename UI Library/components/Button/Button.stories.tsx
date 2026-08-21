@@ -1,94 +1,96 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import Button from './Button';
-import { BUTTON_COLORS, SIZE_CONFIG, TYPOGRAPHY, RADIUS, BORDER_WIDTH, SPACING } from './tokens';
+import {
+  buttonColors,
+  buttonColorValues,
+  buttonValue,
+  BUTTON_VARIANTS,
+  BUTTON_STATES,
+  BUTTON_SIZES,
+  type ButtonVariant,
+  type ButtonSize,
+} from './tokens';
 import ColorBindingsTable from '../../system/ColorBindingsTable';
-import type { ColorBinding } from '../../system/ColorBindingsTable';
 
 // ═══════════════════════════════════════════
 //  Button Stories — Lotteryplus Design System
 //  Figma: "button" component set (14291:130847)
-//  195 variants: Size(L/M/S) × Type(5) × Show icon(2) × Show Text(2) × State(5)
+//  195 variants: Size(3) × Variant(5) × Show icon(2) × Show Text(2) × State(5)
+//
+//  Values shown here are read from foundations/tokens.generated.ts, which is
+//  generated from Figma. Nothing on this page is typed by hand, so a table can
+//  never claim a value the component does not actually render.
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof Button> = {
-  title: 'Components/Button',
+  title: 'Atoms/Button',
   component: Button,
   tags: ['autodocs'],
   argTypes: {
-    type: {
+    variant: {
       control: 'select',
-      options: ['primary', 'secondary', 'tertiary', 'outline', 'link'],
-      description: 'Figma variant: Type',
+      options: BUTTON_VARIANTS,
+      description: 'Canonical variant. `outline` and `link` are approved extensions.',
     },
     size: {
       control: 'select',
-      options: ['L', 'M', 'S'],
-      description: 'Figma variant: Size',
+      options: BUTTON_SIZES,
+      description: 'T-shirt size — lg (44px) / md (36px) / sm (28px)',
     },
-    showIcon: {
-      control: 'boolean',
-      description: 'Figma variant: Show icon',
-    },
-    showText: {
-      control: 'boolean',
-      description: 'Figma variant: Show Text',
-    },
-    iconName: {
-      control: 'text',
-      description: 'Icon name from Components/Icon library',
-    },
-    disabled: {
-      control: 'boolean',
-      description: 'Figma variant: State=Disable',
-    },
-    fullWidth: {
-      control: 'boolean',
-    },
-    children: {
-      control: 'text',
-      description: 'Figma property: Text#1891:27 (default: "BUTTON")',
-    },
+    showIcon: { control: 'boolean', description: 'Figma variant: Show icon' },
+    showText: { control: 'boolean', description: 'Figma variant: Show Text' },
+    iconName: { control: 'text', description: 'Icon name from Components/Icon library' },
+    disabled: { control: 'boolean', description: 'Canonical state: disabled' },
+    fullWidth: { control: 'boolean' },
+    children: { control: 'text', description: 'Figma property: Text#1891:27' },
   },
   args: {
     children: 'BUTTON',
-    type: 'primary',
-    size: 'L',
+    variant: 'primary',
+    size: 'lg',
     showIcon: false,
     showText: true,
     disabled: false,
     iconName: 'outline-Home',
   },
-  parameters: {
-    layout: 'centered',
-  },
+  parameters: { layout: 'centered' },
 };
 
 export default meta;
 type Story = StoryObj<typeof Button>;
 
-// ═══════════════════════════════════════════
-//  Default
-// ═══════════════════════════════════════════
+const sans = "'Graphik TH', sans-serif";
+const mono = 'ui-monospace, SFMono-Regular, Menlo, monospace';
+
 export const Default: Story = {};
 
 // ═══════════════════════════════════════════
-//  All Types (Primary, Secondary, Tertiary, Outline, Link)
+//  All Variants
 // ═══════════════════════════════════════════
-export const AllTypes: Story = {
-  name: 'All Types',
+export const AllVariants: Story = {
+  name: 'All Variants',
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-      {(['primary', 'secondary', 'tertiary', 'outline', 'link'] as const).map((type) => (
-        <div key={type}>
-          <div style={{ fontSize: 12, fontWeight: 600, color: '#737373', marginBottom: 8, textTransform: 'capitalize', fontFamily: "'Graphik TH', sans-serif" }}>
-            {type}
+      {BUTTON_VARIANTS.map((variant) => (
+        <div key={variant}>
+          <div
+            style={{
+              fontSize: 12,
+              fontWeight: 600,
+              color: 'var(--sys-color-text-tertiary-default)',
+              marginBottom: 8,
+              textTransform: 'capitalize',
+              fontFamily: sans,
+            }}
+          >
+            {variant}
           </div>
           <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-            <Button type={type} size="L">BUTTON</Button>
-            <Button type={type} size="L" showIcon iconName="outline-Home">BUTTON</Button>
-            <Button type={type} size="L" showIcon showText={false} iconName="outline-Home" />
-            <Button type={type} size="L" disabled>BUTTON</Button>
+            <Button variant={variant} size="lg">BUTTON</Button>
+            <Button variant={variant} size="lg" showIcon iconName="outline-Home">BUTTON</Button>
+            <Button variant={variant} size="lg" showIcon showText={false} iconName="outline-Home" />
+            <Button variant={variant} size="lg" disabled>BUTTON</Button>
           </div>
         </div>
       ))}
@@ -97,16 +99,24 @@ export const AllTypes: Story = {
 };
 
 // ═══════════════════════════════════════════
-//  All Sizes (L, M, S)
+//  All Sizes
 // ═══════════════════════════════════════════
 export const AllSizes: Story = {
   name: 'All Sizes',
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-      {(['L', 'M', 'S'] as const).map((size) => (
+      {BUTTON_SIZES.map((size) => (
         <div key={size}>
-          <div style={{ fontSize: 12, fontWeight: 600, color: '#737373', marginBottom: 8, fontFamily: "'Graphik TH', sans-serif" }}>
-            Size: {size} — Height: {SIZE_CONFIG[size].height}px
+          <div
+            style={{
+              fontSize: 12,
+              fontWeight: 600,
+              color: 'var(--sys-color-text-tertiary-default)',
+              marginBottom: 8,
+              fontFamily: sans,
+            }}
+          >
+            Size {size} — height {buttonValue(`${size}-height`)}
           </div>
           <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
             <Button size={size}>BUTTON</Button>
@@ -120,21 +130,35 @@ export const AllSizes: Story = {
 };
 
 // ═══════════════════════════════════════════
-//  All States
+//  All States — the canonical five
 // ═══════════════════════════════════════════
 export const AllStates: Story = {
   name: 'All States',
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
-      {(['primary', 'secondary', 'tertiary', 'outline', 'link'] as const).map((type) => (
-        <div key={type}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: '#262626', marginBottom: 12, textTransform: 'capitalize', fontFamily: "'Graphik TH', sans-serif" }}>
-            {type}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 32, fontFamily: sans }}>
+      <p style={{ margin: 0, fontSize: 12, color: 'var(--sys-color-text-tertiary-default)' }}>
+        States use the canonical names from the Design System Standard:{' '}
+        <code style={{ fontFamily: mono }}>rest · hover · active · focus · disabled</code>.
+        Figma still calls them default / pressed / focused — that rename is queued in
+        figma-rename-map.md.
+      </p>
+      {BUTTON_VARIANTS.map((variant) => (
+        <div key={variant}>
+          <div
+            style={{
+              fontSize: 13,
+              fontWeight: 600,
+              color: 'var(--sys-color-text-secondary-default)',
+              marginBottom: 12,
+              textTransform: 'capitalize',
+            }}
+          >
+            {variant}
           </div>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            {(['default', 'hover', 'focused', 'pressed', 'disabled'] as const).map((state) => {
-              const colors = BUTTON_COLORS[type][state === 'disabled' ? 'disabled' : state];
-              const hasBorder = !!colors.border;
+          <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+            {BUTTON_STATES.map((state) => {
+              const colors = buttonColors(variant, state);
+              const values = buttonColorValues(variant, state);
               return (
                 <div key={state} style={{ textAlign: 'center' }}>
                   <div
@@ -142,25 +166,27 @@ export const AllStates: Story = {
                       display: 'inline-flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      height: SIZE_CONFIG.L.height,
-                      paddingLeft: SIZE_CONFIG.L.paddingX,
-                      paddingRight: SIZE_CONFIG.L.paddingX,
-                      borderRadius: RADIUS.lg,
-                      backgroundColor: colors.bg,
-                      color: colors.fg,
-                      border: hasBorder ? `${BORDER_WIDTH[1]}px solid ${colors.border}` : 'none',
-                      fontFamily: TYPOGRAPHY.fontFamily,
-                      fontSize: TYPOGRAPHY.fontSize,
-                      fontWeight: TYPOGRAPHY.fontWeight,
-                      lineHeight: TYPOGRAPHY.lineHeight,
+                      height: 'var(--btn-lg-height)',
+                      paddingLeft: 'var(--btn-padding-x)',
+                      paddingRight: 'var(--btn-padding-x)',
+                      borderRadius: 'var(--btn-radius)',
+                      backgroundColor: colors.background,
+                      color: colors.foreground,
+                      border: `var(--btn-border-width) solid ${colors.border}`,
+                      fontFamily: 'var(--btn-typography-family)',
+                      fontSize: 'var(--btn-typography-size)',
+                      fontWeight: 'var(--btn-typography-weight)' as any,
+                      lineHeight: 'var(--btn-typography-line-height)',
                       cursor: state === 'disabled' ? 'not-allowed' : 'pointer',
-                      opacity: 1,
                     }}
                   >
                     BUTTON
                   </div>
-                  <div style={{ fontSize: 10, color: '#A3A3A3', marginTop: 4, fontFamily: "'Graphik TH', sans-serif" }}>
+                  <div style={{ fontSize: 10, color: 'var(--sys-color-text-tertiary-default)', marginTop: 4 }}>
                     {state}
+                  </div>
+                  <div style={{ fontSize: 9, color: 'var(--sys-color-text-state-light-gray)', fontFamily: mono }}>
+                    {values.background}
                   </div>
                 </div>
               );
@@ -170,6 +196,7 @@ export const AllStates: Story = {
       ))}
     </div>
   ),
+  parameters: { layout: 'padded' },
 };
 
 // ═══════════════════════════════════════════
@@ -178,19 +205,34 @@ export const AllStates: Story = {
 export const WithIcons: Story = {
   name: 'With Icons',
   render: () => {
-    const icons = ['outline-Home', 'outline-cart', 'outline-search', 'outline-setting', 'outline-notification'];
+    const icons = [
+      'outline-Home',
+      'outline-cart',
+      'outline-Search',
+      'outline-setting',
+      'outline-notification',
+    ];
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: '#262626', fontFamily: "'Graphik TH', sans-serif" }}>
-          Icon + Text (paddingLeft: {SIZE_CONFIG.L.iconPaddingLeft}px, gap: {SIZE_CONFIG.L.itemSpacing}px)
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, fontFamily: sans }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--sys-color-text-secondary-default)' }}>
+          Icon + text — padding-left {buttonValue('padding-left-with-icon')}, gap {buttonValue('gap')}
         </div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           {icons.map((icon) => (
-            <Button key={icon} showIcon iconName={icon}>{icon.replace('outline-', '').toUpperCase()}</Button>
+            <Button key={icon} showIcon iconName={icon}>
+              {icon.replace('outline-', '').toUpperCase()}
+            </Button>
           ))}
         </div>
-        <div style={{ fontSize: 13, fontWeight: 600, color: '#262626', marginTop: 8, fontFamily: "'Graphik TH', sans-serif" }}>
-          Icon Only (padding: {SIZE_CONFIG.L.iconOnlyPadding}px, size: {SIZE_CONFIG.L.iconSize}px)
+        <div
+          style={{
+            fontSize: 13,
+            fontWeight: 600,
+            color: 'var(--sys-color-text-secondary-default)',
+            marginTop: 8,
+          }}
+        >
+          Icon only — padding {buttonValue('lg-icon-only-padding')}, icon {buttonValue('icon-size')}
         </div>
         <div style={{ display: 'flex', gap: 12 }}>
           {icons.map((icon) => (
@@ -203,67 +245,117 @@ export const WithIcons: Story = {
 };
 
 // ═══════════════════════════════════════════
-//  Token Verification — Figma vs Storybook
+//  Token chain — component alias → semantic → value
 // ═══════════════════════════════════════════
-export const TokenVerification: Story = {
-  name: '🔍 Token Verification',
+export const TokenChain: Story = {
+  name: '🔍 Token Chain',
   render: () => {
-    const checks = [
-      { label: 'Font Family', figma: 'Graphik TH', storybook: TYPOGRAPHY.fontFamily },
-      { label: 'Font Size (button/m-semb/size)', figma: '14px (size/m)', storybook: `${TYPOGRAPHY.fontSize}px` },
-      { label: 'Font Weight (button/m-semb/weight)', figma: '600 (Semibold)', storybook: `${TYPOGRAPHY.fontWeight}` },
-      { label: 'Line Height (button/m-semb/line-height)', figma: '22px (line-height/m)', storybook: TYPOGRAPHY.lineHeight },
-      { label: 'Border Radius (radius-lg)', figma: '8px (radius/8)', storybook: `${RADIUS.lg}px` },
-      { label: 'Padding X (spacing-2xl)', figma: '16px (spacing/16)', storybook: `${SPACING['2xl']}px` },
-      { label: 'Padding Y (spacing-none)', figma: '0px (spacing/0)', storybook: `${SPACING.none}px` },
-      { label: 'Gap icon+text (spacing-sm)', figma: '4px (spacing/4)', storybook: `${SPACING.sm}px` },
-      { label: 'Icon Padding Left (spacing-xl)', figma: '12px', storybook: `${SPACING.xl}px` },
-      { label: 'Border Width', figma: '1px (border-width/1)', storybook: `${BORDER_WIDTH[1]}px` },
-      { label: 'Height L', figma: '44px', storybook: `${SIZE_CONFIG.L.height}px` },
-      { label: 'Height M', figma: '36px', storybook: `${SIZE_CONFIG.M.height}px` },
-      { label: 'Height S', figma: '28px', storybook: `${SIZE_CONFIG.S.height}px` },
-      { label: 'Icon Size', figma: '24px (icons-size: Size=24)', storybook: `${SIZE_CONFIG.L.iconSize}px` },
-      { label: 'Primary BG Default', figma: '#E32321', storybook: BUTTON_COLORS.primary.default.bg },
-      { label: 'Primary BG Hover', figma: '#B91C1C', storybook: BUTTON_COLORS.primary.hover.bg },
-      { label: 'Primary BG Pressed', figma: '#7F1D1D', storybook: BUTTON_COLORS.primary.pressed.bg },
-      { label: 'Primary FG Default', figma: '#FFFFFF', storybook: BUTTON_COLORS.primary.default.fg },
-      { label: 'Secondary BG Default', figma: '#262626', storybook: BUTTON_COLORS.secondary.default.bg },
-      { label: 'Tertiary Border Default', figma: '#D4D4D4', storybook: BUTTON_COLORS.tertiary.default.border || '' },
-      { label: 'Link FG Default', figma: '#3B82F6', storybook: BUTTON_COLORS.link.default.fg },
-      { label: 'Disabled BG', figma: '#F5F5F5', storybook: BUTTON_COLORS.primary.disabled.bg },
-      { label: 'Disabled FG', figma: '#C9C9C9', storybook: BUTTON_COLORS.primary.disabled.fg },
+    const layout: Array<[string, string]> = [
+      ['--btn-radius', '--sys-radius-lg'],
+      ['--btn-border-width', '--sys-border-width-hairline'],
+      ['--btn-padding-x', '--sys-spacing-2xl'],
+      ['--btn-padding-y', '--sys-spacing-none'],
+      ['--btn-padding-left-with-icon', '--sys-spacing-xl'],
+      ['--btn-gap', '--sys-spacing-sm'],
+      ['--btn-lg-height', '(fixed)'],
+      ['--btn-md-height', '(fixed)'],
+      ['--btn-sm-height', '(fixed)'],
+      ['--btn-icon-size', '(fixed)'],
+      ['--btn-typography-family', '--sys-type-button-md-semibold-family'],
+      ['--btn-typography-size', '--sys-type-button-md-semibold-size'],
+      ['--btn-typography-weight', '--sys-type-button-md-semibold-weight'],
+      ['--btn-typography-line-height', '--sys-type-button-md-semibold-line-height'],
     ];
 
+    const th: React.CSSProperties = {
+      textAlign: 'left',
+      padding: '8px 12px',
+      fontSize: 11,
+      fontWeight: 600,
+      color: 'var(--sys-color-text-tertiary-default)',
+      borderBottom: '2px solid var(--sys-color-border-accent-gray-soft-light)',
+    };
+    const td: React.CSSProperties = {
+      padding: '6px 12px',
+      borderBottom: '1px solid var(--sys-color-background-light)',
+      fontFamily: mono,
+      fontSize: 11,
+    };
+
     return (
-      <div style={{ fontFamily: "'Graphik TH', sans-serif" }}>
-        <h2 style={{ margin: '0 0 8px', fontSize: 20 }}>Button Token Verification</h2>
-        <p style={{ margin: '0 0 16px', fontSize: 13, color: '#737373' }}>
-          Comparing Figma bound variables vs Storybook token values
+      <div style={{ fontFamily: sans, maxWidth: 900 }}>
+        <h2 style={{ margin: '0 0 8px', fontSize: 20 }}>Button token chain</h2>
+        <p style={{ margin: '0 0 20px', fontSize: 13, color: 'var(--sys-color-text-tertiary-default)' }}>
+          Every value flows Figma → design.md → components.json → tokens.css. The component
+          renders the Tier 2 alias; the alias points at a Tier 1 semantic token; that resolves
+          to the literal. Nothing below is hand-typed.
         </p>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+
+        <h3 style={{ fontSize: 14, margin: '0 0 8px' }}>Layout &amp; typography</h3>
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 28 }}>
           <thead>
-            <tr style={{ borderBottom: '2px solid #E5E5E5', textAlign: 'left' }}>
-              <th style={{ padding: '8px 12px' }}>Token</th>
-              <th style={{ padding: '8px 12px' }}>Figma Value</th>
-              <th style={{ padding: '8px 12px' }}>Storybook Value</th>
-              <th style={{ padding: '8px 12px' }}>Match</th>
+            <tr>
+              <th style={th}>Tier 2 — component</th>
+              <th style={th}>Tier 1 — semantic</th>
+              <th style={th}>Value</th>
             </tr>
           </thead>
           <tbody>
-            {checks.map((c) => {
-              const figmaClean = c.figma.replace(/\s*\(.*\)/, '').trim();
-              const sbClean = c.storybook.replace(/'/g, '').replace(/, sans-serif/, '').trim();
-              const match = figmaClean.toLowerCase() === sbClean.toLowerCase() ||
-                c.figma.includes(sbClean) || sbClean.includes(figmaClean);
-              return (
-                <tr key={c.label} style={{ borderBottom: '1px solid #F5F5F5' }}>
-                  <td style={{ padding: '6px 12px', fontWeight: 500 }}>{c.label}</td>
-                  <td style={{ padding: '6px 12px', fontFamily: 'monospace', color: '#E32321' }}>{c.figma}</td>
-                  <td style={{ padding: '6px 12px', fontFamily: 'monospace', color: '#3B82F6' }}>{c.storybook}</td>
-                  <td style={{ padding: '6px 12px', fontSize: 16 }}>{match ? '✅' : '❌'}</td>
-                </tr>
-              );
-            })}
+            {layout.map(([comp, sys]) => (
+              <tr key={comp}>
+                <td style={{ ...td, color: 'var(--sys-color-primary-default)' }}>{comp}</td>
+                <td style={{ ...td, color: 'var(--sys-color-status-info-default)' }}>{sys}</td>
+                <td style={{ ...td, color: 'var(--sys-color-status-success-dark)' }}>
+                  {buttonValue(comp.replace('--btn-', ''))}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <h3 style={{ fontSize: 14, margin: '0 0 8px' }}>Colours by variant and state</h3>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <thead>
+            <tr>
+              <th style={th}>Variant</th>
+              <th style={th}>State</th>
+              <th style={th}>Background</th>
+              <th style={th}>Foreground</th>
+              <th style={th}>Border</th>
+            </tr>
+          </thead>
+          <tbody>
+            {BUTTON_VARIANTS.flatMap((variant) =>
+              BUTTON_STATES.map((state) => {
+                const v = buttonColorValues(variant, state);
+                const swatch = (hex: string) =>
+                  hex ? (
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                      <span
+                        style={{
+                          width: 14,
+                          height: 14,
+                          borderRadius: 3,
+                          background: hex,
+                          border: '1px solid rgba(0,0,0,0.15)',
+                        }}
+                      />
+                      {hex}
+                    </span>
+                  ) : (
+                    <span style={{ color: 'var(--sys-color-text-state-light-gray)' }}>—</span>
+                  );
+                return (
+                  <tr key={`${variant}-${state}`}>
+                    <td style={{ ...td, fontFamily: sans, textTransform: 'capitalize' }}>{variant}</td>
+                    <td style={td}>{state}</td>
+                    <td style={td}>{swatch(v.background)}</td>
+                    <td style={td}>{swatch(v.foreground)}</td>
+                    <td style={td}>{swatch(v.border)}</td>
+                  </tr>
+                );
+              }),
+            )}
           </tbody>
         </table>
       </div>
@@ -273,34 +365,48 @@ export const TokenVerification: Story = {
 };
 
 // ═══════════════════════════════════════════
-//  Full Matrix — All Type × Size combinations
+//  Full matrix
 // ═══════════════════════════════════════════
 export const FullMatrix: Story = {
-  name: 'Full Matrix (Type × Size)',
+  name: 'Full Matrix (Variant × Size)',
   render: () => (
-    <div style={{ fontFamily: "'Graphik TH', sans-serif" }}>
-      <h2 style={{ margin: '0 0 16px', fontSize: 20 }}>Button Matrix</h2>
+    <div style={{ fontFamily: sans }}>
+      <h2 style={{ margin: '0 0 16px', fontSize: 20 }}>Button matrix</h2>
       <table style={{ borderCollapse: 'collapse' }}>
         <thead>
           <tr>
-            <th style={{ padding: '8px 16px', fontSize: 12, color: '#737373', textAlign: 'left' }}>Type \ Size</th>
-            {(['L', 'M', 'S'] as const).map((s) => (
-              <th key={s} style={{ padding: '8px 16px', fontSize: 12, color: '#737373' }}>
-                {s} ({SIZE_CONFIG[s].height}px)
+            <th
+              style={{
+                padding: '8px 16px',
+                fontSize: 12,
+                color: 'var(--sys-color-text-tertiary-default)',
+                textAlign: 'left',
+              }}
+            >
+              Variant \ Size
+            </th>
+            {BUTTON_SIZES.map((s) => (
+              <th
+                key={s}
+                style={{ padding: '8px 16px', fontSize: 12, color: 'var(--sys-color-text-tertiary-default)' }}
+              >
+                {s} ({buttonValue(`${s}-height`)})
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {(['primary', 'secondary', 'tertiary', 'outline', 'link'] as const).map((type) => (
-            <tr key={type} style={{ borderBottom: '1px solid #F5F5F5' }}>
-              <td style={{ padding: '12px 16px', fontSize: 12, fontWeight: 600, textTransform: 'capitalize' }}>{type}</td>
-              {(['L', 'M', 'S'] as const).map((size) => (
+          {BUTTON_VARIANTS.map((variant) => (
+            <tr key={variant} style={{ borderBottom: '1px solid var(--sys-color-background-light)' }}>
+              <td style={{ padding: '12px 16px', fontSize: 12, fontWeight: 600, textTransform: 'capitalize' }}>
+                {variant}
+              </td>
+              {BUTTON_SIZES.map((size) => (
                 <td key={size} style={{ padding: '12px 16px', textAlign: 'center' }}>
                   <div style={{ display: 'flex', gap: 8, justifyContent: 'center', alignItems: 'center' }}>
-                    <Button type={type} size={size}>BUTTON</Button>
-                    <Button type={type} size={size} showIcon iconName="outline-Home">BUTTON</Button>
-                    <Button type={type} size={size} showIcon showText={false} iconName="outline-Home" />
+                    <Button variant={variant} size={size}>BUTTON</Button>
+                    <Button variant={variant} size={size} showIcon iconName="outline-Home">BUTTON</Button>
+                    <Button variant={variant} size={size} showIcon showText={false} iconName="outline-Home" />
                   </div>
                 </td>
               ))}
@@ -313,49 +419,121 @@ export const FullMatrix: Story = {
   parameters: { layout: 'padded' },
 };
 
-// ── Color Bindings ──
+// ═══════════════════════════════════════════
+//  Color bindings — generated from the token chain
+// ═══════════════════════════════════════════
+
+/** Figma still uses abbreviated names; this reconstructs them for cross-referencing. */
+const figmaName = (variant: ButtonVariant, prop: string, state: string): string => {
+  const v: Record<ButtonVariant, string> = {
+    primary: 'pri',
+    secondary: 'sec',
+    tertiary: 'ter',
+    outline: 'out',
+    link: 'link',
+  };
+  const s: Record<string, string> = {
+    rest: 'default',
+    hover: 'hover',
+    focus: 'focused',
+    active: 'pressed',
+    disabled: 'disabled',
+  };
+  const p = prop === 'background' ? 'bg' : prop === 'foreground' ? 'fg' : prop;
+  return `colors/button/${variant}/btn-${p}-${v[variant]}-${s[state]}`;
+};
+
 export const ColorBindings: StoryObj = {
   name: 'Color Bindings',
   render: () => (
     <ColorBindingsTable
       componentName="Button"
       figmaId="14291:130847"
-      bindings={[
-        // Primary
-        { token: 'btn-bg-pri-default', figmaVariable: 'colors/button/primary/btn-bg-pri-default', hex: '#E32321', usage: 'Primary button bg (default)' },
-        { token: 'btn-bg-pri-hover', figmaVariable: 'colors/button/primary/btn-bg-pri-hover', hex: '#B91C1C', usage: 'Primary button bg (hover)' },
-        { token: 'btn-bg-pri-focused', figmaVariable: 'colors/button/primary/btn-bg-pri-focused', hex: '#DC2626', usage: 'Primary button bg (focused)' },
-        { token: 'btn-bg-pri-pressed', figmaVariable: 'colors/button/primary/btn-bg-pri-pressed', hex: '#7F1D1D', usage: 'Primary button bg (pressed)' },
-        { token: 'btn-bg-pri-disabled', figmaVariable: 'colors/button/primary/btn-bg-pri-disabled', hex: '#F5F5F5', usage: 'Primary button bg (disabled)' },
-        { token: 'btn-fg-pri-default', figmaVariable: 'colors/button/primary/btn-fg-pri-default', hex: '#FFFFFF', usage: 'Primary button text' },
-        { token: 'btn-fg-pri-disabled', figmaVariable: 'colors/button/primary/btn-fg-pri-disabled', hex: '#C9C9C9', usage: 'Primary button text (disabled)' },
-        // Secondary
-        { token: 'btn-bg-sec-default', figmaVariable: 'colors/button/secondary/btn-bg-sec-default', hex: '#262626', usage: 'Secondary button bg (default)' },
-        { token: 'btn-bg-sec-hover', figmaVariable: 'colors/button/secondary/btn-bg-sec-hover', hex: '#4F4F4F', usage: 'Secondary button bg (hover)' },
-        { token: 'btn-bg-sec-pressed', figmaVariable: 'colors/button/secondary/btn-bg-sec-pressed', hex: '#1A1A1A', usage: 'Secondary button bg (pressed)' },
-        { token: 'btn-fg-sec-default', figmaVariable: 'colors/button/secondary/btn-fg-sec-default', hex: '#FFFFFF', usage: 'Secondary button text' },
-        // Tertiary
-        { token: 'btn-bg-ter-default', figmaVariable: 'colors/button/tertiary/btn-bg-ter-default', hex: '#FFFFFF', usage: 'Tertiary button bg (default)' },
-        { token: 'btn-bg-ter-hover', figmaVariable: 'colors/button/tertiary/btn-bg-ter-hover', hex: '#FAFAFA', usage: 'Tertiary button bg (hover)' },
-        { token: 'btn-bg-ter-pressed', figmaVariable: 'colors/button/tertiary/btn-bg-ter-pressed', hex: '#C9C9C9', usage: 'Tertiary button bg (pressed)' },
-        { token: 'btn-fg-ter-default', figmaVariable: 'colors/button/tertiary/btn-fg-ter-default', hex: '#262626', usage: 'Tertiary button text (default)' },
-        { token: 'btn-fg-ter-hover', figmaVariable: 'colors/button/tertiary/btn-fg-ter-hover', hex: '#4F4F4F', usage: 'Tertiary button text (hover)' },
-        { token: 'btn-border-ter-default', figmaVariable: 'colors/button/tertiary/btn-border-ter-default', hex: '#D4D4D4', usage: 'Tertiary button border (default)' },
-        { token: 'btn-border-ter-hover', figmaVariable: 'colors/button/tertiary/btn-border-ter-hover', hex: '#4F4F4F', usage: 'Tertiary button border (hover)' },
-        { token: 'btn-border-ter-pressed', figmaVariable: 'colors/button/tertiary/btn-border-ter-pressed', hex: '#1A1A1A', usage: 'Tertiary button border (pressed)' },
-        // Outline
-        { token: 'btn-fg-outline-default', figmaVariable: 'colors/button/outline/btn-fg-outline-default', hex: '#262626', usage: 'Outline button text (default)' },
-        { token: 'btn-fg-outline-hover', figmaVariable: 'colors/button/outline/btn-fg-outline-hover', hex: '#4F4F4F', usage: 'Outline button text (hover)' },
-        { token: 'btn-fg-outline-pressed', figmaVariable: 'colors/button/outline/btn-fg-outline-pressed', hex: '#1A1A1A', usage: 'Outline button text (pressed)' },
-        { token: 'btn-fg-outline-disabled', figmaVariable: 'colors/button/outline/btn-fg-outline-disabled', hex: '#C9C9C9', usage: 'Outline button text (disabled)' },
-        // Link
-        { token: 'btn-fg-link-default', figmaVariable: 'colors/button/link/btn-fg-link-default', hex: '#3B82F6', usage: 'Link button text (default)' },
-        { token: 'btn-fg-link-hover', figmaVariable: 'colors/button/link/btn-fg-link-hover', hex: '#60A5FA', usage: 'Link button text (hover)' },
-        { token: 'btn-fg-link-focused', figmaVariable: 'colors/button/link/btn-fg-link-focused', hex: '#2563EB', usage: 'Link button text (focused)' },
-        { token: 'btn-fg-link-pressed', figmaVariable: 'colors/button/link/btn-fg-link-pressed', hex: '#1D4ED8', usage: 'Link button text (pressed)' },
-        // Shared disabled border
-        { token: 'btn-border-disabled', figmaVariable: 'colors/button/disabled/btn-border-disabled', hex: '#C9C9C9', usage: 'Disabled button border (all types)' },
-      ]}
+      bindings={BUTTON_VARIANTS.flatMap((variant) =>
+        BUTTON_STATES.flatMap((state) =>
+          (['background', 'foreground', 'border'] as const)
+            .map((prop) => ({
+              token: `--btn-${variant}-${prop}-${state}`,
+              figmaVariable: figmaName(variant, prop, state),
+              hex: buttonColorValues(variant, state)[prop],
+              usage: `${variant} ${prop} (${state})`,
+            }))
+            .filter((b) => b.hex !== ''),
+        ),
+      )}
     />
   ),
+};
+
+// ═══════════════════════════════════════════
+//  Variant extensions — the debt register
+// ═══════════════════════════════════════════
+export const VariantExtensions: StoryObj = {
+  name: '⚠️ Variant Extensions',
+  render: () => {
+    const extensions = [
+      {
+        name: 'outline',
+        extends: 'tertiary',
+        expires: '2027-02-17',
+        reason:
+          'Low-emphasis action that still needs a filled surface on light backgrounds. Used across Frontend order and cart flows.',
+      },
+      {
+        name: 'link',
+        extends: 'ghost',
+        expires: '2027-02-17',
+        reason:
+          'Inline navigational action styled as text. Never use for destructive actions — it reads as navigation.',
+      },
+    ];
+
+    return (
+      <div style={{ fontFamily: sans, maxWidth: 760 }}>
+        <h2 style={{ margin: '0 0 8px', fontSize: 20 }}>Variant extensions</h2>
+        <p style={{ margin: '0 0 20px', fontSize: 13, color: 'var(--sys-color-text-tertiary-default)', lineHeight: 1.6 }}>
+          The Standard allows five canonical variants — primary, secondary, tertiary, ghost,
+          destructive. Anything outside that set lives here with a reason and an expiry, so the
+          list stays a deliberate register rather than somewhere variants quietly accumulate.
+          At expiry each one is either promoted, folded into a canonical variant, or dropped.
+        </p>
+        {extensions.map((ext) => (
+          <div
+            key={ext.name}
+            style={{
+              border: '1px solid var(--sys-color-border-accent-gray-soft-light)',
+              borderRadius: 'var(--sys-radius-lg)',
+              padding: 16,
+              marginBottom: 12,
+              background: 'var(--sys-color-status-warning-soft-light)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 8 }}>
+              <code style={{ fontFamily: mono, fontSize: 14, fontWeight: 600 }}>{ext.name}</code>
+              <span style={{ fontSize: 11, color: 'var(--sys-color-text-tertiary-default)' }}>
+                extends <code style={{ fontFamily: mono }}>{ext.extends}</code>
+              </span>
+              <span style={{ fontSize: 11, color: 'var(--sys-color-status-warning-dark)', marginLeft: 'auto' }}>
+                review by {ext.expires}
+              </span>
+            </div>
+            <p style={{ margin: 0, fontSize: 12, color: 'var(--sys-color-text-secondary-default)', lineHeight: 1.6 }}>
+              {ext.reason}
+            </p>
+          </div>
+        ))}
+        <p style={{ fontSize: 12, color: 'var(--sys-color-text-tertiary-default)', marginTop: 20, lineHeight: 1.6 }}>
+          The Frontend carries six more — <code style={{ fontFamily: mono }}>green</code>,{' '}
+          <code style={{ fontFamily: mono }}>green_line</code>,{' '}
+          <code style={{ fontFamily: mono }}>green_light</code>,{' '}
+          <code style={{ fontFamily: mono }}>red_outline</code>,{' '}
+          <code style={{ fontFamily: mono }}>transparent</code>,{' '}
+          <code style={{ fontFamily: mono }}>disabled</code>. The three green ones are deprecated;
+          the rest fold into <code style={{ fontFamily: mono }}>outline</code> and{' '}
+          <code style={{ fontFamily: mono }}>ghost</code> when the Frontend adopts this library.
+        </p>
+      </div>
+    );
+  },
+  parameters: { layout: 'padded' },
 };

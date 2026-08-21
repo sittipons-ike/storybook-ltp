@@ -1,16 +1,13 @@
 import React from 'react';
 import Icon from '../../icons/Icon';
 import '../../icons/icon-data';
+import '../../foundations/tokens.css';
 import Button from '../Button/Button'; // ← ดึง Button component มาใช้จริง
 import {
-  MODAL_STATES,
-  MODAL_COLORS,
-  MODAL_DIMENSIONS,
-  TYPOGRAPHY,
-  SPACING,
-  RADIUS,
-  BORDER_WIDTH,
-  SHADOW,
+  MODAL,
+  MODAL_ICONS,
+  MODAL_ICON_SIZE,
+  modalColors,
   type ModalState,
 } from './tokens';
 import './Modal.css';
@@ -21,12 +18,10 @@ import './Modal.css';
 //  10 variants: state(5) × layout-vertical(2)
 //  Properties: show-icon, title, subtitle, show-subtitle, show-2buttons
 //
-//  All values bound to Foundation variables:
-//  - Spacing: dimension/spacing/* (2-semantic)
-//  - Radius: dimension/breakpoint/radius/* (2-semantic)
-//  - Typography: heading/h4-semb, body/m-reg, button/m-semb
-//  - Colors: colors/modal/* (3-component)
-//  - Icons: icons-size component (Size=48)
+//  Every style value is a CSS custom property from foundations/tokens.css, which is
+//  generated from Figma via design.md + components.json (+ components/modal.json for
+//  layout and typography). There are no literal colours, sizes or font values in this
+//  file — changing one means changing Figma and regenerating.
 // ═══════════════════════════════════════════
 
 export interface ModalProps {
@@ -60,6 +55,9 @@ export interface ModalProps {
   className?: string;
 }
 
+// Stacking order for the scrim. Not a design token — design.md has no z-index ladder.
+const SCRIM_Z_INDEX = 1000;
+
 const Modal: React.FC<ModalProps> = ({
   state = 'success',
   layoutVertical = true,
@@ -76,7 +74,7 @@ const Modal: React.FC<ModalProps> = ({
   onOverlayClick,
   className = '',
 }) => {
-  const stateConfig = MODAL_STATES[state];
+  const colors = modalColors(state);
 
   // Default button texts based on layout
   const primaryText = primaryButtonText || (layoutVertical ? 'ยืนยัน' : 'ตกลง');
@@ -91,27 +89,12 @@ const Modal: React.FC<ModalProps> = ({
         flexDirection: 'column',
         alignItems: 'center',
 
-        // Dimensions
-        width: MODAL_DIMENSIONS.width,  // 358px
-
-        // Padding: spacing-4xl = 24px (all sides)
-        padding: MODAL_DIMENSIONS.padding,
-
-        // Gap: spacing-4xl = 24px (between sections)
-        gap: MODAL_DIMENSIONS.sectionGap,
-
-        // Corner Radius: radius-2xl = 16px
-        borderRadius: MODAL_DIMENSIONS.cornerRadius,
-
-        // Background
-        backgroundColor: MODAL_COLORS.bg, // #FFFFFF → colors/modal/modal-bg-white
-
-        // Shadow: dimension/shadow/md (bound variable: dimension/shadow/md/color-2)
-        // DROP_SHADOW 1: offset(0,2) blur(4) spread(-1) rgba(0,0,0,0.06)
-        // DROP_SHADOW 2: offset(0,4) blur(6) spread(-1) rgba(0,0,0,0.10)
-        boxShadow: SHADOW.md,
-
-        // Box sizing
+        width: MODAL.width,
+        padding: MODAL.padding,
+        gap: MODAL.gap,
+        borderRadius: MODAL.radius,
+        backgroundColor: MODAL.background,
+        boxShadow: MODAL.elevation,
         boxSizing: 'border-box',
       }}
       role="dialog"
@@ -119,7 +102,7 @@ const Modal: React.FC<ModalProps> = ({
       aria-label={title}
     >
       {/* ── Content Area (Icon + Wording) ── */}
-      {/* Figma: "Frame 44290" — VERTICAL, itemSpacing:16, CENTER */}
+      {/* Figma: "Frame 44290" — VERTICAL, CENTER */}
       <div
         className="ltp-modal__content"
         style={{
@@ -127,38 +110,38 @@ const Modal: React.FC<ModalProps> = ({
           flexDirection: 'column',
           alignItems: 'center',
           width: '100%',
-          gap: MODAL_DIMENSIONS.wording.iconToWording, // spacing-2xl = 16px
+          gap: MODAL.contentGap,
         }}
       >
         {/* ── Icon ── */}
-        {/* Figma: "icon" frame — 64×64, padding:8, cornerRadius:48, HORIZONTAL CENTER */}
+        {/* Figma: "icon" frame — square, padded, fully rounded, HORIZONTAL CENTER */}
         {showIcon && (
           <div
             className="ltp-modal__icon"
             style={{
-              width: MODAL_DIMENSIONS.icon.containerSize,   // 64px
-              height: MODAL_DIMENSIONS.icon.containerSize,  // 64px
-              borderRadius: MODAL_DIMENSIONS.icon.borderRadius, // radius-5xl = 48 (circle)
-              backgroundColor: stateConfig.iconBg,
+              width: MODAL.iconCircleSize,
+              height: MODAL.iconCircleSize,
+              borderRadius: MODAL.iconCircleRadius,
+              backgroundColor: colors.background,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: MODAL_DIMENSIONS.icon.padding,       // spacing-lg = 8px
+              padding: MODAL.iconCirclePadding,
               boxSizing: 'border-box',
               flexShrink: 0,
             }}
           >
-            {/* icons-size: Size=48 */}
+            {/* icons-size component, bound in Figma at Size=48 */}
             <Icon
-              name={stateConfig.iconName}
-              size={MODAL_DIMENSIONS.icon.iconSize as any}  // 48px
-              customColor={stateConfig.iconColor}
+              name={MODAL_ICONS[state]}
+              size={MODAL_ICON_SIZE as any}
+              customColor={colors.foreground}
             />
           </div>
         )}
 
         {/* ── Wording ── */}
-        {/* Figma: "Wording" — VERTICAL, itemSpacing:8, CENTER */}
+        {/* Figma: "Wording" — VERTICAL, CENTER */}
         <div
           className="ltp-modal__wording"
           style={{
@@ -166,18 +149,19 @@ const Modal: React.FC<ModalProps> = ({
             flexDirection: 'column',
             alignItems: 'center',
             width: '100%',
-            gap: MODAL_DIMENSIONS.wording.titleToSubtitle, // spacing-lg = 8px
+            gap: MODAL.wordingGap,
           }}
         >
-          {/* Title: heading/h4-semb → 16px/24px Semibold, CENTER */}
+          {/* Title: title/lg-semibold, CENTER */}
           <div
             className="ltp-modal__title"
             style={{
-              fontFamily: TYPOGRAPHY.title.fontFamily,
-              fontSize: TYPOGRAPHY.title.fontSize,
-              fontWeight: TYPOGRAPHY.title.fontWeight,
-              lineHeight: TYPOGRAPHY.title.lineHeight,
-              color: MODAL_COLORS.titleText,
+              fontFamily: MODAL.titleFamily,
+              fontSize: MODAL.titleSize,
+              fontWeight: MODAL.titleWeight as unknown as React.CSSProperties['fontWeight'],
+              lineHeight: MODAL.titleLineHeight,
+              letterSpacing: MODAL.titleTracking,
+              color: MODAL.text,
               textAlign: 'center',
               width: '100%',
             }}
@@ -185,16 +169,17 @@ const Modal: React.FC<ModalProps> = ({
             {title}
           </div>
 
-          {/* Subtitle: body/m-reg → 14px/22px Regular, CENTER */}
+          {/* Subtitle: body/md-regular, CENTER */}
           {showSubtitle && subtitle && (
             <div
               className="ltp-modal__subtitle"
               style={{
-                fontFamily: TYPOGRAPHY.subtitle.fontFamily,
-                fontSize: TYPOGRAPHY.subtitle.fontSize,
-                fontWeight: TYPOGRAPHY.subtitle.fontWeight,
-                lineHeight: TYPOGRAPHY.subtitle.lineHeight,
-                color: MODAL_COLORS.subtitleText,
+                fontFamily: MODAL.subtitleFamily,
+                fontSize: MODAL.subtitleSize,
+                fontWeight: MODAL.subtitleWeight as unknown as React.CSSProperties['fontWeight'],
+                lineHeight: MODAL.subtitleLineHeight,
+                letterSpacing: MODAL.subtitleTracking,
+                color: MODAL.text,
                 textAlign: 'center',
                 width: '100%',
               }}
@@ -206,17 +191,15 @@ const Modal: React.FC<ModalProps> = ({
       </div>
 
       {/* ── Button Session ── */}
-      {/* layout-vertical=yes: HORIZONTAL, gap:16 (side by side) → Button Tertiary + Primary */}
-      {/* layout-vertical=no: VERTICAL, gap:16 (stacked) → Button Primary + Outline */}
+      {/* layout-vertical=yes: HORIZONTAL (side by side) → Button Tertiary + Primary */}
+      {/* layout-vertical=no:  VERTICAL (stacked)       → Button Primary + Outline */}
       {/* ⚡ ใช้ <Button> component จริงจาก Components/Button */}
       <div
         className="ltp-modal__buttons"
         style={{
           display: 'flex',
           flexDirection: layoutVertical ? 'row' : 'column',
-          gap: layoutVertical
-            ? MODAL_DIMENSIONS.buttonsHorizontal.gap   // spacing-2xl = 16px
-            : MODAL_DIMENSIONS.buttonsVertical.gap,    // spacing-2xl = 16px
+          gap: MODAL.buttonGap,
           width: '100%',
         }}
       >
@@ -224,8 +207,8 @@ const Modal: React.FC<ModalProps> = ({
         {show2Buttons && (
           <div style={{ flex: layoutVertical ? 1 : undefined, order: layoutVertical ? 0 : 1 }}>
             <Button
-              type={layoutVertical ? 'tertiary' : 'outline'}
-              size="L"
+              variant={layoutVertical ? 'tertiary' : 'outline'}
+              size="lg"
               fullWidth
               onClick={onSecondaryClick}
             >
@@ -237,8 +220,8 @@ const Modal: React.FC<ModalProps> = ({
         {/* Primary/Confirm Button — Figma instance: button (Primary) */}
         <div style={{ flex: layoutVertical ? 1 : undefined, order: layoutVertical ? 1 : 0 }}>
           <Button
-            type="primary"
-            size="L"
+            variant="primary"
+            size="lg"
             fullWidth
             onClick={onPrimaryClick}
           >
@@ -260,11 +243,11 @@ const Modal: React.FC<ModalProps> = ({
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: MODAL_COLORS.overlay, // overlay-default #00000099
+          backgroundColor: MODAL.scrim,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          zIndex: 1000,
+          zIndex: SCRIM_Z_INDEX,
         }}
         onClick={(e) => {
           if (e.target === e.currentTarget) onOverlayClick?.();

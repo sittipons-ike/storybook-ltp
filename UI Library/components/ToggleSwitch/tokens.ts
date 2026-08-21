@@ -1,69 +1,113 @@
 // ═══════════════════════════════════════════
 // Toggle Switch Design Tokens
-// Source: Figma "Design Systems Web App Lotteryplus V.7.1"
-// Component set: "toggle-switch" (14291:131527)
-// Variants: active=true | active=false
-// All values reference Foundation variables ONLY
+//
+// This file holds NO values. Colours live in Figma (`colors/toggle-switch`) and flow
+// through components.json; layout, sizing and motion are authored in
+// design-library/lotteryplus/components/toggle-switch.json. Both are generated into
+// foundations/tokens.css (CSS custom properties) and foundations/tokens.generated.ts
+// (resolved literals).
+//
+// What this file adds is types and lookup helpers, so ToggleSwitch.tsx renders with CSS
+// variables while stories and tests can still read the literal a token resolves to.
+//
+// Regenerate the source values: python3 tools/gen-components.py && python3 tools/gen-tokens.py
+// Verify them against Figma:    python3 tools/verify-tokens.py
 // ═══════════════════════════════════════════
 
-// ── From Foundation: Spacing (2-semantic) ──
-export const SPACING = {
-  none: 0, // spacing-none → component padding & itemSpacing
+import { component, sys, sysValue } from '../../foundations/tokens';
+
+/** Canonical states, per the Design System Standard. */
+export type ToggleSwitchState =
+  | 'rest'
+  | 'hover'
+  | 'active'
+  | 'focus'
+  | 'disabled'
+  | 'selected';
+
+export const TOGGLE_STATES: readonly ToggleSwitchState[] = [
+  'rest',
+  'hover',
+  'active',
+  'focus',
+  'disabled',
+  'selected',
+] as const;
+
+const t = component('toggle');
+
+/** CSS variable reference for a toggle token — e.g. `toggleRef('radius')`. */
+export const toggleRef = (token: string, fallback?: string): string => t.ref(token, fallback);
+
+/** The literal a toggle token resolves to. Empty string when it is not declared. */
+export const toggleValue = (token: string): string => t.value(token);
+
+/** Every `--toggle-*` token declared by the generator. Stories enumerate this. */
+export const toggleTokenNames = (): string[] => t.names();
+
+/** Layout, sizing and motion — what ToggleSwitch.tsx and ToggleSwitch.css render with. */
+export const TOGGLE = {
+  radius: t.ref('radius'),
+  padding: t.ref('padding'),
+  trackWidth: t.ref('track-width'),
+  trackHeight: t.ref('track-height'),
+  knobSize: t.ref('knob-size'),
+  knobInset: t.ref('knob-inset'),
+  knobShadow: t.ref('knob-shadow'),
+  focusRingWidth: t.ref('focus-ring-width'),
+  focusRingOffset: t.ref('focus-ring-offset'),
+  transitionDuration: t.ref('transition-duration'),
+  transitionTiming: t.ref('transition-timing'),
+  disabledOpacity: t.ref('disabled-opacity'),
 } as const;
 
-// ── From Foundation: Border Radius (2-semantic) ──
-export const RADIUS = {
-  none: 0,    // radius-none → component corners
-  full: 9999, // radius-full → Track & Knob (fully rounded)
-} as const;
-
-// ── From Foundation: Colors (3-component / Toggle Switch) ──
+/**
+ * Colours.
+ *
+ * Figma's `colors/toggle-switch` group declares exactly three tokens. The focus ring is
+ * not one of them — Figma models focus as an interaction, not a fill — so it points
+ * straight at the nearest Tier 1 semantic token instead of inventing a fourth alias.
+ */
 export const TOGGLE_COLORS = {
-  // Track background
-  track: {
-    on: '#22C55E',   // colors/toggle-switch/toggle-bg-green (active=true)
-    off: '#E5E5E5',  // colors/toggle-switch/toggle-bg-soft-gray (active=false)
-  },
-
-  // Knob
-  knob: {
-    fill: '#FFFFFF',  // colors/toggle-switch/toggle-fg-white
-  },
+  /** Track fill when selected. Figma: colors/toggle-switch/toggle-bg-green */
+  trackOn: t.ref('background-green'),
+  /** Track fill at rest. Figma: colors/toggle-switch/toggle-bg-soft-gray */
+  trackOff: t.ref('background-soft-gray'),
+  /** Knob fill. Figma: colors/toggle-switch/toggle-fg-white */
+  knob: t.ref('foreground-white'),
+  /** Focus ring — no Figma token; nearest semantic is the brand red. */
+  focusRing: sys('color-primary-default'),
 } as const;
 
-// ── From Foundation: Shadow (dimension/shadow/md) ──
-// Same shadow tokens as Modal knob — 2× DROP_SHADOW effects
-export const SHADOW = {
-  // Knob shadow: dimension/shadow/md
-  // Shadow 1: 0px 2px 4px -1px rgba(0,0,0,0.06)
-  // Shadow 2: 0px 4px 6px -1px rgba(0,0,0,0.10)
-  md: '0px 2px 4px -1px rgba(0, 0, 0, 0.06), 0px 4px 6px -1px rgba(0, 0, 0, 0.10)',
+/** Resolved literals for the same colours — for stories, tables and tests. */
+export const TOGGLE_COLOR_VALUES = {
+  trackOn: t.value('background-green'),
+  trackOff: t.value('background-soft-gray'),
+  knob: t.value('foreground-white'),
+  focusRing: sysValue('color-primary-default'),
 } as const;
 
-// ── Layout Dimensions from Figma ──
-export const TOGGLE_DIMENSIONS = {
-  // Track: 51×31 (the pill-shaped container)
-  track: {
-    width: 51,
-    height: 31,
-  },
+/** Track fill for a selected / unselected switch. */
+export const trackBackground = (selected: boolean): string =>
+  selected ? TOGGLE_COLORS.trackOn : TOGGLE_COLORS.trackOff;
 
-  // Knob: 27×27 (circular)
-  knob: {
-    size: 27,
-  },
+/**
+ * Knob offset from the track's left edge.
+ *
+ * The "on" position is derived, not authored: Figma places the knob at x:22 inside a
+ * 51px track with a 27px knob and a 2px inset, which is exactly
+ * `track-width - knob-size - knob-inset`. Computing it in CSS means the three tokens
+ * stay the single source and no fourth token can drift out of step with them.
+ */
+export const knobOffset = (selected: boolean): string =>
+  selected
+    ? `calc(${TOGGLE.trackWidth} - ${TOGGLE.knobSize} - ${TOGGLE.knobInset})`
+    : TOGGLE.knobInset;
 
-  // Knob positions (x coordinate within Track, y always = 2)
-  knobPosition: {
-    off: 2,   // x when active=false (left side)
-    on: 22,   // x when active=true  (right side) → 51 - 27 - 2 = 22
-    y: 2,     // y always 2px from top
-  },
-} as const;
-
-// ── Animation Tokens ──
-export const TOGGLE_ANIMATION = {
-  // Smooth slide transition for knob movement
-  duration: '0.2s',
-  timingFunction: 'ease-in-out',
-} as const;
+/** Same offset as a literal, for stories that print dimensions. */
+export const knobOffsetValue = (selected: boolean): string => {
+  const num = (token: string) => parseFloat(t.value(token)) || 0;
+  return selected
+    ? `${num('track-width') - num('knob-size') - num('knob-inset')}px`
+    : t.value('knob-inset');
+};

@@ -1,33 +1,34 @@
 import React, { useState, useCallback } from 'react';
 import Button from '../Button/Button';
-import Icon from '../../icons/Icon';
 import MenuButton from './MenuButton';
 import NumberSearchBox from './NumberSearchBox';
 import SetSelect from './SetSelect';
+import Icon, { type IconSize } from '../../icons/Icon';
+import '../../icons/icon-data';
+import '../../foundations/tokens.css';
 import {
   SEARCH_CARD,
-  SPACING,
-  TYPOGRAPHY,
+  RANDOMIZE_ICON_SIZE,
   LOTTO_BOARD_COLORS,
-  BUTTON_COLORS,
-  RADIUS,
+  lottoBoardText,
+  FONT_FAMILY,
   type SearchCardType,
   type MenuButtonType,
 } from './tokens';
 import './LottoBoard.css';
 
 export interface SearchCardProps {
-  /** Card type — matches Figma "Type" variant: All | Single | Set */
+  /** Card type — matches the Figma "Type" variant: All | Single | Set */
   type?: SearchCardType;
-  /** Date text displayed in header */
+  /** Date text displayed in the header */
   dateText?: string;
-  /** Callback when search is clicked with current digits */
+  /** Callback when search is clicked with the current digits */
   onSearch?: (digits: string) => void;
   /** Callback when random is clicked */
   onRandom?: () => void;
   /** Callback when clear is clicked */
   onClear?: () => void;
-  /** Disabled state */
+  /** Canonical state: disabled */
   disabled?: boolean;
 }
 
@@ -35,11 +36,10 @@ export interface SearchCardProps {
  * SearchCard — Lotteryplus Design System
  *
  * Figma component: search-card (COMPOSITE)
- * Uses: MenuButton + NumberSearchBox + SetSelect (when type=Set)
- * Header: "ค้นหาเลขเด็ด !" red text + date + "ล้างค่า" link
- * Bottom: "สุ่มตัวเลข" button (special) + "ค้นหา" button (primary)
- * Layout: VERTICAL gap 16
- * Variants: Type = All (no set-select) | Single (no set-select) | Set (includes set-select)
+ * Composes MenuButton + NumberSearchBox + SetSelect (when the type is Set) and two
+ * real Buttons from the shared library.
+ *
+ * Every style value is a CSS custom property from foundations/tokens.css.
  */
 const SearchCard: React.FC<SearchCardProps> = ({
   type: initialType = 'All',
@@ -83,9 +83,9 @@ const SearchCard: React.FC<SearchCardProps> = ({
         display: 'flex',
         flexDirection: 'column',
         gap: SEARCH_CARD.gap,
-        fontFamily: TYPOGRAPHY.fontFamily,
+        fontFamily: FONT_FAMILY,
         width: '100%',
-        maxWidth: 400,
+        maxWidth: SEARCH_CARD.maxWidth,
       }}
     >
       {/* Header row */}
@@ -95,27 +95,25 @@ const SearchCard: React.FC<SearchCardProps> = ({
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
-          paddingLeft: SPACING['2xl'],
-          paddingRight: SPACING['2xl'],
+          paddingLeft: SEARCH_CARD.paddingX,
+          paddingRight: SEARCH_CARD.paddingX,
         }}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: SPACING.sm }}>
+        {/* Figma lays the title and the draw date side by side on a single 24px row. */}
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: SEARCH_CARD.gap }}>
           <span
             style={{
-              fontSize: TYPOGRAPHY.title.fontSize,
-              fontWeight: TYPOGRAPHY.title.fontWeight,
-              lineHeight: TYPOGRAPHY.title.lineHeight,
-              color: LOTTO_BOARD_COLORS.fgRed,
+              ...lottoBoardText('title'),
+              color: LOTTO_BOARD_COLORS.foregroundRed,
             }}
           >
             ค้นหาเลขเด็ด !
           </span>
           <span
             style={{
-              fontSize: TYPOGRAPHY.caption.fontSize,
-              fontWeight: TYPOGRAPHY.caption.fontWeight,
-              lineHeight: TYPOGRAPHY.caption.lineHeight,
-              color: LOTTO_BOARD_COLORS.fgDark,
+              ...lottoBoardText('caption'),
+              // Color/Text/Text-Secondary — body weight, not a dimmed grey.
+              color: LOTTO_BOARD_COLORS.foregroundDark,
             }}
           >
             {dateText}
@@ -126,11 +124,8 @@ const SearchCard: React.FC<SearchCardProps> = ({
           onClick={handleClear}
           disabled={disabled}
           style={{
-            fontFamily: TYPOGRAPHY.fontFamily,
-            fontSize: TYPOGRAPHY.underline.fontSize,
-            fontWeight: TYPOGRAPHY.underline.fontWeight,
-            lineHeight: TYPOGRAPHY.underline.lineHeight,
-            color: LOTTO_BOARD_COLORS.fgRed,
+            ...lottoBoardText('link'),
+            color: LOTTO_BOARD_COLORS.foregroundRed,
             cursor: disabled ? 'default' : 'pointer',
           }}
         >
@@ -146,47 +141,61 @@ const SearchCard: React.FC<SearchCardProps> = ({
       />
 
       {/* NumberSearchBox */}
-      <NumberSearchBox
-        value={digits}
-        onChange={setDigits}
-        disabled={disabled}
-      />
+      <NumberSearchBox value={digits} onChange={setDigits} disabled={disabled} />
 
-      {/* SetSelect — only shown when type is Set */}
+      {/* SetSelect — only shown when the type is Set */}
       {showSetSelect && (
-        <SetSelect
-          quantity={setQty}
-          onQuantityChange={setSetQty}
-          disabled={disabled}
-        />
+        <SetSelect quantity={setQty} onQuantityChange={setSetQty} disabled={disabled} />
       )}
 
-      {/* Bottom buttons */}
+      {/* Bottom actions */}
       <div
         style={{
           display: 'flex',
           flexDirection: 'row',
-          gap: SPACING.lg,
-          paddingLeft: SPACING['2xl'],
-          paddingRight: SPACING['2xl'],
+          gap: SEARCH_CARD.actionsGap,
+          paddingLeft: SEARCH_CARD.paddingX,
+          paddingRight: SEARCH_CARD.paddingX,
         }}
       >
-        {/* Random button (special/outline style) */}
-        <Button
-          type="outline"
-          size="L"
-          showIcon
-          iconName="filled-Randomize"
+        {/* Randomise — Figma's `button-special` (14291:131519): a 114x54 tile filled with a
+            dark-to-red gradient. It is not a Button variant in Figma, so it is not one here.
+            Its glyph is `filled-AI`, read off `Frame 1000012333` on 2026-08-20. The overlay
+            used to record that no glyph existed in the set; the glyph was there all along,
+            inside an instance nobody had walked. */}
+        <button
+          type="button"
           onClick={handleRandom}
           disabled={disabled}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: SEARCH_CARD.randomizeGap,
+            flex: 'none',
+            width: SEARCH_CARD.randomizeWidth,
+            height: SEARCH_CARD.randomizeHeight,
+            borderRadius: SEARCH_CARD.randomizeRadius,
+            background: SEARCH_CARD.randomizeGradient,
+            color: SEARCH_CARD.randomizeForeground,
+            border: 'none',
+            cursor: disabled ? 'not-allowed' : 'pointer',
+            opacity: disabled ? SEARCH_CARD.opacityDisabled : undefined,
+            ...lottoBoardText('menu'),
+          }}
         >
+          <Icon
+            name="filled-AI"
+            size={RANDOMIZE_ICON_SIZE as IconSize}
+            customColor={SEARCH_CARD.randomizeForeground}
+          />
           สุ่มตัวเลข
-        </Button>
+        </button>
 
-        {/* Search button (primary) */}
+        {/* Search */}
         <Button
-          type="primary"
-          size="L"
+          variant="primary"
+          size="lg"
           fullWidth
           onClick={handleSearch}
           disabled={disabled}

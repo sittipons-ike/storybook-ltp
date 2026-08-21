@@ -1,68 +1,73 @@
 import React from 'react';
+import '../../foundations/tokens.css';
 import {
-  RADIO_COLORS,
-  RADIO_DIMENSIONS,
-  TYPOGRAPHY,
-  SPACING,
-  RADIUS,
-  BORDER_WIDTH,
+  RADIO_LAYOUT,
+  radioColor,
+  radioOptionalColor,
+  radioText,
+  type RadioInteractionState,
 } from './tokens';
 import './RadioButton.css';
 
+/** React types `fontWeight` as a number-ish union; a CSS var is a string. */
+const weight = (value: string) => value as unknown as React.CSSProperties['fontWeight'];
+
+/** Canonical precedence: disabled beats active beats focus beats hover. */
+const resolveState = (
+  disabled: boolean,
+  active: boolean,
+  focused: boolean,
+  hovered: boolean,
+): RadioInteractionState =>
+  disabled ? 'disabled' : active ? 'active' : focused ? 'focus' : hovered ? 'hover' : 'rest';
+
 // ═══════════════════════════════════════════
-//  RadioDot — The individual radio circle
+//  RadioDot — the radio circle itself
 //  Figma: "radio-buttons" component set (14457:1351)
-//  Variants: type(none/selected) × status(default/focused/disabled)
-//  Size: 20×20px, Circle (radius-full=9999)
-//  Check dot: 12×12px centered, circle
+//  type(none | selected) x status(default | focused | disabled)
+//
+//  Every style value below is a CSS custom property from foundations/tokens.css. There
+//  are no literal colours, sizes or font values in this file — changing one means
+//  changing Figma (or the radio-buttons overlay) and regenerating.
 // ═══════════════════════════════════════════
 
 export interface RadioDotProps {
+  /** Figma `type=selected`. Orthogonal to `state`. */
   selected?: boolean;
-  disabled?: boolean;
-  focused?: boolean;
+  /** Canonical interaction state. `disabled` also blocks pointer events upstream. */
+  state?: RadioInteractionState;
 }
 
-export const RadioDot: React.FC<RadioDotProps> = ({
-  selected = false,
-  disabled = false,
-  focused = false,
-}) => {
-  const size = RADIO_DIMENSIONS.radioSize; // 20px
-  const dotSize = RADIO_DIMENSIONS.checkDotSize; // 12px
+export const RadioDot: React.FC<RadioDotProps> = ({ selected = false, state = 'rest' }) => {
+  const disabled = state === 'disabled';
 
-  const bgColor = disabled
-    ? RADIO_COLORS.radio.bg.disabled        // #F5F5F5
-    : RADIO_COLORS.radio.bg.default;        // #FFFFFF
+  const background = radioColor(disabled ? 'dot-background-disabled' : 'dot-background-rest');
 
-  const borderColor = disabled
-    ? RADIO_COLORS.radio.border.disabled     // #D4D4D4
-    : selected
-    ? RADIO_COLORS.radio.border.selected     // #22C55E
-    : RADIO_COLORS.radio.border.default;     // #D4D4D4
+  const border = radioColor(
+    disabled ? 'dot-border-disabled' : selected ? 'dot-border-selected' : 'dot-border-rest',
+  );
 
-  const checkColor = disabled
-    ? RADIO_COLORS.radio.check.disabled      // #C9C9C9
-    : RADIO_COLORS.radio.check.default;      // #22C55E
+  const check = radioColor(disabled ? 'dot-check-disabled' : 'dot-check-rest');
+
+  // The ripple is Figma's `eff-bg-*` pair: green once selected, grey before.
+  const ripple = !disabled && (state === 'focus' || state === 'active');
+  const ring = radioColor(selected ? 'dot-ring-selected' : 'dot-ring-rest');
 
   return (
     <div
       className="ltp-radio-dot"
       style={{
-        width: size,
-        height: size,
-        borderRadius: RADIUS.full,           // radius-full = 9999
-        backgroundColor: bgColor,
-        border: `${BORDER_WIDTH[1]}px solid ${borderColor}`, // border-width/1 = 1px
+        width: RADIO_LAYOUT.size,
+        height: RADIO_LAYOUT.size,
+        borderRadius: RADIO_LAYOUT.radius,
+        backgroundColor: background,
+        border: `${RADIO_LAYOUT.borderWidth} solid ${border}`,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         boxSizing: 'border-box',
         flexShrink: 0,
-        // Focused ring from Figma: eff-bg-green
-        boxShadow: focused && !disabled
-          ? `0 0 0 3px ${RADIO_COLORS.radio.focusRing}` // #22C55E66
-          : 'none',
+        boxShadow: ripple ? `0 0 0 ${RADIO_LAYOUT.ringWidth} ${ring}` : 'none',
         transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
       }}
     >
@@ -70,10 +75,10 @@ export const RadioDot: React.FC<RadioDotProps> = ({
         <div
           className="ltp-radio-dot__check"
           style={{
-            width: dotSize,
-            height: dotSize,
-            borderRadius: RADIUS.full,       // radius-full = 9999
-            backgroundColor: checkColor,
+            width: RADIO_LAYOUT.dotSize,
+            height: RADIO_LAYOUT.dotSize,
+            borderRadius: RADIO_LAYOUT.radius,
+            backgroundColor: check,
           }}
         />
       )}
@@ -82,12 +87,9 @@ export const RadioDot: React.FC<RadioDotProps> = ({
 };
 
 // ═══════════════════════════════════════════
-//  RadioOption — Single option card
+//  RadioOption — a single option card
 //  Figma: "Check Box Condition" frame
-//  Auto Layout: VERTICAL, padding:16, itemSpacing:8
-//  Inner frame: HORIZONTAL, itemSpacing:8, SPACE_BETWEEN
-//  Corner radius: 8 (radius-lg)
-//  Stroke: 1px (border-width/1)
+//  Auto Layout: VERTICAL, padding spacing-2xl, inner row SPACE_BETWEEN with gap spacing-lg
 // ═══════════════════════════════════════════
 
 export interface RadioOptionProps {
@@ -103,25 +105,33 @@ export const RadioOption: React.FC<RadioOptionProps> = ({
   disabled = false,
   onClick,
 }) => {
+  const [hovered, setHovered] = React.useState(false);
   const [focused, setFocused] = React.useState(false);
+  const [active, setActive] = React.useState(false);
 
-  const bgColor = disabled
-    ? RADIO_COLORS.card.bg.disabled          // #F5F5F5
-    : selected
-    ? RADIO_COLORS.card.bg.selected          // #F0FDF4
-    : RADIO_COLORS.card.bg.default;          // #FFFFFF
+  const state = resolveState(disabled, active, focused, hovered);
 
-  const borderColor = disabled
-    ? RADIO_COLORS.card.border.disabled      // #D4D4D4
-    : selected
-    ? RADIO_COLORS.card.border.selected      // #22C55E
-    : RADIO_COLORS.card.border.default;      // #D4D4D4
+  const background = radioColor(
+    disabled
+      ? 'card-background-disabled'
+      : selected
+      ? 'card-background-selected'
+      : 'card-background-rest',
+  );
 
-  const textColor = disabled
-    ? RADIO_COLORS.card.text.disabled        // #C9C9C9
-    : selected
-    ? RADIO_COLORS.card.text.selected        // #262626
-    : RADIO_COLORS.card.text.default;        // #C9C9C9
+  const border = radioColor(
+    disabled ? 'card-border-disabled' : selected ? 'card-border-selected' : 'card-border-rest',
+  );
+
+  const foreground = radioColor(
+    disabled
+      ? 'card-foreground-disabled'
+      : selected
+      ? 'card-foreground-selected'
+      : 'card-foreground-rest',
+  );
+
+  const optionText = radioText('option');
 
   return (
     <button
@@ -131,42 +141,38 @@ export const RadioOption: React.FC<RadioOptionProps> = ({
       }`}
       disabled={disabled}
       onClick={!disabled ? onClick : undefined}
-      onFocus={() => setFocused(true)}
-      onBlur={() => setFocused(false)}
+      onMouseEnter={() => !disabled && setHovered(true)}
+      onMouseLeave={() => {
+        if (!disabled) {
+          setHovered(false);
+          setActive(false);
+        }
+      }}
+      onMouseDown={() => !disabled && setActive(true)}
+      onMouseUp={() => !disabled && setActive(false)}
+      onFocus={() => !disabled && setFocused(true)}
+      onBlur={() => !disabled && setFocused(false)}
       style={{
-        // Auto Layout: VERTICAL, CENTER/CENTER
+        // Auto Layout: VERTICAL, CENTER / CENTER
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
 
-        // Dimensions
-        height: RADIO_DIMENSIONS.card.height,  // 44px
+        height: RADIO_LAYOUT.cardHeight,
         flex: 1,
+        padding: RADIO_LAYOUT.cardPadding,
+        borderRadius: RADIO_LAYOUT.cardRadius,
+        border: `${RADIO_LAYOUT.borderWidth} solid ${border}`,
+        backgroundColor: background,
 
-        // Padding: spacing-2xl = 16px (all sides)
-        padding: RADIO_DIMENSIONS.card.padding,
-
-        // Corner radius: radius-lg = 8px
-        borderRadius: RADIUS.lg,
-
-        // Border: border-width/1 = 1px
-        border: `${BORDER_WIDTH[1]}px solid ${borderColor}`,
-
-        // Background
-        backgroundColor: bgColor,
-
-        // Cursor
         cursor: disabled ? 'not-allowed' : 'pointer',
-
-        // Reset button styles
         outline: 'none',
         textDecoration: 'none',
-
         transition: 'background-color 0.15s ease, border-color 0.15s ease',
       }}
     >
-      {/* Inner frame: HORIZONTAL, SPACE_BETWEEN, itemSpacing: spacing-lg = 8px */}
+      {/* Inner row: HORIZONTAL, SPACE_BETWEEN, gap spacing-lg */}
       <div
         style={{
           display: 'flex',
@@ -174,35 +180,33 @@ export const RadioOption: React.FC<RadioOptionProps> = ({
           alignItems: 'center',
           justifyContent: 'space-between',
           width: '100%',
-          gap: RADIO_DIMENSIONS.card.innerGap, // spacing-lg = 8px
+          gap: RADIO_LAYOUT.gap,
         }}
       >
-        {/* Option text — Typography: 14px Semibold (button/m-semb) */}
+        {/* Option text — typography/button/md/semibold */}
         <span
           style={{
-            fontFamily: TYPOGRAPHY.optionText.fontFamily,
-            fontSize: TYPOGRAPHY.optionText.fontSize,
-            fontWeight: TYPOGRAPHY.optionText.fontWeight,
-            lineHeight: TYPOGRAPHY.optionText.lineHeight,
-            color: textColor,
+            fontFamily: optionText.fontFamily,
+            fontSize: optionText.fontSize,
+            fontWeight: weight(optionText.fontWeight),
+            lineHeight: optionText.lineHeight,
+            color: foreground,
             whiteSpace: 'nowrap',
           }}
         >
           {label}
         </span>
 
-        {/* Radio dot instance */}
-        <RadioDot selected={selected} disabled={disabled} focused={focused} />
+        <RadioDot selected={selected} state={state} />
       </div>
     </button>
   );
 };
 
 // ═══════════════════════════════════════════
-//  RadioButtonGroup — Full radio button group with label
+//  RadioButtonGroup — the labelled group
 //  Figma: "Gender select" component set (14291:132236)
-//  Auto Layout: VERTICAL, itemSpacing: 4 (spacing-sm)
-//  Structure: Label → Options Row → Description (hidden)
+//  Auto Layout: VERTICAL, gap spacing-sm — Label → Options row → Description
 // ═══════════════════════════════════════════
 
 export interface RadioButtonOption {
@@ -225,7 +229,7 @@ export interface RadioButtonGroupProps {
   onChange?: (value: string) => void;
   /** Error message */
   error?: string;
-  /** Disabled state */
+  /** Canonical state: disabled */
   disabled?: boolean;
   /** Additional className */
   className?: string;
@@ -242,20 +246,23 @@ const RadioButtonGroup: React.FC<RadioButtonGroupProps> = ({
   disabled = false,
   className = '',
 }) => {
+  const labelText = radioText('label');
+  const optionalText = radioText('optional');
+  const requiredText = radioText('required');
+  const errorText = radioText('error');
+
   return (
     <div
       className={`ltp-radio-group ${className}`}
       role="radiogroup"
       aria-label={label}
       style={{
-        // Auto Layout: VERTICAL, itemSpacing: spacing-sm = 4px
         display: 'flex',
         flexDirection: 'column',
-        gap: SPACING.sm, // 4px — wrapper.labelToOptions
+        gap: RADIO_LAYOUT.groupGap,
       }}
     >
-      {/* ── Label Row ── */}
-      {/* Figma: "Label" frame — HORIZONTAL, paddingLeft:4, itemSpacing:4 */}
+      {/* ── Label row — HORIZONTAL, paddingLeft spacing-sm, gap spacing-sm ── */}
       {label && (
         <div
           className="ltp-radio-group__label"
@@ -263,47 +270,44 @@ const RadioButtonGroup: React.FC<RadioButtonGroupProps> = ({
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'center',
-            paddingLeft: SPACING.sm, // spacing-sm = 4px
-            gap: SPACING.sm,        // spacing-sm = 4px
+            paddingLeft: RADIO_LAYOUT.labelPaddingLeft,
+            gap: RADIO_LAYOUT.labelGap,
           }}
         >
-          {/* Label text: 14px/22px Medium, #262626 */}
           <span
             style={{
-              fontFamily: TYPOGRAPHY.label.fontFamily,
-              fontSize: TYPOGRAPHY.label.fontSize,
-              fontWeight: TYPOGRAPHY.label.fontWeight,
-              lineHeight: TYPOGRAPHY.label.lineHeight,
-              color: RADIO_COLORS.label.text,
+              fontFamily: labelText.fontFamily,
+              fontSize: labelText.fontSize,
+              fontWeight: weight(labelText.fontWeight),
+              lineHeight: labelText.lineHeight,
+              color: radioColor('label-foreground-rest'),
             }}
           >
             {label}
           </span>
 
-          {/* Optional indicator: 12px/22px Medium, #A3A3A3 */}
           {optional && !required && (
             <span
               style={{
-                fontFamily: TYPOGRAPHY.optional.fontFamily,
-                fontSize: TYPOGRAPHY.optional.fontSize,
-                fontWeight: TYPOGRAPHY.optional.fontWeight,
-                lineHeight: TYPOGRAPHY.optional.lineHeight,
-                color: RADIO_COLORS.label.optional,
+                fontFamily: optionalText.fontFamily,
+                fontSize: optionalText.fontSize,
+                fontWeight: weight(optionalText.fontWeight),
+                lineHeight: optionalText.lineHeight,
+                color: radioOptionalColor(),
               }}
             >
               (ไม่จำเป็น)
             </span>
           )}
 
-          {/* Required indicator: 12px/18px Medium, #E32321 */}
           {required && (
             <span
               style={{
-                fontFamily: TYPOGRAPHY.required.fontFamily,
-                fontSize: TYPOGRAPHY.required.fontSize,
-                fontWeight: TYPOGRAPHY.required.fontWeight,
-                lineHeight: TYPOGRAPHY.required.lineHeight,
-                color: RADIO_COLORS.label.required,
+                fontFamily: requiredText.fontFamily,
+                fontSize: requiredText.fontSize,
+                fontWeight: weight(requiredText.fontWeight),
+                lineHeight: requiredText.lineHeight,
+                color: radioColor('label-required-rest'),
               }}
             >
               (จำเป็น)
@@ -312,14 +316,13 @@ const RadioButtonGroup: React.FC<RadioButtonGroupProps> = ({
         </div>
       )}
 
-      {/* ── Options Row ── */}
-      {/* Figma: "Frame 1000012457" — HORIZONTAL, itemSpacing: spacing-2xl = 16px */}
+      {/* ── Options row — HORIZONTAL, gap spacing-2xl ── */}
       <div
         className="ltp-radio-group__options"
         style={{
           display: 'flex',
           flexDirection: 'row',
-          gap: RADIO_DIMENSIONS.optionsGap, // spacing-2xl = 16px
+          gap: RADIO_LAYOUT.optionsGap,
         }}
       >
         {options.map((option) => (
@@ -333,23 +336,22 @@ const RadioButtonGroup: React.FC<RadioButtonGroupProps> = ({
         ))}
       </div>
 
-      {/* ── Error Description ── */}
-      {/* Figma: "Description" frame — HORIZONTAL, paddingLeft:4 (hidden by default) */}
+      {/* ── Description — HORIZONTAL, paddingLeft spacing-sm (hidden by default) ── */}
       {error && (
         <div
           className="ltp-radio-group__error"
           style={{
             display: 'flex',
-            paddingLeft: SPACING.sm, // spacing-sm = 4px
+            paddingLeft: RADIO_LAYOUT.labelPaddingLeft,
           }}
         >
           <span
             style={{
-              fontFamily: TYPOGRAPHY.error.fontFamily,
-              fontSize: TYPOGRAPHY.error.fontSize,
-              fontWeight: TYPOGRAPHY.error.fontWeight,
-              lineHeight: TYPOGRAPHY.error.lineHeight,
-              color: RADIO_COLORS.error,
+              fontFamily: errorText.fontFamily,
+              fontSize: errorText.fontSize,
+              fontWeight: weight(errorText.fontWeight),
+              lineHeight: errorText.lineHeight,
+              color: radioColor('error-foreground-rest'),
             }}
           >
             {error}

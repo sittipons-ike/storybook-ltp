@@ -1,12 +1,13 @@
 import React from 'react';
-import Icon from '../../icons/Icon';
+import Icon, { type IconSize } from '../../icons/Icon';
+import '../../foundations/tokens.css';
 import {
   SET_SELECT,
-  TYPOGRAPHY,
   LOTTO_BOARD_COLORS,
-  RADIUS,
-  BORDER_WIDTH,
-  type SetSelectStatus,
+  OPACITY,
+  ICON_SIZE,
+  lottoBoardText,
+  type SetSelectState,
 } from './tokens';
 import './LottoBoard.css';
 
@@ -19,9 +20,9 @@ export interface SetSelectProps {
   max?: number;
   /** Callback when quantity changes */
   onQuantityChange?: (qty: number) => void;
-  /** Figma variant: Status = Default | Active | Actived */
-  status?: SetSelectStatus;
-  /** Disabled state */
+  /** Canonical state — Figma still labels these Default / Active / Actived */
+  state?: SetSelectState;
+  /** Canonical state: disabled */
   disabled?: boolean;
 }
 
@@ -29,75 +30,72 @@ export interface SetSelectProps {
  * SetSelect — Lotteryplus Design System
  *
  * Figma component: set-select
- * Label + lottery image + stepper (minus/number/plus)
- * Stepper buttons: 48x48, minus=white bg + border, plus=dark bg
- * Layout: VERTICAL gap 4, paddingLR 16
- * Inner row: HORIZONTAL gap 16
+ * Label + lottery thumbnail + stepper (minus / quantity / plus).
+ * The minus button is white with a hairline border, the plus button is dark.
+ *
+ * Every style value is a CSS custom property from foundations/tokens.css.
  */
 const SetSelect: React.FC<SetSelectProps> = ({
   quantity = 1,
   min = 1,
   max = 99,
   onQuantityChange,
-  status = 'Default',
+  state = 'rest',
   disabled = false,
 }) => {
   const handleDecrement = () => {
     if (disabled) return;
-    const next = Math.max(min, quantity - 1);
-    onQuantityChange?.(next);
+    onQuantityChange?.(Math.max(min, quantity - 1));
   };
 
   const handleIncrement = () => {
     if (disabled) return;
-    const next = Math.min(max, quantity + 1);
-    onQuantityChange?.(next);
+    onQuantityChange?.(Math.min(max, quantity + 1));
   };
 
-  const ticketsPerSet = quantity;
-  const displayText = `ชุด ${ticketsPerSet}-${ticketsPerSet * 5 > 99 ? 99 : ticketsPerSet * 5} ใบ`;
+  const atMin = quantity <= min;
+  const atMax = quantity >= max;
+  const displayText = `ชุด ${quantity}-${Math.min(quantity * 5, 99)} ใบ`;
 
   return (
     <div
       className="ltp-set-select"
+      data-state={state}
       style={{
         display: 'flex',
         flexDirection: 'column',
         gap: SET_SELECT.gap,
-        paddingLeft: SET_SELECT.paddingLR,
-        paddingRight: SET_SELECT.paddingLR,
-        opacity: disabled ? 0.5 : 1,
+        paddingLeft: SET_SELECT.paddingX,
+        paddingRight: SET_SELECT.paddingX,
+        opacity: disabled ? OPACITY.disabled : undefined,
       }}
     >
       {/* Label */}
       <span
         style={{
-          fontFamily: TYPOGRAPHY.fontFamily,
-          fontSize: TYPOGRAPHY.title.fontSize,
-          fontWeight: TYPOGRAPHY.title.fontWeight,
-          lineHeight: TYPOGRAPHY.title.lineHeight,
-          color: LOTTO_BOARD_COLORS.fgDark,
+          ...lottoBoardText('title'),
+          color: LOTTO_BOARD_COLORS.foregroundDark,
         }}
       >
         เลือกจำนวนชุดที่ต้องการ
       </span>
 
-      {/* Inner row: image + stepper */}
+      {/* Inner row: thumbnail + stepper */}
       <div
         style={{
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
-          gap: SET_SELECT.innerGap,
+          gap: SET_SELECT.rowGap,
         }}
       >
-        {/* Lottery card image placeholder */}
+        {/* Lottery card thumbnail placeholder */}
         <div
           style={{
             width: SET_SELECT.imageWidth,
             height: SET_SELECT.imageHeight,
-            borderRadius: RADIUS.lg,
-            backgroundColor: LOTTO_BOARD_COLORS.bgGray,
+            borderRadius: SET_SELECT.imageRadius,
+            backgroundColor: LOTTO_BOARD_COLORS.backgroundGray,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -107,10 +105,8 @@ const SetSelect: React.FC<SetSelectProps> = ({
         >
           <span
             style={{
-              fontFamily: TYPOGRAPHY.fontFamily,
-              fontSize: TYPOGRAPHY.caption.fontSize,
-              color: LOTTO_BOARD_COLORS.bgWhite,
-              fontWeight: TYPOGRAPHY.caption.fontWeight,
+              ...lottoBoardText('caption'),
+              color: LOTTO_BOARD_COLORS.foregroundWhite,
             }}
           >
             LOTTO
@@ -127,61 +123,67 @@ const SetSelect: React.FC<SetSelectProps> = ({
             overflow: 'hidden',
           }}
         >
-          {/* Minus button */}
+          {/* Minus */}
           <button
             className="ltp-stepper-btn"
             onClick={handleDecrement}
-            disabled={disabled || quantity <= min}
+            disabled={disabled || atMin}
             aria-label="Decrease quantity"
             style={{
-              width: SET_SELECT.stepperButtonSize,
-              height: SET_SELECT.stepperButtonSize,
+              width: SET_SELECT.stepperSize,
+              height: SET_SELECT.stepperSize,
               padding: SET_SELECT.stepperPadding,
-              backgroundColor: LOTTO_BOARD_COLORS.bgWhite,
-              border: `${BORDER_WIDTH[1]}px solid ${LOTTO_BOARD_COLORS.border}`,
+              backgroundColor: LOTTO_BOARD_COLORS.backgroundWhite,
+              border: `${SET_SELECT.stepperBorderWidth} solid ${LOTTO_BOARD_COLORS.border}`,
               borderRadius: SET_SELECT.stepperRadius,
-              cursor: disabled || quantity <= min ? 'default' : 'pointer',
-              opacity: quantity <= min ? 0.4 : 1,
+              cursor: disabled || atMin ? 'default' : 'pointer',
+              opacity: atMin ? OPACITY.limitReached : undefined,
             }}
           >
-            <Icon name="outline-minus" size={24} customColor={LOTTO_BOARD_COLORS.fgDark} />
+            <Icon
+              name="filled-minus"
+              size={ICON_SIZE as IconSize}
+              customColor={LOTTO_BOARD_COLORS.foregroundDark}
+            />
           </button>
 
           {/* Quantity display */}
           <div
             style={{
-              padding: `0 ${SET_SELECT.innerGap}px`,
-              fontFamily: TYPOGRAPHY.fontFamily,
-              fontSize: TYPOGRAPHY.button.fontSize,
-              fontWeight: TYPOGRAPHY.button.fontWeight,
-              lineHeight: TYPOGRAPHY.button.lineHeight,
-              color: LOTTO_BOARD_COLORS.fgDark,
+              ...lottoBoardText('menu'),
+              paddingLeft: SET_SELECT.quantityPaddingX,
+              paddingRight: SET_SELECT.quantityPaddingX,
+              color: LOTTO_BOARD_COLORS.foregroundDark,
               whiteSpace: 'nowrap',
-              minWidth: 100,
+              minWidth: SET_SELECT.quantityMinWidth,
               textAlign: 'center',
             }}
           >
             {displayText}
           </div>
 
-          {/* Plus button */}
+          {/* Plus */}
           <button
             className="ltp-stepper-btn"
             onClick={handleIncrement}
-            disabled={disabled || quantity >= max}
+            disabled={disabled || atMax}
             aria-label="Increase quantity"
             style={{
-              width: SET_SELECT.stepperButtonSize,
-              height: SET_SELECT.stepperButtonSize,
+              width: SET_SELECT.stepperSize,
+              height: SET_SELECT.stepperSize,
               padding: SET_SELECT.stepperPadding,
-              backgroundColor: LOTTO_BOARD_COLORS.bgDark,
-              border: 'none',
+              backgroundColor: LOTTO_BOARD_COLORS.backgroundDark,
+              border: `${SET_SELECT.stepperBorderWidth} solid transparent`,
               borderRadius: SET_SELECT.stepperRadius,
-              cursor: disabled || quantity >= max ? 'default' : 'pointer',
-              opacity: quantity >= max ? 0.4 : 1,
+              cursor: disabled || atMax ? 'default' : 'pointer',
+              opacity: atMax ? OPACITY.limitReached : undefined,
             }}
           >
-            <Icon name="outline-add" size={24} customColor={LOTTO_BOARD_COLORS.bgWhite} />
+            <Icon
+              name="filled-add"
+              size={ICON_SIZE as IconSize}
+              customColor={LOTTO_BOARD_COLORS.backgroundWhite}
+            />
           </button>
         </div>
       </div>

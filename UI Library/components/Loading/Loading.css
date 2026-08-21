@@ -1,6 +1,9 @@
 /* ═══════════════════════════════════════════
    Loading Component — Animation & Resets
    Figma: "Loading" component (14291:131477)
+
+   Colours, sizes and motion values are CSS custom properties from
+   foundations/tokens.css. Only the keyframe geometry is literal here.
    ═══════════════════════════════════════════ */
 
 /* Spin animation keyframes */
@@ -15,19 +18,37 @@
 
 /* Container reset */
 .ltp-loading {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   line-height: 0;
 }
 
-/* SVG spin animation */
+/* SVG spin animation — duration/easing/iteration all come from --loading-* tokens.
+   Loading.tsx may override animation-duration inline. */
 .ltp-loading__spinner {
-  animation: ltp-loading-spin 1s linear infinite;
+  animation-name: ltp-loading-spin;
+  animation-duration: var(--loading-duration);
+  animation-timing-function: var(--loading-timing-function);
+  animation-iteration-count: var(--loading-iteration-count);
   transform-origin: center center;
 }
 
 /* Paused state */
 .ltp-loading--paused .ltp-loading__spinner {
   animation-play-state: paused;
+}
+
+/* Visually hidden label — a11y clip mechanics, not design values */
+.ltp-loading__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
