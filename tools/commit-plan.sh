@@ -62,6 +62,10 @@ step "chore(tooling): token/component generators and the 8-step gate" \
 step "feat(tokens): design-library source of truth and generated token tiers" \
   design-library/ "UI Library/foundations/"
 
+# icons are a registry the components import by name, so they land before the components
+step "feat(icons): icon registry, deduplicated against Figma's own duplicate names" \
+  "UI Library/icons/"
+
 # ── 3. assets before the components that reference them
 step "feat(assets): Graphik TH, brand marks and 112 Figma logos" \
   "UI Library/assets/" "UI Library/logos/"
@@ -72,7 +76,7 @@ step "feat(components): Header, Footer, ActionBar, Avatar, Divider, ErrorState, 
 
 # ── 5. compositions on top of components
 step "feat(patterns): AppShell and BareScreen, plus the component inventory story" \
-  "UI Library/patterns/" "UI Library/system/"
+  "UI Library/patterns/" "UI Library/system/" "UI Library/pages/"
 
 # ── 6. project memory last — it describes everything above
 step "docs: project spec, memory and the Phase 2 rename table" \
@@ -92,5 +96,23 @@ cat <<'NOTE'
   Neither is staged by this script. Decide, then either gitignore or commit by hand.
 NOTE
 echo
-git status --porcelain -uall | sed 's/^/  /' | head -12
+echo "════════════════════════════════════════════"
+echo "  Coverage check"
+echo "════════════════════════════════════════════"
+# Listing directories by hand is how `UI Library/icons` was missed the first time:
+# six commits went in and the icon registry stayed behind, so HEAD referenced icons
+# it did not contain. This asks git what is left instead of trusting the list above.
+missed=$(git status --porcelain -uall \
+  | grep -vE '^.. "?(lotteryplus-frontend-main|slide|wireframe)/' \
+  | grep -vE '\.DS_Store' || true)
+if [ -n "$missed" ]; then
+  echo "  ✗ still uncommitted inside the library — add these paths to a step above:"
+  printf '%s\n' "$missed" | sed 's/^/      /'
+else
+  echo "  ✓ nothing left inside the library"
+fi
+
+echo
+echo "  Untracked and deliberately skipped:"
+git status --porcelain -uall | sed 's/^/  /' | head -6
 echo "  ... $(git status --porcelain -uall | wc -l | tr -d ' ') files still unstaged"
