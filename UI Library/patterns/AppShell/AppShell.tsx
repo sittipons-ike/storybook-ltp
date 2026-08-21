@@ -53,10 +53,23 @@ const Slot: React.FC<{
   show: boolean | ReadonlyArray<string>;
   grow?: boolean;
   minHeight?: number;
-}> = ({ name, filled, show, grow, minHeight }) => {
+  /** Extra scroll-room at the bottom of the grow slot, for content an overlay covers. */
+  growPadBottom?: string;
+  style?: React.CSSProperties;
+}> = ({ name, filled, show, grow, minHeight, growPadBottom, style }) => {
   const outline = Array.isArray(show) ? show.includes(name) : show;
   if (filled) {
-    return <div className={`ltp-shell__slot ltp-shell__slot--${name}`} style={grow ? { flex: 1, minHeight: 0, overflow: 'auto' } : undefined}>{filled}</div>;
+    return (
+      <div
+        className={`ltp-shell__slot ltp-shell__slot--${name}`}
+        style={{
+          ...(grow ? { flex: 1, minHeight: 0, overflow: 'auto', paddingBottom: growPadBottom } : undefined),
+          ...style,
+        }}
+      >
+        {filled}
+      </div>
+    );
   }
   if (!outline) return null;
   return (
@@ -115,6 +128,7 @@ const AppShell: React.FC<AppShellProps> = ({
     style={{
       display: 'flex',
       flexDirection: 'column',
+      position: 'relative',
       width: width ?? '100%',
       height: height ?? '100%',
       background: t.ref('page-background'),
@@ -126,9 +140,27 @@ const AppShell: React.FC<AppShellProps> = ({
     <Slot name="status-bar" filled={statusBar} show={showSlots} minHeight={47} />
     <Slot name="top-navbar" filled={topNavbar} show={showSlots} minHeight={56} />
     <Slot name="header" filled={header} show={showSlots} minHeight={64} />
-    <Slot name="main" filled={children} show={showSlots} grow minHeight={120} />
+    {/* The grow slot keeps the tab bar's full height free at the bottom, because the bar
+        overlays it: NavigationBar's top 22px are transparent by design (Figma fills the
+        68px items and the indicator strip, never the container), so whatever sits behind
+        the bar shows through. In a flex stack nothing sat behind it and the shell's grey
+        page background showed instead — the strip must overlay the page's own content. */}
+    <Slot
+      name="main"
+      filled={children}
+      show={showSlots}
+      grow
+      minHeight={120}
+      growPadBottom={bottomNavbar ? 'var(--navigation-height)' : undefined}
+    />
     <Slot name="footer" filled={footer} show={showSlots} minHeight={56} />
-    <Slot name="bottom-navbar" filled={bottomNavbar} show={showSlots} minHeight={64} />
+    <Slot
+      name="bottom-navbar"
+      filled={bottomNavbar}
+      show={showSlots}
+      minHeight={64}
+      style={bottomNavbar ? { position: 'absolute', left: 0, right: 0, bottom: 0 } : undefined}
+    />
   </div>
 );
 

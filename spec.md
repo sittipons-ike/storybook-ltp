@@ -1,5 +1,5 @@
 # Project Spec — Lotteryplus Design System
-_Last updated: 2026-08-22 00:20_
+_Last updated: 2026-08-21 18:20_
 
 ## Current State
 
@@ -199,6 +199,25 @@ UI Library/
 - 2026-08-21 — **หัวข้อใหญ่ทั้งสองที่ใช้ `display/xl/semibold`** (main + success) ตามที่ดีไซเนอร์ restyle
 - 2026-08-21 — **icon ครบ 157 = เท่า Figma เป๊ะ** เพิ่ม 6 ตัวที่ขาด · `IconData` รองรับ stroke icon แล้ว
   ด่าน icon เป็น **set equality** ทั้งสองทิศ (`figma-icon-names.json`)
+
+
+### 2026-08-21 (เย็น) — hug ทั้ง header set · ProfileSummary divider · navbar overlay
+
+- **`header-bar-mobile` ทุก variant เปลี่ยนเป็น hug + ดีไซเนอร์ย้าย padding** — อ่านรอบสาม:
+  home 146→**154** (padding-top 8→16), sub 56→**68** (padding 16 ย้ายจาก heading ขึ้น bar,
+  heading กลายเป็นกล่อง FIXED 36), success 94→**96** (ปิด gap 94-vs-96 ตามทิศที่ library
+  render อยู่แล้ว) — วัดในเบราว์เซอร์ตรงทุกตัว
+- **ProfileSummary เส้นคั่นกลับมาเห็นได้** — Figma วาด `Line` ไม่มี fill ให้พื้นแดงทะลุ + เส้นประขาวทับ
+  ผมเคยแปลเป็นขาวบนขาว = ล่องหน · แก้เป็น 1px แดงทะลุ + repeating-linear-gradient ขาว 4/4 ·
+  ขอบทอง 3px เปลี่ยน border-top → inset shadow (INSIDE ห้ามกินพื้นที่) · การ์ดล่าง**ไม่มี** border
+  (strokes ว่าง — เคยอ่าน strokeWeight แทน paint list) · บล็อกวัดได้ 187 = 16+80+1+74+16 ตรง Figma
+- **ProfileSummary มี story ตัวเองแล้ว** (`Organisms/ProfileSummary`) + ตอบ user: ก้อนนี้เป็น
+  component อยู่ที่ `UI Library/components/ProfileSummary/` · ข้างในยังเป็น slot เพราะ Figma
+  componentise `nokcash-profile` + `summary-icon-profile` ไว้แล้วแต่ library ยังไม่มี —
+  บันทึกลง component-inventory.json (page profile: 9 sets, unmodelled 8)
+- **AppShell: bottom-navbar เป็น overlay แล้ว** — user ทักพื้นเทาโผล่บน strip โปร่ง 22px ·
+  สาเหตุ: bar โปร่งจริงแต่ flex stack ไม่มีอะไรข้างหลัง · แก้เป็น absolute bottom + main
+  เผื่อ paddingBottom = var(--navigation-height) · ยืนยันแล้ว banner ทะลุ strip
 
 ## Next Up
 
