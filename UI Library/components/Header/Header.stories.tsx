@@ -92,6 +92,20 @@ export const Variants: StoryObj = {
         />
       </Device>
 
+      <Device label="type=type4 · main" sub="68px · หัวข้อชิดซ้าย + counters — หน้าคำสั่งซื้อ">
+        <Header
+          variant="main"
+          title="คำสั่งซื้อของฉัน"
+          actionRight={
+            <>
+              <Counter icon="outline-NokPoints-W" value="1,050" />
+              <Counter icon="outline-Lottery" value="10" />
+              <HeaderAction icon="filled-navigation" label="เมนู" />
+            </>
+          }
+        />
+      </Device>
+
       <Device label="type=sub-page" sub="56px · หน้าที่ไม่ได้กดจาก Navbar">
         <Header
           variant="sub"

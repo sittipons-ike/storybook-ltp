@@ -9,18 +9,23 @@ import './Header.css';
 /**
  * Figma's `type` property on `header-bar-mobile`.
  *
+ * `main` is Figma's `type=type4` (23625:34736), added to the set on 2026-08-21: a 68-tall
+ * bar with the page title on the left and the counters on the right. The Frontend draws
+ * the same shape as `nav_big_title` at 96; Figma says 68 and Figma is the authority.
+ *
  * The set spans two shell slots, which its name hides. `home` and `success` are headers —
  * the tall red block the Frontend renders behind `hasHeader`. `sub` is a top navbar — the
  * 56px bar the Frontend renders behind `hasTopNavbar`. They are kept in one component
  * because Figma models them as one set, and Figma is the structure authority; the slot
  * each belongs to is recorded here so a composition cannot get it wrong by accident.
  */
-export type HeaderVariant = 'home' | 'sub' | 'success';
+export type HeaderVariant = 'home' | 'main' | 'sub' | 'success';
 
 /** Which AppShell slot each variant fills. Checked against `components/layout/index.tsx`. */
 export const HEADER_VARIANT_SLOT: Record<HeaderVariant, 'header' | 'top-navbar'> = {
   home: 'header',
   success: 'header',
+  main: 'top-navbar',
   sub: 'top-navbar',
 };
 
@@ -149,7 +154,7 @@ export const HeaderAction: React.FC<{
 /**
  * Header — Lotteryplus Design System
  *
- * Figma component set `header-bar-mobile` (14924:2118). Three variants, and the page
+ * Figma component set `header-bar-mobile` (14924:2118). Four variants, and the page
  * template in `Guidline-UI Template › Layout` says which goes where: `home` on a
  * destination reached from the tab bar, `sub` on anything reached another way.
  *
@@ -351,6 +356,50 @@ const Header: React.FC<HeaderProps> = ({
             <span style={{ fontWeight: HEADER.titleWeight }}>{metaValue}</span>
           </div>
         )}
+      </header>
+    );
+  }
+
+  if (variant === 'main') {
+    return (
+      <header
+        className={`ltp-header ltp-header--main ${className}`}
+        style={{
+          ...base,
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          minHeight: HEADER.mainHeight,
+          padding: HEADER.mainPadding,
+          gap: HEADER.mainGap,
+        }}
+      >
+        {/* Figma's `heading` column. Both it and the app bar grow, so the title takes
+            whatever the counters leave rather than a width of its own. */}
+        <p
+          className="ltp-header__title"
+          style={{
+            flex: 1,
+            minWidth: 0,
+            textAlign: 'left',
+            fontSize: HEADER.mainTitleSize,
+            lineHeight: HEADER.mainTitleLineHeight,
+            fontWeight: HEADER.mainTitleWeight,
+          }}
+        >
+          {title}
+        </p>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            gap: HEADER.appbarGap,
+            flex: 1,
+            minWidth: 0,
+          }}
+        >
+          {actionRight}
+        </div>
       </header>
     );
   }

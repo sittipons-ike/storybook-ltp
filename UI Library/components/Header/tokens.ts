@@ -49,6 +49,13 @@ export const HEADER = {
   subPaddingX: t.ref('header-sub-padding-x'),
   subGap: t.ref('header-sub-gap'),
   subHeadingPaddingY: t.ref('header-sub-heading-padding-y'),
+
+  mainHeight: t.ref('header-main-height'),
+  mainPadding: t.ref('header-main-padding'),
+  mainGap: t.ref('header-main-gap'),
+  mainTitleSize: t.ref('header-main-title-size'),
+  mainTitleLineHeight: t.ref('header-main-title-line-height'),
+  mainTitleWeight: t.ref('header-main-title-weight'),
   subTitleHeight: t.ref('header-sub-title-height'),
 
   titleSize: t.ref('header-title-size'),

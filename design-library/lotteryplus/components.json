@@ -2440,12 +2440,13 @@
           "profile-summary-*": "The `header-profile` block on [Mobile] Profile: 390x187, 16 of padding, filled with the brand red and rounded 24 on its BOTTOM corners only. Inside it two white cards that read as one: 358x80 rounded 16/16/0/0 with a 3px gold top edge (#EAB308, INSIDE), then a 1px white dashed rule (4/4) with 16 above it, then 358x74 rounded 0/0/16/16 with a 1px white border all round. The Frontend has none of this — it puts a plain white card on the page background — which is why building /profile from the Frontend alone produced the wrong shape. Read 2026-08-21.",
           "header-success-*": "The success meta row (label + value) sits on legacy 14/24 styles no role carries — see _unmigrated_type. Confirmed correct as drawn; literals until a role exists.",
           "subtitle-removed": "Figma's sub-page variant draws a hidden subtitle layer (งวดวันที่ …, 14/24 Medium). The product never shows it — decided with the user 2026-08-21 — so the component does not model it and its literals left with it. If the product ever grows a draw date under the title, this is the layer to re-read: header-bar-mobile > type=sub-page > heading, the hidden TEXT under text-center.",
-          "header-success-title": "Bound to typography/title/lg/semibold per the user's decision 2026-08-21. Figma still draws this layer at 22/34 on a legacy style; that drawing is the stale side. The bar keeps its 94 height via min-height, so the smaller line sits centred in the same block.",
+          "header-success-title": "typography/display/xl-semb — 20/36 Semibold. The layer carried a legacy 22/34 style until 2026-08-21, when the designer restyled it to the same role the new type4 title uses. An earlier binding here read title/lg/semibold (16/24), chosen before the restyle; re-read off the layer's own style id and corrected.",
           "profile-padding-y": "8 — added by the designer in Figma on 2026-08-21; the variant now carries padding 8/16/8/16 and the bar stays 72. Re-read off 14962:94338 the same day.",
-          "profile-meta": "The member-id row carries the text style `typography/caption/l-reg` — read off the layer's own style id on 2026-08-21. The overlay used to bind label/md/regular, picked because its numbers matched (12/18 mobile, 14 desktop on both roles). Same values, wrong word: the binding is vocabulary, and Figma's own style name is the vocabulary that counts. Why the row 'looks big' in Storybook: both roles are responsive on the VIEWPORT, so a desktop browser shows the 14px desktop step even inside a 393px phone mock — the phone itself shows 12. A container-query migration would fix the mock; noted, not done."
+          "profile-meta": "The member-id row carries the text style `typography/caption/l-reg` — read off the layer's own style id on 2026-08-21. The overlay used to bind label/md/regular, picked because its numbers matched (12/18 mobile, 14 desktop on both roles). Same values, wrong word: the binding is vocabulary, and Figma's own style name is the vocabulary that counts. Why the row 'looks big' in Storybook: both roles are responsive on the VIEWPORT, so a desktop browser shows the 14px desktop step even inside a 393px phone mock — the phone itself shows 12. A container-query migration would fix the mock; noted, not done.",
+          "header-main-*": "`type=type4` (23625:34736), added to the set by the designer on 2026-08-21 and read the same day: 390x68, HORIZONTAL, 16 of padding, an 8 gap, brand red, no phoenix. A `heading` column on the left holding `main-title` at typography/display/xl-semb (20/36 Semibold, left-aligned, white), and `appbar-main` on the right holding the two counters and the 36px action well. Both sides grow, so the title takes whatever the counters leave. This is the shape the Frontend calls `big_title` and draws at 96; Figma says 68 and Figma is the authority."
         },
         "_binding": {
-          "header": "header-bar-mobile 14924:2118, variants type=home-page | sub-page | success",
+          "header": "header-bar-mobile 14924:2118, variants type=home-page | type=type4 | sub-page | success",
           "footer": "footer-mobile instance on page `↳  footer ✅`",
           "action": "Guidline-UI Template › Layout › `Order Page / Receipt detail` › frame `Navbar`"
         },
@@ -2465,9 +2466,9 @@
                 "Header.stories.tsx"
               ],
               "icons": {
-                "outline-NokPoints-W": "type=home-page > appbar-main > Frame 1000012514 > counter 1, icons-size Size=24 Colors=On BG (21282:140832). Was filled-empty-wallet at 16px.",
-                "outline-Lottery": "same row, counter 2 (21282:140837). Was filled-Lottery at 16px.",
-                "filled-navigation": "icon-right on type=home-page (21282:140842) and type=sub-page (14924:5615), inside button Size=M Type=Tertiary. The hamburger is a real icon in the set; the stories drew it by hand as three divs, and sub-page carried outline-notification instead.",
+                "outline-NokPoints-W": "type=home-page > appbar-main > Frame 1000012514 > counter 1, icons-size Size=24 Colors=On BG (21282:140832). Was filled-empty-wallet at 16px. Same counter appears on type=type4.",
+                "outline-Lottery": "same row, counter 2 (21282:140837). Was filled-Lottery at 16px. Same counter appears on type=type4.",
+                "filled-navigation": "icon-right on type=home-page (21282:140842) and type=sub-page (14924:5615), inside button Size=M Type=Tertiary. The hamburger is a real icon in the set; the stories drew it by hand as three divs, and sub-page carried outline-notification instead. Also icon-right on type=type4 (23625:34736).",
                 "arrow-left-L": "icon-left on type=sub-page, inside button Size=M Type=Tertiary (14924:3521).",
                 "filled-check_circle": "type=success > Head > Heading, icon+size Size=24 (22447:63635)."
               }
@@ -2517,15 +2518,21 @@
         "header-sub-gap": "{design.semantic.spacing.lg}",
         "header-sub-heading-padding-y": "{design.semantic.spacing.2xl}",
         "header-sub-title-height": 24,
+        "header-main-height": 68,
+        "header-main-padding": "{design.semantic.spacing.2xl}",
+        "header-main-gap": "{design.semantic.spacing.lg}",
+        "header-main-title-size": "{design.semantic.typography.display.xl.semibold.size}",
+        "header-main-title-line-height": "{design.semantic.typography.display.xl.semibold.line-height}",
+        "header-main-title-weight": "{design.semantic.typography.display.xl.semibold.weight}",
         "header-title-size": "{design.semantic.typography.title.lg.semibold.size}",
         "header-title-line-height": "{design.semantic.typography.title.lg.semibold.line-height}",
         "header-title-weight": "{design.semantic.typography.title.lg.semibold.weight}",
         "header-success-height": 94,
         "header-success-padding": "{design.semantic.spacing.2xl}",
         "header-success-gap": "{design.semantic.spacing.sm}",
-        "header-success-title-size": "{design.semantic.typography.title.lg.semibold.size}",
-        "header-success-title-line-height": "{design.semantic.typography.title.lg.semibold.line-height}",
-        "header-success-title-weight": "{design.semantic.typography.title.lg.semibold.weight}",
+        "header-success-title-size": "{design.semantic.typography.display.xl.semibold.size}",
+        "header-success-title-line-height": "{design.semantic.typography.display.xl.semibold.line-height}",
+        "header-success-title-weight": "{design.semantic.typography.display.xl.semibold.weight}",
         "header-success-meta-size": "14px",
         "header-success-meta-line-height": "24px",
         "header-success-phoenix-width": 118,
@@ -2638,6 +2645,9 @@
           "date": "2026-08-19",
           "scope": "all 3 header variants at node level, the footer instance, and the sticky action bar in the template",
           "result": "Header 146/56/94 confirmed in the browser at mobile width. Corrections in this pass: phoenix opacity 40 to 70, HARD_LIGHT blend added, per-variant phoenix geometry, action wells given the tertiary button chrome, the app-bar logo swapped from the wordmark to the 31px mark, and the wordmark row modelled at 32 rather than 31."
+        },
+        "_figma_gaps": {
+          "success-frame-is-two-short-of-its-own-content": "type=success (22447:63726) is set to a FIXED height of 94, but its own auto-layout adds up to 96: 16 of padding, a 64-tall `Head` (Heading 36 + gap 4 + Number 24), and 16 more. The title was restyled to display/xl-semb (20/36) on 2026-08-21 — taller than the 22/34 legacy style's box was set for — and the frame was not resized with it. The library renders 96, because clamping to 94 would clip a line the design asks for. Either the frame goes to 96 or it goes back to hug; a designer picks. Read 2026-08-21."
         }
       }
     }
