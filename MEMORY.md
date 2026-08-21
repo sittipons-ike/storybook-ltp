@@ -196,3 +196,8 @@
 - **เกิดอะไร:** user ถามว่า "มี component ไหนไม่ผูก typo ตามกฎอีกไหม" — สแกนทั้ง 28 overlay เจอเลขสลอตโต้ใช้ `24/32 weight 700` ทั้งที่ Figma ตั้ง text style `typography/display/xl-semb` (20/36 Semibold) ไว้บน layer เลย — ค่าแต่งเองล้วนที่รอดมาหลายวันเพราะด่านสีมีแต่ด่าน typo ไม่มี
 - **ทำไม:** ด่าน "no literal colours" มีมานาน แต่ typography literal ไม่เคยถูกตรวจ — และตัวหลอกเยอะ (`avatar-size`, `badge-size` เป็น geometry ไม่ใช่ฟอนต์) เลยไม่มีใครกล้าเขียนกฎ
 - **ครั้งหน้าทำยังไง:** `check-typography.py` (ด่าน 10) — token ที่ลงท้าย `-line-height/-weight/-family/-tracking` = typography เสมอ · `-size` = typography เมื่อ prefix เดียวกันมี weight/family หรือ line-height แบบ px · ทุกตัวต้องผูก `{design.semantic.typography...}` หรือมีชื่ออยู่ใน `_unmigrated_type` พร้อมเหตุผล · ref ผิด tier (spacing เป็น font size) ก็ fail · ชื่อ geometry ที่กำกวมให้เปลี่ยนชื่อหนี (`badge-size`→`badge-diameter`) ไม่ใช่เพิ่มข้อยกเว้น
+
+## 2026-08-21 · ขนาดกล่องที่ FE จอง ≠ สัดส่วนของรูป
+- **เกิดอะไร:** แบนเนอร์ทุกใบใน /profile ถูกยืดแบน — ผมตั้ง `aspectRatio: 416/96` (4.33) จาก `<Image width={416} height={96}>` ของ FE แต่ไฟล์จริงเป็น 1432×384 (3.73) ต่างกัน 16% นกเลยอ้วนกว่าที่วาด
+- **ทำไม:** เอา prop ของ next/Image มาเป็น "สัดส่วนรูป" ทั้งที่มันคือ**ขนาดกล่องที่จอง** — FE เองก็ยืดรูปด้วยค่านี้เหมือนกัน แปลว่า copy ความผิดของ FE มาแบบซื่อสัตย์เกิน
+- **ครั้งหน้าทำยังไง:** สัดส่วนรูปเป็นของไฟล์ — ห้ามประกาศ aspectRatio ทับรูป bitmap ให้ใช้ `width:100%; height:auto` แล้วปล่อย intrinsic ratio ทำงาน · ก่อนเชื่อ dimension prop ใดๆ ให้ `sips -g pixelWidth -g pixelHeight` เทียบไฟล์จริงก่อน · ตรวจ distortion ด้วย `rendered ratio vs naturalWidth/naturalHeight` ต่างเกิน 0.02 = ยืด

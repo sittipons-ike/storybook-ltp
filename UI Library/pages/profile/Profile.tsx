@@ -11,7 +11,7 @@ import Icon from '../../icons/Icon';
 import '../../icons/icon-data';
 import Logo from '../../logos/Logo';
 import type { Banner, Profile as ProfileData, Wallet, WebConfig } from '../../fixtures/types';
-import { BANNER_RATIO, NOK_CASH_CARD } from './fixtures';
+import { NOK_CASH_CARD } from './fixtures';
 
 /**
  * _frontend_route: /profile
@@ -80,12 +80,14 @@ const MenuRow: React.FC<{ item: ProfileMenuItem; last: boolean }> = ({ item, las
   </>
 );
 
+/**
+ * A banner at the picture's own proportions. The first version forced
+ * `aspectRatio: 416/96`, lifted from the Frontend's `<Image width={416} height={96}>` —
+ * the box the Frontend reserves, not the shape of the artwork. The files are 1432x384
+ * (3.73), and stretching them to 4.33 is what made every bird look wider than drawn.
+ */
 const BannerImage: React.FC<{ banner: Banner }> = ({ banner }) => (
-  <img
-    src={banner.src}
-    alt={banner.alt}
-    style={{ display: 'block', width: '100%', aspectRatio: BANNER_RATIO }}
-  />
+  <img src={banner.src} alt={banner.alt} style={{ display: 'block', width: '100%', height: 'auto' }} />
 );
 
 /**

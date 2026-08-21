@@ -67,8 +67,12 @@ export const AVATAR =
      </svg>`,
   );
 
-/** Measured off the Frontend's `<Image width={416} height={96}>`. */
-export const BANNER_RATIO = 416 / 96;
+/*
+ * There is deliberately no BANNER_RATIO exported any more. The one that used to be here
+ * came from the Frontend's `<Image width={416} height={96}>` — the box it reserves, not
+ * the artwork's shape (the files are 1432x384) — and forcing it stretched every banner
+ * 16% wide. An image's proportions belong to the image.
+ */
 
 /** `<Image width={34} height={34}>` on each counter. */
 export const STAT_ICON_SIZE = 34;
