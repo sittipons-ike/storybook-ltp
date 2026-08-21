@@ -4,6 +4,7 @@ import ProfilePage, { type ProfileMenuItem } from './Profile';
 import AppShell from '../../patterns/AppShell/AppShell';
 import DeviceFrame from '../../patterns/DeviceFrame/DeviceFrame';
 import StatusBar from '../../components/StatusBar/StatusBar';
+import { AVATAR } from './fixtures';
 import NavigationBar from '../../components/NavigationBar/NavigationBar';
 import ProfileHeader from '../../components/Header/ProfileHeader';
 import { AFFILIATE_BANNER, COUPON_BANNER, NOKSHOP_BANNER } from './fixtures';
@@ -74,7 +75,14 @@ const Caption: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 const InShell: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <AppShell
     statusBar={<StatusBar />}
-    topNavbar={<ProfileHeader name="สิทธิพร ใจดีมาก" memberId="P240497" />}
+    topNavbar={
+      <ProfileHeader
+        name="เศรษฐีจิ๊ดริดดด..."
+        memberId="P6176XXX"
+        pillLabel="แสดง"
+        avatarSrc={AVATAR}
+      />
+    }
     bottomNavbar={<NavigationBar selectedKey="profile" fullWidth />}
   >
     {children}

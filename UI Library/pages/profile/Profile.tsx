@@ -6,6 +6,7 @@ import Divider from '../../components/Divider/Divider';
 import Button from '../../components/Button/Button';
 import Text from '../../components/Text/Text';
 import Badge from '../../components/Badge/Badge';
+import ProfileSummary from '../../components/ProfileSummary/ProfileSummary';
 import Icon from '../../icons/Icon';
 import '../../icons/icon-data';
 import Logo from '../../logos/Logo';
@@ -108,22 +109,19 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
   onTopUp,
 }) => (
   <Stack gap="2xl">
-    {/* ── header-profile: a red block wrapping two white cards ──────────────
-        Figma 390x187, 16 of padding, filled with the brand red. The Frontend has
-        no equivalent — it puts the balance card straight on the page — which is why
-        building from the Frontend alone produced a white card floating on grey. */}
-    <Surface tone="primary" radius="none" elevation="none" padding="2xl" gap="none">
-      {profile.isUnderage && (
-        <Stack style={{ marginBottom: 16 }}>
+    {/* ── header-profile ──────────────────────────────────────────────────
+        Figma's own block, drawn by ProfileSummary: red, rounded 24 at the bottom,
+        two white cards joined by a dashed rule. The Frontend has no equivalent. */}
+    <ProfileSummary
+      banner={
+        profile.isUnderage ? (
           <Alert
             title="ยังไม่สามารถซื้อลอตเตอรี่ได้"
             description="จะสามารถใช้บริการได้เมื่ออายุครบ 20 ปี"
           />
-        </Stack>
-      )}
-
-      {/* Balance — Figma's first `Nok Cash`: 358x80, 16 padding, white, top corners only. */}
-      <Surface radius="2xl" elevation="none" padding="2xl" style={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}>
+        ) : undefined
+      }
+      balance={
         <Stack direction="row" align="center" justify="space-between" gap="2xl">
           <Stack direction="row" align="center" gap="lg" style={{ width: 'auto' }}>
             <Surface radius="lg" elevation="none" padding="none" clip style={{ width: 'auto' }}>
@@ -138,15 +136,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
             เติมนกแคช
           </Button>
         </Stack>
-      </Surface>
-
-      {/* Figma's `Line`: white, dashed 4/4, sitting on the seam between the two cards. */}
-      <Surface radius="none" elevation="none" paddingX="2xl">
-        <Divider tone="light-gray" lineStyle="dashed" />
-      </Surface>
-
-      {/* Counters — Figma's second `Nok Cash`: 358x74, 16 padding, white, bottom corners. */}
-      <Surface radius="2xl" elevation="none" padding="2xl" style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
+      }
+      counters={
         <Stack direction="row" align="center" justify="space-between" gap="xl">
           {STATS.map((stat) => (
             <Stack key={stat.unit} direction="row" align="center" gap="sm" style={{ width: 'auto' }}>
@@ -158,8 +149,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
             </Stack>
           ))}
         </Stack>
-      </Surface>
-    </Surface>
+      }
+    />
 
     {/* ── Coupon: everything below the red block. Figma gap 16, side padding 16. ── */}
     <Stack gap="2xl" paddingX="2xl" paddingY="none" style={{ marginBottom: 16 }}>
