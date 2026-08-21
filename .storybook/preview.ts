@@ -3,6 +3,9 @@ import type { Preview } from '@storybook/react';
 // Loaded globally so every story can reference --sys-* / component tokens.
 import '../UI Library/foundations/tokens.css';
 import './preview.css';
+import { installFonts } from './fonts';
+
+installFonts();
 
 const preview: Preview = {
   parameters: {

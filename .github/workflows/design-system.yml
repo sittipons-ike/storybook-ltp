@@ -45,7 +45,13 @@ jobs:
         run: npm run check
 
       # A gate that passes on a tree that cannot build is a gate that lies.
+      #
+      # STORYBOOK_BASE_PATH is where Pages mounts the site. Taken from the repo name rather
+      # than written out, so renaming the repo cannot silently break every font and logo
+      # again — which is what a hardcoded `/` did the first time this deployed.
       - name: Build Storybook
+        env:
+          STORYBOOK_BASE_PATH: /${{ github.event.repository.name }}/
         run: npm run build-storybook
 
       # Kept on every run, not just main: a reviewer can download the built Storybook

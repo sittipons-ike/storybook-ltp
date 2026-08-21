@@ -221,6 +221,15 @@ UI Library/
 
 ## Next Up
 
+- [x] ~~**asset path พังบน Pages**~~ — แก้แล้ว 2026-08-21: `asset()` + base จากชื่อ repo + ด่านที่ 11
+- [ ] **Storybook ยัง public — ตั้งใจพักไว้ (2026-08-21)** · `sittipons-ike.github.io/storybook-ltp`
+      ใครมีลิงก์เปิดได้ · GitHub Pages ไม่มีระบบจำกัดคนดูนอกจาก Enterprise Cloud
+      ถ้าจะ private ต้องย้าย host: Chromatic (ผูกสิทธิ์กับ collaborator, คนดูต้องมี GitHub)
+      หรือ Cloudflare Pages + Access (email OTP, ไม่ต้องมี GitHub) — ยังไม่ได้เช็ค pricing จริง
+- [ ] **required status check ยังไม่ได้ตั้ง** — Settings → Branches → `main` → require `check`
+      ตอนนี้ด่าน 10 ขั้นรายงานอย่างเดียว ยังบล็อก merge ไม่ได้
+- [ ] `gh auth login` ยังไม่ได้ทำ — gh 2.98.0 ลงแล้วที่ `/opt/homebrew/opt/gh/bin/gh` (symlink หาย, `brew link --overwrite gh`)
+
 - [x] ~~`Verification Report` ปลอม~~ → **เขียนใหม่แล้ว** อ่านจาก 3 แหล่งจริง:
       live `getComputedStyle` (1187 token) · `verification-result.json` · `component-verification.json`
       ทดสอบแล้วว่าจับ error ได้จริง (แก้ token → รายงานทันที)

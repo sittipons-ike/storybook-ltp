@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import ProfileHeader from './ProfileHeader';
 import { sys } from '../../foundations/tokens';
+import { asset } from '../../foundations/asset';
 
 // ═══════════════════════════════════════════
 //  ProfileHeader — Figma `header-bar-profile-moblie` (14962:94338), 9 variants.
@@ -16,7 +17,7 @@ export default meta;
 
 const sans = "'Graphik TH', sans-serif";
 const mono = 'ui-monospace, SFMono-Regular, Menlo, monospace';
-const PHOTO = '/brand/phoenix-logo.png';
+const PHOTO = asset('brand/phoenix-logo.png');
 
 const Row: React.FC<{ label: string; sub?: string; children: React.ReactNode }> = ({
   label,

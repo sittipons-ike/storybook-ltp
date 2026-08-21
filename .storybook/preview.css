@@ -2,16 +2,10 @@
    Component typography comes from tokens.css; here we just supply the web-font
    fallback and cover the elements that do not inherit font-family. */
 
-/* Graphik TH — the real product font, served from UI Library/assets/fonts via staticDirs.
-   The same seven files the Frontend loads in `_app.tsx`, at the same weights, so a story
-   and a page render identical text. Sarabun stays behind it as a fallback only. */
-@font-face { font-family: 'Graphik TH'; src: url('/fonts/GraphikThai/GraphikThai-Thin.otf') format('opentype');       font-weight: 100; font-display: swap; }
-@font-face { font-family: 'Graphik TH'; src: url('/fonts/GraphikThai/GraphikThai-Extralight.otf') format('opentype'); font-weight: 200; font-display: swap; }
-@font-face { font-family: 'Graphik TH'; src: url('/fonts/GraphikThai/GraphikThai-Light.otf') format('opentype');      font-weight: 300; font-display: swap; }
-@font-face { font-family: 'Graphik TH'; src: url('/fonts/GraphikThai/GraphikThai-Regular.otf') format('opentype');    font-weight: 400; font-display: swap; }
-@font-face { font-family: 'Graphik TH'; src: url('/fonts/GraphikThai/GraphikThai-Medium.otf') format('opentype');     font-weight: 500; font-display: swap; }
-@font-face { font-family: 'Graphik TH'; src: url('/fonts/GraphikThai/GraphikThai-Semibold.otf') format('opentype');   font-weight: 600; font-display: swap; }
-@font-face { font-family: 'Graphik TH'; src: url('/fonts/GraphikThai/GraphikThai-Bold.otf') format('opentype');       font-weight: 700; font-display: swap; }
+/* Graphik TH's @font-face rules are NOT here — they are built in .storybook/fonts.ts and
+   injected, because an absolute url() written by hand in CSS is the one thing Vite does
+   not resolve against `base`, and that is what made every font 404 on GitHub Pages.
+   Sarabun stays behind it as a fallback only. */
 
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@100;300;400;500;600;700;900&display=swap');
 
