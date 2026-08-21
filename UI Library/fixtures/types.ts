@@ -26,9 +26,19 @@ export interface Profile {
   isUnderage?: boolean;
 }
 
-/** Nok cash. A string because the balance outgrows a safe integer — 13 digits in practice. */
+/**
+ * The four numbers the profile card carries. Strings because a balance outgrows a safe
+ * integer — thirteen digits in the Frontend's own mock.
+ */
 export interface Wallet {
+  /** นกแคช — the headline figure. */
   balance: string;
+  /** นกพอยต์ */
+  points: string;
+  /** สลากของฉัน */
+  lotteryCount: string;
+  /** คูปองส่วนลด */
+  coupons: string;
 }
 
 /**

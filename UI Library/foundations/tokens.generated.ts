@@ -1350,6 +1350,11 @@ export const TOKEN_VALUES = {
   "--topfoot-home-indicator-bar-radius": "9999px",
   "--topfoot-home-indicator-foreground": "#000000",
   "--topfoot-status-bar-height": "47px",
+  "--topfoot-status-bar-padding-x": "32px",
+  "--topfoot-status-bar-time-size": "12px",
+  "--topfoot-device-island-width": "125px",
+  "--topfoot-device-island-height": "37px",
+  "--topfoot-device-island-top": "11px",
   "--topfoot-device-width": "393px",
   "--topfoot-device-height": "852px",
   "--topfoot-device-radius": "47px",
@@ -1528,6 +1533,7 @@ export const TOKEN_VALUES_DESKTOP = {
   "--topfoot-profile-meta-line-height": "22px",
   "--topfoot-profile-badge-size-text": "12px",
   "--topfoot-profile-badge-line-height": "18px",
+  "--topfoot-status-bar-time-size": "14px",
 } as const;
 
 /**

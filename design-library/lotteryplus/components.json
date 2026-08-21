@@ -2406,7 +2406,9 @@
           "header-*-phoenix-right / -bottom": "Negative offsets: the watermark deliberately bleeds past the header's right and bottom edges and is clipped. Measured against each variant's own frame — home overflows 32 right / 18 bottom, success 32 / 35. The sub-page variant hides it entirely.",
           "header-sub-heading-padding-y / header-sub-title-height": "Re-read on 2026-08-19 after the file changed: the sub-page `heading` frame now carries 16 of vertical padding and the title sits in a 24px line, where it previously had no padding and a 56px text box. 16 + 24 + 16 = 56, so the bar height is unchanged — but the title is a line now, not a stretched box.",
           "profile-*": "Measured off `header-bar-profile-moblie` (14962:94338), all 9 variants, on 2026-08-19. 72 tall with 16 of side padding; a 56px avatar beside a stack with 2 of vertical padding and a 6 gap; name 16/24 Semibold with a 20px chevron; the meta row 12/18 Regular with a 4 gap. The show/hide pill is 20 tall, radius full, filled `colors/profile/profile-fg-dark-red`. The notification variant swaps the 36px button well for a 32px glyph with a 16px white badge carrying a 10/18 count.",
-          "header-action-border-width": "1px, and it is the same stroke on all three action wells — but Figma switches its `visible` flag off on exactly one: the back arrow on type=sub-page (14924:3521). The hamburger keeps it on both type=sub-page (14924:5615) and type=home-page (21282:140842). Read on 2026-08-20 after the border was drawn on the back arrow too; the first read took strokeWeight and cornerRadius and never looked at strokes[0].visible. Rendered as an inset box-shadow rather than a CSS border because Figma's strokeAlign is INSIDE — it paints over the 36px frame instead of taking 2px out of it, which under border-box would leave the 24px glyph only 22px to sit in."
+          "header-action-border-width": "1px, and it is the same stroke on all three action wells — but Figma switches its `visible` flag off on exactly one: the back arrow on type=sub-page (14924:3521). The hamburger keeps it on both type=sub-page (14924:5615) and type=home-page (21282:140842). Read on 2026-08-20 after the border was drawn on the back arrow too; the first read took strokeWeight and cornerRadius and never looked at strokes[0].visible. Rendered as an inset box-shadow rather than a CSS border because Figma's strokeAlign is INSIDE — it paints over the 36px frame instead of taking 2px out of it, which under border-box would leave the 24px glyph only 22px to sit in.",
+          "device-island-*": "The Dynamic Island on an iPhone 16: 125 x 37 points, 11 from the top, pill-shaped and centred. Figma's template frames draw an iPhone 14-class notch instead (`Notch`, 156 x 33 inside the `StatusBar` instance on the orders page), which is the older cut-out. The mock here follows the device the spec names — device-* is already iPhone 16 — rather than the canvas the templates happen to be drawn on. Recorded 2026-08-21; not measured off a Figma node, because Figma has no iPhone 16 frame to measure.",
+          "status-bar-padding-x": "32. The status bar's own inset, wider than the header's 16 because the time and the indicators clear the rounded corners. Taken from the AppShell story that drew this by hand before it was a component."
         },
         "_binding": {
           "header": "header-bar-mobile 14924:2118, variants type=home-page | sub-page | success",
@@ -2569,6 +2571,11 @@
         "home-indicator-bar-radius": "{design.semantic.radius.full}",
         "home-indicator-foreground": "{design.semantic.colors.foreground.black}",
         "status-bar-height": 47,
+        "status-bar-padding-x": "{design.semantic.spacing.5xl}",
+        "status-bar-time-size": "{design.semantic.typography.label.md.semibold.size}",
+        "device-island-width": 125,
+        "device-island-height": 37,
+        "device-island-top": 11,
         "device-width": 393,
         "device-height": 852,
         "device-radius": 47,

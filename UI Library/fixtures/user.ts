@@ -25,9 +25,19 @@ export const PROFILE_UNDERAGE: Profile = { ...PROFILE, isUnderage: true };
  * `MOCK_WALLET`, verbatim: 5,239,822,249,018. Thirteen digits, and it is in the Frontend's
  * mock because a balance that long is what finds a card that assumed four.
  */
-export const WALLET_LONG: Wallet = { balance: '5239822249018' };
+export const WALLET_LONG: Wallet = {
+  balance: '5239822249018',
+  points: '500',
+  lotteryCount: '10',
+  coupons: '20',
+};
 
 /** The ordinary case. */
-export const WALLET: Wallet = { balance: '1050' };
+export const WALLET: Wallet = {
+  balance: '2000000',
+  points: '500',
+  lotteryCount: '10',
+  coupons: '20',
+};
 
 export const WEB_CONFIG: WebConfig = { isEnabledAffiliate: true, isEnableNokshop: true };

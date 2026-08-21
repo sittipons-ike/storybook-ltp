@@ -3,6 +3,7 @@ import React from 'react';
 import ProfilePage, { type ProfileMenuItem } from './Profile';
 import AppShell from '../../patterns/AppShell/AppShell';
 import DeviceFrame from '../../patterns/DeviceFrame/DeviceFrame';
+import StatusBar from '../../components/StatusBar/StatusBar';
 import Header from '../../components/Header/Header';
 import NavigationBar from '../../components/NavigationBar/NavigationBar';
 import ProfileHeader from '../../components/Header/ProfileHeader';
@@ -37,7 +38,7 @@ const MENU: ProfileMenuItem[] = [
   { icon: 'filled-qrcode-scan', title: 'คิวอาร์โค้ดของฉัน' },
   { icon: 'outline-Bank', title: 'บัญชีธนาคาร' },
   { icon: 'outline-truck', title: 'ที่อยู่ของฉัน' },
-  { icon: 'outline-History Payment', title: 'ประวัติการถูกรางวัล' },
+  { icon: 'outline-History Payment', title: 'ประวัติการถูกรางวัล', badge: 'ใหม่!' },
 ];
 
 /** `src/components/profile/help-info` — one row. */
@@ -62,14 +63,21 @@ const Caption: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   </div>
 );
 
-/** The shell the Frontend's `<Layout>` builds for this route, filled with our components. */
+/**
+ * The shell the Frontend's `<Layout>` builds for this route, filled with our components.
+ *
+ * `src/pages/profile/index.tsx` passes hasTopNavbar + navbarType=profile + hasHeader +
+ * hasBottomNavbar, which maps onto four of AppShell's six slots. The fifth, `statusBar`,
+ * has no Frontend equivalent because a browser draws its own — here the mock supplies it.
+ */
 const InShell: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <AppShell
+    statusBar={<StatusBar />}
     topNavbar={<ProfileHeader name="สิทธิพร ใจดีมาก" memberId="P240497" />}
     header={<Header variant="home" />}
     bottomNavbar={<NavigationBar selectedKey="profile" fullWidth />}
   >
-    <div style={{ overflowY: 'auto', height: '100%' }}>{children}</div>
+    {children}
   </AppShell>
 );
 
@@ -79,7 +87,7 @@ export const InTheShell: StoryObj = {
     <div style={{ padding: 24, display: 'flex', gap: 24, flexWrap: 'wrap' }}>
       <div>
         <Caption>/profile · iPhone 16 · 393×852</Caption>
-        <DeviceFrame scroll={false}>
+        <DeviceFrame>
           <InShell>
             <ProfilePage
               profile={PROFILE}
@@ -109,7 +117,7 @@ export const EveryState: StoryObj = {
         props: { profile: PROFILE_UNDERAGE, wallet: WALLET, config: WEB_CONFIG, menu: MENU, help: HELP, ...BANNERS },
       },
       {
-        caption: 'ยังไม่ผูกบัญชีธนาคาร — แถวนั้นมีจุดเตือน',
+        caption: 'ยังไม่ผูกบัญชีธนาคาร — แถวนั้นมีไอคอน info',
         props: {
           profile: PROFILE_NO_BANK,
           wallet: WALLET,
@@ -141,8 +149,10 @@ export const EveryState: StoryObj = {
         {cases.map(({ caption, props }) => (
           <div key={caption}>
             <Caption>{caption}</Caption>
-            <DeviceFrame height={620}>
-              <ProfilePage {...props} />
+            <DeviceFrame>
+              <InShell>
+                <ProfilePage {...props} />
+              </InShell>
             </DeviceFrame>
           </div>
         ))}

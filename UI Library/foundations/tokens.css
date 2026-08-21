@@ -1449,6 +1449,11 @@
   --topfoot-home-indicator-bar-radius: var(--sys-radius-full);
   --topfoot-home-indicator-foreground: var(--sys-color-foreground-black);
   --topfoot-status-bar-height: 47px;
+  --topfoot-status-bar-padding-x: var(--sys-spacing-5xl);
+  --topfoot-status-bar-time-size: var(--sys-type-label-md-semibold-size);
+  --topfoot-device-island-width: 125px;
+  --topfoot-device-island-height: 37px;
+  --topfoot-device-island-top: 11px;
   --topfoot-device-width: 393px;
   --topfoot-device-height: 852px;
   --topfoot-device-radius: 47px;
