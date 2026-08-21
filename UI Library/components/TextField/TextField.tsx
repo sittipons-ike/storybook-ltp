@@ -1,32 +1,30 @@
 import React, { useState, useRef, useCallback } from 'react';
-import {
-  TEXTFIELD_COLORS,
-  TEXTFIELD_DIMENSIONS,
-  TEXTFIELD_STATE_MAP,
-  TYPOGRAPHY,
-  SPACING,
-  RADIUS,
-} from './tokens';
 import Icon from '../../icons/Icon';
-import '../../icons/icon-data';
+import '../../icons/icon-data'; // register all icons
+import '../../foundations/tokens.css';
+import {
+  textFieldColors,
+  textFieldTypography,
+  TEXT_FIELD_BASE,
+  TEXT_FIELD_TEXT,
+  TEXT_FIELD_CLEAR_ICON_SIZE,
+  type TextFieldState,
+} from './tokens';
 import './TextField.css';
 
 // ═══════════════════════════════════════════
 //  TextField — Lotteryplus Design System
 //  Figma: "text-field" component set (14291:131807)
-//  States: Default | Hover | Active | Actived | Read Only | Complete | Error-Default | Error
 //  Structure: Label → Field → Description (error)
+//
+//  Every style value is a CSS custom property from foundations/tokens.css, which is
+//  generated from Figma via design.md + components.json + components/text-field.json.
+//  There are no literal colours, sizes, or font values in this file — changing one
+//  means changing Figma and regenerating, which is what keeps design and code from
+//  drifting apart.
 // ═══════════════════════════════════════════
 
-export type TextFieldState =
-  | 'default'
-  | 'hover'
-  | 'active'
-  | 'actived'
-  | 'readOnly'
-  | 'complete'
-  | 'errorDefault'
-  | 'error';
+export type { TextFieldState };
 
 export interface TextFieldProps {
   /** Label text (Figma default: "Field Name") */
@@ -41,17 +39,17 @@ export interface TextFieldProps {
   value?: string;
   /** Change handler */
   onChange?: (value: string) => void;
-  /** Show error description */
+  /** Show the description row */
   showDescription?: boolean;
   /** Description / error message text */
   description?: string;
   /** Visual state override (for Storybook demos) */
   state?: TextFieldState;
-  /** Read only mode */
-  readOnly?: boolean;
-  /** Complete state */
+  /** Canonical state `disabled` — Figma calls it "Read Only" */
+  disabled?: boolean;
+  /** Canonical state `complete` — the success affirmation, green stroke */
   complete?: boolean;
-  /** Error message — triggers error state and shows description */
+  /** Error message — triggers the `error` state and shows the description */
   error?: string;
   /** Show clear icon (filled-close) when there is a value */
   showClearIcon?: boolean;
@@ -69,7 +67,7 @@ const TextField: React.FC<TextFieldProps> = ({
   showDescription,
   description = 'Error Message',
   state: stateProp,
-  readOnly = false,
+  disabled = false,
   complete = false,
   error,
   showClearIcon = false,
@@ -79,58 +77,54 @@ const TextField: React.FC<TextFieldProps> = ({
   const [isHovered, setIsHovered] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Determine the effective state
+  // Canonical state precedence: disabled beats error beats complete beats focus beats hover.
   const getEffectiveState = useCallback((): TextFieldState => {
     if (stateProp) return stateProp;
-    if (readOnly) return 'readOnly';
-    if (error && value) return 'error';
-    if (error) return 'errorDefault';
+    if (disabled) return 'disabled';
+    if (error) return 'error';
     if (complete) return 'complete';
-    if (isFocused) return 'active';
-    if (value && !isFocused) return 'actived';
+    if (isFocused) return 'focus';
     if (isHovered) return 'hover';
-    return 'default';
-  }, [stateProp, readOnly, error, complete, isFocused, value, isHovered]);
+    return 'rest';
+  }, [stateProp, disabled, error, complete, isFocused, isHovered]);
 
   const effectiveState = getEffectiveState();
-  const stateConfig = TEXTFIELD_STATE_MAP[effectiveState];
+  const isDisabled = disabled || effectiveState === 'disabled';
+  const colors = textFieldColors(effectiveState);
+  const labelType = textFieldTypography('label');
+  const requiredType = textFieldTypography('required');
+  const inputType = textFieldTypography('input');
+  const descriptionType = textFieldTypography('description');
 
   const showPlaceholder = !value;
 
-  // Whether to show description (error message area)
-  const isDescriptionVisible = showDescription !== undefined
-    ? showDescription
-    : stateConfig.descVisible;
+  // The description row belongs to the error state, unless the caller overrides it.
+  const isDescriptionVisible =
+    showDescription !== undefined ? showDescription : effectiveState === 'error';
 
-  // Handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange?.(e.target.value);
   };
 
-  // Handle clear
   const handleClear = () => {
     onChange?.('');
     inputRef.current?.focus();
   };
 
-  // Description text to display
   const descriptionText = error || description;
-
-  // Whether to show the clear button
-  const isClearVisible = showClearIcon && !!value && !readOnly && effectiveState !== 'readOnly';
+  const isClearVisible = showClearIcon && !!value && !isDisabled;
 
   return (
     <div
       className={`ltp-textfield ${className}`}
       style={{
-        // Auto Layout: VERTICAL, gap: spacing-sm = 4px
+        // Auto Layout: VERTICAL
         display: 'flex',
         flexDirection: 'column',
-        gap: SPACING.sm, // 4px
+        gap: TEXT_FIELD_BASE.stackGap,
       }}
     >
-      {/* ── Label Row ── */}
-      {/* Figma: HORIZONTAL, paddingLeft:4 = spacing-sm, gap:4 = spacing-sm */}
+      {/* ── Label Row ── Figma: HORIZONTAL, paddingLeft + gap */}
       {showLabel && label && (
         <div
           className="ltp-textfield__label"
@@ -138,32 +132,35 @@ const TextField: React.FC<TextFieldProps> = ({
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'center',
-            paddingLeft: TEXTFIELD_DIMENSIONS.wrapper.labelPaddingLeft, // spacing-sm = 4px
-            gap: TEXTFIELD_DIMENSIONS.wrapper.labelInternalGap,         // spacing-sm = 4px
+            paddingLeft: TEXT_FIELD_BASE.labelPaddingX,
+            gap: TEXT_FIELD_BASE.labelGap,
           }}
         >
-          {/* Label text: title/m-med → 14px/22px Medium, #262626 */}
+          {/* Label text — typography/title/md/medium */}
           <span
             style={{
-              fontFamily: TYPOGRAPHY.label.fontFamily,
-              fontSize: TYPOGRAPHY.label.fontSize,
-              fontWeight: TYPOGRAPHY.label.fontWeight,
-              lineHeight: TYPOGRAPHY.label.lineHeight,
-              color: TEXTFIELD_COLORS.label.text,
+              fontFamily: labelType.fontFamily,
+              fontSize: labelType.fontSize,
+              fontWeight: labelType.fontWeight as unknown as React.CSSProperties['fontWeight'],
+              lineHeight: labelType.lineHeight,
+              letterSpacing: labelType.letterSpacing,
+              color: TEXT_FIELD_TEXT.label,
             }}
           >
             {label}
           </span>
 
-          {/* Required marker: label/m-med → 12px/18px Medium, #E32321 */}
+          {/* Required marker — typography/label/md/medium */}
           {required && (
             <span
               style={{
-                fontFamily: TYPOGRAPHY.required.fontFamily,
-                fontSize: TYPOGRAPHY.required.fontSize,
-                fontWeight: TYPOGRAPHY.required.fontWeight,
-                lineHeight: TYPOGRAPHY.required.lineHeight,
-                color: TEXTFIELD_COLORS.label.required,
+                fontFamily: requiredType.fontFamily,
+                fontSize: requiredType.fontSize,
+                fontWeight:
+                  requiredType.fontWeight as unknown as React.CSSProperties['fontWeight'],
+                lineHeight: requiredType.lineHeight,
+                letterSpacing: requiredType.letterSpacing,
+                color: TEXT_FIELD_TEXT.required,
               }}
             >
               (จำเป็น)
@@ -172,8 +169,7 @@ const TextField: React.FC<TextFieldProps> = ({
         </div>
       )}
 
-      {/* ── Field ── */}
-      {/* Figma: HORIZONTAL, padding: 10/16/10/16, gap:8, radius:8 */}
+      {/* ── Field ── Figma: HORIZONTAL, padding y/x, gap, radius */}
       <div
         className="ltp-textfield__field"
         onMouseEnter={() => setIsHovered(true)}
@@ -183,58 +179,48 @@ const TextField: React.FC<TextFieldProps> = ({
           flexDirection: 'row',
           alignItems: 'center',
 
-          // Padding: spacing-2lg(10) / spacing-2xl(16) / spacing-2lg(10) / spacing-2xl(16)
-          paddingTop: TEXTFIELD_DIMENSIONS.field.paddingTop,       // 10px
-          paddingRight: TEXTFIELD_DIMENSIONS.field.paddingRight,   // 16px
-          paddingBottom: TEXTFIELD_DIMENSIONS.field.paddingBottom,  // 10px
-          paddingLeft: TEXTFIELD_DIMENSIONS.field.paddingLeft,     // 16px
+          paddingTop: TEXT_FIELD_BASE.paddingY,
+          paddingRight: TEXT_FIELD_BASE.paddingX,
+          paddingBottom: TEXT_FIELD_BASE.paddingY,
+          paddingLeft: TEXT_FIELD_BASE.paddingX,
 
-          gap: TEXTFIELD_DIMENSIONS.field.gap, // spacing-lg = 8px
+          gap: TEXT_FIELD_BASE.gap,
 
-          // Corner radius: radius-lg = 8px
-          borderRadius: RADIUS.lg,
+          borderRadius: TEXT_FIELD_BASE.radius,
+          backgroundColor: colors.background,
+          border: `${colors.borderWidth} solid ${colors.border}`,
 
-          // Background
-          backgroundColor: stateConfig.bg,
+          // Focus ring — Figma `text-field-bd-bg-active`, the brand red at 40%.
+          boxShadow: colors.ring
+            ? `0 0 0 ${TEXT_FIELD_BASE.borderWidthFocus} ${colors.ring}`
+            : undefined,
 
-          // Border: varies by state
-          border: `${stateConfig.borderWidth}px solid ${stateConfig.border}`,
-
-          // Cursor
-          cursor: readOnly || effectiveState === 'readOnly' ? 'default' : 'text',
-
-          // Transition
-          transition: 'border-color 0.15s ease, background-color 0.15s ease',
+          cursor: isDisabled ? 'default' : 'text',
+          transition: 'border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease',
         }}
         onClick={() => inputRef.current?.focus()}
       >
-        {/* Text input */}
+        {/* Text input — typography/body/md/regular for both placeholder and value */}
         <input
           ref={inputRef}
           type="text"
           className={`ltp-textfield__input ${
-            readOnly || effectiveState === 'readOnly' ? 'ltp-textfield__input--readonly' : ''
+            isDisabled ? 'ltp-textfield__input--disabled' : ''
           }`}
           value={value}
           placeholder={placeholder}
           onChange={handleChange}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          readOnly={readOnly || effectiveState === 'readOnly'}
+          readOnly={isDisabled}
+          aria-disabled={isDisabled}
           style={{
-            fontFamily: showPlaceholder
-              ? TYPOGRAPHY.placeholder.fontFamily
-              : TYPOGRAPHY.inputText.fontFamily,
-            fontSize: showPlaceholder
-              ? TYPOGRAPHY.placeholder.fontSize
-              : TYPOGRAPHY.inputText.fontSize,
-            fontWeight: showPlaceholder
-              ? TYPOGRAPHY.placeholder.fontWeight
-              : TYPOGRAPHY.inputText.fontWeight,
-            lineHeight: showPlaceholder
-              ? TYPOGRAPHY.placeholder.lineHeight
-              : TYPOGRAPHY.inputText.lineHeight,
-            color: stateConfig.textColor,
+            fontFamily: inputType.fontFamily,
+            fontSize: inputType.fontSize,
+            fontWeight: inputType.fontWeight as unknown as React.CSSProperties['fontWeight'],
+            lineHeight: inputType.lineHeight,
+            letterSpacing: inputType.letterSpacing,
+            color: showPlaceholder ? colors.placeholder : colors.foreground,
             flex: 1,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
@@ -242,10 +228,10 @@ const TextField: React.FC<TextFieldProps> = ({
           }}
           aria-label={label}
           aria-required={required}
-          aria-invalid={effectiveState === 'error' || effectiveState === 'errorDefault'}
+          aria-invalid={effectiveState === 'error'}
         />
 
-        {/* Clear icon: filled-close, 16px — visible when showClearIcon && value exists */}
+        {/* Clear icon — filled-close, `--text-field-clear-icon-size` */}
         {isClearVisible && (
           <button
             type="button"
@@ -258,31 +244,31 @@ const TextField: React.FC<TextFieldProps> = ({
           >
             <Icon
               name="filled-close"
-              size={TEXTFIELD_DIMENSIONS.clearIconSize}
-              customColor={TEXTFIELD_COLORS.fg.dark}
+              size={TEXT_FIELD_CLEAR_ICON_SIZE as never}
+              customColor={colors.foreground}
             />
           </button>
         )}
       </div>
 
-      {/* ── Description (Error message) ── */}
-      {/* Figma: visible in Error states only, paddingLeft:4 */}
-      {/* caption/m-reg → 10px/16px Regular, color #E32321 */}
+      {/* ── Description ── Figma: visible in the error state, typography/caption/md/regular */}
       {isDescriptionVisible && descriptionText && (
         <div
           className="ltp-textfield__description"
           style={{
             display: 'flex',
-            paddingLeft: TEXTFIELD_DIMENSIONS.wrapper.descriptionPaddingLeft, // spacing-sm = 4px
+            paddingLeft: TEXT_FIELD_BASE.descriptionPaddingX,
           }}
         >
           <span
             style={{
-              fontFamily: TYPOGRAPHY.error.fontFamily,
-              fontSize: TYPOGRAPHY.error.fontSize,
-              fontWeight: TYPOGRAPHY.error.fontWeight,
-              lineHeight: TYPOGRAPHY.error.lineHeight,
-              color: TEXTFIELD_COLORS.fg.red,
+              fontFamily: descriptionType.fontFamily,
+              fontSize: descriptionType.fontSize,
+              fontWeight:
+                descriptionType.fontWeight as unknown as React.CSSProperties['fontWeight'],
+              lineHeight: descriptionType.lineHeight,
+              letterSpacing: descriptionType.letterSpacing,
+              color: TEXT_FIELD_TEXT.description,
             }}
           >
             {descriptionText}

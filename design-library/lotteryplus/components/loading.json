@@ -1,0 +1,57 @@
+{
+  "_comment": "Layout, sizing and motion for loading. Colours come from the Figma colour mirror; these do not, so they are authored here.",
+  "base": {
+    "radius": "{design.semantic.radius.none}",
+    "padding": "{design.semantic.spacing.none}",
+    "size-default": 56,
+    "size-sm": 24,
+    "size-lg": 80,
+    "size-xl": 120,
+    "frame-size": 44.8,
+    "frame-offset": 5.6,
+    "track-size": 41.067,
+    "arc-size": 20.344,
+    "duration": "1s",
+    "timing-function": "linear",
+    "iteration-count": "infinite",
+    "track-opacity": "{design.semantic.opacity.subtle}",
+    "_source": {
+      "size-default": "Figma component frame is 56x56 — a fixed dimension, no semantic sizing scale exists in design.md",
+      "size-sm": "storybook-local, no Figma token backs it",
+      "size-lg": "storybook-local, no Figma token backs it",
+      "size-xl": "storybook-local, no Figma token backs it",
+      "frame-size": "Figma inner frame 44.8x44.8 — fixed vector geometry",
+      "frame-offset": "(56 - 44.8) / 2 — derived, fixed",
+      "track-size": "Figma track-ring vector bounds — fixed geometry",
+      "arc-size": "Figma arc vector bounds — fixed geometry",
+      "duration": "storybook-local, no Figma token backs it — design.md has no motion group",
+      "timing-function": "storybook-local, no Figma token backs it — design.md has no motion group",
+      "iteration-count": "storybook-local, no Figma token backs it — design.md has no motion group",
+      "size-sm / size-lg / size-xl": "Library additions, not readings. Figma ships one size, 56. These exist because callers need a smaller inline spinner and a larger page-level one; no Figma variant backs any of them.",
+      "arc-primary": "Read off Figma's `Property 1=Variant2`, which binds `colors/primary/default` on the arc."
+    },
+    "arc-primary": "{design.semantic.colors.primary.default}",
+    "_verified_from": {
+      "node": "22535:131958 — component set `Loading` on page `↳ loading ✅`. The id this file previously carried, 14291:131477, is the `Property 1=Default` variant inside that set — correct but partial.",
+      "date": "2026-08-19",
+      "scope": "both variants, exact unrounded geometry, fill opacity and node opacity",
+      "result": "Frame 56x56, inner 44.8, track vector 41.06668, arc 20.34353 — all match to three decimals. The track is #000000 at fill-opacity 0.8 with node opacity 0.25, so it renders at 20%; the library reaches the same 20% through overlay-heavy (80% black) times track-opacity (25%). Confirmed in the browser: computed fill rgba(0,0,0,0.8) with opacity 0.25.",
+      "gap_found": "Figma's second variant paints the arc `colors/primary/default`. The library had no equivalent — `arc-primary` and the `tone` prop were added to close it."
+    },
+    "_figma_icons": {
+      "_comment": "The icons Figma instantiates for this component, read 2026-08-20 by walking the instance tree and keeping every main component whose parent set is `icons`. An icon Figma hides by default belongs in `icons` only when this component implements the state that reveals it; otherwise it is recorded under _figma_gaps instead, so the gate is not asking for a feature nobody built.",
+      "nodes": [
+        {
+          "node": "22535:131958",
+          "figma": "Loading",
+          "note": "This component draws no icon at all in Figma. Recorded so that one appearing later has to be justified rather than slipping in.",
+          "sources": [
+            "Loading.tsx"
+          ],
+          "icons": {}
+        }
+      ]
+    }
+  },
+  "figma_node": "22535:131958"
+}

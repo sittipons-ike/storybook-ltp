@@ -1,142 +1,124 @@
 // ═══════════════════════════════════════════
 // Button Design Tokens
-// Source: Figma "Design Systems Web App Lotteryplus V.7.1"
-// All values reference Foundation variables ONLY
+//
+// This file holds NO values. Every value lives in Figma, flows through design.md
+// and components.json, and is generated into foundations/tokens.css (CSS custom
+// properties) and foundations/tokens.generated.ts (resolved literals).
+//
+// What this file adds is types and lookup helpers, so Button.tsx renders with CSS
+// variables while stories and tests can still read the literal a token resolves to.
+//
+// Regenerate the source values: python3 tools/gen-tokens.py
+// Verify them against Figma:    python3 tools/verify-tokens.py
 // ═══════════════════════════════════════════
 
-// ── From Foundation: Spacing & Layout ──
-// Variable: dimension/spacing/spacing-none → spacing/0 = 0px
-// Variable: dimension/spacing/spacing-sm → spacing/4 = 4px
-// Variable: dimension/spacing/spacing-lg → spacing/8 = 8px
-// Variable: dimension/spacing/spacing-xl → spacing/12 = 12px
-// Variable: dimension/spacing/spacing-2xl → spacing/16 = 16px
-export const SPACING = {
-  none: 0,       // spacing-none (paddingTop/Bottom)
-  sm: 4,         // spacing-sm (itemSpacing icon+text variant)
-  lg: 8,         // spacing-lg (itemSpacing text-only variant)
-  xl: 12,        // spacing-xl (paddingLeft icon variant)
-  '2xl': 16,     // spacing-2xl (paddingLeft/Right)
-} as const;
+import { TOKEN_VALUES, type TokenName } from '../../foundations/tokens.generated';
 
-// ── From Foundation: Border Radius ──
-// Variable: dimension/breakpoint/radius/radius-lg → radius/8 = 8px
-export const RADIUS = {
-  lg: 8,         // radius-lg (all button corners)
-} as const;
+/** Canonical variants plus the two approved extensions (see components.json). */
+/**
+ * Renamed 2026-08-21 to match what each variant draws — see components.json →
+ * button._naming_correction. `tertiary` declared six border tokens and `outline` declared
+ * none, so the two names were the wrong way round. Figma still uses the old labels and
+ * catches up in Phase 3.
+ */
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'link';
 
-// ── From Foundation: Border Width ──
-// Variable: dimension/border-width/1 → border-width/1 = 1px
-export const BORDER_WIDTH = {
-  1: 1,          // border-width/1 (Tertiary stroke)
-} as const;
+/** Canonical states, per the Design System Standard. */
+export type ButtonState = 'rest' | 'hover' | 'focus' | 'active' | 'disabled';
 
-// ── From Foundation: Typography ──
-// Variable: button/m-semb/font-family → font-family/Graphik TH
-// Variable: button/m-semb/size → size/m = 14px
-// Variable: button/m-semb/weight → weight/Semibold = 600
-// Variable: button/m-semb/line-height → line-height/m = 22px
-export const TYPOGRAPHY = {
-  fontFamily: "'Graphik TH', sans-serif",
-  fontSize: 14,      // size/m
-  fontWeight: 600,    // Semibold
-  lineHeight: '22px', // line-height/m
-} as const;
+/** T-shirt sizes, per the Standard. */
+export type ButtonSize = 'lg' | 'md' | 'sm';
 
-// ── From Foundation: Component Tokens (3-component collection) ──
-// All colors reference semantic/primitive tokens via Foundation
+export const BUTTON_VARIANTS: readonly ButtonVariant[] = [
+  'primary',
+  'secondary',
+  'outline',
+  'ghost',
+  'link',
+] as const;
 
-export type ButtonType = 'primary' | 'secondary' | 'tertiary' | 'outline' | 'link';
-export type ButtonState = 'default' | 'hover' | 'focused' | 'pressed' | 'disabled';
-export type ButtonSize = 'L' | 'M' | 'S';
+export const BUTTON_STATES: readonly ButtonState[] = [
+  'rest',
+  'hover',
+  'focus',
+  'active',
+  'disabled',
+] as const;
 
-interface ButtonColorSet {
-  bg: string;
-  fg: string;
-  border?: string;
+export const BUTTON_SIZES: readonly ButtonSize[] = ['lg', 'md', 'sm'] as const;
+
+export interface ButtonColorSet {
+  background: string;
+  foreground: string;
+  border: string;
 }
 
-// Variable mapping: colors/button/{type}/btn-bg-{type}-{state}
-// Variable mapping: colors/button/{type}/btn-fg-{type}-{state}
-export const BUTTON_COLORS: Record<ButtonType, Record<ButtonState, ButtonColorSet>> = {
-  primary: {
-    default:  { bg: '#E32321', fg: '#FFFFFF' },           // btn-bg-pri-default → colors/primary/default
-    hover:    { bg: '#B91C1C', fg: '#FFFFFF' },           // btn-bg-pri-hover
-    focused:  { bg: '#DC2626', fg: '#FFFFFF' },           // btn-bg-pri-focused
-    pressed:  { bg: '#7F1D1D', fg: '#FFFFFF' },           // btn-bg-pri-pressed
-    disabled: { bg: '#F5F5F5', fg: '#C9C9C9', border: '#C9C9C9' }, // btn-bg-pri-disabled
-  },
-  secondary: {
-    default:  { bg: '#262626', fg: '#FFFFFF' },           // btn-bg-sec-default
-    hover:    { bg: '#4F4F4F', fg: '#FFFFFF' },           // btn-bg-sec-hover
-    focused:  { bg: '#262626', fg: '#FFFFFF' },           // btn-bg-sec-focused
-    pressed:  { bg: '#1A1A1A', fg: '#FFFFFF' },           // btn-bg-sec-pressed
-    disabled: { bg: '#F5F5F5', fg: '#C9C9C9', border: '#C9C9C9' }, // btn-bg-sec-disabled
-  },
-  tertiary: {
-    default:  { bg: '#FFFFFF', fg: '#262626', border: '#D4D4D4' },
-    hover:    { bg: '#FAFAFA', fg: '#4F4F4F', border: '#4F4F4F' },  // btn-bg-ter-hover
-    focused:  { bg: '#FAFAFA', fg: '#262626', border: '#262626' },  // btn-bg-ter-focused
-    pressed:  { bg: '#C9C9C9', fg: '#1A1A1A', border: '#1A1A1A' },  // btn-bg-ter-pressed
-    disabled: { bg: '#F5F5F5', fg: '#C9C9C9', border: '#C9C9C9' },  // btn-bg-ter-disabled
-  },
-  outline: {
-    default:  { bg: 'transparent', fg: '#262626' },
-    hover:    { bg: 'transparent', fg: '#4F4F4F' },
-    focused:  { bg: 'transparent', fg: '#262626' },
-    pressed:  { bg: 'transparent', fg: '#1A1A1A' },
-    disabled: { bg: 'transparent', fg: '#C9C9C9' },
-  },
-  link: {
-    default:  { bg: 'transparent', fg: '#3B82F6' },       // info/default
-    hover:    { bg: 'transparent', fg: '#60A5FA' },        // blue/400
-    focused:  { bg: 'transparent', fg: '#2563EB' },        // blue/600
-    pressed:  { bg: 'transparent', fg: '#1D4ED8' },        // blue/700
-    disabled: { bg: 'transparent', fg: '#C9C9C9' },
-  },
+const has = (name: string): name is TokenName => name in TOKEN_VALUES;
+
+/**
+ * CSS variable reference for a Button token.
+ *
+ * The variant x state x property matrix is sparse — most variants declare no border,
+ * so `--btn-link-border-rest` does not exist. The CSS var fallback covers those cases
+ * without the caller having to know which combinations were declared.
+ */
+const ref = (token: string, fallback?: string): string =>
+  fallback ? `var(--btn-${token}, ${fallback})` : `var(--btn-${token})`;
+
+/** The literal a Button token resolves to. Empty string when it is not declared. */
+export const buttonValue = (token: string): string => {
+  const name = `--btn-${token}`;
+  return has(name) ? TOKEN_VALUES[name] : '';
 };
 
-// ── Button Size Dimensions (from Figma Auto Layout) ──
-// Height is FIXED per size; Width is FIXED at 155px in Figma (but we make it flexible)
-interface SizeConfig {
-  height: number;
-  paddingX: number;           // paddingLeft + paddingRight (text-only)
-  paddingY: number;           // paddingTop + paddingBottom
-  iconPaddingLeft: number;    // paddingLeft when icon is shown
-  iconPaddingRight: number;   // paddingRight when icon is shown
-  itemSpacing: number;        // gap between icon and text
-  iconOnlyPadding: number;    // equal padding for icon-only variant
-  iconSize: number;           // icon dimensions
-}
+/** CSS variable references for one variant in one state — what Button.tsx renders with. */
+export const buttonColors = (
+  variant: ButtonVariant,
+  state: ButtonState,
+): ButtonColorSet => ({
+  background: ref(`${variant}-background-${state}`),
+  foreground: ref(`${variant}-foreground-${state}`),
+  border: ref(`${variant}-border-${state}`, 'transparent'),
+});
 
-export const SIZE_CONFIG: Record<ButtonSize, SizeConfig> = {
-  L: {
-    height: 44,
-    paddingX: 16,              // spacing-2xl
-    paddingY: 0,               // spacing-none
-    iconPaddingLeft: 12,       // spacing-xl
-    iconPaddingRight: 16,      // spacing-2xl
-    itemSpacing: 4,            // spacing-sm
-    iconOnlyPadding: 10,       // (44 - 24) / 2
-    iconSize: 24,
-  },
-  M: {
-    height: 36,
-    paddingX: 16,              // spacing-2xl
-    paddingY: 0,               // spacing-none
-    iconPaddingLeft: 12,       // spacing-xl
-    iconPaddingRight: 16,      // spacing-2xl
-    itemSpacing: 4,            // spacing-sm
-    iconOnlyPadding: 6,        // (36 - 24) / 2
-    iconSize: 24,
-  },
-  S: {
-    height: 28,
-    paddingX: 16,              // spacing-2xl
-    paddingY: 0,               // spacing-none
-    iconPaddingLeft: 12,       // spacing-xl
-    iconPaddingRight: 16,      // spacing-2xl
-    itemSpacing: 4,            // spacing-sm
-    iconOnlyPadding: 2,        // (28 - 24) / 2
-    iconSize: 24,
-  },
-};
+/** Resolved literals for one variant in one state — for stories, tables and tests. */
+export const buttonColorValues = (
+  variant: ButtonVariant,
+  state: ButtonState,
+): ButtonColorSet => ({
+  background: buttonValue(`${variant}-background-${state}`),
+  foreground: buttonValue(`${variant}-foreground-${state}`),
+  border: buttonValue(`${variant}-border-${state}`),
+});
+
+/** Layout and typography shared by every variant. */
+export const BUTTON_BASE = {
+  radius: ref('radius'),
+  borderWidth: ref('border-width'),
+  paddingY: ref('padding-y'),
+  paddingX: ref('padding-x'),
+  paddingLeftWithIcon: ref('padding-left-with-icon'),
+  gap: ref('gap'),
+  fontFamily: ref('typography-family'),
+  fontSize: ref('typography-size'),
+  fontWeight: ref('typography-weight'),
+  lineHeight: ref('typography-line-height'),
+  tracking: ref('typography-tracking'),
+} as const;
+
+/**
+ * Per-size dimensions. `iconSize` stays numeric — it is a component prop, not a style —
+ * and it is per size, not global: Figma uses 24 at L and M and 16 at S.
+ */
+export const buttonSize = (size: ButtonSize) => ({
+  height: ref(`${size}-height`),
+  iconOnlyPadding: ref(`${size}-icon-only-padding`),
+  iconSize: Number(buttonValue(`${size}-icon-size`).replace('px', '')) || 24,
+});
+
+/** Numeric height, for stories that print dimensions. */
+export const buttonSizeValue = (size: ButtonSize) => ({
+  height: buttonValue(`${size}-height`),
+  iconOnlyPadding: buttonValue(`${size}-icon-only-padding`),
+  iconSize: buttonValue(`${size}-icon-size`),
+});

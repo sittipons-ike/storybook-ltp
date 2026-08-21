@@ -1,0 +1,32 @@
+{
+  "_comment": "No Figma component — in blocked_on_figma since 2026-08-19; the Lark Standard section 3.4 lists accordion-item as a canonical molecule, so the gap is on the Figma side. Built from the Frontend per the amended authority rule (2026-08-20).",
+  "figma_node": null,
+  "base": {
+    "gap": "{design.semantic.spacing.lg}",
+    "underline-padding": "{design.semantic.spacing.sm}",
+    "underline-width": "{design.semantic.border-width.hairline}",
+    "accent-color": "{design.semantic.colors.border.primary}",
+    "rule-color": "{design.semantic.colors.border.secondary}",
+    "title-size": "{design.semantic.typography.title.md.medium.size}",
+    "title-line-height": "{design.semantic.typography.title.md.medium.line-height}",
+    "title-weight": "{design.semantic.typography.title.md.medium.weight}",
+    "title-color": "{design.semantic.colors.text.primary.default}",
+    "icon-size": 24,
+    "_source": {
+      "gap": "Frontend `gap-2` = 8px between the trigger row and the expanded content.",
+      "underline": "The trigger reuses title-with-underline's drawing: text over border-primary, the arrow cell over border-secondary, both `pb-1`.",
+      "title": "TYPOGRAPHY_SIZE.title_m_med = title.md.medium; `text-primary` red.",
+      "icon-size": "ArrowDownSmallIcon at its natural 24, flipped vertically (-scale-y-100) when open — the icon set's arrow-down-S."
+    },
+    "_frontend_evidence": {
+      "component": "lotteryplus-frontend-main/src/components/common/accordion — 3 usages",
+      "implementation": "button trigger toggling isExpand; children mount/unmount, no height animation"
+    },
+    "_verified_from": {
+      "node": null,
+      "date": "2026-08-20",
+      "scope": "token mirror searched for accordion/expand; frontend component read in full",
+      "result": "VERIFIED ABSENT in Figma despite being canonical in the Standard. Frontend is the authority per the amended rule (user decision 2026-08-20)."
+    }
+  }
+}

@@ -3,15 +3,13 @@ import React, { useState } from 'react';
 import Modal from './Modal';
 import {
   MODAL_STATES,
-  MODAL_COLORS,
-  MODAL_DIMENSIONS,
-  TYPOGRAPHY,
-  SPACING,
-  RADIUS,
-  BORDER_WIDTH,
-  SHADOW,
+  MODAL_ICONS,
+  modalColorValues,
+  modalStateTokens,
+  modalValue,
   type ModalState,
 } from './tokens';
+import { sys, sysValue } from '../../foundations/tokens';
 import ColorBindingsTable from '../../system/ColorBindingsTable';
 import type { ColorBinding } from '../../system/ColorBindingsTable';
 
@@ -19,16 +17,23 @@ import type { ColorBinding } from '../../system/ColorBindingsTable';
 //  Modal Stories — Lotteryplus Design System
 //  Figma: "modal-state" component set (14610:24998)
 //  10 variants: state(5) × layout-vertical(2)
+//
+//  Values shown here are read from foundations/tokens.generated.ts, which is
+//  generated from Figma. Nothing on this page is typed by hand, so a table can
+//  never claim a value the component does not actually render.
 // ═══════════════════════════════════════════
 
+const sans = "'Graphik TH', sans-serif";
+const mono = 'ui-monospace, SFMono-Regular, Menlo, monospace';
+
 const meta: Meta<typeof Modal> = {
-  title: 'Components/Modal',
+  title: 'Organisms/Modal',
   component: Modal,
   tags: ['autodocs'],
   argTypes: {
     state: {
       control: 'select',
-      options: ['success', 'warning', 'warning-serious', 'error', 'info'],
+      options: MODAL_STATES,
       description: 'Figma variant: state',
     },
     layoutVertical: {
@@ -68,21 +73,32 @@ export const Default: Story = {};
 // ═══════════════════════════════════════════
 export const AllStatesHorizontalButtons: Story = {
   name: 'All States (Buttons Side-by-Side)',
-  render: () => {
-    const states: ModalState[] = ['success', 'warning', 'warning-serious', 'error', 'info'];
-    return (
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, fontFamily: "'Graphik TH', sans-serif" }}>
-        {states.map((state) => (
-          <div key={state}>
-            <div style={{ fontSize: 11, color: '#737373', marginBottom: 8, textAlign: 'center' }}>
-              state={state}, layout-vertical=yes
-            </div>
-            <Modal state={state} layoutVertical={true} />
+  render: () => (
+    <div
+      style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: sys('spacing-4xl'),
+        fontFamily: sans,
+      }}
+    >
+      {MODAL_STATES.map((state) => (
+        <div key={state}>
+          <div
+            style={{
+              fontSize: sys('type-caption-md-regular-size'),
+              color: sys('color-text-tertiary-default'),
+              marginBottom: sys('spacing-lg'),
+              textAlign: 'center',
+            }}
+          >
+            state={state}, layout-vertical=yes
           </div>
-        ))}
-      </div>
-    );
-  },
+          <Modal state={state} layoutVertical={true} />
+        </div>
+      ))}
+    </div>
+  ),
   parameters: { layout: 'padded' },
 };
 
@@ -91,21 +107,32 @@ export const AllStatesHorizontalButtons: Story = {
 // ═══════════════════════════════════════════
 export const AllStatesVerticalButtons: Story = {
   name: 'All States (Buttons Stacked)',
-  render: () => {
-    const states: ModalState[] = ['success', 'warning', 'warning-serious', 'error', 'info'];
-    return (
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, fontFamily: "'Graphik TH', sans-serif" }}>
-        {states.map((state) => (
-          <div key={state}>
-            <div style={{ fontSize: 11, color: '#737373', marginBottom: 8, textAlign: 'center' }}>
-              state={state}, layout-vertical=no
-            </div>
-            <Modal state={state} layoutVertical={false} />
+  render: () => (
+    <div
+      style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: sys('spacing-4xl'),
+        fontFamily: sans,
+      }}
+    >
+      {MODAL_STATES.map((state) => (
+        <div key={state}>
+          <div
+            style={{
+              fontSize: sys('type-caption-md-regular-size'),
+              color: sys('color-text-tertiary-default'),
+              marginBottom: sys('spacing-lg'),
+              textAlign: 'center',
+            }}
+          >
+            state={state}, layout-vertical=no
           </div>
-        ))}
-      </div>
-    );
-  },
+          <Modal state={state} layoutVertical={false} />
+        </div>
+      ))}
+    </div>
+  ),
   parameters: { layout: 'padded' },
 };
 
@@ -151,19 +178,19 @@ export const WithOverlay: Story = {
   render: () => {
     const [open, setOpen] = useState(true);
     return (
-      <div style={{ fontFamily: "'Graphik TH', sans-serif" }}>
+      <div style={{ fontFamily: sans }}>
         <button
           onClick={() => setOpen(true)}
           style={{
-            padding: '12px 24px',
-            backgroundColor: '#E32321',
-            color: '#FFFFFF',
+            padding: `${sysValue('spacing-xl')} ${sysValue('spacing-4xl')}`,
+            backgroundColor: sys('color-primary-default'),
+            color: sys('color-foreground-white'),
             border: 'none',
-            borderRadius: 8,
-            fontSize: 14,
-            fontWeight: 600,
+            borderRadius: sys('radius-lg'),
+            fontSize: sys('type-button-md-semibold-size'),
+            fontWeight: sys('type-button-md-semibold-weight') as unknown as React.CSSProperties['fontWeight'],
             cursor: 'pointer',
-            fontFamily: "'Graphik TH', sans-serif",
+            fontFamily: sans,
           }}
         >
           เปิด Modal
@@ -188,119 +215,220 @@ export const WithOverlay: Story = {
 // ═══════════════════════════════════════════
 export const FullMatrix: Story = {
   name: 'Full Matrix (State × Layout)',
+  render: () => (
+    <div style={{ fontFamily: sans }}>
+      <h2 style={{ margin: `0 0 ${sysValue('spacing-2xl')}`, fontSize: 20 }}>Modal Matrix</h2>
+      <table style={{ borderCollapse: 'collapse' }}>
+        <thead>
+          <tr>
+            <th
+              style={{
+                padding: `${sysValue('spacing-lg')} ${sysValue('spacing-2xl')}`,
+                fontSize: 12,
+                color: sys('color-text-tertiary-default'),
+                textAlign: 'left',
+              }}
+            >
+              State
+            </th>
+            <th
+              style={{
+                padding: `${sysValue('spacing-lg')} ${sysValue('spacing-2xl')}`,
+                fontSize: 12,
+                color: sys('color-text-tertiary-default'),
+              }}
+            >
+              layout-vertical=yes
+            </th>
+            <th
+              style={{
+                padding: `${sysValue('spacing-lg')} ${sysValue('spacing-2xl')}`,
+                fontSize: 12,
+                color: sys('color-text-tertiary-default'),
+              }}
+            >
+              layout-vertical=no
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {MODAL_STATES.map((state) => (
+            <tr key={state} style={{ borderBottom: `1px solid ${sysValue('color-background-light')}` }}>
+              <td style={{ padding: sys('spacing-xl'), fontSize: 12, fontWeight: 600 }}>{state}</td>
+              <td style={{ padding: sys('spacing-xl') }}>
+                <Modal state={state} layoutVertical={true} />
+              </td>
+              <td style={{ padding: sys('spacing-xl') }}>
+                <Modal state={state} layoutVertical={false} />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  ),
+  parameters: { layout: 'padded' },
+};
+
+// ═══════════════════════════════════════════
+//  Token Verification — the chain, read from the generated tokens
+// ═══════════════════════════════════════════
+
+/** Tier 2 token → the Tier 1 semantic token it aliases. `(fixed)` = a literal px value. */
+const LAYOUT_CHAIN: Array<[string, string]> = [
+  ['--modal-width', '(fixed)'],
+  ['--modal-radius', '--sys-radius-2xl'],
+  ['--modal-padding', '--sys-spacing-4xl'],
+  ['--modal-gap', '--sys-spacing-4xl'],
+  ['--modal-content-gap', '--sys-spacing-2xl'],
+  ['--modal-wording-gap', '--sys-spacing-lg'],
+  ['--modal-button-gap', '--sys-spacing-2xl'],
+  ['--modal-elevation', '--sys-elevation-modal'],
+  ['--modal-scrim', '--sys-color-overlay-default'],
+  ['--modal-icon-circle-size', '(fixed)'],
+  ['--modal-icon-circle-padding', '--sys-spacing-lg'],
+  ['--modal-icon-circle-radius', '--sys-radius-full'],
+  ['--modal-icon-size', '(fixed)'],
+  ['--modal-typography-title-family', '--sys-type-title-lg-semibold-family'],
+  ['--modal-typography-title-size', '--sys-type-title-lg-semibold-size'],
+  ['--modal-typography-title-line-height', '--sys-type-title-lg-semibold-line-height'],
+  ['--modal-typography-title-weight', '--sys-type-title-lg-semibold-weight'],
+  ['--modal-typography-title-tracking', '--sys-type-title-lg-semibold-tracking'],
+  ['--modal-typography-subtitle-family', '--sys-type-body-md-regular-family'],
+  ['--modal-typography-subtitle-size', '--sys-type-body-md-regular-size'],
+  ['--modal-typography-subtitle-line-height', '--sys-type-body-md-regular-line-height'],
+  ['--modal-typography-subtitle-weight', '--sys-type-body-md-regular-weight'],
+  ['--modal-typography-subtitle-tracking', '--sys-type-body-md-regular-tracking'],
+];
+
+/** Container colours the modal renders directly, outside the per-state palette. */
+const CONTAINER_COLOURS: Array<[string, string, string]> = [
+  ['--modal-background-white', '--sys-color-background-default', 'Modal surface'],
+  ['--modal-foreground-dark', '--sys-color-secondary-default', 'Title & subtitle text'],
+  ['--modal-scrim', '--sys-color-overlay-default', 'Scrim behind the modal (black 60%)'],
+];
+
+export const TokenVerification: Story = {
+  name: '🔍 Token Verification',
   render: () => {
-    const states: ModalState[] = ['success', 'warning', 'warning-serious', 'error', 'info'];
+    const th: React.CSSProperties = {
+      textAlign: 'left',
+      padding: '8px 12px',
+      fontSize: 11,
+      fontWeight: 600,
+      color: sys('color-text-tertiary-default'),
+      borderBottom: `2px solid ${sysValue('color-border-accent-gray-soft-light')}`,
+    };
+    const td: React.CSSProperties = {
+      padding: '6px 12px',
+      borderBottom: `1px solid ${sysValue('color-background-light')}`,
+      fontFamily: mono,
+      fontSize: 11,
+    };
+
+    const swatch = (hex: string) =>
+      hex ? (
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+          <span
+            style={{
+              width: 14,
+              height: 14,
+              borderRadius: 3,
+              background: hex,
+              border: '1px solid rgba(0,0,0,0.15)',
+            }}
+          />
+          {hex}
+        </span>
+      ) : (
+        <span style={{ color: sys('color-text-state-light-gray') }}>—</span>
+      );
+
     return (
-      <div style={{ fontFamily: "'Graphik TH', sans-serif" }}>
-        <h2 style={{ margin: '0 0 16px', fontSize: 20 }}>Modal Matrix</h2>
-        <table style={{ borderCollapse: 'collapse' }}>
+      <div style={{ fontFamily: sans, maxWidth: 960 }}>
+        <h2 style={{ margin: '0 0 8px', fontSize: 20 }}>Modal token chain</h2>
+        <p style={{ margin: '0 0 20px', fontSize: 13, color: sys('color-text-tertiary-default') }}>
+          Every value flows Figma → design.md → components.json → tokens.css. The component
+          renders the Tier 2 alias; the alias points at a Tier 1 semantic token; that resolves
+          to the literal. Nothing below is hand-typed — the “Value” column is read from
+          foundations/tokens.generated.ts, so it cannot claim a value Modal does not render.
+        </p>
+
+        <h3 style={{ fontSize: 14, margin: '0 0 8px' }}>Layout &amp; typography</h3>
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 28 }}>
           <thead>
             <tr>
-              <th style={{ padding: '8px 16px', fontSize: 12, color: '#737373', textAlign: 'left' }}>State</th>
-              <th style={{ padding: '8px 16px', fontSize: 12, color: '#737373' }}>layout-vertical=yes</th>
-              <th style={{ padding: '8px 16px', fontSize: 12, color: '#737373' }}>layout-vertical=no</th>
+              <th style={th}>Tier 2 — component</th>
+              <th style={th}>Tier 1 — semantic</th>
+              <th style={th}>Value</th>
             </tr>
           </thead>
           <tbody>
-            {states.map((state) => (
-              <tr key={state} style={{ borderBottom: '1px solid #F5F5F5' }}>
-                <td style={{ padding: '12px 16px', fontSize: 12, fontWeight: 600 }}>{state}</td>
-                <td style={{ padding: 12 }}>
-                  <Modal state={state} layoutVertical={true} />
-                </td>
-                <td style={{ padding: 12 }}>
-                  <Modal state={state} layoutVertical={false} />
+            {LAYOUT_CHAIN.map(([comp, semantic]) => (
+              <tr key={comp}>
+                <td style={{ ...td, color: sys('color-primary-default') }}>{comp}</td>
+                <td style={{ ...td, color: sys('color-status-info-default') }}>{semantic}</td>
+                <td style={{ ...td, color: sys('color-status-success-dark') }}>
+                  {modalValue(comp.replace('--modal-', ''))}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-      </div>
-    );
-  },
-  parameters: { layout: 'padded' },
-};
 
-// ═══════════════════════════════════════════
-//  Token Verification
-// ═══════════════════════════════════════════
-export const TokenVerification: Story = {
-  name: '🔍 Token Verification',
-  render: () => {
-    const checks = [
-      // Layout (bound variables from Figma)
-      { label: 'Modal Width', figma: '358px', storybook: `${MODAL_DIMENSIONS.width}px`, var: '—' },
-      { label: 'Modal Padding', figma: '24px', storybook: `${MODAL_DIMENSIONS.padding}px`, var: 'dimension/spacing/spacing-4xl' },
-      { label: 'Section Gap', figma: '24px', storybook: `${MODAL_DIMENSIONS.sectionGap}px`, var: 'dimension/spacing/spacing-4xl' },
-      { label: 'Modal Corner Radius', figma: '16px', storybook: `${MODAL_DIMENSIONS.cornerRadius}px`, var: 'dimension/breakpoint/radius/radius-2xl' },
-
-      // ⚡ Shadow (NEW)
-      { label: 'Box Shadow (md)', figma: '0 2px 4px -1px rgba(0,0,0,0.06), 0 4px 6px -1px rgba(0,0,0,0.10)', storybook: SHADOW.md, var: 'dimension/shadow/md/color-2' },
-
-      // Icon
-      { label: 'Icon Container Size', figma: '64×64px', storybook: `${MODAL_DIMENSIONS.icon.containerSize}×${MODAL_DIMENSIONS.icon.containerSize}px`, var: '—' },
-      { label: 'Icon Size (icons-size)', figma: '48px', storybook: `${MODAL_DIMENSIONS.icon.iconSize}px`, var: '—' },
-      { label: 'Icon Padding', figma: '8px', storybook: `${MODAL_DIMENSIONS.icon.padding}px`, var: '—' },
-      { label: 'Icon Border Radius', figma: '48px (circle)', storybook: `${MODAL_DIMENSIONS.icon.borderRadius}px`, var: '—' },
-
-      // Wording gaps (bound variables)
-      { label: 'Icon↔Wording Gap', figma: '16px', storybook: `${MODAL_DIMENSIONS.wording.iconToWording}px`, var: 'dimension/spacing/spacing-2xl' },
-      { label: 'Title↔Subtitle Gap', figma: '8px', storybook: `${MODAL_DIMENSIONS.wording.titleToSubtitle}px`, var: 'dimension/spacing/spacing-lg (via Wording frame)' },
-
-      // Buttons (via Button component)
-      { label: 'Button Gap', figma: '16px', storybook: `${MODAL_DIMENSIONS.buttonsHorizontal.gap}px`, var: 'dimension/spacing/spacing-2xl' },
-      { label: 'Button Height', figma: '44px', storybook: `${MODAL_DIMENSIONS.buttonsHorizontal.height}px`, var: '— (from Button component)' },
-      { label: 'Button Radius', figma: '8px', storybook: `${RADIUS.lg}px`, var: 'dimension/breakpoint/radius/radius-lg (via Button)' },
-      { label: 'Buttons Component', figma: 'Instance: button (Tertiary + Primary)', storybook: '<Button type="tertiary|primary">', var: '⚡ Reuses Components/Button' },
-
-      // Typography (bound variables from Figma)
-      { label: 'Title Font (title/l-semb)', figma: 'Graphik TH Semibold 16/24', storybook: `Graphik TH ${TYPOGRAPHY.title.fontWeight} ${TYPOGRAPHY.title.fontSize}/${TYPOGRAPHY.title.lineHeight}`, var: 'title/l-semb/*' },
-      { label: 'Subtitle Font (body/m-reg)', figma: 'Graphik TH Regular 14/22', storybook: `Graphik TH ${TYPOGRAPHY.subtitle.fontWeight} ${TYPOGRAPHY.subtitle.fontSize}/${TYPOGRAPHY.subtitle.lineHeight}`, var: 'body/m-reg/*' },
-      { label: 'Button Font (button/m-semb)', figma: 'Graphik TH Semibold 14/22', storybook: `Graphik TH ${TYPOGRAPHY.button.fontWeight} ${TYPOGRAPHY.button.fontSize}/${TYPOGRAPHY.button.lineHeight}`, var: 'button/m-semb/* (via Button)' },
-
-      // Colors — States (bound variables)
-      { label: 'Success Icon', figma: 'outline-check_circle #22C55E', storybook: `${MODAL_STATES.success.iconName} ${MODAL_STATES.success.iconColor}`, var: 'colors/modal/modal-fg-green' },
-      { label: 'Success Icon BG', figma: '#F0FDF4', storybook: MODAL_STATES.success.iconBg, var: 'colors/modal/modal-bg-soft-green' },
-      { label: 'Warning Icon', figma: 'outline-Warning-2 #EAB308', storybook: `${MODAL_STATES.warning.iconName} ${MODAL_STATES.warning.iconColor}`, var: 'colors/modal/modal-fg-yellow' },
-      { label: 'Warning Icon BG', figma: '#FEFCE8', storybook: MODAL_STATES.warning.iconBg, var: 'colors/modal/modal-bg-soft-yellow' },
-      { label: 'Error Icon', figma: 'outline-Error-1 #E32321', storybook: `${MODAL_STATES.error.iconName} ${MODAL_STATES.error.iconColor}`, var: 'colors/modal/modal-fg-red' },
-      { label: 'Error Icon BG', figma: '#FEF2F2', storybook: MODAL_STATES.error.iconBg, var: 'colors/modal/modal-bg-soft-red' },
-      { label: 'Info Icon', figma: 'outline-info #262626', storybook: `${MODAL_STATES.info.iconName} ${MODAL_STATES.info.iconColor}`, var: 'colors/modal/modal-fg-dark' },
-      { label: 'Info Icon BG', figma: '#FAFAFA', storybook: MODAL_STATES.info.iconBg, var: 'colors/modal/modal-bg-soft-dark' },
-
-      // Container colors (bound variables)
-      { label: 'Modal BG', figma: '#FFFFFF', storybook: MODAL_COLORS.bg, var: 'colors/modal/modal-bg-white' },
-      { label: 'Title Color', figma: '#262626', storybook: MODAL_COLORS.titleText, var: 'colors/modal/modal-fg-dark' },
-      { label: 'Subtitle Color', figma: '#262626', storybook: MODAL_COLORS.subtitleText, var: 'colors/modal/modal-fg-dark' },
-      { label: 'Overlay', figma: 'rgba(0,0,0,0.6)', storybook: MODAL_COLORS.overlay, var: 'overlay-default' },
-    ];
-
-    return (
-      <div style={{ fontFamily: "'Graphik TH', sans-serif" }}>
-        <h2 style={{ margin: '0 0 8px', fontSize: 20 }}>Modal Token Verification</h2>
-        <p style={{ margin: '0 0 16px', fontSize: 13, color: '#737373' }}>
-          Comparing Figma component values vs Storybook token values
-        </p>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+        <h3 style={{ fontSize: 14, margin: '0 0 8px' }}>Container colours</h3>
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 28 }}>
           <thead>
-            <tr style={{ borderBottom: '2px solid #E5E5E5', textAlign: 'left' }}>
-              <th style={{ padding: '8px 10px' }}>Token</th>
-              <th style={{ padding: '8px 10px' }}>Figma Variable</th>
-              <th style={{ padding: '8px 10px' }}>Figma Value</th>
-              <th style={{ padding: '8px 10px' }}>Storybook Value</th>
-              <th style={{ padding: '8px 10px' }}>✓</th>
+            <tr>
+              <th style={th}>Tier 2 — component</th>
+              <th style={th}>Tier 1 — semantic</th>
+              <th style={th}>Value</th>
+              <th style={th}>Usage</th>
             </tr>
           </thead>
           <tbody>
-            {checks.map((c) => (
-              <tr key={c.label} style={{ borderBottom: '1px solid #F5F5F5' }}>
-                <td style={{ padding: '5px 10px', fontWeight: 500 }}>{c.label}</td>
-                <td style={{ padding: '5px 10px', fontFamily: 'monospace', fontSize: 10, color: '#737373' }}>{c.var}</td>
-                <td style={{ padding: '5px 10px', fontFamily: 'monospace', color: '#E32321' }}>{c.figma}</td>
-                <td style={{ padding: '5px 10px', fontFamily: 'monospace', color: '#3B82F6' }}>{c.storybook}</td>
-                <td style={{ padding: '5px 10px', fontSize: 14 }}>✅</td>
+            {CONTAINER_COLOURS.map(([comp, semantic, usage]) => (
+              <tr key={comp}>
+                <td style={{ ...td, color: sys('color-primary-default') }}>{comp}</td>
+                <td style={{ ...td, color: sys('color-status-info-default') }}>{semantic}</td>
+                <td style={td}>{swatch(modalValue(comp.replace('--modal-', '')))}</td>
+                <td style={{ ...td, fontFamily: sans }}>{usage}</td>
               </tr>
             ))}
+          </tbody>
+        </table>
+
+        <h3 style={{ fontSize: 14, margin: '0 0 8px' }}>Colours by state</h3>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <thead>
+            <tr>
+              <th style={th}>State</th>
+              <th style={th}>Icon</th>
+              <th style={th}>Foreground token</th>
+              <th style={th}>Foreground</th>
+              <th style={th}>Background token</th>
+              <th style={th}>Background</th>
+            </tr>
+          </thead>
+          <tbody>
+            {MODAL_STATES.map((state) => {
+              const names = modalStateTokens(state);
+              const v = modalColorValues(state);
+              return (
+                <tr key={state}>
+                  <td style={{ ...td, fontFamily: sans }}>{state}</td>
+                  <td style={td}>{MODAL_ICONS[state]}</td>
+                  <td style={{ ...td, color: sys('color-primary-default') }}>
+                    {`--modal-${names.foreground}`}
+                  </td>
+                  <td style={td}>{swatch(v.foreground)}</td>
+                  <td style={{ ...td, color: sys('color-primary-default') }}>
+                    {`--modal-${names.background}`}
+                  </td>
+                  <td style={td}>{swatch(v.background)}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
@@ -310,6 +438,31 @@ export const TokenVerification: Story = {
 };
 
 // ── Color Bindings ──
+const stateBindings: ColorBinding[] = MODAL_STATES.flatMap((state: ModalState) => {
+  const names = modalStateTokens(state);
+  const values = modalColorValues(state);
+  return [
+    {
+      token: `modal-${names.foreground}`,
+      figmaVariable: `colors/modal/${names.foreground.replace('foreground-', 'modal-fg-')}`,
+      hex: values.foreground,
+      usage: `${state} — icon glyph`,
+    },
+    {
+      token: `modal-${names.background}`,
+      figmaVariable: `colors/modal/${names.background.replace('background-', 'modal-bg-')}`,
+      hex: values.background,
+      usage: `${state} — icon circle background`,
+    },
+  ];
+});
+
+// The palette is shared between states (error and warning-serious both read red), so
+// dedupe on the token name rather than listing the same row twice.
+const uniqueStateBindings = stateBindings.filter(
+  (binding, i, all) => all.findIndex((b) => b.token === binding.token) === i,
+);
+
 export const ColorBindings: StoryObj = {
   name: 'Color Bindings',
   render: () => (
@@ -317,21 +470,25 @@ export const ColorBindings: StoryObj = {
       componentName="Modal"
       figmaId="14610:24998"
       bindings={[
-        { token: 'modal-bg-white', figmaVariable: 'colors/modal/modal-bg-white', hex: '#FFFFFF', usage: 'Modal background' },
-        { token: 'modal-fg-dark', figmaVariable: 'colors/modal/modal-fg-dark', hex: '#262626', usage: 'Title & subtitle text' },
-        { token: 'overlay-default', figmaVariable: 'colors/modal/overlay-default', hex: '#00000099', usage: 'Overlay background (black 60%)' },
-        { token: 'modal-fg-green', figmaVariable: 'colors/modal/modal-fg-green', hex: '#22C55E', usage: 'Success icon color' },
-        { token: 'modal-bg-soft-green', figmaVariable: 'colors/modal/modal-bg-soft-green', hex: '#F0FDF4', usage: 'Success icon circle bg' },
-        { token: 'modal-fg-yellow', figmaVariable: 'colors/modal/modal-fg-yellow', hex: '#EAB308', usage: 'Warning icon color' },
-        { token: 'modal-bg-soft-yellow', figmaVariable: 'colors/modal/modal-bg-soft-yellow', hex: '#FEFCE8', usage: 'Warning icon circle bg' },
-        { token: 'modal-fg-red', figmaVariable: 'colors/modal/modal-fg-red', hex: '#E32321', usage: 'Error / warning-serious icon color' },
-        { token: 'modal-bg-soft-red', figmaVariable: 'colors/modal/modal-bg-soft-red', hex: '#FEF2F2', usage: 'Error / warning-serious icon circle bg' },
-        { token: 'modal-bg', figmaVariable: 'colors/modal/modal-bg', hex: '#FAFAFA', usage: 'Info icon circle bg' },
-        { token: 'btn-bg-pri-default', figmaVariable: 'colors/button/primary/btn-bg-pri-default', hex: '#E32321', usage: 'Primary button bg (confirm)' },
-        { token: 'btn-fg-pri-default', figmaVariable: 'colors/button/primary/btn-fg-pri-default', hex: '#FFFFFF', usage: 'Primary button text' },
-        { token: 'btn-bg-ter-default', figmaVariable: 'colors/button/tertiary/btn-bg-ter-default', hex: '#FFFFFF', usage: 'Secondary button bg (cancel)' },
-        { token: 'btn-fg-ter-default', figmaVariable: 'colors/button/tertiary/btn-fg-ter-default', hex: '#262626', usage: 'Secondary button text' },
-        { token: 'btn-border-ter', figmaVariable: 'colors/button/tertiary/btn-border-ter', hex: '#D4D4D4', usage: 'Secondary button border' },
+        {
+          token: 'modal-background-white',
+          figmaVariable: 'colors/modal/modal-bg-white',
+          hex: modalValue('background-white'),
+          usage: 'Modal surface',
+        },
+        {
+          token: 'modal-foreground-dark',
+          figmaVariable: 'colors/modal/modal-fg-dark',
+          hex: modalValue('foreground-dark'),
+          usage: 'Title & subtitle text',
+        },
+        {
+          token: 'modal-scrim',
+          figmaVariable: 'colors/overlay/overlay-default',
+          hex: sysValue('color-overlay-default'),
+          usage: 'Scrim behind the modal (black 60%)',
+        },
+        ...uniqueStateBindings,
       ]}
     />
   ),

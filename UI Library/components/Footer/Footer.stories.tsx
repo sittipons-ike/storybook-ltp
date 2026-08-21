@@ -1,0 +1,108 @@
+import type { Meta, StoryObj } from '@storybook/react';
+import React from 'react';
+import Footer from './Footer';
+import Icon from '../../icons/Icon';
+import '../../icons/icon-data'; // register all icons
+import { sys } from '../../foundations/tokens';
+
+// ═══════════════════════════════════════════
+//  Footer — Figma `footer-mobile`, 390×190.
+//  Designed, but the Frontend does not render a footer below 1280px.
+// ═══════════════════════════════════════════
+
+const meta: Meta<typeof Footer> = {
+  title: 'Organisms/Footer',
+  component: Footer,
+  parameters: { layout: 'padded' },
+};
+export default meta;
+
+const sans = "'Graphik TH', sans-serif";
+const mono = 'ui-monospace, SFMono-Regular, Menlo, monospace';
+
+// Brand colours, taken from the Figma artwork. Deliberately not tokens — see Footer.tsx.
+const SOCIALS = [
+  { label: 'Facebook', color: '#337FFF', icon: <Icon name="outline-notification" size={16} color="onBg" /> },
+  { label: 'X', color: '#000000', icon: <Icon name="outline-close" size={16} color="onBg" /> },
+  { label: 'TikTok', color: '#000000', icon: <Icon name="outline-check" size={16} color="onBg" /> },
+  { label: 'LINE', color: '#3ACE01', icon: <Icon name="outline-check" size={16} color="onBg" /> },
+  { label: 'YouTube', color: '#FF0000', icon: <Icon name="arrow-right-S" size={16} color="onBg" /> },
+];
+
+export const Default: StoryObj = {
+  name: 'footer-mobile',
+  render: () => (
+    <div style={{ fontFamily: sans, maxWidth: 700 }}>
+      <h2 style={{ fontSize: 20, margin: '0 0 6px' }}>Footer</h2>
+      <p style={{ margin: '0 0 14px', fontSize: 13, lineHeight: 1.75, color: sys('color-text-tertiary-default') }}>
+        พื้นหลัง <code style={{ fontFamily: mono }}>topfoot-bg-red-dark</code> เข้มกว่า header หนึ่งขั้น —
+        คู่นี้แหละคือที่มาของชื่อกลุ่ม <code style={{ fontFamily: mono }}>top-and-footer</code>
+      </p>
+      <p
+        style={{
+          margin: '0 0 20px',
+          padding: '10px 14px',
+          fontSize: 12.5,
+          lineHeight: 1.8,
+          borderLeft: `3px solid ${sys('color-border-accent-gray-light')}`,
+          background: sys('color-background-light'),
+          color: sys('color-text-secondary-default'),
+        }}
+      >
+        <strong>วัดสูงได้ 192px ไม่ใช่ 190 — อันนี้ถูกแล้ว</strong> อย่าไปแก้ Figma วาดตัวนี้เป็น mobile
+        (390) แต่ typography token เป็น responsive พอเปิดที่จอกว้าง ≥768px มันเข้าโหมด desktop ป้าย
+        &ldquo;ติดตามเรา :&rdquo; เลยเป็น 16/24 แทน 14/22 → สูงขึ้น 2px ย่อจอลงต่ำกว่า 768 เมื่อไหร่ ได้ 190
+        เป๊ะทันที (ยืนยันแล้วที่ 375px)
+      </p>
+      <div
+        style={{
+          width: 390,
+          border: `1px solid ${sys('color-border-accent-gray-light')}`,
+          borderRadius: sys('radius-lg'),
+          overflow: 'hidden',
+        }}
+      >
+        <Footer
+          socials={SOCIALS}
+          chips={[{ label: 'ติดต่อเรา' }, { label: 'ศูนย์ช่วยเหลือ' }]}
+        />
+      </div>
+    </div>
+  ),
+};
+
+export const NotShipped: StoryObj = {
+  name: '⚠️ ออกแบบไว้ แต่ยังไม่ได้ใช้',
+  render: () => (
+    <div style={{ fontFamily: sans, maxWidth: 700, lineHeight: 1.8 }}>
+      <h2 style={{ fontSize: 20, margin: '0 0 12px' }}>Figma กับ Frontend ไม่ตรงกันตรงนี้จริงๆ</h2>
+
+      <div
+        style={{
+          border: `1px solid ${sys('color-border-accent-gray-soft-light')}`,
+          borderLeft: `3px solid ${sys('color-status-warning-default')}`,
+          background: sys('color-background-light'),
+          padding: '16px 20px',
+          marginBottom: 20,
+          fontFamily: mono,
+          fontSize: 12,
+          lineHeight: 2,
+        }}
+      >
+        Figma&nbsp;&nbsp;&nbsp;&nbsp;footer-mobile · 390×190 · วาดเสร็จแล้ว
+        <br />
+        Frontend&nbsp;&nbsp;components/footer → if (!isDesktop) return null&nbsp;&nbsp;// ตัดที่ 1280px
+      </div>
+
+      <p style={{ fontSize: 13.5, color: sys('color-text-secondary-default'), margin: '0 0 16px' }}>
+        แปลว่า footer บนมือถือถูกออกแบบไว้แล้ว แต่ไม่เคยขึ้นจอผู้ใช้เลย component นี้จึงสร้างตามที่ Figma
+        วาด ไม่ใช่ตามที่ FE ทำ — เพราะกติกาที่ตกลงกันคือ Figma เป็นเจ้าของค่า
+      </p>
+
+      <p style={{ fontSize: 13.5, color: sys('color-text-secondary-default'), margin: 0 }}>
+        ต้องตัดสินใจ: ปล่อย footer มือถือให้ขึ้นจริง หรือลบดีไซน์ทิ้ง — ค้างไว้แบบนี้แปลว่ามีดีไซน์ที่ไม่มีใครดูแล
+        คำถามนี้อยู่ใน <code style={{ fontFamily: mono }}>patterns.json → open_questions</code> แล้ว
+      </p>
+    </div>
+  ),
+};

@@ -1,0 +1,795 @@
+{
+  "$meta": {
+    "purpose": "Three-way component inventory across Figma, Storybook and the Frontend, so the team can decide what belongs in the design system before anyone builds more of it.",
+    "generated": "2026-08-19",
+    "sources": {
+      "figma": "Design Systems Web App Lotteryplus V.7.1 — read two ways. `colors/*` groups in the 3-component collection give 25 token groups; the Atoms/Molecules/Organism pages give 21 component pages holding ~54 component sets. The first pass used only the token groups and therefore missed every component Figma ships without one.",
+      "storybook": "UI Library/components/* plus icons (15)",
+      "frontend": "lotteryplus-frontend-main/src/components/common/* (52) — `feUsage` counts files that import it, excluding its own folder"
+    },
+    "decision_rule": "Lark Standard §3.3 — Share by evidence: raise scope only with two real usages, no change of responsibility needed, and an owner. `feUsage` is that evidence, measured rather than assumed.",
+    "status": "PROPOSAL — every `proposed` field is a recommendation from the audit, not a team decision. `decision` records what was agreed; null means still open.",
+    "levels": [
+      "atom",
+      "molecule",
+      "organism",
+      "pattern",
+      "helper",
+      "not-a-component"
+    ],
+    "scopes": [
+      "global",
+      "project",
+      "feature",
+      "none"
+    ],
+    "correction_2026_08_19": "Counting Figma by token group undercounted it. Avatar, the Text Container (typography), and 116 logos-and-graphics components all exist in Figma with no colour group, so they were invisible in the first inventory. header and footer are separate pages with 10 sets between them, not one `top-and-footer`. Button has seven component sets, of which the library models one.",
+    "revised": "2026-08-19 — moved checkbox, bottom-sheet and top-and-footer out of the gap list now that they are built. ActionBar is the one component with no Figma component set behind it; see patterns.json for why it was built anyway."
+  },
+  "aligned": {
+    "_note": "Present in all three sources. These are the working core — refactored, token-chained, and in real use. The last three joined on 2026-08-19: checkbox, bottom-sheet and top-and-footer (Header + Footer + ActionBar).",
+    "items": [
+      {
+        "name": "button",
+        "figma": true,
+        "storybook": true,
+        "feUsage": 117,
+        "proposed": {
+          "level": "atom",
+          "scope": "global"
+        },
+        "decision": null
+      },
+      {
+        "name": "text-field",
+        "figma": true,
+        "storybook": true,
+        "feUsage": 19,
+        "note": "FE splits this into `input` (16) and `textarea` (3); the DS models one component.",
+        "proposed": {
+          "level": "atom",
+          "scope": "global"
+        },
+        "decision": null
+      },
+      {
+        "name": "modal",
+        "figma": true,
+        "storybook": true,
+        "feUsage": 43,
+        "note": "FE has TWO — `global-modal` (28) and `modal` (15). Which is canonical is an open question.",
+        "proposed": {
+          "level": "organism",
+          "scope": "global"
+        },
+        "decision": null
+      },
+      {
+        "name": "loading",
+        "figma": true,
+        "storybook": true,
+        "feUsage": 35,
+        "note": "FE has TWO — `loading-spin` (26) and `loading-screen` (9). Storybook models one with size presets.",
+        "proposed": {
+          "level": "atom",
+          "scope": "global"
+        },
+        "decision": null
+      },
+      {
+        "name": "dropdown",
+        "figma": true,
+        "storybook": true,
+        "feUsage": 9,
+        "proposed": {
+          "level": "molecule",
+          "scope": "global"
+        },
+        "decision": null
+      },
+      {
+        "name": "breadcrumb",
+        "figma": true,
+        "storybook": true,
+        "feUsage": 7,
+        "proposed": {
+          "level": "molecule",
+          "scope": "global"
+        },
+        "decision": null
+      },
+      {
+        "name": "tabs",
+        "figma": true,
+        "storybook": true,
+        "feUsage": 7,
+        "note": "FE also has `tabs-underline` (1) — a variant, not a separate component.",
+        "proposed": {
+          "level": "organism",
+          "scope": "global"
+        },
+        "decision": null
+      },
+      {
+        "name": "toggle-switch",
+        "figma": true,
+        "storybook": true,
+        "feUsage": 5,
+        "proposed": {
+          "level": "atom",
+          "scope": "global"
+        },
+        "decision": null
+      },
+      {
+        "name": "tooltip",
+        "figma": true,
+        "storybook": true,
+        "feUsage": 3,
+        "note": "Figma has the component but no colors/tooltip token group — the only such case.",
+        "proposed": {
+          "level": "molecule",
+          "scope": "global"
+        },
+        "decision": null
+      },
+      {
+        "name": "radio-buttons",
+        "figma": true,
+        "storybook": true,
+        "feUsage": 1,
+        "note": "FE calls it `radio-button-group`. Only one usage — below the Standard's two-usage bar, but it is a canonical form control.",
+        "proposed": {
+          "level": "atom",
+          "scope": "global"
+        },
+        "decision": null
+      },
+      {
+        "name": "toast",
+        "figma": true,
+        "storybook": true,
+        "feUsage": 1,
+        "proposed": {
+          "level": "molecule",
+          "scope": "global"
+        },
+        "decision": null
+      },
+      {
+        "name": "navigation-bar",
+        "figma": true,
+        "storybook": true,
+        "feUsage": 3,
+        "note": "FE calls it `profile-navbar`; there is also a separate `navbar` business folder (10 files).",
+        "proposed": {
+          "level": "organism",
+          "scope": "global"
+        },
+        "decision": null
+      },
+      {
+        "name": "checkbox",
+        "figma": true,
+        "storybook": true,
+        "feUsage": 3,
+        "figmaTokens": 10,
+        "proposed": {
+          "level": "atom",
+          "scope": "global"
+        },
+        "why": "A canonical form control with a full Figma token set and real FE usage. The clearest gap in the library.",
+        "decision": "built 2026-08-19, verified against the Figma component set"
+      },
+      {
+        "name": "bottom-sheet",
+        "figma": true,
+        "storybook": true,
+        "feUsage": 5,
+        "figmaTokens": 5,
+        "proposed": {
+          "level": "organism",
+          "scope": "global"
+        },
+        "why": "Mobile-first product; a sheet is a primary interaction surface. Five FE usages clears the evidence bar.",
+        "decision": "built 2026-08-19, verified against the Figma component set"
+      },
+      {
+        "name": "top-and-footer",
+        "figma": true,
+        "storybook": true,
+        "feUsage": 19,
+        "figmaTokens": 10,
+        "proposed": {
+          "level": "pattern",
+          "scope": "project"
+        },
+        "why": "This is the app shell — the Standard models that as a pattern with slots, not a component.",
+        "decision": "built 2026-08-19 as three components — Header, Footer and ActionBar — verified against Figma `header-bar-mobile` (14924:2118), `footer-mobile`, and the page template `Guidline-UI Template > Layout`.",
+        "note": "One Figma colour group, three components. Figma paints them all from `colors/top-and-footer`, but they fill different shell slots and the Frontend keeps them in three files: `components/header`, `components/footer` and `components/common/footer-button` (17 call sites). The group was not split, because splitting it would be a rename of Figma."
+      }
+    ]
+  },
+  "missing_from_storybook": {
+    "_note": "Figma ships tokens for these; Storybook has no component. The rest are app surfaces that were given a token tier — having tokens does not make something a component.",
+    "items": [
+      {
+        "name": "card",
+        "figma": true,
+        "storybook": false,
+        "feUsage": 0,
+        "figmaTokens": 1,
+        "proposed": {
+          "level": "atom",
+          "scope": "global"
+        },
+        "why": "Figma declares exactly one token (card-fg-white), which is not enough to build from. Either the Figma side is incomplete or `card` is a layout convention rather than a component.",
+        "decision": null
+      },
+      {
+        "name": "carts",
+        "figma": true,
+        "storybook": false,
+        "feUsage": null,
+        "figmaTokens": 12,
+        "proposed": {
+          "level": "not-a-component",
+          "scope": "project"
+        },
+        "why": "A checkout surface, not a reusable component. Its tokens describe one screen.",
+        "decision": null
+      },
+      {
+        "name": "orders",
+        "figma": true,
+        "storybook": false,
+        "feUsage": null,
+        "figmaTokens": 13,
+        "proposed": {
+          "level": "not-a-component",
+          "scope": "project"
+        },
+        "why": "Same — an order-status screen. FE has a 32-file `order` folder.",
+        "decision": null
+      },
+      {
+        "name": "home",
+        "figma": true,
+        "storybook": false,
+        "feUsage": null,
+        "figmaTokens": 5,
+        "proposed": {
+          "level": "not-a-component",
+          "scope": "project"
+        },
+        "why": "A page. FE has a 27-file `home` folder.",
+        "decision": null
+      },
+      {
+        "name": "profile",
+        "figma": true,
+        "storybook": false,
+        "feUsage": null,
+        "figmaTokens": 10,
+        "proposed": {
+          "level": "not-a-component",
+          "scope": "project"
+        },
+        "why": "A page. FE has a 30-file `profile` folder.",
+        "decision": null
+      },
+      {
+        "name": "lottery",
+        "figma": true,
+        "storybook": false,
+        "feUsage": null,
+        "figmaTokens": 9,
+        "proposed": {
+          "level": "molecule",
+          "scope": "project"
+        },
+        "why": "A lottery ticket display is genuinely reusable within this product — this one may deserve to become a real component, unlike its neighbours.",
+        "decision": null
+      },
+      {
+        "name": "jidrit-lucky",
+        "figma": true,
+        "storybook": false,
+        "feUsage": null,
+        "figmaTokens": 9,
+        "proposed": {
+          "level": "not-a-component",
+          "scope": "feature"
+        },
+        "why": "One feature's surface.",
+        "decision": null
+      }
+    ]
+  },
+  "frontend_only": {
+    "_note": "In the Frontend, unknown to both Figma and Storybook. Ranked by measured usage, because that is the Standard's evidence for promotion. Anything at or above two usages is a candidate; the question for each is whether it is a design-system concern or app code.",
+    "strong_candidates": [
+      {
+        "name": "dash-line",
+        "feUsage": 49,
+        "proposed": {
+          "level": "atom",
+          "scope": "global"
+        },
+        "why": "Second most-used component in the whole Frontend and it exists nowhere in the design system. It is a divider — `semantic.colors.divider.*` already has tokens for it."
+      },
+      {
+        "name": "footer-button",
+        "feUsage": 20,
+        "proposed": {
+          "level": "molecule",
+          "scope": "global"
+        },
+        "why": "A sticky action bar. Twenty usages means it is a real pattern, not a one-off."
+      },
+      {
+        "name": "typography",
+        "feUsage": 17,
+        "proposed": {
+          "level": "atom",
+          "scope": "global"
+        },
+        "why": "A text component wrapping the type scale. Storybook documents typography but ships no component to apply it."
+      },
+      {
+        "name": "title-with-underline",
+        "feUsage": 12,
+        "proposed": {
+          "level": "molecule",
+          "scope": "global"
+        },
+        "why": "A section heading treatment used across twelve places."
+      },
+      {
+        "name": "skeleton",
+        "feUsage": 9,
+        "proposed": {
+          "level": "atom",
+          "scope": "global"
+        },
+        "why": "Loading placeholder. Pairs with `loading`; the DS has one and not the other."
+      },
+      {
+        "name": "image-upload",
+        "feUsage": 5,
+        "proposed": {
+          "level": "molecule",
+          "scope": "global"
+        },
+        "why": "Used in KYC and profile flows."
+      },
+      {
+        "name": "accordion",
+        "feUsage": 3,
+        "proposed": {
+          "level": "molecule",
+          "scope": "global"
+        },
+        "why": "Standard §3.4 lists accordion-item as a canonical molecule."
+      },
+      {
+        "name": "infinity-scroll",
+        "feUsage": 3,
+        "proposed": {
+          "level": "helper",
+          "scope": "global"
+        },
+        "why": "A behaviour, not a visual — the Standard's `helper` category, with no variants or states."
+      },
+      {
+        "name": "contacts-information",
+        "feUsage": 3,
+        "proposed": {
+          "level": "molecule",
+          "scope": "project"
+        },
+        "why": "Product-specific content block."
+      },
+      {
+        "name": "scroll-to-top-button",
+        "feUsage": 2,
+        "proposed": {
+          "level": "atom",
+          "scope": "global"
+        },
+        "why": "Composable from icon-button once that exists."
+      }
+    ],
+    "weak_candidates": [
+      {
+        "name": "alert",
+        "feUsage": 1,
+        "note": "Canonical in the Standard (§3.4 molecule) but barely used here. Possibly superseded by toast."
+      },
+      {
+        "name": "banner",
+        "feUsage": 1,
+        "note": "Ambiguous name — the Standard flags `banner` as living at either atom or molecule depending on composition."
+      },
+      {
+        "name": "notification",
+        "feUsage": 1,
+        "note": "Overlaps toast. Decide whether they are one component or two."
+      },
+      {
+        "name": "countdown-timer",
+        "feUsage": 1,
+        "note": "Central to the 24-hour reservation flow in the PRD, so it may matter more than its usage count suggests."
+      },
+      {
+        "name": "expandable-section",
+        "feUsage": 1,
+        "note": "Likely the same idea as accordion."
+      },
+      {
+        "name": "birthday-dropdown",
+        "feUsage": 1,
+        "note": "A dropdown variant, not a component."
+      },
+      {
+        "name": "action-buttons",
+        "feUsage": 1,
+        "note": "A button-group. The Standard lists button-group as a canonical molecule."
+      },
+      {
+        "name": "announcements-image",
+        "feUsage": 1
+      },
+      {
+        "name": "how-to-use-footer-answer-card",
+        "feUsage": 2
+      },
+      {
+        "name": "highlight-lottery-header",
+        "feUsage": 2
+      }
+    ],
+    "product_specific": [
+      {
+        "name": "lottery-set-display",
+        "feUsage": 5
+      },
+      {
+        "name": "lottery-set-display-modal",
+        "feUsage": 5
+      },
+      {
+        "name": "lottery-image",
+        "feUsage": 5
+      },
+      {
+        "name": "header-banner-safe",
+        "feUsage": 5
+      },
+      {
+        "name": "jidrid-picked-display-list",
+        "feUsage": 4
+      },
+      {
+        "name": "jidrid-item-number",
+        "feUsage": 4
+      },
+      {
+        "name": "jidrid-item",
+        "feUsage": 3
+      },
+      {
+        "name": "scan-lottery-banner",
+        "feUsage": 3
+      },
+      {
+        "name": "nok-cash-card",
+        "feUsage": 3
+      },
+      {
+        "name": "new-feature-label",
+        "feUsage": 3
+      },
+      {
+        "name": "profile-image",
+        "feUsage": 2
+      },
+      {
+        "name": "profile-navbar",
+        "feUsage": 3
+      }
+    ],
+    "dead_code": [
+      {
+        "name": "prize-list",
+        "feUsage": 0
+      },
+      {
+        "name": "lotteries",
+        "feUsage": 0,
+        "note": "13 files, imported by nothing."
+      },
+      {
+        "name": "cart-balance",
+        "feUsage": 0
+      }
+    ]
+  },
+  "duplicates_to_resolve": {
+    "_note": "The Frontend carries two implementations of the same idea in four places. Each pair needs one to win before the design system can model it.",
+    "items": [
+      {
+        "pair": [
+          "global-modal",
+          "modal"
+        ],
+        "usage": [
+          28,
+          15
+        ],
+        "in_ds": "modal"
+      },
+      {
+        "pair": [
+          "loading-spin",
+          "loading-screen"
+        ],
+        "usage": [
+          26,
+          9
+        ],
+        "in_ds": "loading"
+      },
+      {
+        "pair": [
+          "input",
+          "textarea"
+        ],
+        "usage": [
+          16,
+          3
+        ],
+        "in_ds": "text-field",
+        "note": "Arguably correct to keep separate — a textarea is multi-line."
+      },
+      {
+        "pair": [
+          "tabs",
+          "tabs-underline"
+        ],
+        "usage": [
+          6,
+          1
+        ],
+        "in_ds": "tabs",
+        "note": "Storybook already models underline as a variant."
+      },
+      {
+        "pair": [
+          "accordion",
+          "expandable-section"
+        ],
+        "usage": [
+          3,
+          1
+        ],
+        "in_ds": null
+      },
+      {
+        "pair": [
+          "toast",
+          "notification",
+          "alert"
+        ],
+        "usage": [
+          1,
+          1,
+          1
+        ],
+        "in_ds": "toast",
+        "note": "Three components, three total usages — likely one idea split three ways."
+      }
+    ]
+  },
+  "questions_for_the_team": [
+    "ANSWERED — checkbox and bottom-sheet are built and verified against their Figma component sets.",
+    "ANSWERED — typography: Figma already ships it as `writting / Text Container`. The question is no longer whether to adopt the Frontend's version but whether to build Figma's.",
+    "avatar is a real Figma atom with no colour tokens and no Storybook component. Build it?",
+    "Button has seven component sets in Figma and the library models one. `bottom-action-bar2` appears to be the Frontend's `footer-button` (20 usages) — absorb it as a Button variant, or model it separately?",
+    "`dash-line` is used 49 times, the semantic layer has `divider` tokens, and Figma has no divider component at all. Does a component get built from tokens alone, or does Figma draw it first?",
+    "116 logos-and-graphics components exist in Figma and in nobody's plan. Asset library or component set?",
+    "header and footer are separate Figma pages with 10 sets between them, but share one `top-and-footer` token group. Which shape is right?",
+    "navigation-bar carries two sets explicitly marked old-version. Delete them in Figma before the rename, or leave them?",
+    "`carts`, `orders`, `home`, `profile`, `jidrit-lucky` have a Figma token tier shaped exactly like button's, but they are screens. Should app surfaces carry component-tier tokens?",
+    "Which of each duplicated Frontend pair wins? Six pairs, listed above.",
+    "Is `lottery` a project-scope component or a page surface?"
+  ],
+  "figma_components_without_tokens": {
+    "_note": "Real components in Figma that ship no colour group, so the token mirror never saw them. This is the inverse of Tooltip, which the library models without Figma tokens.",
+    "items": [
+      {
+        "name": "avatar",
+        "figmaPage": "Avatar ✅",
+        "sets": 1,
+        "variants": "Type=Member|Avatar|Guest x On bg Red x Show Edit, 40x40",
+        "feUsage": null,
+        "feFolder": "components/avatar (7 files)",
+        "storybook": false,
+        "proposed": {
+          "level": "atom",
+          "scope": "global"
+        },
+        "why": "A real atom with a full variant matrix in Figma and an implementation in the Frontend. Missed entirely by the first inventory because it has no colour tokens.",
+        "decision": null
+      },
+      {
+        "name": "writting / Text Container",
+        "figmaPage": "writting 🖋️",
+        "sets": 1,
+        "feUsage": 17,
+        "feFolder": "components/common/typography",
+        "storybook": false,
+        "proposed": {
+          "level": "atom",
+          "scope": "global"
+        },
+        "why": "This answers the open question about typography: Figma already ships the component. The library documents the type scale but has nothing that applies it, so the Frontend built its own and uses it 17 times.",
+        "decision": null
+      },
+      {
+        "name": "logos-and-graphics",
+        "figmaPage": "logos-and-graphics ✅",
+        "sets": 6,
+        "componentCount": 116,
+        "feUsage": null,
+        "storybook": false,
+        "proposed": {
+          "level": "atom",
+          "scope": "global"
+        },
+        "why": "Bank logos, social icons, illustrated cards. 116 components absent from every design-system conversation so far. Probably an asset library rather than a component, but that is a decision nobody has made.",
+        "decision": null
+      },
+      {
+        "name": "header",
+        "figmaPage": "header ✅",
+        "sets": 6,
+        "componentCount": 42,
+        "feUsage": null,
+        "feFolder": "components/header (2), components/navbar (10)",
+        "storybook": false,
+        "proposed": {
+          "level": "organism",
+          "scope": "project"
+        },
+        "why": "Six component sets — appbar-main, appbar-sub-page, top-navigation-home, and three header-bar variants. The first inventory folded this into `top-and-footer` because that is what the token group is called.",
+        "decision": null
+      },
+      {
+        "name": "footer",
+        "figmaPage": "footer ✅",
+        "sets": 4,
+        "componentCount": 18,
+        "feUsage": null,
+        "feFolder": "components/footer (1)",
+        "storybook": false,
+        "proposed": {
+          "level": "organism",
+          "scope": "project"
+        },
+        "why": "Separate page from header in Figma, sharing three sets with it. One `top-and-footer` token group covers both.",
+        "decision": null
+      }
+    ]
+  },
+  "figma_sets_the_library_does_not_model": {
+    "_note": "Where Figma ships several component sets on one page and the library models one of them. Each extra set is either a variant the library should absorb, or a component in its own right.",
+    "items": [
+      {
+        "page": "button",
+        "sets": 7,
+        "modelled": "button",
+        "unmodelled": [
+          "button-on-cont",
+          "button-special",
+          "button-see-more_lottery",
+          "button-see-more_order",
+          "bottom-action-bar2"
+        ],
+        "note": "`bottom-action-bar2` looks like the Frontend's `footer-button`, used 20 times — so that gap has a Figma home after all. `button-on-cont` is already recorded in components.json as an unmodelled variant."
+      },
+      {
+        "page": "tabs",
+        "sets": 5,
+        "modelled": "horizontal-tabs-underline + horizontal-tabs_button",
+        "unmodelled": [
+          "tabs-for-orders",
+          "Component 1",
+          "Desktop-detail menu list"
+        ],
+        "note": "`Component 1` is an unnamed set — Figma hygiene."
+      },
+      {
+        "page": "navigation-bar",
+        "sets": 4,
+        "modelled": "navigation-bar/Mobile-v2",
+        "unmodelled": [
+          ".navigation-bar-v2 [Old-Version]",
+          ".navigation-bar-v1",
+          "Navigation"
+        ],
+        "note": "Two sets are explicitly marked as old versions. Dead weight in the Figma file, not gaps in the library."
+      },
+      {
+        "page": "modal",
+        "sets": 3,
+        "modelled": "modal-state",
+        "unmodelled": [
+          "popup-jidrid",
+          "popup-tutorial"
+        ],
+        "note": "Feature-specific popups, probably project scope rather than library components."
+      },
+      {
+        "page": "dropdown",
+        "sets": 2,
+        "modelled": "dropdown",
+        "unmodelled": [
+          "dropdown-date"
+        ],
+        "note": "A date picker — the Standard lists date-picker as its own molecule."
+      },
+      {
+        "page": "radio-buttons",
+        "sets": 2,
+        "modelled": "radio-buttons",
+        "unmodelled": [
+          "Gender select"
+        ],
+        "note": "A composed usage rather than a component."
+      },
+      {
+        "page": "progress-bar",
+        "sets": 2,
+        "modelled": "progress-bars-lottery",
+        "unmodelled": [
+          "progress-bars-nokcash"
+        ],
+        "note": "Two products, two progress treatments."
+      },
+      {
+        "page": "tooltip",
+        "sets": 0,
+        "modelled": "tooltip",
+        "unmodelled": [],
+        "note": "Zero component sets. Tooltip has neither a colour group nor a component set — the library models it from the semantic layer alone."
+      },
+      {
+        "page": "profile",
+        "sets": 9,
+        "modelled": "header-profile (as ProfileSummary) + header-bar-profile-moblie (as ProfileHeader)",
+        "unmodelled": [
+          "nokcash-profile",
+          "summary-icon-profile",
+          ".info-slot-profile",
+          ".hamburger-slot-profile",
+          "hamburger-slot-profile",
+          "infomation-menu-card",
+          "[Mobile] menu-banner",
+          "[Desktop] menu-banner"
+        ],
+        "note": "Read 2026-08-21 while fixing the ProfileSummary rule. The first two are the insides of the block the library already ships: `nokcash-profile` (15006:91960) is the balance row — a 76x48 card, a 14/22 label over a 16/24 figure, and the top-up button — and `summary-icon-profile` (15006:91931) is one counter, a 32px logo beside a 16/24 figure over a 10/18 unit, instantiated three times. ProfileSummary takes both as `balance` and `counters` slots, so the Profile page draws them by hand: right values, right roles, but three copies of one counter rather than one component used three times. Figma has componentised them and the library has not — that is the gap, and it is the only one on this page where Figma is ahead of us rather than the other way round. The leading-dot sets are Figma-private helpers."
+      }
+    ]
+  },
+  "logos_and_graphics": {
+    "status": "RESOLVED 2026-08-19 — imported as files, not icons.",
+    "counted": "107 components on Figma's `logos-and-graphics` page: 101 at 80x80, four `logo-icon/*` sets at 32 with a Default and a Hover, plus `noti-error` and `Card`, which are components rather than marks.",
+    "why_not_icons": "70 of the 107 carry unbound multi-colour fills — 229 distinct colours across the page — and several are third-party brand marks. `Icon` exposes a `color` prop; putting these behind it would let any caller tint a bank's logo. Rendering them as `<img>` removes that by construction rather than by a rule someone has to remember.",
+    "format_rule": "Measured, not preferred: export SVG, keep it if 20KB or under, otherwise compare against a 3x PNG and keep the smaller. `gp-jidrit-search` went from 412KB to 26KB, `logo-bank-gsb` from 187KB to 18KB. Final set: 109 files, 26 SVG and 83 PNG, 2.6MB on disk and none of it bundled.",
+    "where": "UI Library/assets/logos, served by `staticDirs`. The manifest at UI Library/logos/logos.generated.ts is built by listing that directory, so it cannot name a file that is not there.",
+    "not_imported": "Nothing. Both hold-outs were resolved on 2026-08-19 and neither turned out to be an asset question: `noti-error` is a component set that arranges an illustration, a heading and the action bar — it became the ErrorState organism, and its three illustrations were already in the manifest. `Card` is a card face plus an id — it became LotteryCard, and its three rasters were exported as `card-lottery-l|m|s`.",
+    "figma_gap": "`logo-bank-gsb` is 39 paths with a single 57KB `d` attribute — 25x the next largest logo. It looks auto-traced rather than drawn, and it is the reason that logo had to ship as a raster. Confirmed on 2026-08-19: it exports at 187KB as SVG against 18KB as a 3x PNG, so it ships as a raster and cannot be recoloured or scaled cleanly. Worth redrawing.",
+    "line_drawn": "Artwork is an asset; an arrangement of artwork is a component. `noti-error` sits on the logos-and-graphics page and looks like a picture, but opening it shows nothing new was ever drawn — every part already existed in the library."
+  }
+}

@@ -5,22 +5,37 @@ import Icon from '../../icons/Icon';
 import '../../icons/icon-data';
 import Button from '../Button/Button';
 import {
-  TOOLTIP_COLORS,
-  TOOLTIP_DIMENSIONS,
-  TYPOGRAPHY,
-  RADIUS,
-  SHADOW,
+  TOOLTIP_POSITIONS,
+  TOOLTIP_TRIGGER_ICON_SIZE,
+  TOOLTIP_FIGMA_GAP,
+  tooltipValue,
+  tooltipTokenNames,
 } from './tokens';
+import { sysValue } from '../../foundations/tokens';
 import ColorBindingsTable from '../../system/ColorBindingsTable';
-import type { ColorBinding } from '../../system/ColorBindingsTable';
 
 // ═══════════════════════════════════════════
 //  Tooltip Stories — Lotteryplus Design System
 //  Figma: tool-tip page
+//
+//  Values shown here are read from foundations/tokens.generated.ts, which is generated
+//  from the same source the component renders with, so a table can never claim a value
+//  Tooltip does not actually paint.
+//
+//  ⚠️ Tooltip is the one component with NO Figma component-tier colour group. See the
+//  "Figma Gap" story.
 // ═══════════════════════════════════════════
 
+const sans = "'Graphik TH', sans-serif";
+const mono = 'ui-monospace, SFMono-Regular, Menlo, monospace';
+
+const GAP_SUMMARY =
+  'Figma V.7.1 has no `colors/tooltip` group. Unlike every other component, Tooltip’s ' +
+  'colour tokens are authored against the Tier 1 semantic layer instead of mirrored from ' +
+  'Figma — see the “Figma Gap” story.';
+
 const meta: Meta<typeof Tooltip> = {
-  title: 'Components/Tooltip',
+  title: 'Molecules/Tooltip',
   component: Tooltip,
   tags: ['autodocs'],
   parameters: {
@@ -31,12 +46,13 @@ const meta: Meta<typeof Tooltip> = {
         component:
           'Tooltip component from Figma Design System. Dark background with title + description. ' +
           'Supports 4 positions (top/bottom/left/right). Shows on hover or controlled. ' +
-          'Uses Icon component for trigger.',
+          'Uses Icon component for trigger.\n\n**Token gap:** ' +
+          GAP_SUMMARY,
       },
     },
   },
   argTypes: {
-    position: { control: 'select', options: ['top', 'bottom', 'left', 'right'] },
+    position: { control: 'select', options: TOOLTIP_POSITIONS },
   },
 };
 export default meta;
@@ -45,16 +61,20 @@ type Story = StoryObj<typeof Tooltip>;
 const sampleTitle = 'Title';
 const sampleContent = 'Lorem ipsum dolor sit amet consectetur. Auctor nec in mauris fermentum faucibus';
 
+const caption: React.CSSProperties = {
+  fontSize: 11,
+  color: 'var(--sys-color-text-tertiary-default)',
+  fontFamily: sans,
+};
+
 // ── 1. Bubble Only (Figma match) ──
 export const BubbleOnly: Story = {
   name: 'Bubble Only (Figma Match)',
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 40, padding: 40 }}>
-      {(['top', 'bottom', 'left', 'right'] as const).map((pos) => (
+      {TOOLTIP_POSITIONS.map((pos) => (
         <div key={pos} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-          <div style={{ fontSize: 11, color: '#999', fontFamily: "'Graphik TH', sans-serif" }}>
-            position=&quot;{pos}&quot;
-          </div>
+          <div style={caption}>position=&quot;{pos}&quot;</div>
           <Tooltip title={sampleTitle} content={sampleContent} position={pos} />
         </div>
       ))}
@@ -67,13 +87,15 @@ export const AllPositions: Story = {
   name: 'All Positions',
   render: () => (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 120, justifyContent: 'center', padding: 200 }}>
-      {(['top', 'bottom', 'left', 'right'] as const).map((pos) => (
+      {TOOLTIP_POSITIONS.map((pos) => (
         <div key={pos} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-          <div style={{ fontSize: 11, color: '#999', fontFamily: "'Graphik TH', sans-serif" }}>
-            position=&quot;{pos}&quot;
-          </div>
+          <div style={caption}>position=&quot;{pos}&quot;</div>
           <Tooltip title={sampleTitle} content={sampleContent} position={pos}>
-            <Icon name="outline-info" size={24} customColor="#262626" />
+            <Icon
+              name="outline-info"
+              size={TOOLTIP_TRIGGER_ICON_SIZE as any}
+              customColor={tooltipValue('trigger-icon-foreground')}
+            />
           </Tooltip>
         </div>
       ))}
@@ -87,15 +109,27 @@ export const Interactive: Story = {
   render: () => (
     <div style={{ padding: 100, display: 'flex', gap: 48, justifyContent: 'center' }}>
       <Tooltip title="ข้อมูลเพิ่มเติม" content="Hover เพื่อดูรายละเอียดเพิ่มเติม" position="top">
-        <Icon name="outline-info" size={24} customColor="#262626" />
+        <Icon
+          name="outline-info"
+          size={TOOLTIP_TRIGGER_ICON_SIZE as any}
+          customColor={tooltipValue('trigger-icon-foreground')}
+        />
       </Tooltip>
 
       <Tooltip title="แจ้งเตือน" content="มีการอัพเดทใหม่" position="bottom">
-        <Icon name="filled-Error-2" size={24} customColor="#E32321" />
+        <Icon
+          name="filled-Error-2"
+          size={TOOLTIP_TRIGGER_ICON_SIZE as any}
+          customColor={sysValue('color-status-error-default')}
+        />
       </Tooltip>
 
       <Tooltip content="ไม่มี title — แสดงเฉพาะ description" position="top">
-        <Icon name="outline-help" size={24} customColor="#737373" />
+        <Icon
+          name="outline-Help"
+          size={TOOLTIP_TRIGGER_ICON_SIZE as any}
+          customColor={sysValue('color-text-tertiary-default')}
+        />
       </Tooltip>
     </div>
   ),
@@ -107,11 +141,11 @@ export const WithButton: Story = {
   render: () => (
     <div style={{ padding: 100, display: 'flex', gap: 48, justifyContent: 'center' }}>
       <Tooltip title="ซื้อสินค้า" content="กดปุ่มเพื่อเพิ่มสินค้าในตะกร้า" position="top">
-        <Button type="primary" size="M">เพิ่มลงตะกร้า</Button>
+        <Button variant="primary" size="md">เพิ่มลงตะกร้า</Button>
       </Tooltip>
 
       <Tooltip content="คุณต้องเข้าสู่ระบบก่อน" position="bottom">
-        <Button type="outline" size="M" disabled>เข้าสู่ระบบ</Button>
+        <Button variant="ghost" size="md" disabled>เข้าสู่ระบบ</Button>
       </Tooltip>
     </div>
   ),
@@ -123,15 +157,15 @@ export const Variations: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 32, alignItems: 'center', padding: 40 }}>
       <div>
-        <div style={{ fontSize: 11, color: '#999', marginBottom: 8, fontFamily: "'Graphik TH', sans-serif" }}>Title + Body</div>
+        <div style={{ ...caption, marginBottom: 8 }}>Title + Body</div>
         <Tooltip title="Title" content="Description body text" position="top" />
       </div>
       <div>
-        <div style={{ fontSize: 11, color: '#999', marginBottom: 8, fontFamily: "'Graphik TH', sans-serif" }}>Body Only (no title)</div>
+        <div style={{ ...caption, marginBottom: 8 }}>Body Only (no title)</div>
         <Tooltip content="Description body text only" position="top" />
       </div>
       <div>
-        <div style={{ fontSize: 11, color: '#999', marginBottom: 8, fontFamily: "'Graphik TH', sans-serif" }}>Long Text</div>
+        <div style={{ ...caption, marginBottom: 8 }}>Long Text</div>
         <Tooltip
           title="Long Title Example"
           content="Lorem ipsum dolor sit amet consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore."
@@ -143,84 +177,228 @@ export const Variations: Story = {
   ),
 };
 
+// ═══════════════════════════════════════════
+//  Token chain
+//
+//  Tier 1 partner for every Tier 2 token. Colours come from TOOLTIP_FIGMA_GAP.colorChain
+//  — the hand-authored substitute for the Figma group Tooltip does not have. Tokens
+//  missing from this map carry no semantic partner and are marked "(fixed)".
+// ═══════════════════════════════════════════
+const TIER1: Record<string, string> = {
+  ...TOOLTIP_FIGMA_GAP.colorChain,
+
+  radius: 'radius-lg',
+  padding: 'spacing-xl',
+  gap: 'spacing-none',
+  offset: 'spacing-sm',
+  shadow: 'elevation-card',
+
+  'typography-title-family': 'type-body-md-medium-family',
+  'typography-title-size': 'type-body-md-medium-size',
+  'typography-title-line-height': 'type-body-md-medium-line-height',
+  'typography-title-weight': 'type-body-md-medium-weight',
+  'typography-title-tracking': 'type-body-md-medium-tracking',
+
+  'typography-body-family': 'type-body-md-regular-family',
+  'typography-body-size': 'type-body-md-regular-size',
+  'typography-body-line-height': 'type-body-md-regular-line-height',
+  'typography-body-weight': 'type-body-md-regular-weight',
+  'typography-body-tracking': 'type-body-md-regular-tracking',
+};
+
+const th: React.CSSProperties = {
+  textAlign: 'left',
+  padding: '8px 12px',
+  fontSize: 11,
+  fontWeight: 600,
+  color: 'var(--sys-color-text-tertiary-default)',
+  borderBottom: '2px solid var(--sys-color-border-accent-gray-soft-light)',
+};
+const td: React.CSSProperties = {
+  padding: '6px 12px',
+  borderBottom: '1px solid var(--sys-color-background-light)',
+  fontFamily: mono,
+  fontSize: 11,
+};
+
 // ── 6. Token Verification ──
-export const TokenVerification: Story = {
-  name: 'Token Verification',
-  render: () => {
-    const tokens = [
-      { section: 'Layout', items: [
-        { token: 'Content padding', figmaVar: 'N/A (12px)', value: `${TOOLTIP_DIMENSIONS.content.padding}px`, actual: '12px' },
-        { token: 'Content max-width', figmaVar: 'N/A (326px)', value: `${TOOLTIP_DIMENSIONS.content.maxWidth}px`, actual: '326px' },
-        { token: 'Content radius (Radius-S)', figmaVar: 'Radius/Radius-S', value: `${RADIUS.s}px`, actual: '8px' },
-        { token: 'Arrow width', figmaVar: 'N/A (16px)', value: `${TOOLTIP_DIMENSIONS.arrow.width}px`, actual: '16px' },
-        { token: 'Arrow height', figmaVar: 'N/A (8px)', value: `${TOOLTIP_DIMENSIONS.arrow.height}px`, actual: '8px' },
-        { token: 'Trigger icon size', figmaVar: 'N/A (24px)', value: `${TOOLTIP_DIMENSIONS.triggerIconSize}px`, actual: '24px' },
-      ]},
-      { section: 'Colors', items: [
-        { token: 'BG (overlay-black-80%)', figmaVar: 'colors/overlay/overlay-black-80%', value: TOOLTIP_COLORS.bg, actual: 'rgba(0, 0, 0, 0.80)' },
-        { token: 'Text (Text-Onbgcolor)', figmaVar: 'Color/Text/Text-Onbgcolor', value: TOOLTIP_COLORS.text, actual: '#FFFFFF' },
-        { token: 'Arrow fill', figmaVar: 'colors/overlay/overlay-black-80%', value: TOOLTIP_COLORS.arrow, actual: 'rgba(0, 0, 0, 0.80)' },
-        { token: 'Trigger icon (icon-fg-secondary)', figmaVar: 'colors/icon/icon-fg-secondary', value: TOOLTIP_COLORS.triggerIcon, actual: '#262626' },
-      ]},
-      { section: 'Typography', items: [
-        { token: 'Title fontSize (body/m-med)', figmaVar: 'body/m-med/size', value: `${TYPOGRAPHY.title.fontSize}px`, actual: '14px' },
-        { token: 'Title fontWeight', figmaVar: 'body/m-med/weight', value: `${TYPOGRAPHY.title.fontWeight}`, actual: '500' },
-        { token: 'Title lineHeight', figmaVar: 'body/m-med/line-height', value: TYPOGRAPHY.title.lineHeight, actual: '22px' },
-        { token: 'Body fontSize (body/m-reg)', figmaVar: 'body/m-reg/size', value: `${TYPOGRAPHY.body.fontSize}px`, actual: '14px' },
-        { token: 'Body fontWeight', figmaVar: 'body/m-reg/weight', value: `${TYPOGRAPHY.body.fontWeight}`, actual: '400' },
-        { token: 'Body lineHeight', figmaVar: 'body/m-reg/line-height', value: TYPOGRAPHY.body.lineHeight, actual: '22px' },
-      ]},
-    ];
+export const TokenVerification: StoryObj = {
+  name: '🔍 Token Chain',
+  render: () => (
+    <div style={{ fontFamily: sans, maxWidth: 900, padding: 32 }}>
+      <h2 style={{ margin: '0 0 8px', fontSize: 20 }}>Tooltip token chain</h2>
+      <p style={{ margin: '0 0 20px', fontSize: 13, color: 'var(--sys-color-text-tertiary-default)' }}>
+        The component renders the Tier 2 alias; the alias points at a Tier 1 semantic
+        token; that resolves to the literal. Every value below is read from
+        <code style={{ fontFamily: mono }}> tokens.generated.ts</code> — nothing is hand-typed,
+        so this table cannot drift from what Tooltip paints.
+      </p>
 
-    return (
-      <div style={{ padding: 32, maxWidth: 700, fontFamily: "'Graphik TH', sans-serif" }}>
-        <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>Tooltip Token Verification</h2>
-        <p style={{ fontSize: 13, color: '#999', marginBottom: 24 }}>Figma: tool-tip page</p>
-
-        {/* Live preview */}
-        <div style={{ padding: 24, background: '#F9F9F9', borderRadius: 8, marginBottom: 32, border: '1px solid #E5E5E5', display: 'flex', justifyContent: 'center' }}>
-          <Tooltip title={sampleTitle} content={sampleContent} position="top" />
-        </div>
-
-        {tokens.map(({ section, items }) => (
-          <div key={section} style={{ marginBottom: 24 }}>
-            <h3 style={{ fontSize: 16, fontWeight: 600, color: '#E32321', borderBottom: '2px solid #E32321', paddingBottom: 4, marginBottom: 12 }}>{section}</h3>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-              <thead>
-                <tr>{['Token', 'Figma Variable', 'Value', 'Match'].map(h => (
-                  <th key={h} style={{ textAlign: 'left', padding: '6px 10px', borderBottom: '2px solid #DDD', fontWeight: 600 }}>{h}</th>
-                ))}</tr>
-              </thead>
-              <tbody>
-                {items.map(({ token, figmaVar, value, actual }) => (
-                  <tr key={token}>
-                    <td style={{ padding: '5px 10px', borderBottom: '1px solid #EEE' }}>{token}</td>
-                    <td style={{ padding: '5px 10px', borderBottom: '1px solid #EEE', color: '#8B8BF5', fontSize: 11, fontFamily: 'monospace' }}>{figmaVar}</td>
-                    <td style={{ padding: '5px 10px', borderBottom: '1px solid #EEE', color: '#22C55E', fontFamily: 'monospace' }}>{value}</td>
-                    <td style={{ padding: '5px 10px', borderBottom: '1px solid #EEE', fontSize: 16 }}>{value === actual ? '✅' : '❌'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ))}
+      <div
+        style={{
+          padding: 24,
+          background: 'var(--sys-color-background-soft-light)',
+          borderRadius: 'var(--sys-radius-lg)',
+          border: '1px solid var(--sys-color-border-accent-gray-soft-light)',
+          marginBottom: 28,
+          display: 'flex',
+          justifyContent: 'center',
+        }}
+      >
+        <Tooltip title={sampleTitle} content={sampleContent} position="top" />
       </div>
-    );
-  },
+
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <thead>
+          <tr>
+            <th style={th}>Tier 2 — component</th>
+            <th style={th}>Tier 1 — semantic</th>
+            <th style={th}>Value</th>
+            <th style={th}>Tiers agree</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tooltipTokenNames().map((token) => {
+            const path = TIER1[token];
+            const value = tooltipValue(token);
+            return (
+              <tr key={token}>
+                <td style={{ ...td, color: 'var(--sys-color-primary-default)' }}>
+                  --tooltip-{token}
+                </td>
+                <td style={{ ...td, color: 'var(--sys-color-status-info-default)' }}>
+                  {path ? `--sys-${path}` : '(fixed)'}
+                </td>
+                <td style={{ ...td, color: 'var(--sys-color-status-success-dark)' }}>{value}</td>
+                <td style={td}>
+                  {path ? (sysValue(path) === value ? '✅' : '❌') : '—'}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  ),
+  parameters: { layout: 'padded' },
 };
 
 // ── 7. Color Bindings ──
 export const ColorBindings: StoryObj = {
   name: 'Color Bindings',
   render: () => (
-    <ColorBindingsTable
-      componentName="Tooltip"
-      figmaId="tool-tip page"
-      bindings={[
-        { token: 'overlay-black-80%', figmaVariable: 'colors/overlay/overlay-black-80%', hex: '#000000CC', usage: 'Tooltip background + arrow' },
-        { token: 'Text-Onbgcolor', figmaVariable: 'Color/Text/Text-Onbgcolor', hex: '#FFFFFF', usage: 'Title + body text' },
-        { token: 'icon-fg-secondary', figmaVariable: 'colors/icon/icon-fg-secondary', hex: '#262626', usage: 'Trigger info icon color' },
-      ]}
-    />
+    <div>
+      <ColorBindingsTable
+        componentName="Tooltip"
+        figmaId="tool-tip page — NO component-tier colour group (see Figma Gap)"
+        bindings={[
+          {
+            token: '--tooltip-background',
+            figmaVariable: '— (authored) → --sys-color-overlay-heavy',
+            hex: tooltipValue('background'),
+            usage: 'Tooltip bubble background',
+          },
+          {
+            token: '--tooltip-arrow-background',
+            figmaVariable: '— (authored) → --sys-color-overlay-heavy',
+            hex: tooltipValue('arrow-background'),
+            usage: 'Caret fill',
+          },
+          {
+            token: '--tooltip-foreground',
+            figmaVariable: '— (authored) → --sys-color-text-on-bgcolor',
+            hex: tooltipValue('foreground'),
+            usage: 'Title + body text',
+          },
+          {
+            token: '--tooltip-trigger-icon-foreground',
+            figmaVariable: '— (authored) → --sys-color-text-secondary-default',
+            hex: tooltipValue('trigger-icon-foreground'),
+            usage: 'Trigger info icon colour',
+          },
+        ]}
+      />
+      <p style={{ ...caption, maxWidth: 800, padding: '0 24px', lineHeight: 1.6 }}>
+        Every other component binds these to a Figma variable. Tooltip has none to bind to —
+        the “Figma Variable” column shows the semantic token standing in for it.
+      </p>
+    </div>
   ),
+};
+
+// ── 8. Figma Gap — the reason this component is different ──
+export const FigmaGap: StoryObj = {
+  name: '⚠️ Figma Gap',
+  render: () => (
+    <div style={{ fontFamily: sans, maxWidth: 820, padding: 32, lineHeight: 1.6 }}>
+      <h2 style={{ margin: '0 0 8px', fontSize: 20 }}>Tooltip has no Figma colour group</h2>
+
+      <div
+        style={{
+          background: 'var(--sys-color-status-warning-soft-light)',
+          border: '1px solid var(--sys-color-border-warning)',
+          borderRadius: 'var(--sys-radius-lg)',
+          padding: 16,
+          fontSize: 13,
+          margin: '0 0 24px',
+        }}
+      >
+        {TOOLTIP_FIGMA_GAP.note}
+      </div>
+
+      <p style={{ fontSize: 13, margin: '0 0 16px' }}>
+        For every other component the chain runs
+        <code style={{ fontFamily: mono }}> Figma colors/&lt;component&gt; → components.json → --&lt;prefix&gt;-* </code>.
+        Tooltip skips the first hop: <code style={{ fontFamily: mono }}>figma_group</code> is{' '}
+        <code style={{ fontFamily: mono }}>{String(TOOLTIP_FIGMA_GAP.figmaGroup)}</code> and the
+        colours are authored in{' '}
+        <code style={{ fontFamily: mono }}>design-library/lotteryplus/components/tooltip.json</code>{' '}
+        against Tier 1 directly.
+      </p>
+
+      <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 24 }}>
+        <thead>
+          <tr>
+            <th style={th}>Tier 2 — component</th>
+            <th style={th}>Figma group</th>
+            <th style={th}>Tier 1 stand-in</th>
+            <th style={th}>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Object.entries(TOOLTIP_FIGMA_GAP.colorChain).map(([token, path]) => (
+            <tr key={token}>
+              <td style={{ ...td, color: 'var(--sys-color-primary-default)' }}>--tooltip-{token}</td>
+              <td style={{ ...td, color: 'var(--sys-color-text-state-light-gray)' }}>— none —</td>
+              <td style={{ ...td, color: 'var(--sys-color-status-info-default)' }}>--sys-{path}</td>
+              <td style={td}>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  <span
+                    style={{
+                      width: 14,
+                      height: 14,
+                      borderRadius: 3,
+                      background: sysValue(path),
+                      border: '1px solid var(--sys-color-border-accent-gray-light)',
+                    }}
+                  />
+                  {sysValue(path)}
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <h3 style={{ fontSize: 14, margin: '0 0 8px' }}>What closes the gap</h3>
+      <p style={{ fontSize: 13, margin: 0 }}>
+        A designer adds a <code style={{ fontFamily: mono }}>colors/tooltip</code> group in Figma
+        bound to the same semantic variables. The next pull mirrors it, the{' '}
+        <code style={{ fontFamily: mono }}>tokens</code> block in{' '}
+        <code style={{ fontFamily: mono }}>components/tooltip.json</code> is deleted, and Tooltip
+        stops being the exception — nothing in this component changes.
+      </p>
+    </div>
+  ),
+  parameters: { layout: 'padded' },
 };

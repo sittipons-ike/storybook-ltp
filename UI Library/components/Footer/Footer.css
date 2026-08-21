@@ -1,0 +1,58 @@
+/* ═══════════════════════════════════════════
+   Footer — Lotteryplus Design System
+
+   Structure only; every colour and dimension is a token applied in Footer.tsx.
+
+   Figma: instance `footer-mobile` on page `↳  footer ✅`.
+   ═══════════════════════════════════════════ */
+
+.ltp-footer {
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.ltp-footer * {
+  box-sizing: border-box;
+}
+
+.ltp-footer__follow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ltp-footer__follow-label {
+  margin: 0;
+}
+
+.ltp-footer__socials {
+  display: flex;
+  align-items: center;
+}
+
+/* Each social mark keeps its brand colour, which is why these are the one place in the
+   footer that does not read a design token — see Footer.tsx. */
+.ltp-footer__social {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+.ltp-footer__chips {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.ltp-footer__chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-width: 0;
+  text-decoration: none;
+}

@@ -1,0 +1,76 @@
+name: design system
+
+# The ten checks in tools/check.sh only ever ran on one laptop. Everything they protect —
+# tokens matching Figma, icons matching the drawings they claim, typography bound to a
+# role, pages not reaching past components — is the kind of thing that comes back the
+# moment nobody is looking. This is what makes them apply to everyone.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # The generators and every checker are Python; the version only has to be recent
+      # enough for the walrus operator and f-strings, which 3.11 comfortably is.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - run: npm ci
+
+      # `check.sh` regenerates first and fails if the committed output differs, so this
+      # single step also proves the generated files in the repo are the ones the sources
+      # produce — not something edited by hand.
+      - name: Run the gate
+        run: npm run check
+
+      # A gate that passes on a tree that cannot build is a gate that lies.
+      - name: Build Storybook
+        run: npm run build-storybook
+
+      # Kept on every run, not just main: a reviewer can download the built Storybook
+      # from a pull request and click through it, which is the point of the tier.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: storybook
+          path: storybook-static
+          retention-days: 14
+
+      - uses: actions/upload-pages-artifact@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          path: storybook-static
+
+  # The library is only a shared source of truth once a designer can open it without
+  # running anything. This publishes the same build the gate just passed — never a
+  # separate one, so the URL and the checks can never describe different trees.
+  deploy:
+    needs: check
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -2,18 +2,19 @@ import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import Toast from './Toast';
 import {
+  TOAST_VARIANTS,
   TOAST_TYPES,
-  TOAST_COLORS,
-  TOAST_DIMENSIONS,
-  TYPOGRAPHY,
-  SPACING,
-  RADIUS,
-  BORDER_WIDTH,
-  SHADOW,
-  CLOSE_ICON,
+  TOAST_LIGHT_TYPES,
+  TOAST_ICONS,
+  TOAST_CLOSE_ICON,
+  toastColors,
+  toastColorTokens,
+  toastColorValues,
+  toastValue,
   type ToastType,
   type ToastVariant,
 } from './tokens';
+import { sysValue } from '../../foundations/tokens';
 import ColorBindingsTable from '../../system/ColorBindingsTable';
 import type { ColorBinding } from '../../system/ColorBindingsTable';
 
@@ -22,25 +23,35 @@ import type { ColorBinding } from '../../system/ColorBindingsTable';
 //  Figma: "toast-message" section
 //    light-toast (14848:2072): 3 types (informative, success, error)
 //    solid-toast (14848:2109): 4 types (informative, success, warning, error)
+//
+//  Values shown here are read from foundations/tokens.generated.ts, which is
+//  generated from Figma. Nothing on this page is typed by hand, so a table can
+//  never claim a value the component does not actually render.
 // ═══════════════════════════════════════════
 
+const sans = 'var(--sys-type-body-md-regular-family), sans-serif';
+const mono = 'ui-monospace, SFMono-Regular, Menlo, monospace';
+
+const muted = 'var(--sys-color-text-tertiary-default)';
+const faint = 'var(--sys-color-text-state-light-gray)';
+
 const meta: Meta<typeof Toast> = {
-  title: 'Components/Toast',
+  title: 'Molecules/Toast',
   component: Toast,
   tags: ['autodocs'],
   argTypes: {
     variant: {
       control: 'select',
-      options: ['light', 'solid'],
+      options: TOAST_VARIANTS,
       description: 'Figma component set: light-toast / solid-toast',
     },
     type: {
       control: 'select',
-      options: ['informative', 'success', 'warning', 'error'],
-      description: 'Figma variant: type',
+      options: TOAST_TYPES,
+      description: 'Figma variant: type. `warning` exists only on solid-toast.',
     },
-    title: { control: 'text', description: 'Title text' },
-    caption: { control: 'text', description: 'Caption/description text' },
+    title: { control: 'text', description: 'Title text — typography/title/lg/semibold' },
+    caption: { control: 'text', description: 'Caption text — typography/body/md/regular' },
     showIcon: { control: 'boolean', description: 'Show type icon' },
     showClose: { control: 'boolean', description: 'Show close button' },
     animated: { control: 'boolean', description: 'Enable slide-in animation' },
@@ -68,65 +79,75 @@ type Story = StoryObj<typeof Toast>;
 export const Default: Story = {};
 
 // ═══════════════════════════════════════════
-//  Light Types — All 3 light toast types
+//  Light Types — the 3 types the light-toast set ships
 // ═══════════════════════════════════════════
 export const LightTypes: Story = {
   name: 'Light Types',
-  render: () => {
-    const lightTypes: ToastType[] = ['informative', 'success', 'error'];
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, fontFamily: "'Graphik TH', sans-serif", maxWidth: 480 }}>
-        <div style={{ fontSize: 13, color: '#737373', marginBottom: 4 }}>
-          Figma: light-toast (14848:2072) — soft bg + colored border
-        </div>
-        {lightTypes.map((t) => (
-          <div key={t}>
-            <div style={{ fontSize: 11, color: '#A3A3A3', marginBottom: 4 }}>
-              variant=light, type={t}
-            </div>
-            <Toast
-              variant="light"
-              type={t}
-              title={`${t.charAt(0).toUpperCase() + t.slice(1)} Toast`}
-              caption={`This is a ${t} toast message with light variant.`}
-              animated={false}
-            />
-          </div>
-        ))}
+  render: () => (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 'var(--sys-spacing-2xl)',
+        fontFamily: sans,
+        maxWidth: 480,
+      }}
+    >
+      <div style={{ fontSize: 13, color: muted, marginBottom: 'var(--sys-spacing-sm)' }}>
+        Figma: light-toast (14848:2072) — soft bg + coloured border
       </div>
-    );
-  },
+      {TOAST_LIGHT_TYPES.map((t) => (
+        <div key={t}>
+          <div style={{ fontSize: 11, color: faint, marginBottom: 'var(--sys-spacing-sm)' }}>
+            variant=light, type={t}
+          </div>
+          <Toast
+            variant="light"
+            type={t}
+            title={`${t.charAt(0).toUpperCase() + t.slice(1)} Toast`}
+            caption={`This is a ${t} toast message with light variant.`}
+            animated={false}
+          />
+        </div>
+      ))}
+    </div>
+  ),
 };
 
 // ═══════════════════════════════════════════
-//  Solid Types — All 4 solid toast types
+//  Solid Types — all 4 solid toast types
 // ═══════════════════════════════════════════
 export const SolidTypes: Story = {
   name: 'Solid Types',
-  render: () => {
-    const solidTypes: ToastType[] = ['informative', 'success', 'warning', 'error'];
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, fontFamily: "'Graphik TH', sans-serif", maxWidth: 480 }}>
-        <div style={{ fontSize: 13, color: '#737373', marginBottom: 4 }}>
-          Figma: solid-toast (14848:2109) — solid colored bg, white text
-        </div>
-        {solidTypes.map((t) => (
-          <div key={t}>
-            <div style={{ fontSize: 11, color: '#A3A3A3', marginBottom: 4 }}>
-              variant=solid, type={t}
-            </div>
-            <Toast
-              variant="solid"
-              type={t}
-              title={`${t.charAt(0).toUpperCase() + t.slice(1)} Toast`}
-              caption={`This is a ${t} toast message with solid variant.`}
-              animated={false}
-            />
-          </div>
-        ))}
+  render: () => (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 'var(--sys-spacing-2xl)',
+        fontFamily: sans,
+        maxWidth: 480,
+      }}
+    >
+      <div style={{ fontSize: 13, color: muted, marginBottom: 'var(--sys-spacing-sm)' }}>
+        Figma: solid-toast (14848:2109) — solid coloured bg, white text
       </div>
-    );
-  },
+      {TOAST_TYPES.map((t) => (
+        <div key={t}>
+          <div style={{ fontSize: 11, color: faint, marginBottom: 'var(--sys-spacing-sm)' }}>
+            variant=solid, type={t}
+          </div>
+          <Toast
+            variant="solid"
+            type={t}
+            title={`${t.charAt(0).toUpperCase() + t.slice(1)} Toast`}
+            caption={`This is a ${t} toast message with solid variant.`}
+            animated={false}
+          />
+        </div>
+      ))}
+    </div>
+  ),
 };
 
 // ═══════════════════════════════════════════
@@ -144,8 +165,8 @@ export const WithAutoClose: Story = {
     };
 
     return (
-      <div style={{ fontFamily: "'Graphik TH', sans-serif", maxWidth: 480 }}>
-        <div style={{ fontSize: 13, color: '#737373', marginBottom: 12 }}>
+      <div style={{ fontFamily: sans, maxWidth: 480 }}>
+        <div style={{ fontSize: 13, color: muted, marginBottom: 'var(--sys-spacing-xl)' }}>
           This toast auto-dismisses after 3 seconds.
         </div>
 
@@ -160,7 +181,15 @@ export const WithAutoClose: Story = {
             onClose={() => setDismissed(true)}
           />
         ) : (
-          <div style={{ padding: '16px 20px', backgroundColor: '#F5F5F5', borderRadius: 12, fontSize: 14, color: '#737373' }}>
+          <div
+            style={{
+              padding: 'var(--sys-spacing-2xl) var(--sys-spacing-3xl)',
+              backgroundColor: 'var(--sys-color-background-light)',
+              borderRadius: 'var(--sys-radius-xl)',
+              fontSize: 14,
+              color: muted,
+            }}
+          >
             Toast dismissed.
           </div>
         )}
@@ -168,16 +197,16 @@ export const WithAutoClose: Story = {
         <button
           onClick={handleReset}
           style={{
-            marginTop: 16,
-            padding: '8px 20px',
-            backgroundColor: '#E32321',
-            color: '#FFFFFF',
+            marginTop: 'var(--sys-spacing-2xl)',
+            padding: 'var(--sys-spacing-lg) var(--sys-spacing-3xl)',
+            backgroundColor: 'var(--sys-color-primary-default)',
+            color: 'var(--sys-color-foreground-white)',
             border: 'none',
-            borderRadius: 8,
+            borderRadius: 'var(--sys-radius-lg)',
             fontSize: 14,
             fontWeight: 600,
             cursor: 'pointer',
-            fontFamily: "'Graphik TH', sans-serif",
+            fontFamily: sans,
           }}
         >
           Show Again
@@ -188,16 +217,14 @@ export const WithAutoClose: Story = {
 };
 
 // ═══════════════════════════════════════════
-//  Interactive — Trigger different toast types
+//  Interactive — trigger toasts of every variant x type
 // ═══════════════════════════════════════════
 export const Interactive: Story = {
   name: 'Interactive',
   render: () => {
-    const [toasts, setToasts] = useState<Array<{
-      id: number;
-      variant: ToastVariant;
-      type: ToastType;
-    }>>([]);
+    const [toasts, setToasts] = useState<
+      Array<{ id: number; variant: ToastVariant; type: ToastType }>
+    >([]);
 
     let nextId = 0;
 
@@ -210,57 +237,64 @@ export const Interactive: Story = {
       setToasts((prev) => prev.filter((t) => t.id !== id));
     };
 
-    const buttonStyle = (bg: string): React.CSSProperties => ({
-      padding: '8px 16px',
-      backgroundColor: bg,
-      color: '#FFFFFF',
+    /** The trigger swatch reuses the toast's own solid background token. */
+    const triggerStyle = (type: ToastType): React.CSSProperties => ({
+      padding: 'var(--sys-spacing-lg) var(--sys-spacing-2xl)',
+      backgroundColor: toastColors('solid', type).background,
+      color: 'var(--sys-color-foreground-white)',
       border: 'none',
-      borderRadius: 8,
+      borderRadius: 'var(--sys-radius-lg)',
       fontSize: 12,
       fontWeight: 600,
       cursor: 'pointer',
-      fontFamily: "'Graphik TH', sans-serif",
+      fontFamily: sans,
+      textTransform: 'capitalize',
     });
 
+    const row = (variant: ToastVariant, types: readonly ToastType[]) => (
+      <>
+        <div style={{ marginBottom: 'var(--sys-spacing-lg)', fontSize: 11, color: faint }}>
+          {variant} variant
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            gap: 'var(--sys-spacing-lg)',
+            marginBottom: 'var(--sys-spacing-2xl)',
+            flexWrap: 'wrap',
+          }}
+        >
+          {types.map((type) => (
+            <button
+              key={`${variant}-${type}`}
+              style={triggerStyle(type)}
+              onClick={() => addToast(variant, type)}
+            >
+              {type}
+            </button>
+          ))}
+        </div>
+      </>
+    );
+
     return (
-      <div style={{ fontFamily: "'Graphik TH', sans-serif" }}>
-        <div style={{ fontSize: 13, color: '#737373', marginBottom: 12 }}>
-          Click buttons to trigger toasts. Each auto-closes after 4 seconds.
+      <div style={{ fontFamily: sans }}>
+        <div style={{ fontSize: 13, color: muted, marginBottom: 'var(--sys-spacing-xl)' }}>
+          Click a trigger to raise a toast. Each auto-closes after 4 seconds.
         </div>
 
-        {/* Light buttons */}
-        <div style={{ marginBottom: 8, fontSize: 11, color: '#A3A3A3' }}>Light Variant</div>
-        <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
-          <button style={buttonStyle('#3B82F6')} onClick={() => addToast('light', 'informative')}>
-            Informative
-          </button>
-          <button style={buttonStyle('#22C55E')} onClick={() => addToast('light', 'success')}>
-            Success
-          </button>
-          <button style={buttonStyle('#E32321')} onClick={() => addToast('light', 'error')}>
-            Error
-          </button>
-        </div>
-
-        {/* Solid buttons */}
-        <div style={{ marginBottom: 8, fontSize: 11, color: '#A3A3A3' }}>Solid Variant</div>
-        <div style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
-          <button style={buttonStyle('#3B82F6')} onClick={() => addToast('solid', 'informative')}>
-            Informative
-          </button>
-          <button style={buttonStyle('#22C55E')} onClick={() => addToast('solid', 'success')}>
-            Success
-          </button>
-          <button style={buttonStyle('#EAB308')} onClick={() => addToast('solid', 'warning')}>
-            Warning
-          </button>
-          <button style={buttonStyle('#E32321')} onClick={() => addToast('solid', 'error')}>
-            Error
-          </button>
-        </div>
+        {row('light', TOAST_LIGHT_TYPES)}
+        {row('solid', TOAST_TYPES)}
 
         {/* Toast stack */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxWidth: 480 }}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 'var(--sys-spacing-lg)',
+            maxWidth: 480,
+          }}
+        >
           {toasts.map((t) => (
             <Toast
               key={t.id}
@@ -279,138 +313,276 @@ export const Interactive: Story = {
 };
 
 // ═══════════════════════════════════════════
-//  Token Verification
+//  Token chain — Tier 2 alias → Tier 1 semantic → literal
 // ═══════════════════════════════════════════
-export const TokenVerification: Story = {
-  name: 'Token Verification',
-  render: () => {
-    const checks = [
-      // ── Layout ──
-      { label: 'Container Padding Top/Bottom', figma: '8px', storybook: `${TOAST_DIMENSIONS.padding.top}px`, var: 'dimension/spacing/spacing-lg' },
-      { label: 'Container Padding Left/Right', figma: '16px', storybook: `${TOAST_DIMENSIONS.padding.left}px`, var: 'dimension/spacing/spacing-2xl' },
-      { label: 'Container Gap', figma: '16px', storybook: `${TOAST_DIMENSIONS.gap}px`, var: 'dimension/spacing/spacing-2xl' },
-      { label: 'Container Border Radius', figma: '16px', storybook: `${TOAST_DIMENSIONS.borderRadius}px`, var: 'dimension/breakpoint/radius/radius-2xl' },
-      { label: 'Border Width (light)', figma: '1px', storybook: `${BORDER_WIDTH[1]}px`, var: 'dimension/border-width/1' },
 
-      // ── Shadow ──
-      { label: 'Box Shadow (sm)', figma: '0 1px 2px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.10)', storybook: SHADOW.sm, var: 'dimension/shadow/sm' },
+/** Tier 2 token → the Tier 1 semantic it aliases. `(fixed)` = no semantic backs it. */
+const LAYOUT_CHAIN: Array<[string, string]> = [
+  ['radius', 'radius-2xl'],
+  ['border-width', 'border-width-hairline'],
+  ['padding-y', 'spacing-lg'],
+  ['padding-x', 'spacing-2xl'],
+  ['gap', 'spacing-2xl'],
+  ['text-gap', 'spacing-none'],
+  ['shadow', 'elevation-card'],
+  ['icon-circle-size', ''],
+  ['icon-circle-padding', 'spacing-sm'],
+  ['icon-circle-radius', 'radius-full'],
+  ['icon-size', ''],
+  ['close-icon-size', ''],
+  ['typography-title-family', 'type-title-lg-semibold-family'],
+  ['typography-title-size', 'type-title-lg-semibold-size'],
+  ['typography-title-line-height', 'type-title-lg-semibold-line-height'],
+  ['typography-title-weight', 'type-title-lg-semibold-weight'],
+  ['typography-title-tracking', 'type-title-lg-semibold-tracking'],
+  ['typography-caption-family', 'type-body-md-regular-family'],
+  ['typography-caption-size', 'type-body-md-regular-size'],
+  ['typography-caption-line-height', 'type-body-md-regular-line-height'],
+  ['typography-caption-weight', 'type-body-md-regular-weight'],
+  ['typography-caption-tracking', 'type-body-md-regular-tracking'],
+];
 
-      // ── Icon ──
-      { label: 'Icon Circle Size', figma: '28x28px', storybook: `${TOAST_DIMENSIONS.icon.circleSize}x${TOAST_DIMENSIONS.icon.circleSize}px`, var: '—' },
-      { label: 'Icon Circle Padding', figma: '4px', storybook: `${TOAST_DIMENSIONS.icon.circlePadding}px`, var: 'dimension/spacing/spacing-sm' },
-      { label: 'Icon Circle Radius', figma: '9999px (full)', storybook: `${TOAST_DIMENSIONS.icon.circleRadius}px`, var: 'dimension/breakpoint/radius/radius-full' },
-      { label: 'Icon Size (icons-size)', figma: '20px', storybook: `${TOAST_DIMENSIONS.icon.iconSize}px`, var: '—' },
-      { label: 'Close Icon Size', figma: '20px', storybook: `${CLOSE_ICON.size}px`, var: '—' },
+const th: React.CSSProperties = {
+  textAlign: 'left',
+  padding: '8px 12px',
+  fontSize: 11,
+  fontWeight: 600,
+  color: muted,
+  borderBottom: '2px solid var(--sys-color-border-accent-gray-soft-light)',
+};
 
-      // ── Typography ──
-      { label: 'Title Font (title/m-semb)', figma: 'Graphik TH Semibold 16/24', storybook: `Graphik TH ${TYPOGRAPHY.title.fontWeight} ${TYPOGRAPHY.title.fontSize}/${TYPOGRAPHY.title.lineHeight}`, var: 'title/m-semb/*' },
-      { label: 'Caption Font (body/m-reg)', figma: 'Graphik TH Regular 14/22', storybook: `Graphik TH ${TYPOGRAPHY.caption.fontWeight} ${TYPOGRAPHY.caption.fontSize}/${TYPOGRAPHY.caption.lineHeight}`, var: 'body/m-reg/*' },
+const td: React.CSSProperties = {
+  padding: '6px 12px',
+  borderBottom: '1px solid var(--sys-color-background-light)',
+  fontFamily: mono,
+  fontSize: 11,
+};
 
-      // ── Light Toast Colors ──
-      { label: 'Light: Informative BG', figma: '#EFF6FF', storybook: TOAST_TYPES.informative.lightBg, var: 'colors/toast/toast-bg-soft-blue' },
-      { label: 'Light: Informative Border', figma: '#3B82F6', storybook: TOAST_TYPES.informative.lightBorder, var: 'colors/toast/toast-fg-blue' },
-      { label: 'Light: Success BG', figma: '#F0FDF4', storybook: TOAST_TYPES.success.lightBg, var: 'colors/toast/toast-bg-soft-green' },
-      { label: 'Light: Success Border', figma: '#22C55E', storybook: TOAST_TYPES.success.lightBorder, var: 'colors/toast/toast-fg-green' },
-      { label: 'Light: Error BG', figma: '#FEF2F2', storybook: TOAST_TYPES.error.lightBg, var: 'colors/toast/toast-bg-soft-red' },
-      { label: 'Light: Error Border', figma: '#E32321', storybook: TOAST_TYPES.error.lightBorder, var: 'colors/toast/toast-fg-red' },
-      { label: 'Light: Text Color', figma: '#262626', storybook: TOAST_COLORS.light.title, var: 'colors/toast/toast-fg-dark' },
+const Swatch: React.FC<{ hex?: string }> = ({ hex }) =>
+  hex ? (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+      <span
+        style={{
+          width: 14,
+          height: 14,
+          borderRadius: 'var(--sys-radius-xs)',
+          background: hex,
+          border: '1px solid var(--sys-color-border-accent-gray-soft-light)',
+        }}
+      />
+      {hex}
+    </span>
+  ) : (
+    <span style={{ color: faint }}>—</span>
+  );
 
-      // ── Solid Toast Colors ──
-      { label: 'Solid: Informative BG', figma: '#3B82F6', storybook: TOAST_TYPES.informative.solidBg, var: 'colors/toast/toast-bg-blue' },
-      { label: 'Solid: Informative Icon BG', figma: '#EFF6FF', storybook: TOAST_TYPES.informative.solidIconBg, var: 'colors/toast/toast-bg-soft-blue' },
-      { label: 'Solid: Success BG', figma: '#22C55E', storybook: TOAST_TYPES.success.solidBg, var: 'colors/toast/toast-bg-green' },
-      { label: 'Solid: Success Icon BG', figma: '#F0FDF4', storybook: TOAST_TYPES.success.solidIconBg, var: 'colors/toast/toast-bg-soft-green' },
-      { label: 'Solid: Warning BG', figma: '#EAB308', storybook: TOAST_TYPES.warning.solidBg, var: 'colors/toast/toast-bg-yellow' },
-      { label: 'Solid: Warning Icon BG', figma: '#FEFCE8', storybook: TOAST_TYPES.warning.solidIconBg, var: 'colors/toast/toast-bg-soft-yellow' },
-      { label: 'Solid: Error BG', figma: '#E32321', storybook: TOAST_TYPES.error.solidBg, var: 'colors/toast/toast-bg-red' },
-      { label: 'Solid: Error Icon BG', figma: '#FEF2F2', storybook: TOAST_TYPES.error.solidIconBg, var: 'colors/toast/toast-bg-soft-red' },
-      { label: 'Solid: Text Color', figma: '#FFFFFF', storybook: TOAST_COLORS.solid.title, var: 'colors/toast/toast-fg-white' },
+export const TokenChain: Story = {
+  name: '🔍 Token Chain',
+  render: () => (
+    <div style={{ fontFamily: sans, maxWidth: 980 }}>
+      <h2 style={{ margin: '0 0 8px', fontSize: 20 }}>Toast token chain</h2>
+      <p style={{ margin: '0 0 20px', fontSize: 13, color: muted }}>
+        Every value flows Figma → design.md + components/toast.json → components.json →
+        tokens.css. The component renders the Tier 2 alias; the alias points at a Tier 1
+        semantic token; that resolves to the literal. Nothing below is hand-typed — the
+        Value columns are read from tokens.generated.ts.
+      </p>
 
-      // ── Icons ──
-      { label: 'Informative Icon', figma: 'filled-info', storybook: TOAST_TYPES.informative.iconName, var: '— (filled-Info)' },
-      { label: 'Success Icon', figma: 'filled-check_circle', storybook: TOAST_TYPES.success.iconName, var: '— (filled-check-circle)' },
-      { label: 'Warning Icon', figma: 'filled-Warning-2', storybook: TOAST_TYPES.warning.iconName, var: '— (filled-Warning-1 mapped)' },
-      { label: 'Error Icon', figma: 'filled-Warning-2', storybook: TOAST_TYPES.error.iconName, var: '— (filled-Warning-1 mapped)' },
-      { label: 'Close Icon', figma: 'filled-close', storybook: CLOSE_ICON.name, var: '— (filled-close)' },
-    ];
-
-    return (
-      <div style={{ fontFamily: "'Graphik TH', sans-serif" }}>
-        <h2 style={{ margin: '0 0 8px', fontSize: 20 }}>Toast Token Verification</h2>
-        <p style={{ margin: '0 0 4px', fontSize: 13, color: '#737373' }}>
-          Figma: toast-message section — light-toast (14848:2072) + solid-toast (14848:2109)
-        </p>
-        <p style={{ margin: '0 0 16px', fontSize: 12, color: '#A3A3A3' }}>
-          Comparing Figma component values vs Storybook token values
-        </p>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
-          <thead>
-            <tr style={{ borderBottom: '2px solid #E5E5E5', textAlign: 'left' }}>
-              <th style={{ padding: '8px 10px' }}>Token</th>
-              <th style={{ padding: '8px 10px' }}>Figma Variable</th>
-              <th style={{ padding: '8px 10px' }}>Figma Value</th>
-              <th style={{ padding: '8px 10px' }}>Storybook Value</th>
-              <th style={{ padding: '8px 10px' }}>Match</th>
+      <h3 style={{ fontSize: 14, margin: '0 0 8px' }}>Layout, sizing &amp; typography</h3>
+      <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 28 }}>
+        <thead>
+          <tr>
+            <th style={th}>Tier 2 — component</th>
+            <th style={th}>Tier 1 — semantic</th>
+            <th style={th}>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {LAYOUT_CHAIN.map(([token, semantic]) => (
+            <tr key={token}>
+              <td style={{ ...td, color: 'var(--sys-color-primary-default)' }}>
+                --toast-{token}
+              </td>
+              <td style={{ ...td, color: 'var(--sys-color-status-info-default)' }}>
+                {semantic ? `--sys-${semantic}` : '(fixed — no semantic token)'}
+              </td>
+              <td style={{ ...td, color: 'var(--sys-color-status-success-dark)' }}>
+                {toastValue(token)}
+                {semantic && sysValue(semantic) !== toastValue(token) ? ' ⚠︎ drift' : ''}
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {checks.map((c) => {
-              const match = c.figma.toLowerCase().replace(/\s/g, '') === c.storybook.toLowerCase().replace(/\s/g, '');
+          ))}
+        </tbody>
+      </table>
+
+      <h3 style={{ fontSize: 14, margin: '0 0 8px' }}>Colours by variant and type</h3>
+      <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 28 }}>
+        <thead>
+          <tr>
+            <th style={th}>Variant</th>
+            <th style={th}>Type</th>
+            <th style={th}>Background</th>
+            <th style={th}>Border</th>
+            <th style={th}>Icon circle</th>
+            <th style={th}>Icon</th>
+            <th style={th}>Text</th>
+          </tr>
+        </thead>
+        <tbody>
+          {TOAST_VARIANTS.flatMap((variant) =>
+            (variant === 'light' ? TOAST_LIGHT_TYPES : TOAST_TYPES).map((type) => {
+              const v = toastColorValues(variant, type);
               return (
-                <tr key={c.label} style={{ borderBottom: '1px solid #F5F5F5' }}>
-                  <td style={{ padding: '5px 10px', fontWeight: 500 }}>{c.label}</td>
-                  <td style={{ padding: '5px 10px', fontFamily: 'monospace', fontSize: 10, color: '#737373' }}>{c.var}</td>
-                  <td style={{ padding: '5px 10px', fontFamily: 'monospace', color: '#E32321' }}>{c.figma}</td>
-                  <td style={{ padding: '5px 10px', fontFamily: 'monospace', color: '#3B82F6' }}>{c.storybook}</td>
-                  <td style={{ padding: '5px 10px', fontSize: 14, textAlign: 'center' }}>{match ? '\u2705' : '\u2705'}</td>
+                <tr key={`${variant}-${type}`}>
+                  <td style={{ ...td, fontFamily: sans, textTransform: 'capitalize' }}>
+                    {variant}
+                  </td>
+                  <td style={td}>{type}</td>
+                  <td style={td}>
+                    <Swatch hex={v.background} />
+                  </td>
+                  <td style={td}>
+                    <Swatch hex={v.border} />
+                  </td>
+                  <td style={td}>
+                    <Swatch hex={v.iconCircle} />
+                  </td>
+                  <td style={td}>
+                    <Swatch hex={v.icon} />
+                  </td>
+                  <td style={td}>
+                    <Swatch hex={v.text} />
+                  </td>
                 </tr>
               );
-            })}
-          </tbody>
-        </table>
+            }),
+          )}
+        </tbody>
+      </table>
 
-        {/* ── Visual Preview ── */}
-        <h3 style={{ margin: '32px 0 12px', fontSize: 16 }}>Visual Preview</h3>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 480 }}>
-          <div style={{ fontSize: 11, fontWeight: 600, color: '#737373' }}>Light Toasts</div>
-          {(['informative', 'success', 'error'] as ToastType[]).map((t) => (
-            <Toast key={`light-${t}`} variant="light" type={t} title={`${t} (light)`} caption="Description" animated={false} />
+      <h3 style={{ fontSize: 14, margin: '0 0 8px' }}>Icons</h3>
+      <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 28 }}>
+        <thead>
+          <tr>
+            <th style={th}>Slot</th>
+            <th style={th}>Icon component</th>
+            <th style={th}>Size</th>
+          </tr>
+        </thead>
+        <tbody>
+          {TOAST_TYPES.map((type) => (
+            <tr key={type}>
+              <td style={{ ...td, fontFamily: sans }}>{type}</td>
+              <td style={td}>{TOAST_ICONS[type]}</td>
+              <td style={td}>{toastValue('icon-size')}</td>
+            </tr>
           ))}
-          <div style={{ fontSize: 11, fontWeight: 600, color: '#737373', marginTop: 8 }}>Solid Toasts</div>
-          {(['informative', 'success', 'warning', 'error'] as ToastType[]).map((t) => (
-            <Toast key={`solid-${t}`} variant="solid" type={t} title={`${t} (solid)`} caption="Description" animated={false} />
-          ))}
+          <tr>
+            <td style={{ ...td, fontFamily: sans }}>close</td>
+            <td style={td}>{TOAST_CLOSE_ICON}</td>
+            <td style={td}>{toastValue('close-icon-size')}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      {/* ── Visual Preview ── */}
+      <h3 style={{ fontSize: 14, margin: '0 0 12px' }}>Visual preview</h3>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--sys-spacing-xl)',
+          maxWidth: 480,
+        }}
+      >
+        <div style={{ fontSize: 11, fontWeight: 600, color: muted }}>Light toasts</div>
+        {TOAST_LIGHT_TYPES.map((t) => (
+          <Toast
+            key={`light-${t}`}
+            variant="light"
+            type={t}
+            title={`${t} (light)`}
+            caption="Description"
+            animated={false}
+          />
+        ))}
+        <div
+          style={{
+            fontSize: 11,
+            fontWeight: 600,
+            color: muted,
+            marginTop: 'var(--sys-spacing-lg)',
+          }}
+        >
+          Solid toasts
         </div>
+        {TOAST_TYPES.map((t) => (
+          <Toast
+            key={`solid-${t}`}
+            variant="solid"
+            type={t}
+            title={`${t} (solid)`}
+            caption="Description"
+            animated={false}
+          />
+        ))}
       </div>
-    );
-  },
+    </div>
+  ),
   parameters: { layout: 'padded' },
 };
 
-// ── Color Bindings ──
+// ═══════════════════════════════════════════
+//  Color bindings — generated from the token chain
+// ═══════════════════════════════════════════
+
+/** Figma still abbreviates bg/fg; this reconstructs the variable path. */
+const figmaName = (token: string): string =>
+  `colors/toast/toast-${token.replace(/^background-/, 'bg-').replace(/^foreground-/, 'fg-')}`;
+
+/** Which slot(s) each colour token feeds, derived from the same map the component uses. */
+const usageOf = (token: string): string => {
+  const uses: string[] = [];
+  for (const variant of TOAST_VARIANTS) {
+    for (const type of variant === 'light' ? TOAST_LIGHT_TYPES : TOAST_TYPES) {
+      const slots = toastColorTokens(variant, type);
+      for (const [slot, name] of Object.entries(slots)) {
+        if (name === token) uses.push(`${variant} ${type} ${slot}`);
+      }
+    }
+  }
+  return uses.length ? uses.join(', ') : 'declared in Figma, unused by this component';
+};
+
+const COLOR_BINDINGS: ColorBinding[] = [
+  'background-soft-blue',
+  'foreground-blue',
+  'background-soft-green',
+  'foreground-green',
+  'background-soft-red',
+  'foreground-red',
+  'background-soft-yellow',
+  'foreground-yellow',
+  'foreground-dark',
+  'background-blue',
+  'background-green',
+  'background-yellow',
+  'background-red',
+  'foreground-white',
+].map((token) => ({
+  token: `--toast-${token}`,
+  figmaVariable: figmaName(token),
+  hex: toastValue(token),
+  usage: usageOf(token),
+}));
+
 export const ColorBindings: StoryObj = {
   name: 'Color Bindings',
   render: () => (
     <ColorBindingsTable
       componentName="Toast"
-      figmaId="14848:2072"
-      bindings={[
-        // Light toast
-        { token: 'toast-bg-soft-blue', figmaVariable: 'colors/toast/toast-bg-soft-blue', hex: '#EFF6FF', usage: 'Light informative bg' },
-        { token: 'toast-fg-blue', figmaVariable: 'colors/toast/toast-fg-blue', hex: '#3B82F6', usage: 'Light informative border & icon circle' },
-        { token: 'toast-bg-soft-green', figmaVariable: 'colors/toast/toast-bg-soft-green', hex: '#F0FDF4', usage: 'Light success bg' },
-        { token: 'toast-fg-green', figmaVariable: 'colors/toast/toast-fg-green', hex: '#22C55E', usage: 'Light success border & icon circle' },
-        { token: 'toast-bg-soft-red', figmaVariable: 'colors/toast/toast-bg-soft-red', hex: '#FEF2F2', usage: 'Light error bg' },
-        { token: 'toast-fg-red', figmaVariable: 'colors/toast/toast-fg-red', hex: '#E32321', usage: 'Light error border & icon circle' },
-        { token: 'toast-fg-dark', figmaVariable: 'colors/toast/toast-fg-dark', hex: '#262626', usage: 'Light toast text & close icon' },
-        // Solid toast
-        { token: 'toast-bg-blue', figmaVariable: 'colors/toast/toast-bg-blue', hex: '#3B82F6', usage: 'Solid informative bg' },
-        { token: 'toast-bg-green', figmaVariable: 'colors/toast/toast-bg-green', hex: '#22C55E', usage: 'Solid success bg' },
-        { token: 'toast-bg-yellow', figmaVariable: 'colors/toast/toast-bg-yellow', hex: '#EAB308', usage: 'Solid warning bg' },
-        { token: 'toast-bg-red', figmaVariable: 'colors/toast/toast-bg-red', hex: '#E32321', usage: 'Solid error bg' },
-        { token: 'toast-bg-soft-yellow', figmaVariable: 'colors/toast/toast-bg-soft-yellow', hex: '#FEFCE8', usage: 'Solid warning icon circle bg' },
-        { token: 'toast-fg-white', figmaVariable: 'colors/toast/toast-fg-white', hex: '#FFFFFF', usage: 'Solid toast text & close icon' },
-      ]}
+      figmaId="14848:2072 (light) / 14848:2109 (solid)"
+      bindings={COLOR_BINDINGS}
     />
   ),
 };

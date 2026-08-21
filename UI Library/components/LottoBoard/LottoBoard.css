@@ -1,6 +1,9 @@
 /* ═══════════════════════════════════════════
    LottoBoard Components — Lotteryplus Design System
-   All values reference Foundation tokens
+
+   Structural rules only. Every colour, size and font value is a CSS custom property
+   from foundations/tokens.css, generated from Figma via design.md +
+   design-library/lotteryplus/components/lotto-board.json. Nothing here is a literal.
    ═══════════════════════════════════════════ */
 
 /* Base reset */
@@ -11,7 +14,15 @@
   box-sizing: border-box;
 }
 
-/* NumberSearchBox input reset */
+/* ── NumberSearchBox ── */
+
+/* Each cell is an independent action, so it keeps its own hit area and pointer. */
+.ltp-number-box {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
 .ltp-number-box-input {
   outline: none;
   border: none;
@@ -33,14 +44,13 @@
   margin: 0;
 }
 
-.ltp-number-box-input[type=number] {
+.ltp-number-box-input[type='number'] {
   -moz-appearance: textfield;
 }
 
-/* MenuButton reset */
+/* ── MenuButton ── */
 .ltp-menu-btn {
   cursor: pointer;
-  border: none;
   outline: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -51,10 +61,13 @@
   padding: 0;
 }
 
-/* SetSelect stepper button reset */
+.ltp-menu-btn:disabled {
+  pointer-events: none;
+}
+
+/* ── SetSelect stepper ── */
 .ltp-stepper-btn {
   cursor: pointer;
-  border: none;
   outline: none;
   display: flex;
   align-items: center;
@@ -68,12 +81,21 @@
   padding: 0;
 }
 
-/* SearchCard link reset */
+.ltp-stepper-btn:disabled {
+  pointer-events: none;
+}
+
+/* ── SearchCard ── */
 .ltp-clear-link {
   cursor: pointer;
-  text-decoration: underline;
+  /* The role is typography/underline/md/medium — the decoration is part of the role. */
+  text-decoration: var(--lotto-board-typography-link-decoration);
   background: none;
   border: none;
   outline: none;
   padding: 0;
+}
+
+.ltp-clear-link:disabled {
+  pointer-events: none;
 }

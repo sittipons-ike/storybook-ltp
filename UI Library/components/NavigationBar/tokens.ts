@@ -1,131 +1,203 @@
 // ═══════════════════════════════════════════
 // NavigationBar Design Tokens
-// Source: Figma "Design Systems Web App Lotteryplus V.7.1"
-// Component set: "navigation-bar-v2" (14291:135864)
-// 10 variants: 5 states x 2 add-to-cart modes
-// All values reference Foundation variables ONLY
+//
+// This file holds NO values. Colours live in Figma's `colors/navigation-bar` group and
+// are mirrored into components.json by tools/gen-components.py; layout, sizing and
+// typography are authored in design-library/lotteryplus/components/navigation-bar.json.
+// Both flow into foundations/tokens.css (CSS custom properties, prefix `--navigation-*`)
+// and foundations/tokens.generated.ts (resolved literals).
+//
+// What this file adds is types and lookup helpers, so NavigationBar.tsx renders with CSS
+// variables while stories and tests can still read the literal a token resolves to.
+//
+// Regenerate: python3 tools/gen-components.py && python3 tools/gen-tokens.py
+// Verify:     python3 tools/verify-tokens.py
 // ═══════════════════════════════════════════
 
-// ── From Foundation: Spacing (2-semantic) ──
-// Variable: dimension/spacing/spacing-none → spacing/0 = 0px
-// Variable: dimension/spacing/spacing-sm → spacing/4 = 4px
-// Variable: dimension/spacing/spacing-xl → spacing/12 = 12px
-// Variable: dimension/spacing/spacing-2lg → spacing/10 = 10px
-export const SPACING = {
-  none: 0,    // spacing-none → paddingTop of nav item
-  sm: 4,      // spacing-sm → paddingRight/Left of nav item, cart item padding
-  xl: 12,     // spacing-xl → paddingBottom of nav item
-  '2lg': 10,  // spacing-2lg → gap inside nav item (icon ↔ label)
-} as const;
+import { component, sys, sysValue } from '../../foundations/tokens';
 
-// ── From Foundation: Border Radius ──
-// Variable: dimension/breakpoint/radius/radius-lg → radius/8 = 8px
-// Variable: dimension/breakpoint/radius/radius-full → radius/100 = 100px
-export const RADIUS = {
-  lg: 8,       // radius-lg → cart button border-radius
-  full: 100,   // radius-full → home indicator pill, badge circle
-} as const;
+/** Bound to the Figma group `colors/navigation-bar`, whose css_prefix is `navigation`. */
+const t = component('navigation');
 
-// ── From Foundation: Border Width ──
-// Variable: dimension/border-width/1 → border-width/1 = 1px
-export const BORDER_WIDTH = {
-  1: 1, // border-width/1 → top border of nav bar
-} as const;
+export { sys, sysValue };
 
-// ── From Foundation: Typography ──
-// Variable: button/xs-med/font-family → font-family/Graphik TH
-// Variable: button/xs-med/size → size/xs = 10px
-// Variable: button/xs-med/weight → weight/Medium = 500
-// Variable: button/xs-med/line-height → line-height/xs = 18px
-export const TYPOGRAPHY = {
-  fontFamily: "'Graphik TH', sans-serif",
-  fontSize: 10,       // button/xs-med/size → 10px
-  fontWeight: 500,     // button/xs-med/weight → Medium
-  lineHeight: '18px',  // button/xs-med/line-height → 18px
-} as const;
+/** Canonical states, per the Design System Standard. */
+export type NavigationState =
+  | 'rest'
+  | 'hover'
+  | 'active'
+  | 'focus'
+  | 'disabled'
+  | 'selected';
 
-// ── From Foundation: Colors (3-component / NavigationBar) ──
-export const NAV_COLORS = {
-  // Background
-  bgWhite: '#FFFFFF',       // colors/navigation-bar/navigation-bg-white
+export const NAVIGATION_STATES: readonly NavigationState[] = [
+  'rest',
+  'hover',
+  'active',
+  'focus',
+  'disabled',
+  'selected',
+] as const;
 
-  // Foreground
-  fgRed: '#E32321',         // colors/navigation-bar/navigation-fg-red (active text, selector bar)
-  fgDark: '#262626',        // colors/navigation-bar/navigation-fg-dark (inactive text)
-  fgWhite: '#FFFFFF',       // colors/navigation-bar/navigation-fg-white (cart button text, badge text)
+/** The five top-level areas the bar navigates between — Figma's `state` variant axis. */
+export type NavigationKey = 'home' | 'order' | 'cart' | 'safe' | 'profile';
 
-  // Border
-  border: '#F5F5F5',        // colors/navigation-bar/navigation-border (top border)
-} as const;
+export const NAVIGATION_KEYS: readonly NavigationKey[] = [
+  'home',
+  'order',
+  'cart',
+  'safe',
+  'profile',
+] as const;
 
-// ── Layout Dimensions from Figma ──
-export const NAV_DIMENSIONS = {
-  // Outer container: 390 x 124, VERTICAL, no padding/gap
-  outerWidth: 390,
-  outerHeight: 124,
+/** CSS variable reference for a NavigationBar token — e.g. `var(--navigation-height)`. */
+export const navigationRef = (token: string, fallback?: string): string =>
+  t.ref(token, fallback);
 
-  // Navbar-Mobile: 390 x 90, HORIZONTAL, center align bottom
-  navbarHeight: 90,
+/** The literal a NavigationBar token resolves to. Empty string when it is not declared. */
+export const navigationValue = (token: string): string => t.value(token);
 
-  // Each nav item: 78 x 68
-  itemWidth: 78,
-  itemHeight: 68,
+/** Every `--navigation-*` token declared, without the prefix. Stories enumerate this. */
+export const navigationTokenNames = (): string[] => t.names();
 
-  // Item padding: top=0 right=4 bottom=12 left=4
-  // spacing-none / spacing-sm / spacing-xl / spacing-sm
-  itemPaddingTop: 0,     // spacing-none
-  itemPaddingRight: 4,   // spacing-sm
-  itemPaddingBottom: 12,  // spacing-xl
-  itemPaddingLeft: 4,    // spacing-sm
+/** Numeric form of a token, for the few places React needs a number rather than a length. */
+export const navigationNumber = (token: string, fallback: number): number =>
+  Number.parseFloat(t.value(token)) || fallback;
 
-  // Item internal gap: 10px (spacing-2lg)
-  itemGap: 10,           // spacing-2lg
+// ── Colours ──────────────────────────────────────────────────────────────────
 
-  // Selector bar: 70 x 4
-  selectorBarWidth: 70,
-  selectorBarHeight: 4,
+export interface NavigationColorSet {
+  /** Label colour. */
+  foreground: string;
+  /** Icon fill — Icon takes a colour string, so this is the same chain. */
+  icon: string;
+  /** Selector bar under the item; the background colour hides it when not selected. */
+  selector: string;
+}
 
-  // Content frame: 70 x 42
-  contentFrameWidth: 70,
-  contentFrameHeight: 42,
+const colorTokens = (state: NavigationState): Record<keyof NavigationColorSet, string> => {
+  if (state === 'selected') {
+    return { foreground: 'foreground-red', icon: 'foreground-red', selector: 'foreground-red' };
+  }
+  if (state === 'disabled') {
+    return {
+      foreground: 'foreground-disable',
+      icon: 'foreground-disable',
+      selector: 'background-white',
+    };
+  }
+  // rest, hover, focus and active share one appearance in Figma — the component set has
+  // no per-state colour for them, so they all resolve to the inactive pair.
+  return { foreground: 'foreground-dark', icon: 'foreground-gray', selector: 'background-white' };
+};
 
-  // Icon size: 24px
-  iconSize: 24,
+/** CSS variable references for one state — what NavigationBar.tsx renders with. */
+export const navigationColors = (state: NavigationState): NavigationColorSet => {
+  const tokens = colorTokens(state);
+  return {
+    foreground: t.ref(tokens.foreground),
+    icon: t.ref(tokens.icon),
+    selector: t.ref(tokens.selector),
+  };
+};
 
-  // Badge: red circle
-  badgeSize: 16,
-  badgeMinWidth: 16,
-  badgeFontSize: 10,
-  badgePaddingX: 4,
-  badgeTop: -4,
-  badgeRight: 8,
+/** Resolved literals for one state — for stories, tables and tests. */
+export const navigationColorValues = (state: NavigationState): NavigationColorSet => {
+  const tokens = colorTokens(state);
+  return {
+    foreground: t.value(tokens.foreground),
+    icon: t.value(tokens.icon),
+    selector: t.value(tokens.selector),
+  };
+};
 
-  // Home Indicator: 390 x 34 container, pill 134 x 5
-  homeIndicatorContainerHeight: 34,
-  homeIndicatorWidth: 134,
-  homeIndicatorHeight: 5,
-  homeIndicatorRadius: 100,  // radius-full
-  homeIndicatorColor: '#000000',
+/** The Tier 2 token name behind each colour of a state — for the token-chain table. */
+export const navigationColorTokens = colorTokens;
 
-  // Cart button (add-to-cart=yes)
-  cartButtonHeight: 90,
-  cartButtonRadius: 8,     // radius-lg
-  cartButtonPadding: 4,    // spacing-sm
+// ── Layout, sizing and typography ────────────────────────────────────────────
+
+/** Every value NavigationBar.tsx renders with. No literals — each is a `var(--navigation-*)`. */
+export const NAVIGATION = {
+  // Shell
+  width: t.ref('width'),
+  height: t.ref('height'),
+  barHeight: t.ref('bar-height'),
+  borderWidth: t.ref('border-width'),
+  background: t.ref('background-white'),
+  borderColor: t.ref('border'),
+
+  // Nav item
+  itemHeight: t.ref('item-height'),
+  itemPaddingTop: t.ref('item-padding-top'),
+  itemPaddingX: t.ref('item-padding-x'),
+  itemPaddingBottom: t.ref('item-padding-bottom'),
+  itemGap: t.ref('item-gap'),
+
+  // Selector bar
+  selectorWidth: t.ref('selector-width'),
+  selectorHeight: t.ref('selector-height'),
+  selectorRadius: t.ref('selector-radius'),
+
+  // Content frame
+  contentWidth: t.ref('content-width'),
+  contentHeight: t.ref('content-height'),
+  contentOffset: t.ref('content-offset'),
+
+  // Badges
+  orderBadgeOffsetTop: t.ref('order-badge-offset-top'),
+  orderBadgeOffsetRight: t.ref('order-badge-offset-right'),
+  badgeSize: t.ref('badge-diameter'),
+  badgeRadius: t.ref('badge-radius'),
+  badgeBorderWidth: t.ref('badge-border-width'),
+  badgeLineHeight: t.ref('badge-line-height'),
+  badgeOffsetTop: t.ref('badge-offset-top'),
+  badgeOffsetRight: t.ref('badge-offset-right'),
+
+  // Cart button (add-to-cart mode)
+  cartHeight: t.ref('cart-height'),
+  cartRadius: t.ref('cart-radius'),
+  cartPadding: t.ref('cart-padding'),
+  cartPaddingBottom: t.ref('cart-padding-bottom'),
+  cartGap: t.ref('cart-gap'),
+  cartGradient: t.ref('cart-gradient'),
+  cartBadgeOffsetTop: t.ref('cart-badge-offset-top'),
+  cartBadgeOffsetRight: t.ref('cart-badge-offset-right'),
 
   // Timer pill
-  timerPillBorderWidth: 1,
-  timerPillBorderColor: '#FFFFFF',
-  timerPillRadius: 100,    // radius-full
-  timerPillPaddingX: 8,
-  timerPillPaddingY: 2,
-  timerFontSize: 10,
+  timerBorderWidth: t.ref('timer-border-width'),
+  timerRadius: t.ref('timer-radius'),
+  timerPaddingX: t.ref('timer-padding-x'),
+  timerPaddingY: t.ref('timer-padding-y'),
+  timerLineHeight: t.ref('timer-line-height'),
 
-  // Cart badge (white circle on cart button)
-  cartBadgeSize: 20,
-  cartBadgeTop: -4,
-  cartBadgeRight: -4,
+  // Home indicator
+  homeIndicatorContainerHeight: t.ref('home-indicator-container-height'),
+  homeIndicatorPaddingBottom: t.ref('home-indicator-padding-bottom'),
+  homeIndicatorWidth: t.ref('home-indicator-width'),
+  homeIndicatorHeight: t.ref('home-indicator-height'),
+  homeIndicatorRadius: t.ref('home-indicator-radius'),
+  homeIndicatorColor: t.ref('foreground-home-indicator'),
+
+  // Typography — typography/button/xs/medium
+  fontFamily: t.ref('typography-family'),
+  fontSize: t.ref('typography-size'),
+  fontWeight: t.ref('typography-weight'),
+  lineHeight: t.ref('typography-line-height'),
+  tracking: t.ref('typography-tracking'),
+
+  // Foreground colours used outside the state matrix
+  foregroundOnCart: t.ref('foreground-white'),
+  foregroundAccent: t.ref('foreground-red'),
 } as const;
 
-// ── Cart Gradient ──
-// Figma: rgba(248,92,42,1) → rgba(216,15,13,1) vertical
-export const CART_GRADIENT = 'linear-gradient(180deg, #F85C2A 0%, #D80F0D 100%)' as const;
+/**
+ * Icon dimensions stay numeric — `size` is an Icon prop, not a CSS length, so it cannot
+ * be a `var()`. The number is still read from the generated token, not hand-typed.
+ */
+export const NAVIGATION_ICON = {
+  size: navigationNumber('icon-size', 24) as 24,
+  orderBadgeSize: navigationNumber('order-badge-icon-size', 20) as 20,
+} as const;
+
+/** Default container width, for the `width` prop. Read from the token, never typed. */
+export const NAVIGATION_DEFAULT_WIDTH = navigationNumber('width', 390);

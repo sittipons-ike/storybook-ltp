@@ -1,60 +1,83 @@
 // ═══════════════════════════════════════════
 // Loading Design Tokens
-// Source: Figma "Design Systems Web App Lotteryplus V.7.1"
-// Component: "Loading" (14291:131477)
-// All values reference Foundation variables ONLY
+//
+// This file holds NO values. Colours come from Figma (`colors/loading`) through
+// components.figma.json → components.json; layout, sizing and motion are authored in
+// design-library/lotteryplus/components/loading.json. Both are generated into
+// foundations/tokens.css (CSS custom properties) and foundations/tokens.generated.ts
+// (resolved literals).
+//
+// What this file adds is types and lookup helpers, so Loading.tsx renders with CSS
+// variables while stories and tests can still read the literal a token resolves to.
+//
+// Regenerate: python3 tools/gen-components.py && python3 tools/gen-tokens.py
+// Verify:     python3 tools/verify-tokens.py
 // ═══════════════════════════════════════════
 
-// ── From Foundation: Spacing & Layout (2-semantic) ──
-export const SPACING = {
-  none: 0, // spacing-none
+import { component, sys, sysValue } from '../../foundations/tokens';
+
+const t = component('loading');
+
+/** Size presets. `default` is the Figma component frame; the rest are library presets. */
+export type LoadingSize = 'sm' | 'default' | 'lg' | 'xl';
+
+export const LOADING_SIZES: readonly LoadingSize[] = ['sm', 'default', 'lg', 'xl'] as const;
+
+/** The literal a Loading token resolves to. Empty string when it is not declared. */
+export const loadingValue = (token: string): string => t.value(token);
+
+/** Every `--loading-*` token declared by the generator — what the token-chain story lists. */
+export const loadingTokenNames = (): string[] => t.names();
+
+/**
+ * CSS variable references — what Loading.tsx renders with.
+ *
+ * `logoFill` is the one colour Figma does not expose under `colors/loading`; the Figma
+ * layer binds `Color/Foreground/FG-Primary` directly, so this points at the Tier 1
+ * semantic token rather than inventing a `--loading-*` alias for it.
+ */
+export const LOADING = {
+  radius: t.ref('radius'),
+  padding: t.ref('padding'),
+
+  trackFill: t.ref('background-black-80'),
+  trackOpacity: t.ref('track-opacity'),
+  arcFill: t.ref('foreground-white'),
+  arcPrimary: t.ref('arc-primary'),
+  logoFill: sys('color-foreground-primary'),
+
+  frameSize: t.ref('frame-size'),
+  frameOffset: t.ref('frame-offset'),
+  trackSize: t.ref('track-size'),
+  arcSize: t.ref('arc-size'),
+
+  duration: t.ref('duration'),
+  timingFunction: t.ref('timing-function'),
+  iterationCount: t.ref('iteration-count'),
 } as const;
 
-// ── From Foundation: Border Radius (2-semantic) ──
-export const RADIUS = {
-  none: 0, // radius-none → component corner radius
+/** Resolved literals for the same set — for stories, tables and tests. */
+export const LOADING_VALUES = {
+  radius: t.value('radius'),
+  padding: t.value('padding'),
+
+  trackFill: t.value('background-black-80'),
+  trackOpacity: t.value('track-opacity'),
+  arcFill: t.value('foreground-white'),
+  logoFill: sysValue('color-foreground-primary'),
+
+  frameSize: t.value('frame-size'),
+  frameOffset: t.value('frame-offset'),
+  trackSize: t.value('track-size'),
+  arcSize: t.value('arc-size'),
+
+  duration: t.value('duration'),
+  timingFunction: t.value('timing-function'),
+  iterationCount: t.value('iteration-count'),
 } as const;
 
-// ── From Foundation: Colors (3-component / Loading) ──
-export const LOADING_COLORS = {
-  // Track ring (background): black at 80% opacity, then 25% element opacity
-  // Figma bound: colors/loading/loading-bg-black-80%
-  trackFill: 'rgba(0, 0, 0, 0.8)',
-  trackOpacity: 0.25, // element-level opacity
+/** CSS reference for one size preset — e.g. `var(--loading-size-lg)`. */
+export const loadingSize = (size: LoadingSize): string => t.ref(`size-${size}`);
 
-  // Spinning arc indicator
-  // Figma bound: colors/loading/loading-fg-white
-  arcFill: '#FFFFFF',
-
-  // Logo (hidden by default in this variant)
-  // Figma bound: Color/Foreground/FG-Primary
-  logoFill: '#E32321',
-} as const;
-
-// ── Component Dimensions from Figma ──
-export const LOADING_DIMENSIONS = {
-  // Component size: 56x56
-  componentSize: 56,
-
-  // Inner frame: 44.8x44.8 centered (offset 5.6 from edges)
-  frameSize: 44.8,
-  frameOffset: 5.6, // (56 - 44.8) / 2
-
-  // Track ring vector: ~41x41
-  trackSize: 41.067,
-
-  // Arc vector: ~20.3x20.3
-  arcSize: 20.344,
-} as const;
-
-// ── Animation Tokens ──
-export const LOADING_ANIMATION = {
-  // Spin duration (standard loading speed)
-  duration: '1s',
-
-  // Timing function: linear for continuous smooth rotation
-  timingFunction: 'linear',
-
-  // Iteration: infinite
-  iterationCount: 'infinite',
-} as const;
+/** Resolved literal for one size preset — e.g. `'80px'`. */
+export const loadingSizeValue = (size: LoadingSize): string => t.value(`size-${size}`);

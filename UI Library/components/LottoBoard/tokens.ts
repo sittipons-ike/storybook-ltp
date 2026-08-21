@@ -1,171 +1,266 @@
 // ═══════════════════════════════════════════
 // LottoBoard Design Tokens
-// Source: Figma "Design Systems Web App Lotteryplus V.7.1"
-// Sub-components: NumberSearchBox, MenuButton, SetSelect, SearchCard
-// All values reference Foundation variables ONLY
+//
+// This file holds NO values. Every value lives in Figma, flows through design.md
+// (colours) and design-library/lotteryplus/components/lotto-board.json (layout, sizing
+// and typography), and is generated into foundations/tokens.css (CSS custom properties)
+// and foundations/tokens.generated.ts (resolved literals).
+//
+// What this file adds is types and lookup helpers, so the four sub-components render
+// with CSS variables while stories and tests can still read the literal a token
+// resolves to.
+//
+// Sub-components and their token namespaces:
+//   NumberSearchBox  cell-* / row-*
+//   MenuButton       menu-*
+//   SetSelect        set-*
+//   SearchCard       card-*
+//
+// Regenerate the source values: python3 tools/gen-components.py && python3 tools/gen-tokens.py
+// Verify them against Figma:    python3 tools/verify-tokens.py
 // ═══════════════════════════════════════════
 
-// ── From Foundation: Spacing & Layout ──
-// Variable: dimension/spacing/spacing-none → spacing/0 = 0px
-// Variable: dimension/spacing/spacing-sm → spacing/4 = 4px
-// Variable: dimension/spacing/spacing-lg → spacing/8 = 8px
-// Variable: dimension/spacing/spacing-xl → spacing/12 = 12px
-// Variable: dimension/spacing/spacing-2xl → spacing/16 = 16px
-export const SPACING = {
-  none: 0,   // spacing-none
-  sm: 4,     // spacing-sm
-  lg: 8,     // spacing-lg
-  xl: 12,    // spacing-xl
-  '2xl': 16, // spacing-2xl
-} as const;
+import type { CSSProperties } from 'react';
+import { component } from '../../foundations/tokens';
 
-// ── From Foundation: Border Radius ──
-// Variable: dimension/breakpoint/radius/radius-none → radius/0 = 0px
-// Variable: dimension/breakpoint/radius/radius-lg → radius/8 = 8px
-export const RADIUS = {
-  none: 0, // radius-none
-  lg: 8,   // radius-lg
-} as const;
+const t = component('lotto-board');
 
-// ── From Foundation: Border Width ──
-// Variable: dimension/border-width/0 → 0px
-// Variable: dimension/border-width/1 → 1px
-export const BORDER_WIDTH = {
-  0: 0,
-  1: 1,
-} as const;
+/** `var(--lotto-board-<token>)` — what the components render with. */
+export const lottoBoardRef = (token: string, fallback?: string): string => t.ref(token, fallback);
 
-// ── From Foundation: Shadow ──
-// Variable: dimension/shadow/sm
-export const SHADOW = {
-  sm: '0px 1px 2px 0px rgba(0,0,0,0.06), 0px 1px 3px 0px rgba(0,0,0,0.10)',
-} as const;
+/** The literal a LottoBoard token resolves to. Empty string when it is not declared. */
+export const lottoBoardValue = (token: string): string => t.value(token);
 
-// ── From Foundation: Typography ──
-// Variable: title/l-semb → 16px/24px Semibold, Graphik TH
-// Variable: button/m-semb → 14px/22px Semibold, Graphik TH
-// Variable: underline/m-med → 14px/22px Medium, Graphik TH
-// Variable: caption → 12px/18px Medium, Graphik TH
-export const TYPOGRAPHY = {
-  fontFamily: "'Graphik TH', sans-serif",
-  title: {
-    fontSize: 16,
-    fontWeight: 600,
-    lineHeight: '24px',
-  },
-  button: {
-    fontSize: 14,
-    fontWeight: 600,
-    lineHeight: '22px',
-  },
-  underline: {
-    fontSize: 14,
-    fontWeight: 500,
-    lineHeight: '22px',
-  },
-  caption: {
-    fontSize: 12,
-    fontWeight: 500,
-    lineHeight: '18px',
-  },
-  numberBox: {
-    fontSize: 24,
-    fontWeight: 700,
-    lineHeight: '32px',
-  },
-} as const;
+/** Every token declared for this component — what the token-chain story enumerates. */
+export const lottoBoardTokenNames = (): string[] => t.names();
 
-// ── From Foundation: Component Colors (3-component collection) ──
-// Variable mapping: colors/lotto-board/*
+// ─────────────────────────────────────────
+//  Canonical vocabulary
+// ─────────────────────────────────────────
 
-export const LOTTO_BOARD_COLORS = {
-  /** colors/lotto-board/lotto-board-bg-white → #FFFFFF */
-  bgWhite: '#FFFFFF',
-  /** colors/lotto-board/lotto-board-bg-dark → #262626 */
-  bgDark: '#262626',
-  /** colors/lotto-board/lotto-board-bg-gray → #C9C9C9 */
-  bgGray: '#C9C9C9',
-  /** colors/lotto-board/lotto-board-border → #D4D4D4 */
-  border: '#D4D4D4',
-  /** colors/lotto-board/lotto-board-fg-dark → #262626 */
-  fgDark: '#262626',
-  /** colors/lotto-board/lotto-board-fg-red → #E32321 */
-  fgRed: '#E32321',
-} as const;
+/** Canonical states, per the Design System Standard, plus `selected` for the cells. */
+export type LottoBoardState =
+  | 'rest'
+  | 'hover'
+  | 'active'
+  | 'focus'
+  | 'disabled'
+  | 'selected';
 
-// ── From Foundation: Button Colors (used by MenuButton) ──
-// Variable mapping: colors/button/primary/*
-// Variable mapping: colors/button/on-container/*
+export const LOTTO_BOARD_STATES: readonly LottoBoardState[] = [
+  'rest',
+  'hover',
+  'active',
+  'focus',
+  'disabled',
+  'selected',
+] as const;
 
-export const BUTTON_COLORS = {
-  primary: {
-    bg: '#E32321',    // btn-bg-pri-default
-    fg: '#FFFFFF',    // btn-fg-pri-default
-  },
-  onContainer: {
-    bg: '#FFFFFF',    // btn-bg-oncont-default
-    fg: '#E32321',    // btn-fg-oncont-default
-  },
-} as const;
+/**
+ * SetSelect's state set. Figma still labels these Default / Active / Actived — that
+ * rename is queued in figma-rename-map.md; the canonical names are used here.
+ */
+export type SetSelectState = Extract<LottoBoardState, 'rest' | 'active' | 'selected'>;
 
-// ── NumberSearchBox Config ──
-export const NUMBER_BOX = {
-  width: 53,
-  height: 64,
-  padding: SPACING.lg,        // 8px all sides
-  gap: SPACING.lg,            // 8px between boxes
-  wrapperPaddingLR: SPACING['2xl'], // 16px
-  borderRadius: RADIUS.lg,    // 8px
-  borderWidth: BORDER_WIDTH[1], // 1px
-  shadow: SHADOW.sm,
-} as const;
+export const SET_SELECT_STATES: readonly SetSelectState[] = ['rest', 'active', 'selected'] as const;
 
-// ── MenuButton Config ──
-export const MENU_BUTTON = {
-  buttonWidth: 114,
-  buttonHeight: 44,
-  gap: SPACING.lg,            // 8px
-  paddingLR: SPACING['2xl'],  // 16px
-  borderRadius: RADIUS.lg,    // 8px
-  borderWidth: BORDER_WIDTH[1],
-} as const;
-
-// ── SetSelect Config ──
-export const SET_SELECT = {
-  gap: SPACING.sm,             // 4px vertical gap
-  paddingLR: SPACING['2xl'],   // 16px
-  innerGap: SPACING['2xl'],    // 16px horizontal gap
-  imageWidth: 72,
-  imageHeight: 69,
-  stepperButtonSize: 48,
-  stepperPadding: SPACING.xl,  // 12px
-  stepperRadius: RADIUS.lg,    // 8px
-} as const;
-
-// ── SearchCard Config ──
-export const SEARCH_CARD = {
-  gap: SPACING['2xl'],         // 16px vertical gap
-} as const;
-
-// ── Variant Types ──
+/** Figma variant of number-search-box-2 — which cells read as selected. */
 export type NumberSearchBoxVariant = 'Empty' | '6' | 'Front 3' | 'Back 3' | 'Back 2' | '1';
-export type MenuButtonType = 'All' | 'Single' | 'Set';
-export type SetSelectStatus = 'Default' | 'Active' | 'Actived';
-export type SearchCardType = 'All' | 'Single' | 'Set';
 
-// Maps variant to which boxes are selected (true = selected/active)
+export const NUMBER_SEARCH_BOX_VARIANTS: readonly NumberSearchBoxVariant[] = [
+  'Empty',
+  '6',
+  'Front 3',
+  'Back 3',
+  'Back 2',
+  '1',
+] as const;
+
+/** Figma "Type" variant, shared by menu-button and search-card. */
+export type MenuButtonType = 'All' | 'Single' | 'Set';
+export type SearchCardType = MenuButtonType;
+
+export const MENU_BUTTON_TYPES: readonly MenuButtonType[] = ['All', 'Single', 'Set'] as const;
+
+/** Which cells a Figma variant shows as selected. */
 export const NUMBER_BOX_VARIANT_MAP: Record<NumberSearchBoxVariant, boolean[]> = {
-  'Empty':   [false, false, false, false, false, false],
-  '6':       [true,  true,  true,  true,  true,  true],
-  'Front 3': [true,  true,  true,  false, false, false],
-  'Back 3':  [false, false, false, true,  true,  true],
-  'Back 2':  [false, false, false, false, true,  true],
-  '1':       [false, false, false, false, false, true],
+  Empty: [false, false, false, false, false, false],
+  '6': [true, true, true, true, true, true],
+  'Front 3': [true, true, true, false, false, false],
+  'Back 3': [false, false, false, true, true, true],
+  'Back 2': [false, false, false, false, true, true],
+  '1': [false, false, false, false, false, true],
 };
 
-// Menu button labels (Thai)
+/** Menu button labels (Thai) — content, not style. */
 export const MENU_BUTTON_LABELS: Record<MenuButtonType, string> = {
   All: 'ทั้งหมด',
   Single: 'หวยเดี่ยว',
   Set: 'หวยชุด',
 };
+
+// ─────────────────────────────────────────
+//  Colours — Tier 2 aliases into colors/lotto-board
+// ─────────────────────────────────────────
+
+export const LOTTO_BOARD_COLORS = {
+  backgroundWhite: t.ref('background-white'),
+  backgroundRed: t.ref('background-red'),
+  backgroundDark: t.ref('background-dark'),
+  backgroundGray: t.ref('background-gray'),
+  backgroundSoftGray: t.ref('background-soft-gray'),
+  backgroundDarkGray: t.ref('background-dark-gray'),
+  foregroundWhite: t.ref('foreground-white'),
+  foregroundDark: t.ref('foreground-dark'),
+  foregroundRed: t.ref('foreground-red'),
+  foregroundGray: t.ref('foreground-gray'),
+  foregroundDarkGray: t.ref('foreground-dark-gray'),
+  foregroundDisable: t.ref('foreground-disable'),
+  border: t.ref('border'),
+} as const;
+
+/** The same palette resolved to literals — for stories, tables and tests. */
+export const LOTTO_BOARD_COLOR_VALUES: Record<keyof typeof LOTTO_BOARD_COLORS, string> = {
+  backgroundWhite: t.value('background-white'),
+  backgroundRed: t.value('background-red'),
+  backgroundDark: t.value('background-dark'),
+  backgroundGray: t.value('background-gray'),
+  backgroundSoftGray: t.value('background-soft-gray'),
+  backgroundDarkGray: t.value('background-dark-gray'),
+  foregroundWhite: t.value('foreground-white'),
+  foregroundDark: t.value('foreground-dark'),
+  foregroundRed: t.value('foreground-red'),
+  foregroundGray: t.value('foreground-gray'),
+  foregroundDarkGray: t.value('foreground-dark-gray'),
+  foregroundDisable: t.value('foreground-disable'),
+  border: t.value('border'),
+};
+
+// ─────────────────────────────────────────
+//  Typography roles
+// ─────────────────────────────────────────
+
+/**
+ * Text roles this component family renders.
+ *
+ * `number` is the only one whose size / line-height / weight are not backed by a
+ * semantic role — 24px/32px Bold has no equivalent in design.md. See the `_source`
+ * note in components/lotto-board.json.
+ */
+export type LottoBoardTextRole = 'title' | 'menu' | 'link' | 'caption' | 'number';
+
+export const LOTTO_BOARD_TEXT_ROLES: readonly LottoBoardTextRole[] = [
+  'title',
+  'menu',
+  'link',
+  'caption',
+  'number',
+] as const;
+
+/** CSS variable references for one text role — spread straight into a style object. */
+export const lottoBoardText = (role: LottoBoardTextRole): CSSProperties => ({
+  fontFamily: t.ref(`typography-${role}-family`),
+  fontSize: t.ref(`typography-${role}-size`),
+  fontWeight: t.ref(`typography-${role}-weight`) as CSSProperties['fontWeight'],
+  lineHeight: t.ref(`typography-${role}-line-height`),
+  letterSpacing: t.ref(`typography-${role}-tracking`),
+});
+
+/** Resolved literals for one text role — for stories and tests. */
+export const lottoBoardTextValues = (role: LottoBoardTextRole) => ({
+  family: t.value(`typography-${role}-family`),
+  size: t.value(`typography-${role}-size`),
+  weight: t.value(`typography-${role}-weight`),
+  lineHeight: t.value(`typography-${role}-line-height`),
+  tracking: t.value(`typography-${role}-tracking`),
+});
+
+/** The shared type family — every role resolves to the same one. */
+export const FONT_FAMILY = t.ref('typography-title-family');
+
+// ─────────────────────────────────────────
+//  Layout, sizing and opacity
+// ─────────────────────────────────────────
+
+/** NumberSearchBox — the row of digit cells. */
+export const NUMBER_BOX = {
+  gap: t.ref('cell-gap'),
+  padding: t.ref('cell-padding'),
+  radius: t.ref('cell-radius'),
+  borderWidth: t.ref('cell-border-width'),
+  shadow: t.ref('cell-shadow'),
+  width: t.ref('cell-width'),
+  height: t.ref('cell-height'),
+  rowPaddingX: t.ref('row-padding-x'),
+} as const;
+
+/** MenuButton — the three type filters. */
+export const MENU_BUTTON = {
+  gap: t.ref('menu-gap'),
+  paddingX: t.ref('menu-padding-x'),
+  itemPaddingX: t.ref('menu-item-padding-x'),
+  itemRadius: t.ref('menu-item-radius'),
+  itemBorderWidth: t.ref('menu-item-border-width'),
+  itemWidth: t.ref('menu-item-width'),
+  itemHeight: t.ref('menu-item-height'),
+} as const;
+
+/** SetSelect — label, thumbnail and stepper. */
+export const SET_SELECT = {
+  gap: t.ref('set-gap'),
+  paddingX: t.ref('set-padding-x'),
+  rowGap: t.ref('set-row-gap'),
+  imageRadius: t.ref('set-image-radius'),
+  imageWidth: t.ref('set-image-width'),
+  imageHeight: t.ref('set-image-height'),
+  stepperRadius: t.ref('set-stepper-radius'),
+  stepperPadding: t.ref('set-stepper-padding'),
+  stepperBorderWidth: t.ref('set-stepper-border-width'),
+  stepperSize: t.ref('set-stepper-size'),
+  quantityPaddingX: t.ref('set-quantity-padding-x'),
+  quantityMinWidth: t.ref('set-quantity-min-width'),
+} as const;
+
+/** SearchCard — the composite shell. */
+export const SEARCH_CARD = {
+  gap: t.ref('card-gap'),
+  paddingX: t.ref('card-padding-x'),
+  headerGap: t.ref('card-header-gap'),
+  randomizeWidth: t.ref('randomize-width'),
+  randomizeHeight: t.ref('randomize-height'),
+  randomizeRadius: t.ref('randomize-radius'),
+  randomizeGradient: t.ref('randomize-gradient'),
+  randomizeForeground: t.ref('randomize-foreground'),
+  randomizeGap: t.ref('randomize-gap'),
+  searchHeight: t.ref('search-height'),
+  opacityDisabled: t.ref('opacity-disabled'),
+  actionsGap: t.ref('card-actions-gap'),
+  maxWidth: t.ref('card-max-width'),
+} as const;
+
+/** Opacity treatments. Neither has a semantic role — see components/lotto-board.json. */
+export const OPACITY = {
+  disabled: t.ref('opacity-disabled'),
+  limitReached: t.ref('opacity-limit-reached'),
+} as const;
+
+/**
+ * Icon size stays numeric — it is a component prop on `<Icon size>`, not a style.
+ * Mirrors how Button reads `--btn-icon-size`.
+ */
+export const ICON_SIZE = Number(t.value('set-icon-size').replace('px', '')) || 24;
+
+/** The randomise tile's glyph. Figma sizes it independently of the stepper's. */
+export const RANDOMIZE_ICON_SIZE = Number(t.value('randomize-icon-size').replace('px', '')) || 24;
+
+/** Everything the family renders with, in one place. */
+export const LOTTO_BOARD = {
+  colors: LOTTO_BOARD_COLORS,
+  numberBox: NUMBER_BOX,
+  menuButton: MENU_BUTTON,
+  setSelect: SET_SELECT,
+  searchCard: SEARCH_CARD,
+  opacity: OPACITY,
+  fontFamily: FONT_FAMILY,
+  iconSize: ICON_SIZE,
+} as const;

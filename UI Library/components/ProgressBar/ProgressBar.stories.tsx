@@ -1,24 +1,41 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState, useEffect } from 'react';
-import ProgressBar, { DEFAULT_STEPS, ProgressStep } from './ProgressBar';
+import ProgressBar, {
+  DEFAULT_STEPS,
+  LOTTERY_STEPS,
+  LOTTERY_EXTRA_STEPS,
+  LOTTERY_SLIP_STEPS,
+  NOKCASH_STEPS,
+  NOKCASH_SLIP_STEPS,
+  ProgressStep,
+} from './ProgressBar';
 import {
-  SPACING,
-  RADIUS,
-  TYPOGRAPHY,
-  PROGRESS_COLORS,
-  PROGRESS_DIMENSIONS,
+  PROGRESS,
+  PROGRESS_FIGMA_ID,
+  PROGRESS_STEP_STATES,
+  PROGRESS_TRACK_TOKENS,
+  progressStepColorValues,
+  progressStepTokens,
+  progressValue,
 } from './tokens';
+import { sys, sysValue } from '../../foundations/tokens';
 import ColorBindingsTable from '../../system/ColorBindingsTable';
-import type { ColorBinding } from '../../system/ColorBindingsTable';
 
 // ═══════════════════════════════════════════
 //  ProgressBar Stories — Lotteryplus Design System
 //  Figma: "progress-bars-lottery" component set (14291:136200)
 //  5 Variants: Step-1, Step-2, Step-3, Step-3-Extra, Step-3-Slip
+//
+//  Values shown here are read from foundations/tokens.generated.ts, which is
+//  generated from Figma. Nothing on this page is typed by hand, so a table can
+//  never claim a value the component does not actually render.
 // ═══════════════════════════════════════════
 
+const sans = sys('type-label-md-medium-family');
+const mono = 'ui-monospace, SFMono-Regular, Menlo, monospace';
+
 const meta: Meta<typeof ProgressBar> = {
-  title: 'Components/ProgressBar',
+  title: 'Atoms/ProgressBar',
   component: ProgressBar,
   tags: ['autodocs'],
   argTypes: {
@@ -48,6 +65,17 @@ const meta: Meta<typeof ProgressBar> = {
 export default meta;
 type Story = StoryObj<typeof ProgressBar>;
 
+/** Caption above a demo block — chrome only, but still token-driven. */
+const caption: React.CSSProperties = {
+  fontFamily: sans,
+  fontSize: sys('type-label-md-semibold-size'),
+  fontWeight: sys(
+    'type-label-md-semibold-weight',
+  ) as unknown as React.CSSProperties['fontWeight'],
+  color: sys('color-text-tertiary-default'),
+  marginBottom: sys('spacing-lg'),
+};
+
 // ═══════════════════════════════════════════
 //  Default (4 steps, step 2 active)
 // ═══════════════════════════════════════════
@@ -74,6 +102,17 @@ export const Interactive: Story = {
       const [step, setStep] = useState(0);
       const maxStep = DEFAULT_STEPS.length - 1;
 
+      const chrome = (disabled: boolean): React.CSSProperties => ({
+        padding: `${sys('spacing-lg')} ${sys('spacing-2xl')}`,
+        borderRadius: sys('radius-lg'),
+        border: `${sys('border-width-hairline')} solid ${sys('color-border-accent-gray-light')}`,
+        background: disabled ? sys('color-background-light') : sys('color-background-default'),
+        color: disabled ? sys('color-secondary-light') : sys('color-secondary-default'),
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        fontFamily: sans,
+        fontSize: sys('type-body-md-regular-size'),
+      });
+
       return (
         <div style={{ width: 480 }}>
           <ProgressBar steps={DEFAULT_STEPS} currentStep={step} animated />
@@ -81,23 +120,14 @@ export const Interactive: Story = {
             style={{
               display: 'flex',
               justifyContent: 'center',
-              gap: 12,
-              marginTop: 24,
+              gap: sys('spacing-xl'),
+              marginTop: sys('spacing-4xl'),
             }}
           >
             <button
               onClick={() => setStep((s) => Math.max(0, s - 1))}
               disabled={step === 0}
-              style={{
-                padding: '8px 16px',
-                borderRadius: 8,
-                border: '1px solid #D4D4D4',
-                background: step === 0 ? '#F5F5F5' : '#FFFFFF',
-                color: step === 0 ? '#C9C9C9' : '#262626',
-                cursor: step === 0 ? 'not-allowed' : 'pointer',
-                fontFamily: "'Graphik TH', sans-serif",
-                fontSize: 14,
-              }}
+              style={chrome(step === 0)}
             >
               Previous
             </button>
@@ -105,41 +135,31 @@ export const Interactive: Story = {
               onClick={() => setStep((s) => Math.min(maxStep, s + 1))}
               disabled={step === maxStep}
               style={{
-                padding: '8px 16px',
-                borderRadius: 8,
+                ...chrome(step === maxStep),
                 border: 'none',
-                background: step === maxStep ? '#F5F5F5' : '#E32321',
-                color: step === maxStep ? '#C9C9C9' : '#FFFFFF',
-                cursor: step === maxStep ? 'not-allowed' : 'pointer',
-                fontFamily: "'Graphik TH', sans-serif",
-                fontSize: 14,
+                background:
+                  step === maxStep
+                    ? sys('color-background-light')
+                    : sys('color-primary-default'),
+                color:
+                  step === maxStep
+                    ? sys('color-secondary-light')
+                    : sys('color-foreground-white'),
               }}
             >
               Next
             </button>
-            <button
-              onClick={() => setStep(0)}
-              style={{
-                padding: '8px 16px',
-                borderRadius: 8,
-                border: '1px solid #D4D4D4',
-                background: '#FFFFFF',
-                color: '#262626',
-                cursor: 'pointer',
-                fontFamily: "'Graphik TH', sans-serif",
-                fontSize: 14,
-              }}
-            >
+            <button onClick={() => setStep(0)} style={chrome(false)}>
               Reset
             </button>
           </div>
           <div
             style={{
               textAlign: 'center',
-              marginTop: 12,
-              fontFamily: "'Graphik TH', sans-serif",
-              fontSize: 12,
-              color: '#737373',
+              marginTop: sys('spacing-xl'),
+              fontFamily: sans,
+              fontSize: sys('type-label-md-regular-size'),
+              color: sys('color-text-tertiary-default'),
             }}
           >
             Current: Step {step + 1} of {DEFAULT_STEPS.length}
@@ -157,18 +177,17 @@ export const Interactive: Story = {
 export const AllSteps: Story = {
   name: 'All Steps',
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 32, width: 480 }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: sys('spacing-5xl'),
+        width: 480,
+      }}
+    >
       {[0, 1, 2, 3].map((step) => (
         <div key={step}>
-          <div
-            style={{
-              fontSize: 12,
-              fontWeight: 600,
-              color: '#737373',
-              marginBottom: 8,
-              fontFamily: "'Graphik TH', sans-serif",
-            }}
-          >
+          <div style={caption}>
             Step {step + 1} of 4 {step === 0 ? '(First)' : step === 3 ? '(Last)' : ''}
           </div>
           <ProgressBar steps={DEFAULT_STEPS} currentStep={step} animated={false} />
@@ -179,55 +198,31 @@ export const AllSteps: Story = {
 };
 
 // ═══════════════════════════════════════════
-//  CustomSteps (3 and 5 step examples)
+//  The two flows Figma actually draws
 // ═══════════════════════════════════════════
 export const CustomSteps: Story = {
-  name: 'Custom Steps',
+  name: 'Figma flows',
   render: () => {
-    const threeSteps: ProgressStep[] = [
-      { key: 'start', label: 'Start', icon: 'outline-Home' },
-      { key: 'process', label: 'Process', icon: 'outline-order' },
-      { key: 'done', label: 'Done', icon: 'outline-check', completedIcon: 'outline-check' },
-    ];
-
-    const fiveSteps: ProgressStep[] = [
-      { key: 'info', label: 'Info', icon: 'outline-member' },
-      { key: 'details', label: 'Details', icon: 'outline-order' },
-      { key: 'review', label: 'Review', icon: 'outline-safe' },
-      { key: 'confirm', label: 'Confirm', icon: 'outline-check' },
-      { key: 'complete', label: 'Complete', icon: 'outline-check' },
+    const rows: { caption: string; steps: ProgressStep[]; at: number }[] = [
+      { caption: 'progress-bars-lottery · State=Step-2 — 4 ขั้น', steps: LOTTERY_STEPS, at: 1 },
+      { caption: 'progress-bars-lottery · State=Step-3-Extra — ชำระเงินเพิ่ม', steps: LOTTERY_EXTRA_STEPS, at: 2 },
+      { caption: 'progress-bars-lottery · State=Step-3-Slip — สลิปแทน QR', steps: LOTTERY_SLIP_STEPS, at: 2 },
+      { caption: 'progress-bars-nokcash · State=Step-1 — 3 ขั้น', steps: NOKCASH_STEPS, at: 0 },
+      { caption: 'progress-bars-nokcash · State=Step-2-Slip', steps: NOKCASH_SLIP_STEPS, at: 1 },
     ];
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 40, width: 520 }}>
-        <div>
-          <div
-            style={{
-              fontSize: 12,
-              fontWeight: 600,
-              color: '#737373',
-              marginBottom: 8,
-              fontFamily: "'Graphik TH', sans-serif",
-            }}
-          >
-            3 Steps (custom icons) — Step 2 active
+      <div style={{ display: 'flex', flexDirection: 'column', gap: sys('spacing-6xl'), width: 520 }}>
+        <p style={{ ...caption, maxWidth: 520, lineHeight: 1.7 }}>
+          Figma ไม่มี progress bar แบบ generic — มีสองสายที่ตั้งชื่อไว้ชัดเจน คนละความยาว
+          `steps` ยังรับเป็น data ได้เหมือนเดิม แต่ค่า default มาจากสองสายนี้ ไม่ใช่ที่แต่งขึ้นเอง
+        </p>
+        {rows.map((row) => (
+          <div key={row.caption}>
+            <div style={caption}>{row.caption}</div>
+            <ProgressBar steps={row.steps} currentStep={row.at} animated={false} />
           </div>
-          <ProgressBar steps={threeSteps} currentStep={1} animated={false} />
-        </div>
-        <div>
-          <div
-            style={{
-              fontSize: 12,
-              fontWeight: 600,
-              color: '#737373',
-              marginBottom: 8,
-              fontFamily: "'Graphik TH', sans-serif",
-            }}
-          >
-            5 Steps (custom icons + labels) — Step 3 active
-          </div>
-          <ProgressBar steps={fiveSteps} currentStep={2} animated={false} />
-        </div>
+        ))}
       </div>
     );
   },
@@ -256,10 +251,10 @@ export const AnimationDemo: Story = {
           <div
             style={{
               textAlign: 'center',
-              marginTop: 16,
-              fontFamily: "'Graphik TH', sans-serif",
-              fontSize: 12,
-              color: '#737373',
+              marginTop: sys('spacing-2xl'),
+              fontFamily: sans,
+              fontSize: sys('type-label-md-regular-size'),
+              color: sys('color-text-tertiary-default'),
             }}
           >
             Auto-advancing every 2 seconds (Step {step + 1}/{totalSteps})
@@ -272,266 +267,271 @@ export const AnimationDemo: Story = {
 };
 
 // ═══════════════════════════════════════════
-//  Token Verification
+//  Token Chain / Verification
+//
+//  Tier 2 (--progress-*) → Tier 1 (--sys-*) → literal. The literal column is read
+//  from tokens.generated.ts, so it cannot drift from what the component renders.
 // ═══════════════════════════════════════════
+
+/** Tier 2 token → the Tier 1 semantic token it aliases, per progress-bars.json. */
+const LAYOUT_CHAIN: Array<[token: string, semantic: string, usage: string]> = [
+  ['radius', 'radius-full', 'Step circle (full round)'],
+  ['padding-y', 'spacing-none', 'Container paddingTop/Bottom'],
+  ['padding-x', 'spacing-lg', 'Container paddingLeft/Right'],
+  ['gap', 'spacing-sm', 'Gap circle to label'],
+  ['circle-size', '(fixed)', 'Step circle width/height'],
+  ['icon-size', '(fixed)', 'Icon within circle'],
+  ['track-height', 'border-width-thin', 'Connector line height'],
+  ['typography-family', 'type-label-md-medium-family', 'Step label font'],
+  ['typography-size', 'type-label-md-medium-size', 'Step label size'],
+  ['typography-weight', 'type-label-md-medium-weight', 'Step label weight'],
+  ['typography-line-height', 'type-label-md-medium-line-height', 'Step label line-height'],
+  ['typography-tracking', 'type-label-md-medium-tracking', 'Step label tracking'],
+];
+
+/** Colour token → Tier 1 semantic → Figma variable it mirrors. */
+const COLOUR_CHAIN: Array<[token: string, semantic: string, figma: string, usage: string]> = [
+  [
+    'background-red',
+    'color-primary-default',
+    'colors/progress-bars/progress-bg-red',
+    'Active/completed circle & line fill',
+  ],
+  [
+    'background-soft-gray',
+    'color-border-accent-gray-light',
+    'colors/progress-bars/progress-bg-soft-gray',
+    'Upcoming circle & line track',
+  ],
+  [
+    'foreground-dark',
+    'color-secondary-default',
+    'colors/progress-bars/progress-fg-dark',
+    'Active/completed label text',
+  ],
+  [
+    'foreground-disable',
+    'color-secondary-light',
+    'colors/progress-bars/progress-fg-disable',
+    'Upcoming label text',
+  ],
+  [
+    'foreground-white',
+    'color-foreground-white',
+    'colors/progress-bars/progress-fg-white',
+    'Icon on coloured circle',
+  ],
+];
+
+const th: React.CSSProperties = {
+  textAlign: 'left',
+  padding: '8px 12px',
+  fontSize: 11,
+  fontWeight: 600,
+  fontFamily: sans,
+  color: sys('color-text-tertiary-default'),
+  borderBottom: `2px solid ${sys('color-border-accent-gray-soft-light')}`,
+};
+
+const td: React.CSSProperties = {
+  padding: '6px 12px',
+  borderBottom: `1px solid ${sys('color-background-light')}`,
+  fontFamily: mono,
+  fontSize: 11,
+};
+
+const Swatch: React.FC<{ hex: string }> = ({ hex }) =>
+  hex ? (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+      <span
+        style={{
+          width: 14,
+          height: 14,
+          borderRadius: 3,
+          background: hex,
+          border: `1px solid ${sys('color-border-accent-gray-soft-light')}`,
+        }}
+      />
+      {hex}
+    </span>
+  ) : (
+    <span style={{ color: sys('color-text-state-light-gray') }}>—</span>
+  );
+
 export const TokenVerification: Story = {
-  name: 'Token Verification',
-  render: () => {
-    const cellStyle: React.CSSProperties = {
-      padding: '6px 10px',
-      borderBottom: '1px solid #E5E5E5',
-      fontFamily: "'Graphik TH', sans-serif",
-      fontSize: 12,
-      lineHeight: '18px',
-      verticalAlign: 'top',
-    };
-    const headerStyle: React.CSSProperties = {
-      ...cellStyle,
-      fontWeight: 600,
-      backgroundColor: '#F5F5F5',
-      color: '#262626',
-    };
-    const codeStyle: React.CSSProperties = {
-      fontFamily: "'SF Mono', 'Fira Code', monospace",
-      fontSize: 11,
-      backgroundColor: '#F5F5F5',
-      padding: '1px 4px',
-      borderRadius: 3,
-    };
-    const swatchStyle = (color: string): React.CSSProperties => ({
-      display: 'inline-block',
-      width: 14,
-      height: 14,
-      borderRadius: 3,
-      backgroundColor: color,
-      border: '1px solid #E5E5E5',
-      verticalAlign: 'middle',
-      marginRight: 6,
-    });
+  name: '🔍 Token Chain',
+  render: () => (
+    <div style={{ fontFamily: sans, maxWidth: 960 }}>
+      <h2 style={{ margin: '0 0 8px', fontSize: 20 }}>ProgressBar token chain</h2>
+      <p
+        style={{
+          margin: '0 0 20px',
+          fontSize: 13,
+          color: sys('color-text-tertiary-default'),
+        }}
+      >
+        Every value flows Figma → design.md + components/progress-bars.json →
+        components.json → tokens.css. The component renders the Tier 2 alias; the alias
+        points at a Tier 1 semantic token; that resolves to the literal. Nothing below is
+        hand-typed. Figma: {PROGRESS_FIGMA_ID}.
+      </p>
 
-    const tokens = [
-      // Spacing
-      {
-        category: 'Spacing',
-        figmaVariable: 'dimension/spacing/spacing-none',
-        token: 'SPACING.none',
-        value: `${SPACING.none}px`,
-        usage: 'Container paddingTop/Bottom',
-      },
-      {
-        category: 'Spacing',
-        figmaVariable: 'dimension/spacing/spacing-sm',
-        token: 'SPACING.sm',
-        value: `${SPACING.sm}px`,
-        usage: 'Gap circle to label',
-      },
-      {
-        category: 'Spacing',
-        figmaVariable: 'dimension/spacing/spacing-lg',
-        token: 'SPACING.lg',
-        value: `${SPACING.lg}px`,
-        usage: 'Container paddingLeft/Right',
-      },
-      // Radius
-      {
-        category: 'Radius',
-        figmaVariable: 'dimension/breakpoint/radius/radius-xxxl',
-        token: 'RADIUS.full',
-        value: `${RADIUS.full}px`,
-        usage: 'Step circle (full round)',
-      },
-      // Typography
-      {
-        category: 'Typography',
-        figmaVariable: 'label/m-reg/font-family',
-        token: 'TYPOGRAPHY.fontFamily',
-        value: TYPOGRAPHY.fontFamily,
-        usage: 'Step label font',
-      },
-      {
-        category: 'Typography',
-        figmaVariable: 'label/m-reg/size',
-        token: 'TYPOGRAPHY.fontSize',
-        value: `${TYPOGRAPHY.fontSize}px`,
-        usage: 'Step label size',
-      },
-      {
-        category: 'Typography',
-        figmaVariable: 'label/m-reg/weight',
-        token: 'TYPOGRAPHY.fontWeight',
-        value: `${TYPOGRAPHY.fontWeight} (Medium)`,
-        usage: 'Step label weight',
-      },
-      {
-        category: 'Typography',
-        figmaVariable: 'label/m-reg/line-height',
-        token: 'TYPOGRAPHY.lineHeight',
-        value: TYPOGRAPHY.lineHeight,
-        usage: 'Step label line-height',
-      },
-      // Colors — Circle
-      {
-        category: 'Color',
-        figmaVariable: 'colors/progress/progress-bg-red',
-        token: 'PROGRESS_COLORS.circle.active',
-        value: PROGRESS_COLORS.circle.active,
-        color: PROGRESS_COLORS.circle.active,
-        usage: 'Active/completed circle bg',
-      },
-      {
-        category: 'Color',
-        figmaVariable: 'colors/progress/progress-bg-soft-gray',
-        token: 'PROGRESS_COLORS.circle.inactive',
-        value: PROGRESS_COLORS.circle.inactive,
-        color: PROGRESS_COLORS.circle.inactive,
-        usage: 'Inactive circle bg',
-      },
-      // Colors — Line
-      {
-        category: 'Color',
-        figmaVariable: 'colors/progress/progress-bg-red',
-        token: 'PROGRESS_COLORS.line.active',
-        value: PROGRESS_COLORS.line.active,
-        color: PROGRESS_COLORS.line.active,
-        usage: 'Completed line fill',
-      },
-      {
-        category: 'Color',
-        figmaVariable: 'colors/progress/progress-bg-soft-gray',
-        token: 'PROGRESS_COLORS.line.inactive',
-        value: PROGRESS_COLORS.line.inactive,
-        color: PROGRESS_COLORS.line.inactive,
-        usage: 'Inactive line track',
-      },
-      // Colors — Label
-      {
-        category: 'Color',
-        figmaVariable: 'colors/progress/progress-fg-dark',
-        token: 'PROGRESS_COLORS.label.active',
-        value: PROGRESS_COLORS.label.active,
-        color: PROGRESS_COLORS.label.active,
-        usage: 'Active/completed label text',
-      },
-      {
-        category: 'Color',
-        figmaVariable: 'colors/progress/progress-fg-disable',
-        token: 'PROGRESS_COLORS.label.inactive',
-        value: PROGRESS_COLORS.label.inactive,
-        color: PROGRESS_COLORS.label.inactive,
-        usage: 'Inactive label text',
-      },
-      // Colors — Icon
-      {
-        category: 'Color',
-        figmaVariable: 'colors/icon/on-bg',
-        token: 'PROGRESS_COLORS.icon',
-        value: PROGRESS_COLORS.icon,
-        color: PROGRESS_COLORS.icon,
-        usage: 'Icon on circle (white)',
-      },
-      // Dimensions
-      {
-        category: 'Dimension',
-        figmaVariable: 'icons-size (component property)',
-        token: 'PROGRESS_DIMENSIONS.circleSize',
-        value: `${PROGRESS_DIMENSIONS.circleSize}px`,
-        usage: 'Step circle width/height',
-      },
-      {
-        category: 'Dimension',
-        figmaVariable: 'icons-size (24)',
-        token: 'PROGRESS_DIMENSIONS.iconSize',
-        value: `${PROGRESS_DIMENSIONS.iconSize}px`,
-        usage: 'Icon within circle',
-      },
-      {
-        category: 'Dimension',
-        figmaVariable: 'VECTOR strokeWeight',
-        token: 'PROGRESS_DIMENSIONS.lineHeight',
-        value: `${PROGRESS_DIMENSIONS.lineHeight}px`,
-        usage: 'Connecting line height',
-      },
-    ];
-
-    return (
-      <div style={{ maxWidth: 900 }}>
-        <div
-          style={{
-            fontFamily: "'Graphik TH', sans-serif",
-            fontSize: 14,
-            fontWeight: 600,
-            marginBottom: 16,
-            color: '#262626',
-          }}
-        >
-          Token Verification — progress-bars-lottery (14291:136200)
-        </div>
-
-        {/* Live preview */}
-        <div
-          style={{
-            padding: 24,
-            marginBottom: 24,
-            backgroundColor: '#FAFAFA',
-            borderRadius: 8,
-            border: '1px solid #E5E5E5',
-          }}
-        >
-          <div
-            style={{
-              fontSize: 11,
-              fontWeight: 600,
-              color: '#737373',
-              marginBottom: 12,
-              fontFamily: "'Graphik TH', sans-serif",
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px',
-            }}
-          >
-            Live Preview (Step 2 of 4)
-          </div>
-          <ProgressBar steps={DEFAULT_STEPS} currentStep={1} animated={false} />
-        </div>
-
-        {/* Token table */}
-        <table
-          style={{
-            width: '100%',
-            borderCollapse: 'collapse',
-            border: '1px solid #E5E5E5',
-          }}
-        >
-          <thead>
-            <tr>
-              <th style={headerStyle}>Category</th>
-              <th style={headerStyle}>Figma Variable</th>
-              <th style={headerStyle}>Token</th>
-              <th style={headerStyle}>Value</th>
-              <th style={headerStyle}>Usage</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tokens.map((t, i) => (
-              <tr key={i}>
-                <td style={cellStyle}>{t.category}</td>
-                <td style={cellStyle}>
-                  <span style={codeStyle}>{t.figmaVariable}</span>
-                </td>
-                <td style={cellStyle}>
-                  <span style={codeStyle}>{t.token}</span>
-                </td>
-                <td style={cellStyle}>
-                  {'color' in t && t.color && <span style={swatchStyle(t.color)} />}
-                  <span style={codeStyle}>{t.value}</span>
-                </td>
-                <td style={{ ...cellStyle, color: '#737373' }}>{t.usage}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {/* Live preview */}
+      <div
+        style={{
+          padding: 24,
+          marginBottom: 24,
+          backgroundColor: sys('color-background-soft-light'),
+          borderRadius: sys('radius-lg'),
+          border: `1px solid ${sys('color-border-accent-gray-soft-light')}`,
+        }}
+      >
+        <ProgressBar steps={DEFAULT_STEPS} currentStep={1} animated={false} />
       </div>
-    );
-  },
+
+      <h3 style={{ fontSize: 14, margin: '0 0 8px' }}>Layout &amp; typography</h3>
+      <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 28 }}>
+        <thead>
+          <tr>
+            <th style={th}>Tier 2 — component</th>
+            <th style={th}>Tier 1 — semantic</th>
+            <th style={th}>Value</th>
+            <th style={th}>Usage</th>
+          </tr>
+        </thead>
+        <tbody>
+          {LAYOUT_CHAIN.map(([token, semantic, usage]) => (
+            <tr key={token}>
+              <td style={{ ...td, color: sys('color-primary-default') }}>
+                --progress-{token}
+              </td>
+              <td style={{ ...td, color: sys('color-status-info-default') }}>
+                {semantic === '(fixed)' ? '(fixed)' : `--sys-${semantic}`}
+              </td>
+              <td style={{ ...td, color: sys('color-status-success-dark') }}>
+                {progressValue(token)}
+                {semantic !== '(fixed)' && sysValue(semantic) !== progressValue(token) && (
+                  <span style={{ color: sys('color-primary-default') }}>
+                    {' '}
+                    ≠ {sysValue(semantic)}
+                  </span>
+                )}
+              </td>
+              <td style={{ ...td, fontFamily: sans, color: sys('color-text-tertiary-default') }}>
+                {usage}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <h3 style={{ fontSize: 14, margin: '0 0 8px' }}>Colours</h3>
+      <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 28 }}>
+        <thead>
+          <tr>
+            <th style={th}>Tier 2 — component</th>
+            <th style={th}>Tier 1 — semantic</th>
+            <th style={th}>Figma variable</th>
+            <th style={th}>Value</th>
+            <th style={th}>Usage</th>
+          </tr>
+        </thead>
+        <tbody>
+          {COLOUR_CHAIN.map(([token, semantic, figma, usage]) => (
+            <tr key={token}>
+              <td style={{ ...td, color: sys('color-primary-default') }}>
+                --progress-{token}
+              </td>
+              <td style={{ ...td, color: sys('color-status-info-default') }}>
+                --sys-{semantic}
+              </td>
+              <td style={{ ...td, color: sys('color-text-tertiary-default') }}>{figma}</td>
+              <td style={td}>
+                <Swatch hex={progressValue(token)} />
+              </td>
+              <td style={{ ...td, fontFamily: sans, color: sys('color-text-tertiary-default') }}>
+                {usage}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <h3 style={{ fontSize: 14, margin: '0 0 8px' }}>Colours by step state</h3>
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <thead>
+          <tr>
+            <th style={th}>Step state</th>
+            <th style={th}>Circle</th>
+            <th style={th}>Icon</th>
+            <th style={th}>Label</th>
+          </tr>
+        </thead>
+        <tbody>
+          {PROGRESS_STEP_STATES.map((state) => {
+            const names = progressStepTokens(state);
+            const values = progressStepColorValues(state);
+            return (
+              <tr key={state}>
+                <td style={{ ...td, fontFamily: sans, textTransform: 'capitalize' }}>
+                  {state}
+                </td>
+                <td style={td}>
+                  <Swatch hex={values.circle} />
+                  <div style={{ color: sys('color-text-tertiary-default') }}>
+                    --progress-{names.circle}
+                  </div>
+                </td>
+                <td style={td}>
+                  <Swatch hex={values.icon} />
+                  <div style={{ color: sys('color-text-tertiary-default') }}>
+                    --progress-{names.icon}
+                  </div>
+                </td>
+                <td style={td}>
+                  <Swatch hex={values.label} />
+                  <div style={{ color: sys('color-text-tertiary-default') }}>
+                    --progress-{names.label}
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
+          <tr>
+            <td style={{ ...td, fontFamily: sans }}>Connector</td>
+            <td style={td}>
+              <Swatch hex={progressValue(PROGRESS_TRACK_TOKENS.track)} />
+              <div style={{ color: sys('color-text-tertiary-default') }}>
+                --progress-{PROGRESS_TRACK_TOKENS.track} (track)
+              </div>
+            </td>
+            <td style={td}>
+              <Swatch hex={progressValue(PROGRESS_TRACK_TOKENS.fill)} />
+              <div style={{ color: sys('color-text-tertiary-default') }}>
+                --progress-{PROGRESS_TRACK_TOKENS.fill} (fill)
+              </div>
+            </td>
+            <td style={td}>
+              <span style={{ color: sys('color-text-state-light-gray') }}>—</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p
+        style={{
+          marginTop: 20,
+          fontSize: 12,
+          fontFamily: sans,
+          color: sys('color-text-tertiary-default'),
+        }}
+      >
+        Rendered offset for the connector line:{' '}
+        <code style={{ fontFamily: mono }}>{PROGRESS.trackOffset}</code>
+      </p>
+    </div>
+  ),
+  parameters: { layout: 'padded' },
 };
 
 // ── Color Bindings ──
@@ -540,14 +540,13 @@ export const ColorBindings: StoryObj = {
   render: () => (
     <ColorBindingsTable
       componentName="ProgressBar"
-      figmaId="14291:136200"
-      bindings={[
-        { token: 'progress-bg-red', figmaVariable: 'colors/progress/progress-bg-red', hex: '#E32321', usage: 'Active/completed circle & line' },
-        { token: 'progress-bg-soft-gray', figmaVariable: 'colors/progress/progress-bg-soft-gray', hex: '#D4D4D4', usage: 'Inactive circle & line' },
-        { token: 'progress-fg-dark', figmaVariable: 'colors/progress/progress-fg-dark', hex: '#262626', usage: 'Active/completed label text' },
-        { token: 'progress-fg-disable', figmaVariable: 'colors/progress/progress-fg-disable', hex: '#C9C9C9', usage: 'Inactive label text' },
-        { token: 'icon-on-bg', figmaVariable: 'colors/icon/on-bg', hex: '#FFFFFF', usage: 'Icon on colored circle (white)' },
-      ]}
+      figmaId={PROGRESS_FIGMA_ID}
+      bindings={COLOUR_CHAIN.map(([token, , figma, usage]) => ({
+        token: `--progress-${token}`,
+        figmaVariable: figma,
+        hex: progressValue(token),
+        usage,
+      }))}
     />
   ),
 };

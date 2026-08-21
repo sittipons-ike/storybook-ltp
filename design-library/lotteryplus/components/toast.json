@@ -1,0 +1,65 @@
+{
+  "_comment": "Layout, sizing and typography for toast. Colours come from the Figma colour mirror; these do not, so they are authored here. Figma: toast-message — light-toast (14848:2072) + solid-toast (14848:2109).",
+  "base": {
+    "radius": "{design.semantic.radius.2xl}",
+    "border-width": "{design.semantic.border-width.hairline}",
+    "padding-y": "{design.semantic.spacing.lg}",
+    "padding-x": "{design.semantic.spacing.2xl}",
+    "gap": "{design.semantic.spacing.2xl}",
+    "close-gap": "{design.semantic.spacing.lg}",
+    "text-gap": "{design.semantic.spacing.none}",
+    "shadow": "{design.semantic.elevation.card}",
+    "icon-circle-size": 28,
+    "_source-icon-circle-size": "storybook-local, no Figma token backs it — 28x28 is a fixed frame size on the icon circle, and semantic.spacing has no 28 step",
+    "icon-circle-padding": "{design.semantic.spacing.sm}",
+    "icon-circle-radius": "{design.semantic.radius.full}",
+    "icon-size": 20,
+    "_source-icon-size": "storybook-local, no Figma token backs it — semantic.iconography.sizes are still 'tbd' in design.md; Figma binds the icons-size component at Size=20",
+    "close-icon-size": 20,
+    "_source-close-icon-size": "storybook-local, no Figma token backs it — same icons-size Size=20 binding as icon-size",
+    "typography-title-family": "{design.semantic.typography.title.lg.semibold.family}",
+    "typography-title-size": "{design.semantic.typography.title.lg.semibold.size}",
+    "typography-title-line-height": "{design.semantic.typography.title.lg.semibold.line-height}",
+    "typography-title-weight": "{design.semantic.typography.title.lg.semibold.weight}",
+    "typography-title-tracking": "{design.semantic.typography.title.lg.semibold.tracking}",
+    "typography-caption-family": "{design.semantic.typography.body.md.regular.family}",
+    "typography-caption-size": "{design.semantic.typography.body.md.regular.size}",
+    "typography-caption-line-height": "{design.semantic.typography.body.md.regular.line-height}",
+    "typography-caption-weight": "{design.semantic.typography.body.md.regular.weight}",
+    "typography-caption-tracking": "{design.semantic.typography.body.md.regular.tracking}",
+    "_source": {
+      "gap / close-gap": "Figma nests two rows with different gaps: `Frame 2` puts 16 between the icon and the text block, and `Frame 3` puts 8 between that whole block and the close button. The library was applying 16 to both."
+    },
+    "_verified_from": {
+      "node": "14848:2072 `light-toast` (3 variants) and 14848:2109 `solid-toast` (4 variants), page `↳ toast-message ✅`",
+      "date": "2026-08-19",
+      "scope": "all 7 variants, plus a depth-4 walk of light-toast type=success",
+      "result": "358x62, radius 16, padding 8/16, shadow `0,1 blur2 @6%` + `0,1 blur3 @10%` = elevation.card. light-toast strokes 1px INSIDE with the type hue; solid-toast has no stroke. Icon circle 28 with 4 padding and a full radius; icon 20; close 20. Title 16/24 Semibold = title.lg.semibold; caption 14/22 Regular = body.md.regular; the gap between them is 0, which the library already had right."
+    },
+    "_corrections": {
+      "close-gap": "The gap between the content and the close button was rendering at 16 because one token was used for both rows. Figma says 8. Added `close-gap` and pointed the outer row at it."
+    },
+    "_figma_gaps": {
+      "warning-type": "`solid-toast` has four types — informative, success, warning, error — but `light-toast` has only three: it has no warning. Whether that is intentional needs a designer."
+    },
+    "_figma_icons": {
+      "_comment": "The icons Figma instantiates for this component, read 2026-08-20 by walking the instance tree and keeping every main component whose parent set is `icons`. check-figma-icons.py holds the files in `sources` to exactly this set — an extra icon fails as loudly as a missing one, because an extra is one nobody compared. Files not listed in `sources` carry payload a caller passes, not a choice the design makes.",
+      "nodes": [
+        {
+          "node": "14848:2072 · 14848:2109",
+          "figma": "light-toast / solid-toast",
+          "sources": [
+            "tokens.ts"
+          ],
+          "icons": {
+            "filled-Warning-2": "type=error on light-toast and type=warning on solid-toast",
+            "filled-check_circle": "type=success on both sets",
+            "filled-close": "the dismiss control, `Frame 3`, on every type",
+            "filled-info": "type=informative on both sets, inside `Frame 3 > Frame 2 > icon`"
+          }
+        }
+      ]
+    }
+  },
+  "figma_node": "14848:2072 (light-toast) · 14848:2109 (solid-toast)"
+}

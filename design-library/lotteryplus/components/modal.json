@@ -1,0 +1,62 @@
+{
+  "_comment": "Layout, sizing and typography for modal. Colours come from the Figma colour mirror; these do not, so they are authored here. Figma: modal-state component set (14610:24998) — state(5) x layout-vertical(2).",
+  "figma_node": "14610:24998",
+  "base": {
+    "radius": "{design.semantic.radius.2xl}",
+    "padding": "{design.semantic.spacing.4xl}",
+    "gap": "{design.semantic.spacing.4xl}",
+    "content-gap": "{design.semantic.spacing.2xl}",
+    "wording-gap": "{design.semantic.spacing.lg}",
+    "button-gap": "{design.semantic.spacing.2xl}",
+    "elevation": "{design.semantic.elevation.floating}",
+    "scrim": "{design.semantic.colors.overlay.default}",
+    "width": 358,
+    "_source-width": "storybook-local, no Figma token backs it — 358 is a fixed frame width on the modal container (375pt mobile viewport less a gutter); semantic.spacing has no such step",
+    "icon-circle-size": 64,
+    "_source-icon-circle-size": "storybook-local, no Figma token backs it — 64x64 is a fixed frame size on the icon circle",
+    "icon-circle-padding": "{design.semantic.spacing.lg}",
+    "icon-circle-radius": "{design.semantic.radius.full}",
+    "icon-size": 48,
+    "_source-icon-size": "storybook-local, no Figma token backs it — semantic.iconography.sizes are still 'tbd' in design.md; Figma binds the icons-size component at Size=48",
+    "typography-title-family": "{design.semantic.typography.title.lg.semibold.family}",
+    "typography-title-size": "{design.semantic.typography.title.lg.semibold.size}",
+    "typography-title-line-height": "{design.semantic.typography.title.lg.semibold.line-height}",
+    "typography-title-weight": "{design.semantic.typography.title.lg.semibold.weight}",
+    "typography-title-tracking": "{design.semantic.typography.title.lg.semibold.tracking}",
+    "typography-subtitle-family": "{design.semantic.typography.body.md.regular.family}",
+    "typography-subtitle-size": "{design.semantic.typography.body.md.regular.size}",
+    "typography-subtitle-line-height": "{design.semantic.typography.body.md.regular.line-height}",
+    "typography-subtitle-weight": "{design.semantic.typography.body.md.regular.weight}",
+    "typography-subtitle-tracking": "{design.semantic.typography.body.md.regular.tracking}",
+    "_verified_from": {
+      "node": "14610:24998 — component set `modal-state` on page `↳ modal ✅`",
+      "date": "2026-08-19",
+      "scope": "all 11 variants, depth-2 walk of state=info",
+      "result": "358 wide, radius 16, padding 24, root gap 24, content gap 16, wording gap 8, button gap 16. Shadow `0,2 b4 s-1 @6%` + `0,4 b6 s-1 @10%` = elevation.floating. Icon circle 64 with 8 padding, so the glyph is 48. All match.",
+      "noted": "Figma states the icon circle radius as 48, not 9999. On a 64px square both render as a circle, so radius.full gives the same shape; recorded because the numbers differ even though the result does not."
+    },
+    "_figma_icons": {
+      "_comment": "The icons Figma instantiates for this component, read 2026-08-20 by walking the instance tree and keeping every main component whose parent set is `icons`. check-figma-icons.py holds the files in `sources` to exactly this set — an extra icon fails as loudly as a missing one, because an extra is one nobody compared. Files not listed in `sources` carry payload a caller passes, not a choice the design makes.",
+      "nodes": [
+        {
+          "node": "14610:24998",
+          "figma": "modal-state",
+          "sources": [
+            "tokens.ts"
+          ],
+          "icons": {
+            "outline-Error-1": "state=error, both layouts",
+            "outline-Warning-2": "state=warning and state=warning-serious",
+            "outline-check_circle": "state=success, both layouts",
+            "outline-info": "state=info, both layouts, inside `icon`"
+          }
+        }
+      ]
+    }
+  },
+  "known_gaps": [
+    "Verified against Figma 2026-08-17: every `modal` component variant carries a bound `shadow/md` effect (0 2px 4px -1px @6%, 0 4px 6px -1px @10%), which design.md names `elevation.floating` — not `elevation.modal` (= shadow/xl). This overlay binds `elevation.floating` so the render matches Figma exactly. The open question is naming, not pixels: either Figma's modal should move up to shadow/xl, or design.md's `elevation.modal` role should map to shadow/md. Today `elevation.modal` has no consumer.",
+    "Figma sets the icon circle's corner radius to a literal 48px. design.md's `radius.5xl` — the name the old Storybook tokens.ts claimed — is 32px, and `radius.7xl` is 48px. Bound to `radius.full` here because the shape is a circle and 48px on a 64px box clamps to the same result; this matches the sibling toast component's `icon-circle-radius`.",
+    "Button height (44px), button radius (8px) and the tertiary button's 1px stroke used to be restated in Modal's tokens.ts. They belong to Button and are no longer duplicated here — Modal renders the real <Button> component."
+  ]
+}

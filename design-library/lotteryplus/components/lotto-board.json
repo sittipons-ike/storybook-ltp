@@ -1,0 +1,123 @@
+{
+  "_comment": "Layout, sizing and typography for lotto-board. Colours come from the Figma colour mirror; these do not, so they are authored here. Four sub-components share one prefix: NumberSearchBox (cell-*, row-*), MenuButton (menu-*), SetSelect (set-*), SearchCard (card-*).",
+  "base": {
+    "cell-gap": "{design.semantic.spacing.lg}",
+    "cell-padding": "{design.semantic.spacing.lg}",
+    "cell-radius": "{design.semantic.radius.lg}",
+    "cell-border-width": "{design.semantic.border-width.hairline}",
+    "cell-shadow": "{design.semantic.elevation.card}",
+    "cell-width": 53,
+    "cell-height": 64,
+    "_source-cell-width": "storybook-local, no Figma token backs it — 53x64 is the fixed frame size of a digit box in number-search-box-2, and neither 53 nor 64 has a semantic sizing scale to sit on (design.md has no `sizing` group)",
+    "row-padding-x": "{design.semantic.spacing.2xl}",
+    "menu-gap": "{design.semantic.spacing.lg}",
+    "menu-padding-x": "{design.semantic.spacing.2xl}",
+    "menu-item-padding-x": "{design.semantic.spacing.2xl}",
+    "menu-item-radius": "{design.semantic.radius.lg}",
+    "menu-item-border-width": "{design.semantic.border-width.hairline}",
+    "menu-item-width": 114,
+    "menu-item-height": 44,
+    "_source-menu-item-width": "storybook-local, no Figma token backs it — 114x44 is the fixed frame size of a menu-button item. 44 equals primitive.a11y.touch-target-min-px, but a11y lives at the primitive tier and refs may only point at {design.semantic.*}, so it stays a literal",
+    "set-gap": "{design.semantic.spacing.sm}",
+    "set-padding-x": "{design.semantic.spacing.2xl}",
+    "set-row-gap": "{design.semantic.spacing.2xl}",
+    "set-image-radius": "{design.semantic.radius.lg}",
+    "set-image-width": 72,
+    "set-image-height": 69,
+    "_source-set-image-width": "storybook-local, no Figma token backs it — 72x69 is the fixed frame size of the lottery-card thumbnail in set-select",
+    "set-stepper-radius": "{design.semantic.radius.lg}",
+    "set-stepper-padding": "{design.semantic.spacing.xl}",
+    "set-stepper-border-width": "{design.semantic.border-width.hairline}",
+    "set-stepper-size": 48,
+    "_source-set-stepper-size": "storybook-local, no Figma token backs it — 48x48 is the fixed frame size of the minus/plus buttons in set-select",
+    "set-quantity-padding-x": "{design.semantic.spacing.2xl}",
+    "set-quantity-min-width": 100,
+    "_source-set-quantity-min-width": "storybook-local, no Figma token backs it — reserves room for the widest Thai quantity label so the stepper does not reflow as the number grows",
+    "set-icon-size": 24,
+    "_source-set-icon-size": "storybook-local, no Figma token backs it — design.md's semantic.iconography.sizes are still 'tbd'; Figma binds the icons-size component at Size=24",
+    "card-gap": "{design.semantic.spacing.2xl}",
+    "card-padding-x": "{design.semantic.spacing.2xl}",
+    "card-header-gap": "{design.semantic.spacing.sm}",
+    "card-actions-gap": "{design.semantic.spacing.lg}",
+    "randomize-width": 114,
+    "randomize-height": 54,
+    "randomize-radius": "{design.semantic.radius.lg}",
+    "randomize-gradient": "linear-gradient(180deg, #262626 0%, #E32321 66%)",
+    "randomize-foreground": "#FEF2F2",
+    "randomize-icon-size": 24,
+    "randomize-gap": "{design.semantic.spacing.sm}",
+    "search-height": 54,
+    "card-max-width": 400,
+    "_source-card-max-width": "storybook-local, no Figma token backs it — the search-card frame is 400 wide in Figma and design.md's breakpoints start at 321/361/390, none of which is 400",
+    "opacity-disabled": "{design.semantic.opacity.disabled}",
+    "opacity-limit-reached": "{design.semantic.opacity.muted}",
+    "typography-title-family": "{design.semantic.typography.title.lg.semibold.family}",
+    "typography-title-size": "{design.semantic.typography.title.lg.semibold.size}",
+    "typography-title-line-height": "{design.semantic.typography.title.lg.semibold.line-height}",
+    "typography-title-weight": "{design.semantic.typography.title.lg.semibold.weight}",
+    "typography-title-tracking": "{design.semantic.typography.title.lg.semibold.tracking}",
+    "typography-menu-family": "{design.semantic.typography.button.md.semibold.family}",
+    "typography-menu-size": "{design.semantic.typography.button.md.semibold.size}",
+    "typography-menu-line-height": "{design.semantic.typography.button.md.semibold.line-height}",
+    "typography-menu-weight": "{design.semantic.typography.button.md.semibold.weight}",
+    "typography-menu-tracking": "{design.semantic.typography.button.md.semibold.tracking}",
+    "typography-link-family": "{design.semantic.typography.underline.md.medium.family}",
+    "typography-link-size": "{design.semantic.typography.underline.md.medium.size}",
+    "typography-link-line-height": "{design.semantic.typography.underline.md.medium.line-height}",
+    "typography-link-weight": "{design.semantic.typography.underline.md.medium.weight}",
+    "typography-link-tracking": "{design.semantic.typography.underline.md.medium.tracking}",
+    "typography-link-decoration": "{design.semantic.typography.underline.md.medium.text-decoration}",
+    "_source-typography-caption": "the old tokens.ts comment named this role `caption` (12/18 Medium), but semantic.typography.caption.md.regular is 10/16 regular and caption.lg.regular is 12/18 *regular*. The role that matches the rendered 12px/18px/500 byte-for-byte is label.md.medium, so that is what it refs.",
+    "typography-caption-family": "{design.semantic.typography.label.md.medium.family}",
+    "typography-caption-size": "{design.semantic.typography.label.md.medium.size}",
+    "typography-caption-line-height": "{design.semantic.typography.label.md.medium.line-height}",
+    "typography-caption-weight": "{design.semantic.typography.label.md.medium.weight}",
+    "typography-caption-tracking": "{design.semantic.typography.label.md.medium.tracking}",
+    "typography-number-family": "{design.semantic.typography.body.xl.semibold.family}",
+    "typography-number-tracking": "{design.semantic.typography.body.xl.semibold.tracking}",
+    "typography-number-size": "{design.semantic.typography.display.xl.semibold.size}",
+    "typography-number-line-height": "{design.semantic.typography.display.xl.semibold.line-height}",
+    "typography-number-weight": "{design.semantic.typography.display.xl.semibold.weight}",
+    "_source-typography-number": "storybook-local, no Figma token backs the size/line-height/weight — the digit style is 24px/32px Bold, and no semantic typography role resolves to that on mobile (size.xl is 20/24, size.2xl is 28/32) and no role carries weight.bold at all. Only family and tracking, which every role shares, are refs.",
+    "_source": {
+      "randomize-*": "The randomise control is Figma's `button-special`: 114x54, radius 8, filled with a linear gradient from #262626 at 0% to #E32321 at 66%, label `colors/button/accent/btn-fg-bg-white` (#FEF2F2), 24px glyph. Neither the gradient nor #FEF2F2 exists as a semantic token, so both stand verbatim.",
+      "randomize-gap": "4, from `Frame 1000012333` inside `button-special` — a HORIZONTAL row holding the 24px glyph then the label. Read on 2026-08-20.",
+      "typography-number": "The digits in the number cells carry the text style `typography/display/xl-semb` — 20/36 Semibold, read off lotto-board-mobile (14583:89931) on 2026-08-21, and the style id is set on the layer, so this is Figma's own naming rather than a guess. The overlay used to say 24/32 weight 700, which matched no layer and no role: an invented value that survived because nothing forced typography to bind."
+    },
+    "_verified_from": {
+      "node": "14583:89931 `lotto-board-mobile` (3 variants), 14583:89963 `menu-button` (3), 14583:90116 `number-search-box-2` (7), 19002:25158 `search-card` (3) — page `↳ search-lottery ✅`",
+      "date": "2026-08-19",
+      "scope": "variant lists for all four sets, depth-3 walks, plus a rendered screenshot of lotto-board-mobile",
+      "result": "Cell 53x64 with 8 padding, radius 8, a 1px `lotto-board-border` stroke and elevation.card; cell gap 8; row padding 16. Menu row 390x44 with three 114x44 buttons, gap 8, radius 8. Search row: a 114x54 randomise button and a 236x54 search button, gap 8. All geometry matches.",
+      "corrections": {
+        "header layout": "Figma lays the title and the draw date side by side on one 24px row with an 8px gap, and puts `ล้างค่า` at the far end. The library stacked the title above the date.",
+        "date colour": "`Color/Text/Text-Secondary` (#262626) — the same weight as body copy, not a dimmed grey.",
+        "randomise button": "Was `Button variant=outline`, a white pill. Figma fills it with a dark-to-red gradient and sets the label to #FEF2F2."
+      }
+    },
+    "_figma_gaps": {
+      "button-special-not-a-button-variant": "Figma models the randomise control as its own component set, `button-special` (14291:131519, 12 variants), rather than a variant of `button`. The library renders its shape inside LottoBoard. Whether it should become a Button variant is a designer's call.",
+      "search-card-is-a-second-set": "`search-card` (19002:25158) repeats lotto-board-mobile with a different title and a root gap of 8 instead of 16. Two sets for one thing.",
+      "randomise-glow": "Figma layers two blurred #262626 ellipses over the gradient (LAYER_BLUR 16) for a glow. The library renders the gradient alone — close, but not the same thing. Recorded rather than approximated."
+    },
+    "_figma_icons": {
+      "_comment": "The icons Figma instantiates for this component, read 2026-08-20 by walking the instance tree and keeping every main component whose parent set is `icons`. check-figma-icons.py holds the files in `sources` to exactly this set — an extra icon fails as loudly as a missing one, because an extra is one nobody compared. Files not listed in `sources` carry payload a caller passes, not a choice the design makes.",
+      "nodes": [
+        {
+          "node": "14583:89931 · 19002:25158",
+          "figma": "lotto-board-mobile / search-card",
+          "sources": [
+            "SearchCard.tsx",
+            "SetSelect.tsx"
+          ],
+          "icons": {
+            "filled-AI": "the randomise tile, `Search > button-special > Button > Frame 1000012333`, a 24px glyph before สุ่มตัวเลข. The overlay used to record that this glyph did not exist in the set; it did.",
+            "filled-add": "the stepper's increment, same row. Was outline-add.",
+            "filled-minus": "the stepper's decrement, `set-select > Frame 1000012300 > Frame 44720 > Button`. Was outline-minus."
+          }
+        }
+      ]
+    }
+  },
+  "figma_node": "14583:89931 (lotto-board-mobile) · 14583:89963 (menu-button) · 14583:90116 (number-search-box-2) · 19002:25158 (search-card)"
+}

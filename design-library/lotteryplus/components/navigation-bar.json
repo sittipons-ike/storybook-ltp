@@ -1,0 +1,114 @@
+{
+  "_comment": "Layout, sizing and typography for navigation-bar. Colours come from the Figma colour mirror; these do not, so they are authored here. Figma component set: navigation-bar-v2 (14291:135864).",
+  "base": {
+    "_source": {
+      "cart-gradient": "storybook-local, no Figma token backs it — the add-to-cart button is painted with a raw linear gradient fill in Figma (rgba(248,92,42) -> rgba(216,15,13)). Neither stop is a colour variable, and no primitive hue is close to #F85C2A, so substituting the nearest token would change the value Figma ships.",
+      "badge-border-width": "storybook-local, no Figma token backs it — Figma strokes the count badge at 1.5px, which falls between border-width.hairline (1px) and border-width.thin (2px).",
+      "badge-line-height": "storybook-local, no Figma token backs it — the badge count is optically centred with a unitless line-height of 1; every semantic line-height role is a px pair.",
+      "timer-line-height": "storybook-local, no Figma token backs it — same unitless centring as badge-line-height.",
+      "fixed-dimensions": "width, height, bar-height, item-height, selector-*, content-*, icon-size, order-badge-icon-size, badge-size, badge-*-offset-*, cart-height and home-indicator-* are fixed pixel dimensions read off the Figma frame. Figma has no dimension variable for any of them."
+    },
+    "width": 390,
+    "height": 124,
+    "bar-height": 90,
+    "border-width": "{design.semantic.border-width.hairline}",
+    "item-height": 68,
+    "item-padding-top": "{design.semantic.spacing.none}",
+    "item-padding-x": "{design.semantic.spacing.sm}",
+    "item-padding-bottom": "{design.semantic.spacing.xl}",
+    "item-gap": "{design.semantic.spacing.none}",
+    "selector-width": 70,
+    "selector-height": 4,
+    "selector-radius": "{design.semantic.radius.xs}",
+    "content-width": 70,
+    "content-height": 42,
+    "content-offset": "{design.semantic.spacing.2lg}",
+    "icon-size": 24,
+    "order-badge-icon-size": 20,
+    "order-badge-offset-top": -6,
+    "order-badge-offset-right": -8,
+    "badge-diameter": 16,
+    "badge-radius": "{design.semantic.radius.full}",
+    "badge-border-width": 1.5,
+    "badge-line-height": "1",
+    "badge-offset-top": -5,
+    "badge-offset-right": -7,
+    "cart-height": 90,
+    "cart-radius": "{design.semantic.radius.lg}",
+    "cart-padding": "{design.semantic.spacing.sm}",
+    "cart-padding-bottom": "{design.semantic.spacing.none}",
+    "cart-gap": "{design.semantic.spacing.xs}",
+    "cart-gradient": "linear-gradient(180deg, #F85C2A 0%, #D80F0D 100%)",
+    "cart-badge-offset-top": -3,
+    "cart-badge-offset-right": -7,
+    "timer-border-width": "{design.semantic.border-width.hairline}",
+    "timer-radius": "{design.semantic.radius.full}",
+    "timer-padding-x": "{design.semantic.spacing.lg}",
+    "timer-padding-y": "{design.semantic.spacing.xs}",
+    "timer-line-height": "1",
+    "home-indicator-container-height": 34,
+    "home-indicator-padding-bottom": "{design.semantic.spacing.lg}",
+    "home-indicator-width": 134,
+    "home-indicator-height": 5,
+    "home-indicator-radius": "{design.semantic.radius.full}",
+    "typography-family": "{design.semantic.typography.button.xs.medium.family}",
+    "typography-size": "{design.semantic.typography.button.xs.medium.size}",
+    "typography-line-height": "{design.semantic.typography.button.xs.medium.line-height}",
+    "typography-weight": "{design.semantic.typography.button.xs.medium.weight}",
+    "typography-tracking": "{design.semantic.typography.button.xs.medium.tracking}",
+    "_verified_from": {
+      "node": "14291:135864 — component set `navigation-bar/Mobile-v2` on page `↳ navigation-bar ✅`",
+      "date": "2026-08-19",
+      "scope": "all 10 variants: root/bar fills, per-item height and offset, per-side stroke weights, cart cell and its gradient",
+      "result": "390x124, bar 90, item 78x68, selector 70x4, content 70x42, home indicator 34 with a 134x5 bar. Items tile exactly: five at 78 with gap 0 fills 390. Cart is 78x90 when add-to-cart=yes, gradient #F85C2A to #D80F0D, radius 8, padding 4/4/0/4.",
+      "checked_closely": {
+        "selector radius": "Figma rounds only the bottom two corners, 0/0/2/2. The component already draws `0 0 R R`, so this is correct — worth recording because a single radius would be wrong.",
+        "item gap": "Figma sets a 10px gap inside each item, between the selector bar and the content. The library reaches the same 10 through `content-offset` as a margin rather than a gap. Same result.",
+        "border weight": "Figma puts 0.6px on the bar and 1px on the top of every item. Because the items tile with no gap, their 1px strokes form the continuous line you see; the bar's 0.6 sits behind it. The library draws one 1px line on the bar, which reproduces what renders. Left as is — changing it to 0.6 would make the line thinner than Figma shows."
+      },
+      "corrections": {
+        "white was filling the whole bar": "Figma paints white on the 68px items and on the home-indicator strip. The root and the 90px row are both fill NONE on all 10 variants, so the top 22px is see-through and the page shows behind it. The library was painting the container white, which closed that gap and made the bar read as one solid block.",
+        "top rule sat 22px too high": "Figma strokes 1px INSIDE on each item's top edge — that is y=22, not y=0. The library drew one border on the 90px row. Invisible while the container was white; wrong as soon as it was not.",
+        "cart had no white cell": "Figma nests the gradient card inside a white 78x90 item. The card's 8px corners are where that white shows. The library rendered the card alone."
+      },
+      "left_as_is": "The bar's own 0.6px top stroke. It sits behind the items' 1px strokes, which tile into the continuous line that actually renders, so reproducing it would change nothing visible."
+    },
+    "_figma_gaps": {
+      "cart-has-no-selected-state": "All ten variants of `navigation-bar` (14291:135864) draw the cart with `outline-cart`, and the `state` property offers home | order | safe | profile | not — no `cart`. So the raised cart cell is modelled as an action, not a tab you can be on. The library used to default its selected glyph to `filled-cart`, which no Figma node contains. It now keeps the outline glyph in both states. If the cart is meant to look selected when the user is on the cart page, Figma needs that variant. Read 2026-08-20."
+    },
+    "_figma_icons": {
+      "_comment": "The icons Figma instantiates for this component, read 2026-08-20 by walking the instance tree and keeping every main component whose parent set is `icons`. check-figma-icons.py holds the files in `sources` to exactly this set — an extra icon fails as loudly as a missing one, because an extra is one nobody compared. Files not listed in `sources` carry payload a caller passes, not a choice the design makes.",
+      "nodes": [
+        {
+          "node": "14291:135864",
+          "figma": "navigation-bar/Mobile-v2",
+          "sources": [
+            "NavigationBar.tsx",
+            "NavigationBar.stories.tsx"
+          ],
+          "icons": {
+            "filled-Error-2": "the count badge riding on `Order`",
+            "filled-Home": "the Home tab on state=home",
+            "filled-member": "the Member tab on state=profile",
+            "filled-order": "the Order tab on state=order",
+            "filled-safe": "the Safe tab on state=safe",
+            "outline-Home": "the Home tab when another tab is selected, `Home > Content`",
+            "outline-cart": "the Cart cell on ALL TEN variants. There is no state=cart and no filled-cart anywhere in the set — see _figma_gaps > cart-has-no-selected-state",
+            "outline-member": "the Member tab when unselected",
+            "outline-order": "the Order tab when unselected",
+            "outline-safe": "the Safe tab when unselected"
+          }
+        }
+      ]
+    },
+    "_unmigrated_type": {
+      "_note": "Not text styles — unitless line-heights used to centre a glyph in its pill. Listed so check-typography.py knows they are deliberate.",
+      "timer-line-height": "1 — centring, no Figma token backs it",
+      "badge-line-height": "1 — same centring"
+    }
+  },
+  "tokens": {
+    "foreground-home-indicator": "{design.semantic.colors.foreground.black}"
+  },
+  "figma_node": "14291:135864"
+}

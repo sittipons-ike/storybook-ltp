@@ -1,0 +1,70 @@
+/* ═══════════════════════════════════════════
+   Header — Lotteryplus Design System
+
+   Structure only. Every colour, dimension and type step is a token applied in
+   Header.tsx, so this file carries nothing a designer would want to change.
+
+   Figma: header-bar-mobile (14924:2118)
+   ═══════════════════════════════════════════ */
+
+.ltp-header {
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+}
+
+.ltp-header * {
+  box-sizing: border-box;
+}
+
+/* The phoenix is a decorative bleed: it hangs off the right edge and must never take
+   layout space or intercept a tap meant for the action beside it. */
+/* Position comes from per-variant tokens in Header.tsx — Figma offsets it differently on
+   each one, so a single rule here would be wrong for at least one variant. */
+.ltp-header__phoenix {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* `overflow: hidden` is here for the ellipsis, but it also clips vertically — and Thai
+   ink runs 4.8px below the baseline (the foot of ◌ู) while a 16/24 line box leaves it
+   only ~1.2px of room. That margin survives one engine's rounding and not another's,
+   which is how the same build showed a full ตู้ on one machine and ต้ on the next.
+   The padding grows the clip box so ink can never reach its edge; the negative margin
+   hands the space back, so layout stays exactly 24. */
+.ltp-header__title,
+.ltp-header__slogan {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  margin-top: -8px;
+  margin-bottom: -8px;
+}
+
+/* Both action wells keep their footprint whether or not they hold a control, so the
+   centred title stays centred when only one side is filled. */
+.ltp-header__action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+.ltp-header__action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+.ltp-header__action-button:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}

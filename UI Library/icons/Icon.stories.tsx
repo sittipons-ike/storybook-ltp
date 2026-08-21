@@ -5,7 +5,7 @@ import './Icon.css';
 import './icon-data'; // registers all icons
 
 const meta: Meta<typeof Icon> = {
-  title: 'Components/Icon',
+  title: 'Atoms/Icon',
   component: Icon,
   tags: ['autodocs'],
   argTypes: {

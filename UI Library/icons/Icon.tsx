@@ -1,17 +1,43 @@
 import React from 'react';
+import '../foundations/tokens.css';
+import { component } from '../foundations/tokens';
 import './Icon.css';
 
-export type IconSize = 12 | 16 | 20 | 24 | 32 | 40 | 48 | 56 | 64 | 72;
+const t = component('icon');
+
+/**
+ * Size steps mirror Figma's `icons-size` component set (14291:110788) — ten sizes.
+ * Figma models these as components rather than variables, so the values live in
+ * `design-library/lotteryplus/components/icon.json` and are generated into
+ * `--icon-size-*`. Consumers pass a number; the union is what the design system offers.
+ */
+export const ICON_SIZES = {
+  '2xs': 12,
+  xs: 16,
+  sm: 20,
+  md: 24,
+  lg: 32,
+  xl: 40,
+  '2xl': 48,
+  '3xl': 56,
+  '4xl': 64,
+  '5xl': 72,
+} as const;
+
+export type IconSizeName = keyof typeof ICON_SIZES;
+export type IconSize = (typeof ICON_SIZES)[IconSizeName];
+
+/** Colour roles Figma declares in `colors/icon/*`. */
 export type IconColor = 'primary' | 'secondary' | 'tertiary' | 'onBg' | 'inherit';
 
 export interface IconProps {
-  /** Icon name matching Figma component name */
+  /** Icon name matching the Figma component name */
   name: string;
-  /** Icon size in px — matches Figma icons-size variants */
-  size?: IconSize;
-  /** Semantic color from design system */
+  /** Size in px, or a t-shirt step from the `icons-size` set */
+  size?: IconSize | IconSizeName;
+  /** Semantic colour from the design system */
   color?: IconColor;
-  /** Custom color override (hex) */
+  /** Explicit colour override — a token reference such as `var(--btn-primary-foreground-rest)` */
   customColor?: string;
   /** Additional class */
   className?: string;
@@ -19,38 +45,59 @@ export interface IconProps {
   'aria-label'?: string;
 }
 
-const COLOR_MAP: Record<IconColor, string> = {
-  primary: '#E32321',
-  secondary: '#262626',
-  tertiary: '#737373',
-  onBg: '#FFFFFF',
+/**
+ * Figma's `colors/icon/*` group, resolved through Tier 2. `inherit` has no token because
+ * it is a mechanism, not a colour — it hands the decision to the parent's `color`.
+ */
+const COLOR_TOKEN: Record<IconColor, string> = {
+  primary: t.ref('foreground-primary'),
+  secondary: t.ref('foreground-secondary'),
+  tertiary: t.ref('foreground-tertiary'),
+  onBg: t.ref('foreground-white'),
   inherit: 'currentColor',
 };
 
+const resolveSize = (size: IconSize | IconSizeName): number =>
+  typeof size === 'number' ? size : ICON_SIZES[size];
+
 /**
- * Icon component — Lotteryplus Design System
+ * Icon — Lotteryplus Design System
  *
- * Renders inline SVG icons exported from Figma.
- * Uses the `icons-size` component set properties:
- *   - Size: 12 | 16 | 20 | 24 | 32 | 40 | 48 | 56 | 64 | 72
- *   - Colors: Primary | Secondary | Tertiary | On BG
+ * Renders inline SVG paths exported from Figma's `icons` frame.
+ *
+ * Note on `fill`: the value lands on the SVG presentation attribute, which browsers map
+ * to CSS, so a `var(--…)` reference resolves there as it would in a style. That is what
+ * lets callers pass a component token straight through.
  */
 const Icon: React.FC<IconProps> = ({
   name,
-  size = 24,
+  size = 'md',
   color = 'secondary',
   customColor,
   className = '',
   'aria-label': ariaLabel,
 }) => {
-  const fill = customColor || COLOR_MAP[color];
+  const fill = customColor || COLOR_TOKEN[color];
+  const px = resolveSize(size);
   const iconData = ICONS[name];
 
   if (!iconData) {
+    // Loud on purpose: a missing icon renders as a small grey "?" that is easy to scroll
+    // past in review and impossible to miss in production. `filled-Randomize` shipped this
+    // way — referenced by SearchCard, never drawn in Figma, never noticed.
+    console.error(`[Icon] "${name}" is not registered in icon-data.ts`);
     return (
       <span
         className={`ltp-icon ltp-icon--missing ${className}`}
-        style={{ width: size, height: size, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: size * 0.5, color: '#C9C9C9' }}
+        style={{
+          width: px,
+          height: px,
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: px * 0.5,
+          color: t.ref('missing-foreground'),
+        }}
         title={`Icon not found: ${name}`}
       >
         ?
@@ -61,8 +108,8 @@ const Icon: React.FC<IconProps> = ({
   return (
     <svg
       className={`ltp-icon ${className}`}
-      width={size}
-      height={size}
+      width={px}
+      height={px}
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -70,15 +117,30 @@ const Icon: React.FC<IconProps> = ({
       aria-label={ariaLabel}
       aria-hidden={!ariaLabel}
     >
-      {iconData.paths.map((d, i) => (
-        <path
-          key={i}
-          d={d}
-          fill={fill}
-          fillRule={iconData.fillRule || 'nonzero'}
-          clipRule={iconData.fillRule === 'evenodd' ? 'evenodd' : undefined}
-        />
-      ))}
+      {iconData.paths.map((d, i) =>
+        iconData.stroke ? (
+          // A stroked icon's `d` is a centreline, not an outline. Filling it produces a
+          // blob or nothing at all, so the same colour goes to `stroke` instead and the
+          // weight and joins come from Figma's own export.
+          <path
+            key={i}
+            d={d}
+            fill="none"
+            stroke={fill}
+            strokeWidth={iconData.stroke.width}
+            strokeLinecap={iconData.stroke.cap ?? 'round'}
+            strokeLinejoin={iconData.stroke.join ?? 'round'}
+          />
+        ) : (
+          <path
+            key={i}
+            d={d}
+            fill={fill}
+            fillRule={iconData.fillRule || 'nonzero'}
+            clipRule={iconData.fillRule === 'evenodd' ? 'evenodd' : undefined}
+          />
+        ),
+      )}
     </svg>
   );
 };
@@ -86,17 +148,29 @@ const Icon: React.FC<IconProps> = ({
 // ═══════════════════════════════════════════
 //  Icon path data — exported from Figma
 //  Source: "Design Systems Web App Lotteryplus V.7.1"
-//  Frame: icons (14291:110788) — 155 components
+//  Frame: icons (14291:110788)
 // ═══════════════════════════════════════════
 
-type IconData = { paths: string[]; fillRule?: 'evenodd' | 'nonzero' };
+/**
+ * Most icons are outlined shapes — closed paths that get filled. A few are drawn as
+ * strokes, where `d` is the line's centre rather than its edge; those carry `stroke`, and
+ * the renderer sends the colour to `stroke` instead of `fill`. Filling a centreline gives
+ * a blob, so the distinction has to live in the data.
+ */
+export type IconData = {
+  paths: string[];
+  fillRule?: 'evenodd' | 'nonzero';
+  stroke?: { width: number; cap?: 'round' | 'butt' | 'square'; join?: 'round' | 'miter' | 'bevel' };
+};
 
-// This will be populated by the icon export script
 export const ICONS: Record<string, IconData> = {};
 
-// Helper to register icons (used by generated icon-data file)
+/** Populated by the generated icon-data file. */
 export function registerIcons(icons: Record<string, IconData>) {
   Object.assign(ICONS, icons);
 }
+
+/** Every registered icon name, for stories and audits. */
+export const iconNames = (): string[] => Object.keys(ICONS).sort();
 
 export default Icon;

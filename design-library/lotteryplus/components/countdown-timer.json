@@ -1,0 +1,44 @@
+{
+  "_comment": "No Figma component — flagged 2026-08-19 as central to the 24-hour reservation flow in the PRD despite one call site. Built from the Frontend per the amended authority rule (2026-08-20). A HH:MM:SS badge fed by a countdown to `expiredAt`.",
+  "figma_node": null,
+  "base": {
+    "padding-x": "{design.semantic.spacing.md}",
+    "height": 24,
+    "radius": "{design.semantic.radius.full}",
+    "float-radius": "{design.semantic.radius.md}",
+    "background": "{design.semantic.colors.background.default}",
+    "foreground": "{design.semantic.colors.text.primary.default}",
+    "red-background": "{design.semantic.colors.primary.default}",
+    "red-foreground": "{design.semantic.colors.text.on-bgcolor}",
+    "sidebar-background": "{design.semantic.colors.background.light}",
+    "size": "{design.semantic.typography.body.lg.medium.size}",
+    "line-height": "{design.semantic.typography.body.lg.medium.line-height}",
+    "weight": "{design.semantic.typography.body.lg.medium.weight}",
+    "float-size": "8px",
+    "float-line-height": "14px",
+    "float-weight": 600,
+    "_unmigrated_type": {
+      "_note": "The floated badge uses the Frontend's text-label-xs = 8/14 Semibold; no role carries it. Keyed by token name for check-typography.py.",
+      "float-size": "8px — text-label-xs",
+      "float-line-height": "14px — text-label-xs",
+      "float-weight": "600 — text-label-xs"
+    },
+    "_source": {
+      "padding-x": "Frontend `px-1.5` = 6px = spacing.md.",
+      "height": "`h-6` = 24, on the non-floated shape only; the floated badge hugs its text.",
+      "radius": "rounded-full on the pill; the floated badge is `rounded-t-md` (6px, top corners) on mobile.",
+      "colors": "default: white badge, brand-red text. red variant: primary background, on-bgcolor text. sidebar: background.light.",
+      "float-position": "Frontend positions the floated badge absolute top-10 inside `notification`'s relative wrapper — that offset belongs to the parent, so the component only ships position:absolute and leaves the inset to the caller."
+    },
+    "_frontend_evidence": {
+      "component": "lotteryplus-frontend-main/src/components/common/notification/timer — plus the `notification` wrapper whose only job is relative positioning for the floated badge",
+      "hook": "useCountdown(expiredAt): setInterval 1000ms, clamps at zero"
+    },
+    "_verified_from": {
+      "node": null,
+      "date": "2026-08-20",
+      "scope": "token mirror searched for timer/countdown; frontend timer + notification + use-countdown read in full",
+      "result": "VERIFIED ABSENT in Figma. Frontend is the authority per the amended rule (user decision 2026-08-20)."
+    }
+  }
+}

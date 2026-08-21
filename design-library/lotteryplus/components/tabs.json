@@ -1,0 +1,53 @@
+{
+  "_comment": "Layout, sizing and typography for tabs. Colours come from the Figma colour mirror; these do not, so they are authored here. Figma sets: horizontal-tabs-underline (14370:9654) and horizontal-tabs_button (14370:9710).",
+  "base": {
+    "radius": "{design.semantic.radius.lg}",
+    "radius-active": "{design.semantic.radius.md}",
+    "padding-x": "{design.semantic.spacing.2xl}",
+    "padding-y": "{design.semantic.spacing.lg}",
+    "gap": "{design.semantic.spacing.lg}",
+    "item-gap": "{design.semantic.spacing.sm}",
+    "border-width": "{design.semantic.border-width.hairline}",
+    "indicator-width": "{design.semantic.border-width.thin}",
+    "typography-family": "{design.semantic.typography.button.md.medium.family}",
+    "typography-size": "{design.semantic.typography.button.md.medium.size}",
+    "typography-line-height": "{design.semantic.typography.button.md.medium.line-height}",
+    "typography-weight": "{design.semantic.typography.button.md.medium.weight}",
+    "typography-tracking": "{design.semantic.typography.button.md.medium.tracking}",
+    "height": 40,
+    "badge-size": 16,
+    "_source": "height and badge-size are fixed pixel dimensions read off the Figma frames; no semantic token backs them (semantic.iconography.sizes are still 'tbd' in design.md), so they stay literal.",
+    "_verified_from": {
+      "node": "14370:9654 `horizontal-tabs-underline` (14 variants), 14370:9710 `horizontal-tabs_button` (18), 16426:4355 `tabs-for-orders` (16) — page `↳ tabs ✅`",
+      "date": "2026-08-19",
+      "scope": "variant lists for all three sets, depth-3 walk of the first variant of each, plus a browser measurement of the rendered underline tabs",
+      "result": "Underline: root 40 with a 1px bottom rule in `tabs-fg-disable`; item 40 with padding 8/16 and an 8px internal gap; the selected item takes a 2px bottom rule in `Border-Primary`; labels 14/22 Medium — #E32321 when selected, #262626 otherwise. Button: container radius 8 with a 1px accent border, inner row gap 4, item radius 6. Every one of those matches, confirmed in the browser.",
+      "corrections": {
+        "root height": "Rendered 41 instead of 40. Figma strokes the bottom rule INSIDE the frame; the container was content-box, so the border was adding to the height. Same mistake ActionBar had."
+      }
+    },
+    "_figma_gaps": {
+      "third-set-not-modelled": "`tabs-for-orders` (16426:4355) is a third set: same shape as the button style but item padding 4/8 instead of 8/16, and it adds a `desktop=yes|no` axis. The library models the two general sets only. Whether orders needs its own tighter density or should use the shared one is a designer's call, not a build decision."
+    },
+    "_figma_icons": {
+      "_comment": "The icons Figma instantiates for this component, read 2026-08-20 by walking the instance tree and keeping every main component whose parent set is `icons`. check-figma-icons.py holds the files in `sources` to exactly this set — an extra icon fails as loudly as a missing one, because an extra is one nobody compared. Files not listed in `sources` carry payload a caller passes, not a choice the design makes.",
+      "nodes": [
+        {
+          "node": "14370:9654 · 14370:9710 · 16426:4355",
+          "figma": "horizontal-tabs-underline / -button / orders",
+          "sources": [
+            "Tabs.tsx"
+          ],
+          "icons": {
+            "filled-Error-2": "the badge dot on `horizontal-tabs-underline` state=select-1 menu=tab-4, on Menu-2 and Menu-4. The other two sets carry no icon."
+          }
+        }
+      ]
+    }
+  },
+  "tokens": {
+    "separator": "{design.semantic.colors.border.accent.gray-soft-light}",
+    "_source-separator": "storybook-local, no Figma token backs it. The underline separator renders #E5E5E5 in Figma and the old tokens.ts labelled it Color/Border/Border-Disable, but semantic.colors.border.disable is #D4D4D4. border.accent.gray-soft-light is the semantic token that actually carries #E5E5E5, so the value stays true to Figma."
+  },
+  "figma_node": "14370:9654 (underline) · 14370:9710 (button) · 16426:4355 (orders)"
+}

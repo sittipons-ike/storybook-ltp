@@ -1,16 +1,22 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import Dropdown from './Dropdown';
-import type { DropdownState, DropdownOption } from './Dropdown';
+import type { DropdownOption } from './Dropdown';
 import {
-  DROPDOWN_COLORS,
-  DROPDOWN_DIMENSIONS,
-  DROPDOWN_STATE_MAP,
-  TYPOGRAPHY,
-  SPACING,
-  RADIUS,
-  BORDER_WIDTH,
-  SHADOW,
+  DROPDOWN_FIGMA_STATES,
+  DROPDOWN_STATES,
+  DROPDOWN_STATUSES,
+  DROPDOWN_TYPOGRAPHY_ROLES,
+  dropdownFieldTokenNames,
+  dropdownFieldValues,
+  dropdownOptionValues,
+  dropdownTokenNames,
+  dropdownTypographyValues,
+  dropdownValue,
+  sysValue,
+  type DropdownState,
+  type DropdownStatus,
+  type DropdownTypographyRole,
 } from './tokens';
 import ColorBindingsTable from '../../system/ColorBindingsTable';
 import type { ColorBinding } from '../../system/ColorBindingsTable';
@@ -18,8 +24,18 @@ import type { ColorBinding } from '../../system/ColorBindingsTable';
 // ═══════════════════════════════════════════
 //  Dropdown Stories — Lotteryplus Design System
 //  Figma: "dropdown" component set (14291:131904)
-//  States: Default | Hover | Active | Actived | Read Only | Complete | Error-Default | Error
+//
+//  Figma's eight flat states decompose onto two canonical axes:
+//    state  — rest | hover | active | focus | disabled | selected
+//    status — default | complete | error
+//
+//  Values shown here are read from foundations/tokens.generated.ts, which is
+//  generated from Figma. Nothing on this page is typed by hand, so a table can
+//  never claim a value the component does not actually render.
 // ═══════════════════════════════════════════
+
+const sans = "'Graphik TH', sans-serif";
+const mono = 'ui-monospace, SFMono-Regular, Menlo, monospace';
 
 const DEFAULT_OPTIONS: DropdownOption[] = [
   { value: 'text-2', label: 'Text-2' },
@@ -29,8 +45,14 @@ const DEFAULT_OPTIONS: DropdownOption[] = [
   { value: 'text-6', label: 'Text-6' },
 ];
 
+const caption: React.CSSProperties = {
+  fontSize: 12,
+  color: 'var(--sys-color-text-tertiary-default)',
+  marginBottom: 8,
+};
+
 const meta: Meta<typeof Dropdown> = {
-  title: 'Components/Dropdown',
+  title: 'Molecules/Dropdown',
   component: Dropdown,
   tags: ['autodocs'],
   argTypes: {
@@ -40,12 +62,18 @@ const meta: Meta<typeof Dropdown> = {
     required: { control: 'boolean' },
     showDescription: { control: 'boolean' },
     description: { control: 'text' },
-    readOnly: { control: 'boolean' },
-    complete: { control: 'boolean' },
-    error: { control: 'text' },
+    readOnly: { control: 'boolean', description: 'Renders the canonical `disabled` state' },
+    complete: { control: 'boolean', description: 'Renders the canonical `complete` status' },
+    error: { control: 'text', description: 'Sets the `error` status and shows the description' },
     state: {
       control: 'select',
-      options: ['default', 'hover', 'active', 'actived', 'readOnly', 'complete', 'errorDefault', 'error'],
+      options: DROPDOWN_STATES,
+      description: 'Canonical interaction state, per the Design System Standard',
+    },
+    status: {
+      control: 'select',
+      options: DROPDOWN_STATUSES,
+      description: 'Validation status — an axis orthogonal to interaction state',
     },
   },
   args: {
@@ -76,27 +104,21 @@ export const Default: Story = {
 };
 
 // ═══════════════════════════════════════════
-//  All States — Side by side comparison
+//  All States — one row per Figma state, labelled with its canonical pair
 // ═══════════════════════════════════════════
 export const AllStates: Story = {
   name: 'All States',
   render: () => {
-    const states: { state: DropdownState; label: string; value?: string }[] = [
-      { state: 'default', label: 'Default' },
-      { state: 'hover', label: 'Hover' },
-      { state: 'actived', label: 'Actived (value selected)', value: 'text-3' },
-      { state: 'readOnly', label: 'Read Only', value: 'text-3' },
-      { state: 'complete', label: 'Complete', value: 'text-3' },
-      { state: 'errorDefault', label: 'Error-Default' },
-      { state: 'error', label: 'Error (with value)', value: 'text-3' },
-    ];
+    // A selected value is what makes `selected` observable; `rest`/`hover` show the
+    // placeholder. Everything else about each row comes from the canonical pair.
+    const valueFor = (state: DropdownState) => (state === 'selected' ? 'text-3' : undefined);
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 24, fontFamily: "'Graphik TH', sans-serif" }}>
-        {states.map((s) => (
-          <div key={s.state}>
-            <div style={{ fontSize: 12, color: '#737373', marginBottom: 8 }}>
-              Figma State: {s.label}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24, fontFamily: sans }}>
+        {DROPDOWN_FIGMA_STATES.filter((s) => s.state !== 'active').map((s) => (
+          <div key={s.figma}>
+            <div style={caption}>
+              Figma “{s.figma}” → state=<code>{s.state}</code> status=<code>{s.status}</code>
             </div>
             <div style={{ width: 358 }}>
               <Dropdown
@@ -106,7 +128,8 @@ export const AllStates: Story = {
                 required
                 options={DEFAULT_OPTIONS}
                 state={s.state}
-                value={s.value}
+                status={s.status}
+                value={valueFor(s.state)}
                 description="Error Message"
               />
             </div>
@@ -119,7 +142,50 @@ export const AllStates: Story = {
 };
 
 // ═══════════════════════════════════════════
-//  With Dropdown Open (Active state)
+//  Focus ring — --dropdown-ring-active
+// ═══════════════════════════════════════════
+export const FocusRing: Story = {
+  name: 'Focus Ring',
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, fontFamily: sans }}>
+      <div>
+        <div style={caption}>
+          state=<code>focus</code> — 2px brand-red border plus the{' '}
+          <code>--dropdown-ring-active</code> glow ({dropdownValue('ring-active')}), brand red
+          at 40%.
+        </div>
+        <div style={{ width: 358 }}>
+          <Dropdown
+            label="Field Name"
+            showLabel
+            placeholder="Place Holder"
+            required
+            options={DEFAULT_OPTIONS}
+            state="focus"
+          />
+        </div>
+      </div>
+      <div>
+        <div style={caption}>
+          Tab into this one to see the ring driven by real focus rather than an override.
+        </div>
+        <div style={{ width: 358 }}>
+          <Dropdown
+            label="Field Name"
+            showLabel
+            placeholder="Place Holder"
+            required
+            options={DEFAULT_OPTIONS}
+          />
+        </div>
+      </div>
+    </div>
+  ),
+  parameters: { layout: 'padded' },
+};
+
+// ═══════════════════════════════════════════
+//  With Dropdown Open (active state)
 // ═══════════════════════════════════════════
 export const WithDropdownOpen: Story = {
   name: 'With Dropdown Open',
@@ -127,9 +193,9 @@ export const WithDropdownOpen: Story = {
     const [value, setValue] = useState<string>('text-3');
 
     return (
-      <div style={{ width: 358, paddingBottom: 220, fontFamily: "'Graphik TH', sans-serif" }}>
-        <div style={{ fontSize: 12, color: '#737373', marginBottom: 8 }}>
-          Figma State: Active (dropdown open) — click the field to toggle
+      <div style={{ width: 358, paddingBottom: 220, fontFamily: sans }}>
+        <div style={caption}>
+          state=<code>active</code> (list open) — click the field to toggle
         </div>
         <Dropdown
           label="Field Name"
@@ -155,10 +221,10 @@ export const WithError: Story = {
     const [value, setValue] = useState<string | undefined>(undefined);
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 24, fontFamily: "'Graphik TH', sans-serif" }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24, fontFamily: sans }}>
         <div>
-          <div style={{ fontSize: 12, color: '#737373', marginBottom: 8 }}>
-            Figma State: Error-Default (no value selected)
+          <div style={caption}>
+            Figma “Error-Default” → state=<code>rest</code> status=<code>error</code>
           </div>
           <div style={{ width: 358 }}>
             <Dropdown
@@ -172,8 +238,8 @@ export const WithError: Story = {
           </div>
         </div>
         <div>
-          <div style={{ fontSize: 12, color: '#737373', marginBottom: 8 }}>
-            Figma State: Error (with value selected)
+          <div style={caption}>
+            Figma “Error” → state=<code>selected</code> status=<code>error</code>
           </div>
           <div style={{ width: 358 }}>
             <Dropdown
@@ -188,8 +254,9 @@ export const WithError: Story = {
           </div>
         </div>
         <div>
-          <div style={{ fontSize: 12, color: '#737373', marginBottom: 8 }}>
-            Interactive error dropdown — select a value to see Error state
+          <div style={caption}>
+            Interactive — picking a value moves it from <code>rest</code> to{' '}
+            <code>selected</code>, status stays <code>error</code>
           </div>
           <div style={{ width: 358, paddingBottom: 180 }}>
             <Dropdown
@@ -216,10 +283,12 @@ export const WithError: Story = {
 export const ReadOnlyAndComplete: Story = {
   name: 'Read Only & Complete',
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, fontFamily: "'Graphik TH', sans-serif" }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, fontFamily: sans }}>
       <div>
-        <div style={{ fontSize: 12, color: '#737373', marginBottom: 8 }}>
-          Figma State: Read Only — BG #F5F5F5, text #737373, non-interactive
+        <div style={caption}>
+          Figma “Read Only” → state=<code>disabled</code> — background{' '}
+          {dropdownValue('background-disable')}, text {dropdownValue('foreground-gray')},
+          non-interactive
         </div>
         <div style={{ width: 358 }}>
           <Dropdown
@@ -234,8 +303,9 @@ export const ReadOnlyAndComplete: Story = {
         </div>
       </div>
       <div>
-        <div style={{ fontSize: 12, color: '#737373', marginBottom: 8 }}>
-          Figma State: Complete — Border #22C55E (green)
+        <div style={caption}>
+          Figma “Complete” → status=<code>complete</code> — border{' '}
+          {dropdownValue('foreground-green')}
         </div>
         <div style={{ width: 358 }}>
           <Dropdown
@@ -255,133 +325,291 @@ export const ReadOnlyAndComplete: Story = {
 };
 
 // ═══════════════════════════════════════════
-//  Token Verification
+//  Token Chain — every value read, never typed
 // ═══════════════════════════════════════════
-export const TokenVerification: Story = {
-  name: 'Token Verification',
+const th: React.CSSProperties = {
+  textAlign: 'left',
+  padding: '8px 12px',
+  fontSize: 11,
+  fontWeight: 600,
+  color: 'var(--sys-color-text-tertiary-default)',
+  borderBottom: '2px solid var(--sys-color-border-accent-gray-soft-light)',
+};
+
+const td: React.CSSProperties = {
+  padding: '6px 12px',
+  borderBottom: '1px solid var(--sys-color-background-light)',
+  fontFamily: mono,
+  fontSize: 11,
+};
+
+const Swatch: React.FC<{ hex: string }> = ({ hex }) =>
+  hex ? (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+      <span
+        style={{
+          width: 14,
+          height: 14,
+          borderRadius: 3,
+          background: hex,
+          border: '1px solid rgba(0,0,0,0.15)',
+        }}
+      />
+      {hex}
+    </span>
+  ) : (
+    <span style={{ color: 'var(--sys-color-text-state-light-gray)' }}>—</span>
+  );
+
+export const TokenChain: Story = {
+  name: '🔍 Token Chain',
   render: () => {
-    const checks = [
-      // Layout / Spacing
-      { category: 'Layout', label: 'Wrapper gap (spacing-sm)', figma: '4px', storybook: `${SPACING.sm}px`, variable: 'spacing-sm' },
-      { category: 'Layout', label: 'Label paddingLeft (spacing-sm)', figma: '4px', storybook: `${DROPDOWN_DIMENSIONS.wrapper.labelPaddingLeft}px`, variable: 'spacing-sm' },
-      { category: 'Layout', label: 'Label internal gap (spacing-sm)', figma: '4px', storybook: `${DROPDOWN_DIMENSIONS.wrapper.labelInternalGap}px`, variable: 'spacing-sm' },
-      { category: 'Layout', label: 'Field paddingTop (spacing-2lg)', figma: '10px', storybook: `${DROPDOWN_DIMENSIONS.field.paddingTop}px`, variable: 'spacing-2lg' },
-      { category: 'Layout', label: 'Field paddingRight (spacing-lg)', figma: '8px', storybook: `${DROPDOWN_DIMENSIONS.field.paddingRight}px`, variable: 'spacing-lg' },
-      { category: 'Layout', label: 'Field paddingBottom (spacing-2lg)', figma: '10px', storybook: `${DROPDOWN_DIMENSIONS.field.paddingBottom}px`, variable: 'spacing-2lg' },
-      { category: 'Layout', label: 'Field paddingLeft (spacing-2xl)', figma: '16px', storybook: `${DROPDOWN_DIMENSIONS.field.paddingLeft}px`, variable: 'spacing-2xl' },
-      { category: 'Layout', label: 'Field gap (spacing-lg)', figma: '8px', storybook: `${DROPDOWN_DIMENSIONS.field.gap}px`, variable: 'spacing-lg' },
-      { category: 'Layout', label: 'Field border-radius (radius-lg)', figma: '8px', storybook: `${RADIUS.lg}px`, variable: 'radius-lg' },
-      { category: 'Layout', label: 'Icon size', figma: '24px', storybook: `${DROPDOWN_DIMENSIONS.iconSize}px`, variable: 'icons-size Size=24' },
-
-      // Dropdown List
-      { category: 'Dropdown List', label: 'List padding (spacing-lg)', figma: '8px', storybook: `${DROPDOWN_DIMENSIONS.list.padding}px`, variable: 'spacing-lg' },
-      { category: 'Dropdown List', label: 'List item gap (spacing-2lg)', figma: '10px', storybook: `${DROPDOWN_DIMENSIONS.list.gap}px`, variable: 'spacing-2lg' },
-      { category: 'Dropdown List', label: 'List border-radius (radius-lg)', figma: '8px', storybook: `${RADIUS.lg}px`, variable: 'radius-lg' },
-      { category: 'Dropdown List', label: 'List border', figma: '1px #D4D4D4', storybook: `${BORDER_WIDTH[1]}px ${DROPDOWN_COLORS.border.default}`, variable: 'dimension/border-width/1, colors/dropdown/dropdown-border' },
-      { category: 'Dropdown List', label: 'List shadow (dimension/shadow/sm)', figma: '0px 1px 2px rgba(0,0,0,0.06), 0px 1px 3px rgba(0,0,0,0.10)', storybook: SHADOW.sm, variable: 'dimension/shadow/sm' },
-
-      // Option Items
-      { category: 'Option Item', label: 'Option padding (spacing-sm/spacing-2xl)', figma: '4/16/4/16', storybook: `${DROPDOWN_DIMENSIONS.option.paddingTop}/${DROPDOWN_DIMENSIONS.option.paddingRight}/${DROPDOWN_DIMENSIONS.option.paddingBottom}/${DROPDOWN_DIMENSIONS.option.paddingLeft}`, variable: 'spacing-sm, spacing-2xl' },
-      { category: 'Option Item', label: 'Option border-radius (radius-lg)', figma: '8px', storybook: `${RADIUS.lg}px`, variable: 'radius-lg' },
-      { category: 'Option Item', label: 'Option BG default', figma: '#FFFFFF', storybook: DROPDOWN_COLORS.option.bgDefault, variable: 'colors/dropdown/dropdown-bg-white' },
-      { category: 'Option Item', label: 'Option BG hover', figma: '#E5E5E5', storybook: DROPDOWN_COLORS.option.bgHover, variable: 'colors/dropdown/dropdown-fg-soft-gray' },
-      { category: 'Option Item', label: 'Option BG selected', figma: '#E32321', storybook: DROPDOWN_COLORS.option.bgSelected, variable: 'colors/dropdown/dropdown-fg-red' },
-      { category: 'Option Item', label: 'Option text default', figma: '#262626', storybook: DROPDOWN_COLORS.option.textDefault, variable: 'colors/dropdown/dropdown-fg-dark' },
-      { category: 'Option Item', label: 'Option text selected', figma: '#FFFFFF', storybook: DROPDOWN_COLORS.option.textSelected, variable: 'white' },
-
-      // Typography
-      { category: 'Typography', label: 'Label (title/m-med)', figma: '14px/22px Medium', storybook: `${TYPOGRAPHY.label.fontSize}px/${TYPOGRAPHY.label.lineHeight} w${TYPOGRAPHY.label.fontWeight}`, variable: 'title/m-med/*' },
-      { category: 'Typography', label: 'Required (label/m-med)', figma: '12px/18px Medium', storybook: `${TYPOGRAPHY.required.fontSize}px/${TYPOGRAPHY.required.lineHeight} w${TYPOGRAPHY.required.fontWeight}`, variable: 'label/m-reg/*, label/m-med/weight' },
-      { category: 'Typography', label: 'Placeholder (body/m-reg)', figma: '14px/22px Regular', storybook: `${TYPOGRAPHY.placeholder.fontSize}px/${TYPOGRAPHY.placeholder.lineHeight} w${TYPOGRAPHY.placeholder.fontWeight}`, variable: 'body/m-reg/*' },
-      { category: 'Typography', label: 'Option normal (body/m-reg)', figma: '14px/22px Regular', storybook: `${TYPOGRAPHY.optionNormal.fontSize}px/${TYPOGRAPHY.optionNormal.lineHeight} w${TYPOGRAPHY.optionNormal.fontWeight}`, variable: 'body/m-reg/*' },
-      { category: 'Typography', label: 'Option selected (body/m-med)', figma: '14px/22px Medium', storybook: `${TYPOGRAPHY.optionSelected.fontSize}px/${TYPOGRAPHY.optionSelected.lineHeight} w${TYPOGRAPHY.optionSelected.fontWeight}`, variable: 'body/m-med/*' },
-      { category: 'Typography', label: 'Error (caption/m-reg)', figma: '10px/16px Regular', storybook: `${TYPOGRAPHY.error.fontSize}px/${TYPOGRAPHY.error.lineHeight} w${TYPOGRAPHY.error.fontWeight}`, variable: 'caption/m-reg/*' },
-      { category: 'Typography', label: 'Font Family', figma: 'Graphik TH', storybook: TYPOGRAPHY.label.fontFamily, variable: 'Graphik TH' },
-
-      // State Colors — Field BG
-      { category: 'State: Default', label: 'BG', figma: '#FFFFFF', storybook: DROPDOWN_STATE_MAP.default.bg, variable: 'colors/dropdown/dropdown-bg-white' },
-      { category: 'State: Default', label: 'Border', figma: '#D4D4D4', storybook: DROPDOWN_STATE_MAP.default.border, variable: 'colors/dropdown/dropdown-border' },
-      { category: 'State: Default', label: 'Border Width', figma: '1px', storybook: `${DROPDOWN_STATE_MAP.default.borderWidth}px`, variable: 'dimension/border-width/1' },
-      { category: 'State: Default', label: 'Text Color', figma: '#C9C9C9', storybook: DROPDOWN_STATE_MAP.default.textColor, variable: 'colors/dropdown/dropdown-fg-disable' },
-      { category: 'State: Default', label: 'Icon Color', figma: '#C9C9C9', storybook: DROPDOWN_STATE_MAP.default.iconColor, variable: 'colors/dropdown/dropdown-fg-disable' },
-
-      { category: 'State: Hover', label: 'Border', figma: '#737373', storybook: DROPDOWN_STATE_MAP.hover.border, variable: 'colors/dropdown/dropdown-fg-gray' },
-      { category: 'State: Hover', label: 'Icon Color', figma: '#737373', storybook: DROPDOWN_STATE_MAP.hover.iconColor, variable: 'colors/dropdown/dropdown-fg-gray' },
-
-      { category: 'State: Active', label: 'Border', figma: '#E32321', storybook: DROPDOWN_STATE_MAP.active.border, variable: 'colors/dropdown/dropdown-bd-bg-active' },
-      { category: 'State: Active', label: 'Border Width', figma: '2px', storybook: `${DROPDOWN_STATE_MAP.active.borderWidth}px`, variable: 'dimension/border-width/2' },
-      { category: 'State: Active', label: 'Text Color', figma: '#262626', storybook: DROPDOWN_STATE_MAP.active.textColor, variable: 'colors/dropdown/dropdown-fg-dark' },
-
-      { category: 'State: Actived', label: 'Border', figma: '#D4D4D4', storybook: DROPDOWN_STATE_MAP.actived.border, variable: 'colors/dropdown/dropdown-border' },
-      { category: 'State: Actived', label: 'Text Color', figma: '#262626', storybook: DROPDOWN_STATE_MAP.actived.textColor, variable: 'colors/dropdown/dropdown-fg-dark' },
-
-      { category: 'State: Read Only', label: 'BG', figma: '#F5F5F5', storybook: DROPDOWN_STATE_MAP.readOnly.bg, variable: 'colors/dropdown/dropdown-bg-disable' },
-      { category: 'State: Read Only', label: 'Text Color', figma: '#737373', storybook: DROPDOWN_STATE_MAP.readOnly.textColor, variable: 'colors/dropdown/dropdown-fg-gray' },
-      { category: 'State: Read Only', label: 'Icon Color', figma: '#C9C9C9', storybook: DROPDOWN_STATE_MAP.readOnly.iconColor, variable: 'colors/dropdown/dropdown-fg-disable' },
-
-      { category: 'State: Complete', label: 'Border', figma: '#22C55E', storybook: DROPDOWN_STATE_MAP.complete.border, variable: 'colors/dropdown/dropdown-fg-green' },
-
-      { category: 'State: Error-Default', label: 'Border', figma: '#E32321', storybook: DROPDOWN_STATE_MAP.errorDefault.border, variable: 'colors/dropdown/dropdown-fg-red' },
-      { category: 'State: Error-Default', label: 'Text Color', figma: '#C9C9C9', storybook: DROPDOWN_STATE_MAP.errorDefault.textColor, variable: 'colors/dropdown/dropdown-fg-disable' },
-      { category: 'State: Error-Default', label: 'Desc Visible', figma: 'true', storybook: `${DROPDOWN_STATE_MAP.errorDefault.descVisible}`, variable: 'Show Description=true' },
-
-      { category: 'State: Error', label: 'Border', figma: '#E32321', storybook: DROPDOWN_STATE_MAP.error.border, variable: 'colors/dropdown/dropdown-fg-red' },
-      { category: 'State: Error', label: 'Text Color', figma: '#262626', storybook: DROPDOWN_STATE_MAP.error.textColor, variable: 'colors/dropdown/dropdown-fg-dark' },
-
-      // Description
-      { category: 'Description', label: 'Error text color', figma: '#E32321', storybook: DROPDOWN_COLORS.fg.red, variable: 'colors/dropdown/dropdown-fg-red' },
-      { category: 'Description', label: 'Description paddingLeft', figma: '4px', storybook: `${DROPDOWN_DIMENSIONS.wrapper.descriptionPaddingLeft}px`, variable: 'spacing-sm' },
+    // Tier 2 -> Tier 1. Only the pairing is written here; both values are read.
+    const layout: Array<[string, string]> = [
+      ['radius', 'radius-lg'],
+      ['border-width', 'border-width-hairline'],
+      ['border-width-active', 'border-width-thin'],
+      ['elevation', 'elevation-card'],
+      ['wrapper-gap', 'spacing-sm'],
+      ['label-padding-left', 'spacing-sm'],
+      ['label-gap', 'spacing-sm'],
+      ['description-padding-left', 'spacing-sm'],
+      ['field-padding-y', 'spacing-2lg'],
+      ['field-padding-right', 'spacing-lg'],
+      ['field-padding-left', 'spacing-2xl'],
+      ['field-gap', 'spacing-lg'],
+      ['list-offset', 'spacing-sm'],
+      ['list-padding', 'spacing-lg'],
+      ['list-gap', 'spacing-2lg'],
+      ['option-padding-y', 'spacing-sm'],
+      ['option-padding-x', 'spacing-2xl'],
+      ['option-gap', 'spacing-lg'],
+      ['icon-size', ''],
     ];
 
-    // Group by category
-    const categories = [...new Set(checks.map((c) => c.category))];
+    const typographyRole: Record<DropdownTypographyRole, string> = {
+      label: 'type-title-md-medium',
+      required: 'type-label-md-medium',
+      value: 'type-body-md-regular',
+      option: 'type-body-md-regular',
+      'option-selected': 'type-body-md-medium',
+      description: 'type-caption-md-regular',
+    };
+
+    const typographyProps: Array<[keyof ReturnType<typeof dropdownTypographyValues>, string]> = [
+      ['fontFamily', 'family'],
+      ['fontSize', 'size'],
+      ['lineHeight', 'line-height'],
+      ['fontWeight', 'weight'],
+      ['letterSpacing', 'tracking'],
+    ];
+
+    const pairs = DROPDOWN_FIGMA_STATES.map(
+      (s): [DropdownState, DropdownStatus] => [s.state, s.status],
+    );
 
     return (
-      <div style={{ fontFamily: "'Graphik TH', sans-serif", maxWidth: 900 }}>
-        <h2 style={{ margin: '0 0 8px', fontSize: 20 }}>Dropdown Token Verification</h2>
-        <p style={{ margin: '0 0 16px', fontSize: 13, color: '#737373' }}>
-          Comparing Figma component values vs Storybook token values with bound variable names
-        </p>
-        <p style={{ margin: '0 0 16px', fontSize: 12, color: '#A3A3A3' }}>
-          Figma component set: "dropdown" (14291:131904)
+      <div style={{ fontFamily: sans, maxWidth: 980 }}>
+        <h2 style={{ margin: '0 0 8px', fontSize: 20 }}>Dropdown token chain</h2>
+        <p style={{ margin: '0 0 20px', fontSize: 13, color: 'var(--sys-color-text-tertiary-default)' }}>
+          Every value flows Figma → design.md → components.json → tokens.css. The component
+          renders the Tier 2 alias; the alias points at a Tier 1 semantic token; that resolves
+          to the literal. Nothing below is hand-typed — layout and typography are authored in{' '}
+          <code>design-library/lotteryplus/components/dropdown.json</code>, colours are mirrored
+          from Figma’s <code>colors/dropdown</code> group.
         </p>
 
-        {categories.map((cat) => (
-          <div key={cat} style={{ marginBottom: 24 }}>
-            <h3 style={{ margin: '0 0 8px', fontSize: 14, fontWeight: 600, color: '#262626', borderBottom: '2px solid #E32321', paddingBottom: 4 }}>
-              {cat}
-            </h3>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-              <thead>
-                <tr style={{ borderBottom: '2px solid #E5E5E5', textAlign: 'left' }}>
-                  <th style={{ padding: '6px 10px', width: '25%' }}>Token</th>
-                  <th style={{ padding: '6px 10px', width: '20%' }}>Figma Value</th>
-                  <th style={{ padding: '6px 10px', width: '20%' }}>Storybook Value</th>
-                  <th style={{ padding: '6px 10px', width: '30%' }}>Bound Variable</th>
-                  <th style={{ padding: '6px 10px', width: '5%' }}>Match</th>
+        <h3 style={{ fontSize: 14, margin: '0 0 8px' }}>Layout &amp; sizing</h3>
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 28 }}>
+          <thead>
+            <tr>
+              <th style={th}>Tier 2 — component</th>
+              <th style={th}>Tier 1 — semantic</th>
+              <th style={th}>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {layout.map(([token, semantic]) => (
+              <tr key={token}>
+                <td style={{ ...td, color: 'var(--sys-color-primary-default)' }}>
+                  --dropdown-{token}
+                </td>
+                <td style={{ ...td, color: 'var(--sys-color-status-info-default)' }}>
+                  {semantic ? `--sys-${semantic}` : '(fixed)'}
+                </td>
+                <td style={{ ...td, color: 'var(--sys-color-status-success-dark)' }}>
+                  {dropdownValue(token)}
+                  {semantic && dropdownValue(token) !== sysValue(semantic) ? ' ⚠︎' : ''}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <h3 style={{ fontSize: 14, margin: '0 0 8px' }}>Typography roles</h3>
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 28 }}>
+          <thead>
+            <tr>
+              <th style={th}>Role</th>
+              <th style={th}>Tier 1 — semantic</th>
+              {typographyProps.map(([, label]) => (
+                <th key={label} style={th}>
+                  {label}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {DROPDOWN_TYPOGRAPHY_ROLES.map((role) => {
+              const v = dropdownTypographyValues(role);
+              return (
+                <tr key={role}>
+                  <td style={{ ...td, fontFamily: sans }}>{role}</td>
+                  <td style={{ ...td, color: 'var(--sys-color-status-info-default)' }}>
+                    --sys-{typographyRole[role]}-*
+                  </td>
+                  {typographyProps.map(([key, label]) => (
+                    <td key={label} style={td}>
+                      {v[key]}
+                    </td>
+                  ))}
                 </tr>
-              </thead>
-              <tbody>
-                {checks
-                  .filter((c) => c.category === cat)
-                  .map((c, i) => {
-                    const figmaNorm = c.figma.toLowerCase().replace(/\s/g, '');
-                    const sbNorm = c.storybook.toLowerCase().replace(/\s/g, '').replace(/'graphikth',sans-serif/g, 'graphikth');
-                    const match = figmaNorm === sbNorm || sbNorm.includes(figmaNorm.split(' ')[0]);
-                    return (
-                      <tr key={`${c.category}-${c.label}-${i}`} style={{ borderBottom: '1px solid #F5F5F5' }}>
-                        <td style={{ padding: '5px 10px', fontWeight: 500 }}>{c.label}</td>
-                        <td style={{ padding: '5px 10px', fontFamily: 'monospace', color: '#22C55E' }}>{c.figma}</td>
-                        <td style={{ padding: '5px 10px', fontFamily: 'monospace', color: '#3B82F6' }}>{c.storybook}</td>
-                        <td style={{ padding: '5px 10px', fontFamily: 'monospace', color: '#737373', fontSize: 11 }}>{c.variable}</td>
-                        <td style={{ padding: '5px 10px', fontSize: 16, textAlign: 'center' }}>&#x2705;</td>
-                      </tr>
-                    );
-                  })}
-              </tbody>
-            </table>
-          </div>
-        ))}
+              );
+            })}
+          </tbody>
+        </table>
+
+        <h3 style={{ fontSize: 14, margin: '0 0 8px' }}>Field colours by state × status</h3>
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 28 }}>
+          <thead>
+            <tr>
+              <th style={th}>Figma state</th>
+              <th style={th}>state</th>
+              <th style={th}>status</th>
+              <th style={th}>Background</th>
+              <th style={th}>Border</th>
+              <th style={th}>Width</th>
+              <th style={th}>Text</th>
+              <th style={th}>Icon</th>
+              <th style={th}>Ring</th>
+            </tr>
+          </thead>
+          <tbody>
+            {DROPDOWN_FIGMA_STATES.map(({ figma, state, status }) => {
+              const v = dropdownFieldValues(state, status);
+              const names = dropdownFieldTokenNames(state, status);
+              return (
+                <tr key={figma}>
+                  <td style={{ ...td, fontFamily: sans }}>{figma}</td>
+                  <td style={td}>{state}</td>
+                  <td style={td}>{status}</td>
+                  <td style={td} title={`--dropdown-${names.background}`}>
+                    <Swatch hex={v.background} />
+                  </td>
+                  <td style={td} title={`--dropdown-${names.border}`}>
+                    <Swatch hex={v.border} />
+                  </td>
+                  <td style={td} title={`--dropdown-${names.borderWidth}`}>
+                    {v.borderWidth}
+                  </td>
+                  <td style={td} title={`--dropdown-${names.foreground}`}>
+                    <Swatch hex={v.foreground} />
+                  </td>
+                  <td style={td} title={`--dropdown-${names.icon}`}>
+                    <Swatch hex={v.icon} />
+                  </td>
+                  <td style={td} title={names.ring ? `--dropdown-${names.ring}` : ''}>
+                    <Swatch hex={v.ring} />
+                  </td>
+                </tr>
+              );
+            })}
+            {/* Canonical states Figma has no dedicated frame for. */}
+            {DROPDOWN_STATES.filter(
+              (s) => !pairs.some(([state, status]) => state === s && status === 'default'),
+            ).map((state) => {
+              const v = dropdownFieldValues(state, 'default');
+              return (
+                <tr key={`extra-${state}`}>
+                  <td style={{ ...td, fontFamily: sans, opacity: 0.6 }}>(no Figma frame)</td>
+                  <td style={td}>{state}</td>
+                  <td style={td}>default</td>
+                  <td style={td}>
+                    <Swatch hex={v.background} />
+                  </td>
+                  <td style={td}>
+                    <Swatch hex={v.border} />
+                  </td>
+                  <td style={td}>{v.borderWidth}</td>
+                  <td style={td}>
+                    <Swatch hex={v.foreground} />
+                  </td>
+                  <td style={td}>
+                    <Swatch hex={v.icon} />
+                  </td>
+                  <td style={td}>
+                    <Swatch hex={v.ring} />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+
+        <h3 style={{ fontSize: 14, margin: '0 0 8px' }}>Option rows</h3>
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 28 }}>
+          <thead>
+            <tr>
+              <th style={th}>Row</th>
+              <th style={th}>Background</th>
+              <th style={th}>Text</th>
+            </tr>
+          </thead>
+          <tbody>
+            {(
+              [
+                ['rest', false, false],
+                ['hover', false, true],
+                ['selected', true, false],
+              ] as Array<[string, boolean, boolean]>
+            ).map(([label, selected, hovered]) => {
+              const v = dropdownOptionValues(selected, hovered);
+              return (
+                <tr key={label}>
+                  <td style={{ ...td, fontFamily: sans }}>{label}</td>
+                  <td style={td}>
+                    <Swatch hex={v.background} />
+                  </td>
+                  <td style={td}>
+                    <Swatch hex={v.foreground} />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+
+        <h3 style={{ fontSize: 14, margin: '0 0 8px' }}>
+          Every declared token ({dropdownTokenNames().length})
+        </h3>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <thead>
+            <tr>
+              <th style={th}>Token</th>
+              <th style={th}>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {dropdownTokenNames().map((name) => (
+              <tr key={name}>
+                <td style={{ ...td, color: 'var(--sys-color-primary-default)' }}>
+                  --dropdown-{name}
+                </td>
+                <td style={td}>{dropdownValue(name)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     );
   },
@@ -389,26 +617,82 @@ export const TokenVerification: Story = {
 };
 
 // ── Color Bindings ──
+const BINDINGS: ColorBinding[] = [
+  {
+    token: 'dropdown-background-white',
+    figmaVariable: 'colors/dropdown/dropdown-bg-white',
+    hex: dropdownValue('background-white'),
+    usage: 'Field background, list surface, default option row',
+  },
+  {
+    token: 'dropdown-background-disable',
+    figmaVariable: 'colors/dropdown/dropdown-bg-disable',
+    hex: dropdownValue('background-disable'),
+    usage: 'Field background — state=disabled (Figma “Read Only”)',
+  },
+  {
+    token: 'dropdown-border',
+    figmaVariable: 'colors/dropdown/dropdown-border',
+    hex: dropdownValue('border'),
+    usage: 'Field border — rest / selected / disabled; list border',
+  },
+  {
+    token: 'dropdown-foreground-gray',
+    figmaVariable: 'colors/dropdown/dropdown-fg-gray',
+    hex: dropdownValue('foreground-gray'),
+    usage: 'Field border and icon on hover; text when disabled',
+  },
+  {
+    token: 'dropdown-ring-active',
+    figmaVariable: 'colors/dropdown/dropdown-bd-bg-active',
+    hex: dropdownValue('ring-active'),
+    usage: 'Focus ring — state=active / focus (brand red at 40%)',
+  },
+  {
+    token: 'dropdown-foreground-green',
+    figmaVariable: 'colors/dropdown/dropdown-fg-green',
+    hex: dropdownValue('foreground-green'),
+    usage: 'Field border — status=complete',
+  },
+  {
+    token: 'dropdown-foreground-red',
+    figmaVariable: 'colors/dropdown/dropdown-fg-red',
+    hex: dropdownValue('foreground-red'),
+    usage: 'Field border on status=error and state=active/focus; required marker; description text; selected option background',
+  },
+  {
+    token: 'dropdown-foreground-dark',
+    figmaVariable: 'colors/dropdown/dropdown-fg-dark',
+    hex: dropdownValue('foreground-dark'),
+    usage: 'Label text, value text, icons, default option text',
+  },
+  {
+    token: 'dropdown-foreground-disable',
+    figmaVariable: 'colors/dropdown/dropdown-fg-disable',
+    hex: dropdownValue('foreground-disable'),
+    usage: 'Placeholder text, rest-state icon',
+  },
+  {
+    token: 'dropdown-foreground-soft-gray',
+    figmaVariable: 'colors/dropdown/dropdown-fg-soft-gray',
+    hex: dropdownValue('foreground-soft-gray'),
+    usage: 'Option row background on hover',
+  },
+  {
+    token: 'dropdown-foreground-white',
+    figmaVariable: 'colors/dropdown/dropdown-fg-white',
+    hex: dropdownValue('foreground-white'),
+    usage: 'Selected option text',
+  },
+];
+
 export const ColorBindings: StoryObj = {
   name: 'Color Bindings',
   render: () => (
     <ColorBindingsTable
       componentName="Dropdown"
       figmaId="14291:131904"
-      bindings={[
-        { token: 'dropdown-bg-white', figmaVariable: 'colors/dropdown/dropdown-bg-white', hex: '#FFFFFF', usage: 'Field background (default)' },
-        { token: 'dropdown-bg-disable', figmaVariable: 'colors/dropdown/dropdown-bg-disable', hex: '#F5F5F5', usage: 'Field background (read only)' },
-        { token: 'dropdown-border', figmaVariable: 'colors/dropdown/dropdown-border', hex: '#D4D4D4', usage: 'Field border (default/actived/readOnly)' },
-        { token: 'dropdown-fg-gray', figmaVariable: 'colors/dropdown/dropdown-fg-gray', hex: '#737373', usage: 'Field border (hover), hover icon' },
-        { token: 'dropdown-bd-bg-active', figmaVariable: 'colors/dropdown/dropdown-bd-bg-active', hex: '#E32321', usage: 'Field border (active state)' },
-        { token: 'dropdown-fg-green', figmaVariable: 'colors/dropdown/dropdown-fg-green', hex: '#22C55E', usage: 'Field border (complete)' },
-        { token: 'dropdown-fg-red', figmaVariable: 'colors/dropdown/dropdown-fg-red', hex: '#E32321', usage: 'Field border (error), required marker, error text' },
-        { token: 'dropdown-fg-dark', figmaVariable: 'colors/dropdown/dropdown-fg-dark', hex: '#262626', usage: 'Label text, active/actived text, icons' },
-        { token: 'dropdown-fg-disable', figmaVariable: 'colors/dropdown/dropdown-fg-disable', hex: '#C9C9C9', usage: 'Placeholder text, default icon' },
-        { token: 'dropdown-fg-soft-gray', figmaVariable: 'colors/dropdown/dropdown-fg-soft-gray', hex: '#E5E5E5', usage: 'Option hover bg' },
-        { token: 'dropdown-option-bg-selected', figmaVariable: 'colors/dropdown/dropdown-fg-red', hex: '#E32321', usage: 'Selected option bg' },
-        { token: 'dropdown-option-text-selected', figmaVariable: 'colors/dropdown/dropdown-fg-white', hex: '#FFFFFF', usage: 'Selected option text' },
-      ]}
+      bindings={BINDINGS}
     />
   ),
 };

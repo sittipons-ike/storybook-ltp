@@ -1,40 +1,48 @@
-/* Global font: Graphik TH — Lotteryplus Design System */
+/* Storybook chrome only — this file must never decide what a component looks like.
+   Component typography comes from tokens.css; here we just supply the web-font
+   fallback and cover the elements that do not inherit font-family. */
+
+/* Graphik TH — the real product font, served from UI Library/assets/fonts via staticDirs.
+   The same seven files the Frontend loads in `_app.tsx`, at the same weights, so a story
+   and a page render identical text. Sarabun stays behind it as a fallback only. */
+@font-face { font-family: 'Graphik TH'; src: url('/fonts/GraphikThai/GraphikThai-Thin.otf') format('opentype');       font-weight: 100; font-display: swap; }
+@font-face { font-family: 'Graphik TH'; src: url('/fonts/GraphikThai/GraphikThai-Extralight.otf') format('opentype'); font-weight: 200; font-display: swap; }
+@font-face { font-family: 'Graphik TH'; src: url('/fonts/GraphikThai/GraphikThai-Light.otf') format('opentype');      font-weight: 300; font-display: swap; }
+@font-face { font-family: 'Graphik TH'; src: url('/fonts/GraphikThai/GraphikThai-Regular.otf') format('opentype');    font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Graphik TH'; src: url('/fonts/GraphikThai/GraphikThai-Medium.otf') format('opentype');     font-weight: 500; font-display: swap; }
+@font-face { font-family: 'Graphik TH'; src: url('/fonts/GraphikThai/GraphikThai-Semibold.otf') format('opentype');   font-weight: 600; font-display: swap; }
+@font-face { font-family: 'Graphik TH'; src: url('/fonts/GraphikThai/GraphikThai-Bold.otf') format('opentype');       font-weight: 700; font-display: swap; }
+
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@100;300;400;500;600;700;900&display=swap');
 
-/* Graphik TH is a commercial font — use Sarabun as fallback for Thai glyphs */
 :root {
-  --ltp-font-family: 'Graphik TH', 'Sarabun', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  /* Derived from the token, not restated — change the family in Figma and Storybook
+     follows. Everything after the token is fallback for when Graphik TH is absent. */
+  --ltp-font-family: var(--sys-type-body-md-regular-family, 'Graphik TH'), 'Sarabun',
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-/* Apply to all story content */
+/* Baseline for story and docs content. No `!important` and no `*` selector: a
+   component's own font-family token has to be able to win, otherwise the token is
+   decorative and Storybook silently shows something the design system did not choose. */
 .sb-show-main,
 #storybook-root,
-#storybook-root * {
-  font-family: var(--ltp-font-family) !important;
+.sbdocs-content {
+  font-family: var(--ltp-font-family);
 }
 
-/* Force form elements (button, input, select, textarea) —
-   these do NOT inherit font-family by default in most browsers */
+/* Form controls do not inherit font-family in any browser, so they need it stated.
+   Still no `!important` — an inline token on the element itself takes precedence. */
 #storybook-root button,
 #storybook-root input,
 #storybook-root select,
 #storybook-root textarea,
 #storybook-root label,
-#storybook-root optgroup {
-  font-family: var(--ltp-font-family) !important;
-}
-
-/* Docs page content */
-.sbdocs-content,
-.sbdocs-content * {
-  font-family: var(--ltp-font-family) !important;
-}
-
-/* Docs form elements */
+#storybook-root optgroup,
 .sbdocs-content button,
 .sbdocs-content input,
 .sbdocs-content select,
 .sbdocs-content textarea,
 .sbdocs-content label {
-  font-family: var(--ltp-font-family) !important;
+  font-family: var(--ltp-font-family);
 }

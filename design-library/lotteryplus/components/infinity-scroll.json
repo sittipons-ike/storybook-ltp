@@ -1,0 +1,12 @@
+{
+  "_comment": "A behaviour, not a visual — the Lark Standard's `helper` category. IntersectionObserver on a sentinel div after the children; no variants, no states, no tokens. Registered so the library owns the behaviour the Frontend repeats in 3 places.",
+  "figma_node": null,
+  "base": {
+    "_verified_from": {
+      "node": null,
+      "date": "2026-08-20",
+      "scope": "token mirror searched for infinit/scroll; frontend common/infinity-scroll read in full",
+      "result": "VERIFIED ABSENT in Figma, correctly — a helper has nothing to draw. Frontend is the authority for the behaviour: observe a sentinel, call loadMore when it intersects and hasMore && !loading."
+    }
+  }
+}

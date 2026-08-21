@@ -1,171 +1,302 @@
 // ═══════════════════════════════════════════
 // Dropdown Design Tokens
-// Source: Figma "Design Systems Web App Lotteryplus V.7.1"
-// Component set: "dropdown" (14291:131904)
-// All values reference Foundation variables ONLY
+//
+// This file holds NO values. Every value lives in Figma, flows through design.md
+// and components.json (colours via the Figma colour mirror, layout/typography via
+// design-library/lotteryplus/components/dropdown.json), and is generated into
+// foundations/tokens.css and foundations/tokens.generated.ts.
+//
+// What this file adds is types and lookups, so Dropdown.tsx renders with CSS
+// variables while stories and tests can still read the literal a token resolves to.
+//
+// Regenerate: python3 tools/gen-components.py && python3 tools/gen-tokens.py
+// Verify:     python3 tools/verify-tokens.py
 // ═══════════════════════════════════════════
 
-// ── From Foundation: Spacing & Layout (2-semantic) ──
-export const SPACING = {
-  none: 0,       // spacing-none
-  sm: 4,         // spacing-sm → Label row paddingLeft, Label↔Field gap, wrapper gap
-  lg: 8,         // spacing-lg → Field internal gap, dropdown list padding, option item gap
-  '2lg': 10,     // spacing-2lg → Field paddingTop/paddingBottom, dropdown list item spacing
-  '2xl': 16,     // spacing-2xl → Field paddingLeft, option item paddingLeft/paddingRight
+import { component, sys, sysValue } from '../../foundations/tokens';
+import type { IconSize } from '../../icons/Icon';
+
+const t = component('dropdown');
+
+export { sys, sysValue };
+
+/** CSS variable reference for a Dropdown token — e.g. `dropdownRef('radius')`. */
+export const dropdownRef = t.ref;
+
+/** The literal a Dropdown token resolves to. Empty string when it is not declared. */
+export const dropdownValue = t.value;
+
+/** Every `--dropdown-*` token the generator declared. Used by the token-chain story. */
+export const dropdownTokenNames = t.names;
+
+// ── Canonical vocabulary ──────────────────────────────────────────────────────
+
+/** Canonical interaction states, per the Design System Standard. */
+export type DropdownState =
+  | 'rest'
+  | 'hover'
+  | 'active'
+  | 'focus'
+  | 'disabled'
+  | 'selected';
+
+/**
+ * Validation status — an axis orthogonal to interaction state.
+ *
+ * Figma models Dropdown as eight flat states; six of them are interaction states and
+ * the other two (Complete, Error) are validation outcomes that combine with any of
+ * them. Splitting the two axes reproduces all eight without inventing a state name
+ * the Standard does not have.
+ */
+export type DropdownStatus = 'default' | 'complete' | 'error';
+
+export const DROPDOWN_STATES: readonly DropdownState[] = [
+  'rest',
+  'hover',
+  'active',
+  'focus',
+  'disabled',
+  'selected',
+] as const;
+
+export const DROPDOWN_STATUSES: readonly DropdownStatus[] = [
+  'default',
+  'complete',
+  'error',
+] as const;
+
+/**
+ * How Figma's eight flat dropdown states decompose onto the two canonical axes.
+ * Stories render this so the rename stays auditable against the Figma component set.
+ */
+export const DROPDOWN_FIGMA_STATES: readonly {
+  figma: string;
+  state: DropdownState;
+  status: DropdownStatus;
+}[] = [
+  { figma: 'Default', state: 'rest', status: 'default' },
+  { figma: 'Hover', state: 'hover', status: 'default' },
+  { figma: 'Active', state: 'active', status: 'default' },
+  { figma: 'Actived', state: 'selected', status: 'default' },
+  { figma: 'Read Only', state: 'disabled', status: 'default' },
+  { figma: 'Complete', state: 'selected', status: 'complete' },
+  { figma: 'Error-Default', state: 'rest', status: 'error' },
+  { figma: 'Error', state: 'selected', status: 'error' },
+] as const;
+
+// ── Layout, sizing and elevation ──────────────────────────────────────────────
+
+/** Layout and elevation shared by every state. */
+export const DROPDOWN = {
+  radius: t.ref('radius'),
+  borderWidth: t.ref('border-width'),
+  borderWidthActive: t.ref('border-width-active'),
+  elevation: t.ref('elevation'),
+
+  wrapperGap: t.ref('wrapper-gap'),
+  labelPaddingLeft: t.ref('label-padding-left'),
+  labelGap: t.ref('label-gap'),
+  descriptionPaddingLeft: t.ref('description-padding-left'),
+
+  fieldPaddingY: t.ref('field-padding-y'),
+  fieldPaddingRight: t.ref('field-padding-right'),
+  fieldPaddingLeft: t.ref('field-padding-left'),
+  fieldGap: t.ref('field-gap'),
+
+  listOffset: t.ref('list-offset'),
+  listPadding: t.ref('list-padding'),
+  listGap: t.ref('list-gap'),
+
+  optionPaddingY: t.ref('option-padding-y'),
+  optionPaddingX: t.ref('option-padding-x'),
+  optionGap: t.ref('option-gap'),
 } as const;
 
-// ── From Foundation: Border Radius (2-semantic) ──
-export const RADIUS = {
-  lg: 8,         // radius-lg → Field corner radius, dropdown list radius, option item radius
+/**
+ * Icon edge length in px. Numeric because it is a component prop, not a style — the
+ * cast is the one place the token string meets Icon's literal-union size type.
+ */
+export const dropdownIconSize = (): IconSize =>
+  (Number(t.value('icon-size').replace('px', '')) || 24) as IconSize;
+
+// ── Typography ────────────────────────────────────────────────────────────────
+
+export type DropdownTypographyRole =
+  | 'label'
+  | 'required'
+  | 'value'
+  | 'option'
+  | 'option-selected'
+  | 'description';
+
+export const DROPDOWN_TYPOGRAPHY_ROLES: readonly DropdownTypographyRole[] = [
+  'label',
+  'required',
+  'value',
+  'option',
+  'option-selected',
+  'description',
+] as const;
+
+export interface DropdownTypography {
+  fontFamily: string;
+  fontSize: string;
+  fontWeight: string;
+  lineHeight: string;
+  letterSpacing: string;
+}
+
+/** CSS variable references for one typography role — what Dropdown.tsx renders with. */
+export const dropdownTypography = (role: DropdownTypographyRole): DropdownTypography => ({
+  fontFamily: t.ref(`typography-${role}-family`),
+  fontSize: t.ref(`typography-${role}-size`),
+  fontWeight: t.ref(`typography-${role}-weight`),
+  lineHeight: t.ref(`typography-${role}-line-height`),
+  letterSpacing: t.ref(`typography-${role}-tracking`),
+});
+
+/** Resolved literals for one typography role — for stories, tables and tests. */
+export const dropdownTypographyValues = (
+  role: DropdownTypographyRole,
+): DropdownTypography => ({
+  fontFamily: t.value(`typography-${role}-family`),
+  fontSize: t.value(`typography-${role}-size`),
+  fontWeight: t.value(`typography-${role}-weight`),
+  lineHeight: t.value(`typography-${role}-line-height`),
+  letterSpacing: t.value(`typography-${role}-tracking`),
+});
+
+// ── Field colours by state x status ───────────────────────────────────────────
+
+export interface DropdownFieldTokens {
+  background: string;
+  border: string;
+  borderWidth: string;
+  foreground: string;
+  icon: string;
+  /** Focus ring colour, or '' when the state does not draw one. */
+  ring: string;
+}
+
+/** True when Figma shows the description (error message) row. */
+export const dropdownDescriptionVisible = (status: DropdownStatus): boolean =>
+  status === 'error';
+
+/** True when the field draws the `ring-active` glow. */
+const ringed = (state: DropdownState): boolean => state === 'active' || state === 'focus';
+
+/** Which `--dropdown-*` token each field property resolves to, as bare token names. */
+const fieldTokenNames = (
+  state: DropdownState,
+  status: DropdownStatus,
+): Record<keyof DropdownFieldTokens, string> => {
+  const background = state === 'disabled' ? 'background-disable' : 'background-white';
+
+  let border = 'border';
+  if (status === 'error') border = 'foreground-red';
+  else if (status === 'complete') border = 'foreground-green';
+  else if (ringed(state)) border = 'foreground-red';
+  else if (state === 'hover') border = 'foreground-gray';
+
+  const borderWidth = ringed(state) ? 'border-width-active' : 'border-width';
+
+  let foreground = 'foreground-dark';
+  if (state === 'disabled') foreground = 'foreground-gray';
+  else if (state === 'rest' || state === 'hover') foreground = 'foreground-disable';
+
+  let icon = 'foreground-dark';
+  if (state === 'disabled') icon = 'foreground-disable';
+  else if (state === 'hover') icon = 'foreground-gray';
+  else if (state === 'rest') icon = status === 'error' ? 'foreground-dark' : 'foreground-disable';
+
+  return {
+    background,
+    border,
+    borderWidth,
+    foreground,
+    icon,
+    ring: ringed(state) ? 'ring-active' : '',
+  };
+};
+
+/** CSS variable references for one state x status — what Dropdown.tsx renders with. */
+export const dropdownField = (
+  state: DropdownState,
+  status: DropdownStatus = 'default',
+): DropdownFieldTokens => {
+  const names = fieldTokenNames(state, status);
+  return {
+    background: t.ref(names.background),
+    border: t.ref(names.border),
+    borderWidth: t.ref(names.borderWidth),
+    foreground: t.ref(names.foreground),
+    icon: t.ref(names.icon),
+    ring: names.ring ? t.ref(names.ring) : '',
+  };
+};
+
+/** Resolved literals for one state x status — for stories, tables and tests. */
+export const dropdownFieldValues = (
+  state: DropdownState,
+  status: DropdownStatus = 'default',
+): DropdownFieldTokens => {
+  const names = fieldTokenNames(state, status);
+  return {
+    background: t.value(names.background),
+    border: t.value(names.border),
+    borderWidth: t.value(names.borderWidth),
+    foreground: t.value(names.foreground),
+    icon: t.value(names.icon),
+    ring: names.ring ? t.value(names.ring) : '',
+  };
+};
+
+/** The bare `--dropdown-*` token names behind one state x status — for the chain story. */
+export const dropdownFieldTokenNames = fieldTokenNames;
+
+// ── Dropdown list and option items ────────────────────────────────────────────
+
+export interface DropdownOptionTokens {
+  background: string;
+  foreground: string;
+}
+
+const optionTokenNames = (
+  selected: boolean,
+  hovered: boolean,
+): Record<keyof DropdownOptionTokens, string> => {
+  if (selected) return { background: 'foreground-red', foreground: 'foreground-white' };
+  if (hovered) return { background: 'foreground-soft-gray', foreground: 'foreground-dark' };
+  return { background: 'background-white', foreground: 'foreground-dark' };
+};
+
+/** CSS variable references for one option row. */
+export const dropdownOption = (
+  selected: boolean,
+  hovered = false,
+): DropdownOptionTokens => {
+  const names = optionTokenNames(selected, hovered);
+  return { background: t.ref(names.background), foreground: t.ref(names.foreground) };
+};
+
+/** Resolved literals for one option row. */
+export const dropdownOptionValues = (
+  selected: boolean,
+  hovered = false,
+): DropdownOptionTokens => {
+  const names = optionTokenNames(selected, hovered);
+  return { background: t.value(names.background), foreground: t.value(names.foreground) };
+};
+
+/** Surface tokens for the open list container. */
+export const DROPDOWN_LIST = {
+  background: t.ref('background-white'),
+  border: t.ref('border'),
 } as const;
 
-// ── From Foundation: Border Width (2-semantic) ──
-export const BORDER_WIDTH = {
-  1: 1,          // dimension/border-width/1 → Default/Hover/Actived/ReadOnly/Complete/Error states
-  2: 2,          // dimension/border-width/2 → Active state
-} as const;
-
-// ── From Foundation: Typography (typography collection) ──
-// All fonts: Graphik TH
-export const TYPOGRAPHY = {
-  label: {
-    fontFamily: "'Graphik TH', sans-serif",
-    fontSize: 14,       // title/m-med/size → size/m
-    fontWeight: 500,     // title/m-med/weight → Medium
-    lineHeight: '22px',  // title/m-med/line-height → line-height/m
-  },
-  required: {
-    fontFamily: "'Graphik TH', sans-serif",
-    fontSize: 12,       // label/m-reg/size → size/s
-    fontWeight: 500,     // label/m-med/weight → Medium
-    lineHeight: '18px',  // label/m-reg/line-height → line-height/s
-  },
-  placeholder: {
-    fontFamily: "'Graphik TH', sans-serif",
-    fontSize: 14,       // body/m-reg/size → size/m
-    fontWeight: 400,     // body/m-reg/weight → Regular
-    lineHeight: '22px',  // body/m-reg/line-height → line-height/m
-  },
-  selectedText: {
-    fontFamily: "'Graphik TH', sans-serif",
-    fontSize: 14,       // body/m-reg/size → size/m
-    fontWeight: 400,     // body/m-reg/weight → Regular
-    lineHeight: '22px',  // body/m-reg/line-height → line-height/m
-  },
-  optionNormal: {
-    fontFamily: "'Graphik TH', sans-serif",
-    fontSize: 14,       // body/m-reg/size → size/m
-    fontWeight: 400,     // body/m-reg/weight → Regular
-    lineHeight: '22px',  // body/m-reg/line-height → line-height/m
-  },
-  optionSelected: {
-    fontFamily: "'Graphik TH', sans-serif",
-    fontSize: 14,       // body/m-med/size → size/m
-    fontWeight: 500,     // body/m-med/weight → Medium
-    lineHeight: '22px',  // body/m-med/line-height → line-height/m
-  },
-  error: {
-    fontFamily: "'Graphik TH', sans-serif",
-    fontSize: 10,       // caption/m-reg/size → size/2xs
-    fontWeight: 400,     // caption/m-reg/weight → Regular
-    lineHeight: '16px',  // caption/m-reg/line-height → line-height/2xs
-  },
-} as const;
-
-// ── From Foundation: Component Tokens (3-component / Dropdown) ──
-export const DROPDOWN_COLORS = {
-  // Field backgrounds
-  bg: {
-    white: '#FFFFFF',      // colors/dropdown/dropdown-bg-white
-    disable: '#F5F5F5',    // colors/dropdown/dropdown-bg-disable (Read Only)
-  },
-
-  // Field borders per state
-  border: {
-    default: '#D4D4D4',   // colors/dropdown/dropdown-border (Default/Actived/ReadOnly)
-    hover: '#737373',      // colors/dropdown/dropdown-fg-gray (Hover)
-    active: '#E32321',     // colors/dropdown/dropdown-bd-bg-active (Active)
-    complete: '#22C55E',   // colors/dropdown/dropdown-fg-green (Complete)
-    error: '#E32321',      // colors/dropdown/dropdown-fg-red (Error-Default/Error)
-  },
-
-  // Text colors
-  fg: {
-    dark: '#262626',       // colors/dropdown/dropdown-fg-dark (label, active/actived text, icons)
-    placeholder: '#C9C9C9', // colors/dropdown/dropdown-fg-disable (placeholder text, default icon)
-    gray: '#737373',       // colors/dropdown/dropdown-fg-gray (hover icon, read-only text)
-    red: '#E32321',        // colors/dropdown/dropdown-fg-red (required marker, error text)
-    green: '#22C55E',      // colors/dropdown/dropdown-fg-green (complete border)
-    softGray: '#E5E5E5',   // colors/dropdown/dropdown-fg-soft-gray (option hover bg)
-  },
-
-  // Label area
-  label: {
-    text: '#262626',       // colors/dropdown/dropdown-fg-dark
-    required: '#E32321',   // colors/dropdown/dropdown-fg-red
-  },
-
-  // Dropdown list option items
-  option: {
-    bgDefault: '#FFFFFF',  // colors/dropdown/dropdown-bg-white
-    bgHover: '#E5E5E5',    // colors/dropdown/dropdown-fg-soft-gray
-    bgSelected: '#E32321', // colors/dropdown/dropdown-fg-red
-    textDefault: '#262626', // colors/dropdown/dropdown-fg-dark
-    textSelected: '#FFFFFF', // white text on selected item
-  },
-} as const;
-
-// ── State-specific mappings (for Token Verification) ──
-export const DROPDOWN_STATE_MAP = {
-  default:       { bg: '#FFFFFF', border: '#D4D4D4', borderWidth: 1, textColor: '#C9C9C9', iconColor: '#C9C9C9', descVisible: false },
-  hover:         { bg: '#FFFFFF', border: '#737373', borderWidth: 1, textColor: '#C9C9C9', iconColor: '#737373', descVisible: false },
-  active:        { bg: '#FFFFFF', border: '#E32321', borderWidth: 2, textColor: '#262626', iconColor: '#262626', descVisible: false },
-  actived:       { bg: '#FFFFFF', border: '#D4D4D4', borderWidth: 1, textColor: '#262626', iconColor: '#262626', descVisible: false },
-  readOnly:      { bg: '#F5F5F5', border: '#D4D4D4', borderWidth: 1, textColor: '#737373', iconColor: '#C9C9C9', descVisible: false },
-  complete:      { bg: '#FFFFFF', border: '#22C55E', borderWidth: 1, textColor: '#262626', iconColor: '#262626', descVisible: false },
-  errorDefault:  { bg: '#FFFFFF', border: '#E32321', borderWidth: 1, textColor: '#C9C9C9', iconColor: '#262626', descVisible: true },
-  error:         { bg: '#FFFFFF', border: '#E32321', borderWidth: 1, textColor: '#262626', iconColor: '#262626', descVisible: true },
-} as const;
-
-// ── Layout dimensions from Figma ──
-export const DROPDOWN_DIMENSIONS = {
-  // Field padding: top/right/bottom/left → 10/8/10/16
-  field: {
-    paddingTop: 10,        // spacing-2lg
-    paddingRight: 8,       // spacing-lg
-    paddingBottom: 10,     // spacing-2lg
-    paddingLeft: 16,       // spacing-2xl
-    gap: 8,                // spacing-lg (between text and icon)
-  },
-
-  // Icon
-  iconSize: 24,            // icons-size Size=24
-
-  // Dropdown list container
-  list: {
-    padding: 8,            // spacing-lg
-    gap: 10,               // spacing-2lg
-  },
-
-  // Option item: padding 4/16/4/16
-  option: {
-    paddingTop: 4,         // spacing-sm
-    paddingRight: 16,      // spacing-2xl
-    paddingBottom: 4,      // spacing-sm
-    paddingLeft: 16,       // spacing-2xl
-    gap: 8,                // spacing-lg
-  },
-
-  // Wrapper
-  wrapper: {
-    labelToFieldGap: 4,    // spacing-sm (VERTICAL gap)
-    labelPaddingLeft: 4,   // spacing-sm
-    labelInternalGap: 4,   // spacing-sm
-    descriptionPaddingLeft: 4, // spacing-sm
-  },
-} as const;
-
-// ── Shadow Tokens ──
-export const SHADOW = {
-  sm: '0px 1px 2px 0px rgba(0,0,0,0.06), 0px 1px 3px 0px rgba(0,0,0,0.10)', // dimension/shadow/sm
+/** Colours for the label row and the description (error) row. */
+export const DROPDOWN_TEXT = {
+  label: t.ref('foreground-dark'),
+  required: t.ref('foreground-red'),
+  description: t.ref('foreground-red'),
 } as const;

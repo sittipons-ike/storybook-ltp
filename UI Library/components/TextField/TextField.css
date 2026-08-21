@@ -1,7 +1,9 @@
 /* ═══════════════════════════════════════════
    TextField Component — Lotteryplus Design System
    Source: Figma "text-field" component set (14291:131807)
-   All values reference Foundation tokens
+
+   Structural resets only. Every design value (colour, spacing, radius, type) is a
+   `--text-field-*` custom property applied in TextField.tsx — see foundations/tokens.css.
    ═══════════════════════════════════════════ */
 
 /* Wrapper */
@@ -49,8 +51,8 @@
   transition: background-color 5000s ease-in-out 0s;
 }
 
-/* Read only / disabled input */
-.ltp-textfield__input--readonly {
+/* Canonical `disabled` state — Figma calls it "Read Only" */
+.ltp-textfield__input--disabled {
   cursor: default;
   pointer-events: none;
 }

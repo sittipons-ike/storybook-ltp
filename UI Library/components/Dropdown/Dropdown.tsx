@@ -1,34 +1,35 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import {
-  DROPDOWN_COLORS,
-  DROPDOWN_DIMENSIONS,
-  DROPDOWN_STATE_MAP,
-  TYPOGRAPHY,
-  SPACING,
-  RADIUS,
-  BORDER_WIDTH,
-  SHADOW,
-} from './tokens';
 import Icon from '../../icons/Icon';
 import '../../icons/icon-data';
+import '../../foundations/tokens.css';
+import {
+  DROPDOWN,
+  DROPDOWN_LIST,
+  DROPDOWN_TEXT,
+  dropdownDescriptionVisible,
+  dropdownField,
+  dropdownIconSize,
+  dropdownOption,
+  dropdownTypography,
+  type DropdownState,
+  type DropdownStatus,
+} from './tokens';
 import './Dropdown.css';
 
 // ═══════════════════════════════════════════
 //  Dropdown — Lotteryplus Design System
 //  Figma: "dropdown" component set (14291:131904)
-//  States: Default | Hover | Active | Actived | Read Only | Complete | Error-Default | Error
-//  Structure: Label → Field → Description (error)
+//
+//  Figma models eight flat states; they decompose onto two canonical axes —
+//  interaction state (rest | hover | active | focus | disabled | selected) and
+//  validation status (default | complete | error). See DROPDOWN_FIGMA_STATES.
+//
+//  Every style value is a CSS custom property from foundations/tokens.css, which is
+//  generated from Figma via design.md + components.json. There are no literal colours,
+//  sizes or font values in this file.
 // ═══════════════════════════════════════════
 
-export type DropdownState =
-  | 'default'
-  | 'hover'
-  | 'active'
-  | 'actived'
-  | 'readOnly'
-  | 'complete'
-  | 'errorDefault'
-  | 'error';
+export type { DropdownState, DropdownStatus } from './tokens';
 
 export interface DropdownOption {
   value: string;
@@ -54,13 +55,15 @@ export interface DropdownProps {
   showDescription?: boolean;
   /** Description / error message text */
   description?: string;
-  /** Visual state override (for Storybook demos) */
+  /** Interaction-state override (for Storybook demos) */
   state?: DropdownState;
-  /** Read only mode */
+  /** Validation-status override (for Storybook demos) */
+  status?: DropdownStatus;
+  /** Read only — renders the canonical `disabled` state */
   readOnly?: boolean;
-  /** Complete state */
+  /** Complete — renders the canonical `complete` status */
   complete?: boolean;
-  /** Error message — triggers error state and shows description */
+  /** Error message — triggers the `error` status and shows the description */
   error?: string;
   /** Additional className */
   className?: string;
@@ -77,6 +80,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   showDescription,
   description = 'Error Message',
   state: stateProp,
+  status: statusProp,
   readOnly = false,
   complete = false,
   error,
@@ -84,24 +88,35 @@ const Dropdown: React.FC<DropdownProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number>(-1);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  // Determine the effective state
-  const getEffectiveState = useCallback((): DropdownState => {
+  // Canonical state precedence: disabled beats active beats focus beats selected
+  // beats hover.
+  const resolvedState = useCallback((): DropdownState => {
     if (stateProp) return stateProp;
-    if (readOnly) return 'readOnly';
-    if (error && value) return 'error';
-    if (error) return 'errorDefault';
-    if (complete) return 'complete';
+    if (readOnly) return 'disabled';
     if (isOpen) return 'active';
-    if (value && !isOpen) return 'actived';
+    if (isFocused) return 'focus';
+    if (value) return 'selected';
     if (isHovered) return 'hover';
-    return 'default';
-  }, [stateProp, readOnly, error, complete, isOpen, value, isHovered]);
+    return 'rest';
+  }, [stateProp, readOnly, isOpen, isFocused, value, isHovered]);
 
-  const effectiveState = getEffectiveState();
-  const stateConfig = DROPDOWN_STATE_MAP[effectiveState];
+  const resolvedStatus = useCallback((): DropdownStatus => {
+    if (statusProp) return statusProp;
+    if (error) return 'error';
+    if (complete) return 'complete';
+    return 'default';
+  }, [statusProp, error, complete]);
+
+  const state = resolvedState();
+  const status = resolvedStatus();
+  const isDisabled = state === 'disabled';
+
+  const field = dropdownField(state, status);
+  const iconSize = dropdownIconSize();
 
   // Selected option label
   const selectedOption = options.find((o) => o.value === value);
@@ -109,9 +124,8 @@ const Dropdown: React.FC<DropdownProps> = ({
   const showPlaceholder = !selectedOption;
 
   // Whether to show description (error message area)
-  const isDescriptionVisible = showDescription !== undefined
-    ? showDescription
-    : stateConfig.descVisible;
+  const isDescriptionVisible =
+    showDescription !== undefined ? showDescription : dropdownDescriptionVisible(status);
 
   // Close on outside click
   useEffect(() => {
@@ -128,7 +142,7 @@ const Dropdown: React.FC<DropdownProps> = ({
 
   // Handle field click
   const handleFieldClick = () => {
-    if (readOnly || effectiveState === 'readOnly') return;
+    if (isDisabled) return;
     setIsOpen((prev) => !prev);
   };
 
@@ -140,7 +154,7 @@ const Dropdown: React.FC<DropdownProps> = ({
 
   // Keyboard support
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (readOnly || effectiveState === 'readOnly') return;
+    if (isDisabled) return;
 
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
@@ -163,19 +177,25 @@ const Dropdown: React.FC<DropdownProps> = ({
   // Description text to display
   const descriptionText = error || description;
 
+  const labelType = dropdownTypography('label');
+  const requiredType = dropdownTypography('required');
+  const valueType = dropdownTypography('value');
+  const descriptionType = dropdownTypography('description');
+
+  // React types fontWeight as a literal union; every weight here is a CSS var.
+  const weight = (w: string) => w as unknown as React.CSSProperties['fontWeight'];
+
   return (
     <div
       ref={wrapperRef}
       className={`ltp-dropdown ${className}`}
       style={{
-        // Auto Layout: VERTICAL, gap: spacing-sm = 4px
         display: 'flex',
         flexDirection: 'column',
-        gap: SPACING.sm, // 4px
+        gap: DROPDOWN.wrapperGap,
       }}
     >
-      {/* ── Label Row ── */}
-      {/* Figma: HORIZONTAL, paddingLeft:4 = spacing-sm, gap:4 = spacing-sm */}
+      {/* ── Label row ── */}
       {showLabel && label && (
         <div
           className="ltp-dropdown__label"
@@ -183,32 +203,32 @@ const Dropdown: React.FC<DropdownProps> = ({
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'center',
-            paddingLeft: DROPDOWN_DIMENSIONS.wrapper.labelPaddingLeft, // spacing-sm = 4px
-            gap: DROPDOWN_DIMENSIONS.wrapper.labelInternalGap,         // spacing-sm = 4px
+            paddingLeft: DROPDOWN.labelPaddingLeft,
+            gap: DROPDOWN.labelGap,
           }}
         >
-          {/* Label text: title/m-med → 14px/22px Medium, #262626 */}
           <span
             style={{
-              fontFamily: TYPOGRAPHY.label.fontFamily,
-              fontSize: TYPOGRAPHY.label.fontSize,
-              fontWeight: TYPOGRAPHY.label.fontWeight,
-              lineHeight: TYPOGRAPHY.label.lineHeight,
-              color: DROPDOWN_COLORS.label.text,
+              fontFamily: labelType.fontFamily,
+              fontSize: labelType.fontSize,
+              fontWeight: weight(labelType.fontWeight),
+              lineHeight: labelType.lineHeight,
+              letterSpacing: labelType.letterSpacing,
+              color: DROPDOWN_TEXT.label,
             }}
           >
             {label}
           </span>
 
-          {/* Required marker: label/m-med → 12px/18px Medium, #E32321 */}
           {required && (
             <span
               style={{
-                fontFamily: TYPOGRAPHY.required.fontFamily,
-                fontSize: TYPOGRAPHY.required.fontSize,
-                fontWeight: TYPOGRAPHY.required.fontWeight,
-                lineHeight: TYPOGRAPHY.required.lineHeight,
-                color: DROPDOWN_COLORS.label.required,
+                fontFamily: requiredType.fontFamily,
+                fontSize: requiredType.fontSize,
+                fontWeight: weight(requiredType.fontWeight),
+                lineHeight: requiredType.lineHeight,
+                letterSpacing: requiredType.letterSpacing,
+                color: DROPDOWN_TEXT.required,
               }}
             >
               (จำเป็น)
@@ -218,64 +238,52 @@ const Dropdown: React.FC<DropdownProps> = ({
       )}
 
       {/* ── Field ── */}
-      {/* Figma: HORIZONTAL, padding: 10/8/10/16, gap:8, radius:8 */}
       <button
         type="button"
-        className={`ltp-dropdown__field ${
-          readOnly || effectiveState === 'readOnly' ? 'ltp-dropdown__field--readonly' : ''
-        }`}
+        className={`ltp-dropdown__field ${isDisabled ? 'ltp-dropdown__field--readonly' : ''}`}
         onClick={handleFieldClick}
         onKeyDown={handleKeyDown}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
         style={{
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
 
-          // Padding: spacing-2lg(10) / spacing-lg(8) / spacing-2lg(10) / spacing-2xl(16)
-          paddingTop: DROPDOWN_DIMENSIONS.field.paddingTop,       // 10px
-          paddingRight: DROPDOWN_DIMENSIONS.field.paddingRight,   // 8px
-          paddingBottom: DROPDOWN_DIMENSIONS.field.paddingBottom,  // 10px
-          paddingLeft: DROPDOWN_DIMENSIONS.field.paddingLeft,     // 16px
+          paddingTop: DROPDOWN.fieldPaddingY,
+          paddingRight: DROPDOWN.fieldPaddingRight,
+          paddingBottom: DROPDOWN.fieldPaddingY,
+          paddingLeft: DROPDOWN.fieldPaddingLeft,
 
-          gap: DROPDOWN_DIMENSIONS.field.gap, // spacing-lg = 8px
+          gap: DROPDOWN.fieldGap,
+          borderRadius: DROPDOWN.radius,
+          backgroundColor: field.background,
+          border: `${field.borderWidth} solid ${field.border}`,
 
-          // Corner radius: radius-lg = 8px
-          borderRadius: RADIUS.lg,
+          // Focus ring — --dropdown-ring-active, brand red at 40%.
+          boxShadow: field.ring
+            ? `0 0 0 ${DROPDOWN.borderWidthActive} ${field.ring}`
+            : 'none',
 
-          // Background
-          backgroundColor: stateConfig.bg,
-
-          // Border: varies by state
-          border: `${stateConfig.borderWidth}px solid ${stateConfig.border}`,
-
-          // Cursor
-          cursor: readOnly || effectiveState === 'readOnly' ? 'default' : 'pointer',
-
-          // Transition
-          transition: 'border-color 0.15s ease, background-color 0.15s ease',
+          cursor: isDisabled ? 'default' : 'pointer',
+          transition: 'border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease',
         }}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
+        aria-disabled={isDisabled}
       >
         {/* Text — placeholder or selected value */}
         <span
           style={{
-            fontFamily: showPlaceholder
-              ? TYPOGRAPHY.placeholder.fontFamily
-              : TYPOGRAPHY.selectedText.fontFamily,
-            fontSize: showPlaceholder
-              ? TYPOGRAPHY.placeholder.fontSize
-              : TYPOGRAPHY.selectedText.fontSize,
-            fontWeight: showPlaceholder
-              ? TYPOGRAPHY.placeholder.fontWeight
-              : TYPOGRAPHY.selectedText.fontWeight,
-            lineHeight: showPlaceholder
-              ? TYPOGRAPHY.placeholder.lineHeight
-              : TYPOGRAPHY.selectedText.lineHeight,
-            color: stateConfig.textColor,
+            fontFamily: valueType.fontFamily,
+            fontSize: valueType.fontSize,
+            fontWeight: weight(valueType.fontWeight),
+            lineHeight: valueType.lineHeight,
+            letterSpacing: valueType.letterSpacing,
+            color: field.foreground,
             flex: 1,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
@@ -285,60 +293,36 @@ const Dropdown: React.FC<DropdownProps> = ({
           {showPlaceholder ? placeholder : displayText}
         </span>
 
-        {/* Arrow icon: icons-size Size=24, name "arrow-down-S" */}
-        <Icon
-          name="arrow-down-S"
-          size={24}
-          customColor={stateConfig.iconColor}
-        />
+        <Icon name="arrow-down-S" size={iconSize} customColor={field.icon} />
       </button>
 
-      {/* ── Dropdown List (Active state) ── */}
-      {/* Figma: "Tabs" frame — padding:8, gap:10, radius:8, border:1px #D4D4D4, shadow:sm */}
+      {/* ── Open list ── */}
       {isOpen && (
         <ul
           className="ltp-dropdown__list"
           role="listbox"
           style={{
             top: '100%',
-            marginTop: 4,
+            marginTop: DROPDOWN.listOffset,
 
-            // Container styling
-            padding: DROPDOWN_DIMENSIONS.list.padding, // spacing-lg = 8px
+            padding: DROPDOWN.listPadding,
             display: 'flex',
             flexDirection: 'column',
-            gap: DROPDOWN_DIMENSIONS.list.gap, // spacing-2lg = 10px
+            gap: DROPDOWN.listGap,
 
-            // Background & border
-            backgroundColor: DROPDOWN_COLORS.option.bgDefault,   // #FFFFFF
-            border: `${BORDER_WIDTH[1]}px solid ${DROPDOWN_COLORS.border.default}`, // 1px #D4D4D4
-            borderRadius: RADIUS.lg, // radius-lg = 8px
-
-            // Shadow: dimension/shadow/sm
-            boxShadow: SHADOW.sm,
+            backgroundColor: DROPDOWN_LIST.background,
+            border: `${DROPDOWN.borderWidth} solid ${DROPDOWN_LIST.border}`,
+            borderRadius: DROPDOWN.radius,
+            boxShadow: DROPDOWN.elevation,
           }}
         >
           {options.map((option, index) => {
             const isSelected = option.value === value;
             const isItemHovered = hoveredIndex === index;
-
-            // Determine option background
-            let optionBg = DROPDOWN_COLORS.option.bgDefault;    // #FFFFFF
-            if (isSelected) {
-              optionBg = DROPDOWN_COLORS.option.bgSelected;      // #E32321
-            } else if (isItemHovered) {
-              optionBg = DROPDOWN_COLORS.option.bgHover;         // #E5E5E5
-            }
-
-            // Determine option text color
-            const optionTextColor = isSelected
-              ? DROPDOWN_COLORS.option.textSelected              // #FFFFFF
-              : DROPDOWN_COLORS.option.textDefault;              // #262626
-
-            // Typography: selected=Medium, normal=Regular
-            const optionTypo = isSelected
-              ? TYPOGRAPHY.optionSelected
-              : TYPOGRAPHY.optionNormal;
+            const optionColors = dropdownOption(isSelected, isItemHovered);
+            const optionType = dropdownTypography(
+              isSelected ? 'option-selected' : 'option',
+            );
 
             return (
               <li key={option.value} style={{ listStyle: 'none' }}>
@@ -351,28 +335,22 @@ const Dropdown: React.FC<DropdownProps> = ({
                   onMouseEnter={() => setHoveredIndex(index)}
                   onMouseLeave={() => setHoveredIndex(-1)}
                   style={{
-                    // Padding: 4/16/4/16 = spacing-sm/spacing-2xl
-                    paddingTop: DROPDOWN_DIMENSIONS.option.paddingTop,       // 4px
-                    paddingRight: DROPDOWN_DIMENSIONS.option.paddingRight,   // 16px
-                    paddingBottom: DROPDOWN_DIMENSIONS.option.paddingBottom, // 4px
-                    paddingLeft: DROPDOWN_DIMENSIONS.option.paddingLeft,     // 16px
+                    paddingTop: DROPDOWN.optionPaddingY,
+                    paddingRight: DROPDOWN.optionPaddingX,
+                    paddingBottom: DROPDOWN.optionPaddingY,
+                    paddingLeft: DROPDOWN.optionPaddingX,
 
-                    gap: DROPDOWN_DIMENSIONS.option.gap, // spacing-lg = 8px
+                    gap: DROPDOWN.optionGap,
+                    borderRadius: DROPDOWN.radius,
+                    backgroundColor: optionColors.background,
 
-                    // Radius: radius-lg = 8px
-                    borderRadius: RADIUS.lg,
+                    fontFamily: optionType.fontFamily,
+                    fontSize: optionType.fontSize,
+                    fontWeight: weight(optionType.fontWeight),
+                    lineHeight: optionType.lineHeight,
+                    letterSpacing: optionType.letterSpacing,
+                    color: optionColors.foreground,
 
-                    // Background
-                    backgroundColor: optionBg,
-
-                    // Text
-                    fontFamily: optionTypo.fontFamily,
-                    fontSize: optionTypo.fontSize,
-                    fontWeight: optionTypo.fontWeight,
-                    lineHeight: optionTypo.lineHeight,
-                    color: optionTextColor,
-
-                    // Transition
                     transition: 'background-color 0.1s ease',
                   }}
                 >
@@ -384,24 +362,23 @@ const Dropdown: React.FC<DropdownProps> = ({
         </ul>
       )}
 
-      {/* ── Description (Error message) ── */}
-      {/* Figma: visible in Error states only, paddingLeft:4 */}
-      {/* caption/m-reg → 10px/16px Regular, color #E32321 */}
+      {/* ── Description (error message) ── */}
       {isDescriptionVisible && descriptionText && (
         <div
           className="ltp-dropdown__description"
           style={{
             display: 'flex',
-            paddingLeft: DROPDOWN_DIMENSIONS.wrapper.descriptionPaddingLeft, // spacing-sm = 4px
+            paddingLeft: DROPDOWN.descriptionPaddingLeft,
           }}
         >
           <span
             style={{
-              fontFamily: TYPOGRAPHY.error.fontFamily,
-              fontSize: TYPOGRAPHY.error.fontSize,
-              fontWeight: TYPOGRAPHY.error.fontWeight,
-              lineHeight: TYPOGRAPHY.error.lineHeight,
-              color: DROPDOWN_COLORS.fg.red,
+              fontFamily: descriptionType.fontFamily,
+              fontSize: descriptionType.fontSize,
+              fontWeight: weight(descriptionType.fontWeight),
+              lineHeight: descriptionType.lineHeight,
+              letterSpacing: descriptionType.letterSpacing,
+              color: DROPDOWN_TEXT.description,
             }}
           >
             {descriptionText}

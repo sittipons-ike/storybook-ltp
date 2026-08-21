@@ -1,0 +1,332 @@
+{
+  "_comment": "Written by tools/collect-verification.py from each components/<name>.json `base._verified_from`. Do not hand-edit — UI Library/foundations/VerificationReport.stories.tsx renders it verbatim.",
+  "counts": {
+    "overlays": 28,
+    "verified": 28,
+    "unverified": 0,
+    "corrections": 26,
+    "openGaps": 21
+  },
+  "components": {
+    "accordion": {
+      "verified": true,
+      "node": null,
+      "date": "2026-08-20",
+      "scope": "token mirror searched for accordion/expand; frontend component read in full",
+      "result": "VERIFIED ABSENT in Figma despite being canonical in the Standard. Frontend is the authority per the amended rule (user decision 2026-08-20).",
+      "corrections": {},
+      "gaps": {}
+    },
+    "alert": {
+      "verified": true,
+      "node": null,
+      "date": "2026-08-20",
+      "scope": "token mirror searched for alert/banner; frontend component + module css read in full",
+      "result": "VERIFIED ABSENT in Figma. Frontend is the authority per the amended rule (user decision 2026-08-20).",
+      "corrections": {},
+      "gaps": {}
+    },
+    "avatar": {
+      "verified": true,
+      "node": "14291:133618 — component set `avatar` on page `↳  Avatar ✅`",
+      "date": "2026-08-19",
+      "scope": "all 10 variants across the three axes (Type, On bg Red, Show Edit)",
+      "result": "Base frame 40x40. Inside it a 33.5x33.5 circle with 2.5 padding and a 1.4px INSIDE stroke, holding a 28.5x28.5 disc. Member fills that disc with an image; Guest fills it and drops a 16px `filled-user` on top; Avatar masks an illustration into it. Show Edit adds a 12x12 disc carrying an 8px `filled-Camera`.",
+      "corrections": {
+        "half-pixel values": "First read had the ring at 34 and the disc at 29 — those were my own rounding of the dump, not Figma's numbers. Figma says 33.5 and 28.5, and the halves are what make the 56px instance land on 46.9 and 39.9.",
+        "ring stroke ate the padding": "The ring was a CSS `border`, which consumes the padding box: a 46.9 circle with 3.5 padding and a 1.96 border left a 36.7 disc instead of 39.9. Figma strokes INSIDE, which does not. Now an inset box-shadow."
+      },
+      "gaps": {
+        "no-colour-group": "There is no `colors/avatar` variable group. The component borrows `colors/top-and-footer`, which is why its colours are authored against the semantic layer rather than mirrored.",
+        "illustration-not-portable": "The `Type=Avatar` variant masks an illustration that lives only in Figma. The component exposes the slot; the artwork has to be exported before it can render."
+      }
+    },
+    "bottom-sheet": {
+      "verified": true,
+      "node": "20052:11505 — component set `Bottom sheet`",
+      "date": "2026-08-19",
+      "scope": "frame, handle and effects",
+      "result": "Corrected against Figma in an earlier pass; see `_corrections`. The component carries no effect at all (`effects: []`), the handle is 54x4 with a 2.5 radius, and padding is 12/16.",
+      "corrections": {
+        "elevation": "REMOVED. The first build bound elevation.modal. The Figma component carries no effect at all — `effects: []` — so the sheet reads against the scrim, not against a shadow.",
+        "handle-height": "Was 5, is 4.",
+        "handle-radius": "Was radius.full (9999). Figma draws 2.5, which is exactly half of a 4px bar — the same shape, but stated rather than approximated.",
+        "handle-colour": "Was foreground-gray (#A3A3A3), guessed from the token name. Figma binds `bottom sheet-fg-dark` (#000000) — the Frontend was right and the guess was wrong.",
+        "handle-padding": "Was 12 top / 8 bottom. Figma's Handlebar has 12 on both, and 16 on the sides."
+      },
+      "gaps": {
+        "handlebar-has-two-hidden-icon-slots": "`Bottom sheet/Handlebar` (inside 20052:11505, both Modal=True and Modal=False) carries two 16px icon slots either side of the drag bar — `filled-Home` on the left at x=0 and `filled-close` on the right at x=342 — each wrapped in an `icons-size` instance whose `visible` is false. The design has drawn a header row for the sheet and switched it off. The library renders the bar alone, which matches every variant as shipped. If that row is meant to exist, Figma needs a variant that shows it, and these two move into _figma_icons. Read 2026-08-20."
+      }
+    },
+    "breadcrumb": {
+      "verified": true,
+      "node": "14291:136385 — component set `breadcrumb` on page `↳ breadcrumb ✅`",
+      "date": "2026-08-19",
+      "scope": "all 5 variants (State=Step 1..5), every child node",
+      "result": "No discrepancies. Segment gap 16 = spacing.2xl; inside-segment gap 8 = spacing.lg; text 12/18 Regular for past steps and 12/18 Semibold for the current one, which is exactly label.md.regular and label.md.semibold; past-step colour #141414 = secondary-dark; current #E32321 = primary; icon 24; separator is `arrow-right-S` inside an `icons-size Size=24, Colors=Secondary`.",
+      "corrections": {},
+      "gaps": {}
+    },
+    "card": {
+      "verified": true,
+      "node": "14591:60095 — component set `Card` on page `↳ logos-and-graphics ✅`",
+      "date": "2026-08-19",
+      "scope": "all 3 sizes, artwork nodes and the bound text style",
+      "result": "L 326x205, M 154x96, S 76x48, radius 0. The face is an IMAGE fill at each size — three different rasters, not one scaled. The ID reads `typography/body/l-med` (16/24 Medium) in `card-fg-white` with a 10 gap, placed absolutely at (22,165) on L and (10,72) on M. S carries no text.",
+      "corrections": {},
+      "gaps": {
+        "id-is-not-laid-out": "The ID is absolutely positioned on each size instead of being an auto-layout child, which is why its offsets had to be copied per size rather than expressed once.",
+        "large-face-is-heavy": "`card-lottery-l` is 272KB at 3x. It is a detailed illustration at 326px wide; if it ships on a list screen, a 2x export or a WebP would be worth considering."
+      }
+    },
+    "checkbox": {
+      "verified": true,
+      "node": "14291:131502 — component set `checkbox` on page `↳ checkbox`",
+      "date": "2026-08-19",
+      "scope": "all 14 variants, every frame property and nested glyph",
+      "result": "Rebuilt from the full truth table; see `_figma_truth_table` and `_corrections`. Measured in the browser afterwards: 7 of 7 state/colour combinations match, box 24x24, radius 4, focus ring #22C55E at 35% with blur 5 and spread 3.",
+      "corrections": {
+        "build-1": "Drew the box in CSS and invented a radius, border width and focus ring. Wrong values, right idea.",
+        "build-2": "Concluded 'Figma draws the whole control as an icon' and removed the box entirely. That was read off `Outline/Old/Check` — a HIDDEN, ORPHANED legacy instance sitting inside every unchecked variant. The result rendered a tick when the box was empty and had no box at all.",
+        "build-3": "Read all 14 variants and their frame properties. The frame draws the box (fill, stroke, radius 4); the icon is only the glyph, and only on two states.",
+        "icon-size-rest": "REMOVED. There is no glyph at rest — 18px was the size of the hidden legacy node.",
+        "checked-glyph": "Was `filled-check`. Figma uses `outline-check`.",
+        "unchecked-glyph": "Was `outline-check` rendered at rest, so an unticked box showed a tick. Figma shows nothing."
+      },
+      "gaps": {
+        "unbound-strokes": "The Hover, Focus and Error strokes are raw hexes with no bound variable. Hover and Focus match status.success.default (#22C55E) and primary.default (#E32321) exactly, so they are bound here; Figma should bind them too.",
+        "error-uses-the-old-red": "DECIDED 2026-08-19 — follow Figma. The Error stroke is #EF4444, Tailwind's red.500, which this design system overrode to #E32321 everywhere else. It matches no token, so it is held as a literal in `border-error` rather than silently swapped for the brand red. Figma is the value authority and the team chose to keep it; if the intent later changes, the fix is one value in this file.",
+        "no-checked-hover": "Figma draws no Hover, Focus or Error variant for a checked box. This component keeps the checked fill and layers the emphasis border, which is an extrapolation, not a reading."
+      }
+    },
+    "countdown-timer": {
+      "verified": true,
+      "node": null,
+      "date": "2026-08-20",
+      "scope": "token mirror searched for timer/countdown; frontend timer + notification + use-countdown read in full",
+      "result": "VERIFIED ABSENT in Figma. Frontend is the authority per the amended rule (user decision 2026-08-20).",
+      "corrections": {},
+      "gaps": {}
+    },
+    "divider": {
+      "verified": true,
+      "node": null,
+      "date": "2026-08-19",
+      "scope": "every page searched for a COMPONENT or COMPONENT_SET matching divider / dash / separator / rule",
+      "result": "VERIFIED ABSENT. Figma has no divider component. What it does have is a `colors/divider` semantic group with five roles, confirmed in the `2-semantic` collection, and two component-tier tokens (`carts-divider`, `orders-divider`). The component is built on those.",
+      "corrections": {},
+      "gaps": {}
+    },
+    "dropdown": {
+      "verified": true,
+      "node": "14291:131904 — component set `dropdown` on page `↳ dropdown ✅`",
+      "date": "2026-08-19",
+      "scope": "all 8 variants, plus a depth-2 walk of State=Active",
+      "result": "No discrepancies. Field 44 tall, radius 8, padding 10/8/10/16, gap 8; stack gap 4; label and description both inset 4 on the left. Border 1px in every state except Active, which is 2px — hairline and thin. The open list (`Tabs`) is padding 8, gap 10, radius 8, and carries `0,1 blur2 @6%` + `0,1 blur3 @10%`, which is exactly elevation.card. Label 14/22 Medium = title.md.medium; error 10/16 Regular = caption.md.regular; icon 24.",
+      "corrections": {},
+      "gaps": {}
+    },
+    "error-state": {
+      "verified": true,
+      "node": "15170:101685 — component set `noti-error` on page `↳ logos-and-graphics ✅`",
+      "date": "2026-08-19",
+      "scope": "all 4 variants, depth-4 walk of type=a-lot-of-users, plus the bound text styles",
+      "result": "390 wide with 16 of side padding and a 24 gap. A 280px illustration, then a text block with a 16 gap, then `bottom-action-bar2`. Title is `typography/display/xl-semb` (20/36 Semibold) in `home-fg-red`; body is `typography/body/m-reg` (14/22 Regular) in `home-fg-dark`. Both centred. The action bar holds a 326x44 primary button and a hidden tertiary one.",
+      "corrections": {},
+      "gaps": {
+        "internet-error-reuses-an-illustration": "`type=internet error` shows `gp-jidrit-system-down`, the same mark as `type=system-down`. Either it needs its own artwork or the two states are the same picture on purpose.",
+        "shorter-variant": "`internet error` is 384 tall where the other three are 476. The content is the only difference, so the component hugs rather than pinning a height — but it is worth a designer confirming that is intended.",
+        "no-colour-group": "There is no `colors/error-state` group; the set borrows `colors/home`."
+      }
+    },
+    "icon": {
+      "verified": true,
+      "node": "14291:110788 — the `icons-size` component set",
+      "date": "2026-08-19",
+      "scope": "size steps only",
+      "result": "The ten size steps match. The glyph set itself is checked continuously by tools/check-icons.py, which fails the build if any name a component uses is missing from icon-data.ts.",
+      "corrections": {},
+      "gaps": {}
+    },
+    "image-upload": {
+      "verified": true,
+      "node": null,
+      "date": "2026-08-20",
+      "scope": "token mirror searched for upload/gallery/attach; frontend component + module css read in full",
+      "result": "VERIFIED ABSENT in Figma. Frontend is the authority per the amended rule (user decision 2026-08-20).",
+      "corrections": {},
+      "gaps": {}
+    },
+    "infinity-scroll": {
+      "verified": true,
+      "node": null,
+      "date": "2026-08-20",
+      "scope": "token mirror searched for infinit/scroll; frontend common/infinity-scroll read in full",
+      "result": "VERIFIED ABSENT in Figma, correctly — a helper has nothing to draw. Frontend is the authority for the behaviour: observe a sentinel, call loadMore when it intersects and hasMore && !loading.",
+      "corrections": {},
+      "gaps": {}
+    },
+    "loading": {
+      "verified": true,
+      "node": "22535:131958 — component set `Loading` on page `↳ loading ✅`. The id this file previously carried, 14291:131477, is the `Property 1=Default` variant inside that set — correct but partial.",
+      "date": "2026-08-19",
+      "scope": "both variants, exact unrounded geometry, fill opacity and node opacity",
+      "result": "Frame 56x56, inner 44.8, track vector 41.06668, arc 20.34353 — all match to three decimals. The track is #000000 at fill-opacity 0.8 with node opacity 0.25, so it renders at 20%; the library reaches the same 20% through overlay-heavy (80% black) times track-opacity (25%). Confirmed in the browser: computed fill rgba(0,0,0,0.8) with opacity 0.25.",
+      "corrections": {},
+      "gaps": {}
+    },
+    "lotto-board": {
+      "verified": true,
+      "node": "14583:89931 `lotto-board-mobile` (3 variants), 14583:89963 `menu-button` (3), 14583:90116 `number-search-box-2` (7), 19002:25158 `search-card` (3) — page `↳ search-lottery ✅`",
+      "date": "2026-08-19",
+      "scope": "variant lists for all four sets, depth-3 walks, plus a rendered screenshot of lotto-board-mobile",
+      "result": "Cell 53x64 with 8 padding, radius 8, a 1px `lotto-board-border` stroke and elevation.card; cell gap 8; row padding 16. Menu row 390x44 with three 114x44 buttons, gap 8, radius 8. Search row: a 114x54 randomise button and a 236x54 search button, gap 8. All geometry matches.",
+      "corrections": {
+        "header layout": "Figma lays the title and the draw date side by side on one 24px row with an 8px gap, and puts `ล้างค่า` at the far end. The library stacked the title above the date.",
+        "date colour": "`Color/Text/Text-Secondary` (#262626) — the same weight as body copy, not a dimmed grey.",
+        "randomise button": "Was `Button variant=outline`, a white pill. Figma fills it with a dark-to-red gradient and sets the label to #FEF2F2."
+      },
+      "gaps": {
+        "button-special-not-a-button-variant": "Figma models the randomise control as its own component set, `button-special` (14291:131519, 12 variants), rather than a variant of `button`. The library renders its shape inside LottoBoard. Whether it should become a Button variant is a designer's call.",
+        "search-card-is-a-second-set": "`search-card` (19002:25158) repeats lotto-board-mobile with a different title and a root gap of 8 instead of 16. Two sets for one thing.",
+        "randomise-glow": "Figma layers two blurred #262626 ellipses over the gradient (LAYER_BLUR 16) for a glow. The library renders the gradient alone — close, but not the same thing. Recorded rather than approximated."
+      }
+    },
+    "modal": {
+      "verified": true,
+      "node": "14610:24998 — component set `modal-state` on page `↳ modal ✅`",
+      "date": "2026-08-19",
+      "scope": "all 11 variants, depth-2 walk of state=info",
+      "result": "358 wide, radius 16, padding 24, root gap 24, content gap 16, wording gap 8, button gap 16. Shadow `0,2 b4 s-1 @6%` + `0,4 b6 s-1 @10%` = elevation.floating. Icon circle 64 with 8 padding, so the glyph is 48. All match.",
+      "corrections": {},
+      "gaps": {}
+    },
+    "navigation-bar": {
+      "verified": true,
+      "node": "14291:135864 — component set `navigation-bar/Mobile-v2` on page `↳ navigation-bar ✅`",
+      "date": "2026-08-19",
+      "scope": "all 10 variants: root/bar fills, per-item height and offset, per-side stroke weights, cart cell and its gradient",
+      "result": "390x124, bar 90, item 78x68, selector 70x4, content 70x42, home indicator 34 with a 134x5 bar. Items tile exactly: five at 78 with gap 0 fills 390. Cart is 78x90 when add-to-cart=yes, gradient #F85C2A to #D80F0D, radius 8, padding 4/4/0/4.",
+      "corrections": {
+        "white was filling the whole bar": "Figma paints white on the 68px items and on the home-indicator strip. The root and the 90px row are both fill NONE on all 10 variants, so the top 22px is see-through and the page shows behind it. The library was painting the container white, which closed that gap and made the bar read as one solid block.",
+        "top rule sat 22px too high": "Figma strokes 1px INSIDE on each item's top edge — that is y=22, not y=0. The library drew one border on the 90px row. Invisible while the container was white; wrong as soon as it was not.",
+        "cart had no white cell": "Figma nests the gradient card inside a white 78x90 item. The card's 8px corners are where that white shows. The library rendered the card alone."
+      },
+      "gaps": {
+        "cart-has-no-selected-state": "All ten variants of `navigation-bar` (14291:135864) draw the cart with `outline-cart`, and the `state` property offers home | order | safe | profile | not — no `cart`. So the raised cart cell is modelled as an action, not a tab you can be on. The library used to default its selected glyph to `filled-cart`, which no Figma node contains. It now keeps the outline glyph in both states. If the cart is meant to look selected when the user is on the cart page, Figma needs that variant. Read 2026-08-20."
+      }
+    },
+    "progress-bars": {
+      "verified": true,
+      "node": "14291:136200 `progress-bars-lottery` (5 variants) and 14291:136316 `progress-bars-nokcash` (4 variants), page `↳ progress-bar ✅`",
+      "date": "2026-08-19",
+      "scope": "variant list for both sets, depth-3 walk of lottery Step-1",
+      "result": "358x62, padding 0/8, step gap 4, circle 40 radius 999, icon 24, connector 2px tall. All match. Labels 12/18 Medium; done steps `progress-fg-dark`, upcoming `progress-fg-disable`.",
+      "corrections": {},
+      "gaps": {}
+    },
+    "radio-buttons": {
+      "verified": true,
+      "node": "14457:1351",
+      "date": "2026-08-19",
+      "scope": "all 6 variants: size, radius, border, dot, focus effect",
+      "result": null,
+      "corrections": {
+        "ring-width": "Was 3 with a note claiming Figma states nothing. Figma states 4. The note was the error, not the value's absence — `storybook-local` was being used to mean 'not checked' rather than 'checked and genuinely absent'."
+      },
+      "gaps": {}
+    },
+    "skeleton": {
+      "verified": true,
+      "node": null,
+      "date": "2026-08-20",
+      "scope": "token mirror searched for skeleton/shimmer/placeholder; frontend common/skeleton read in full",
+      "result": "VERIFIED ABSENT in Figma. Frontend is the authority per the amended rule (user decision 2026-08-20). When Figma draws one, Figma wins again and this record must be re-verified.",
+      "corrections": {},
+      "gaps": {}
+    },
+    "tabs": {
+      "verified": true,
+      "node": "14370:9654 `horizontal-tabs-underline` (14 variants), 14370:9710 `horizontal-tabs_button` (18), 16426:4355 `tabs-for-orders` (16) — page `↳ tabs ✅`",
+      "date": "2026-08-19",
+      "scope": "variant lists for all three sets, depth-3 walk of the first variant of each, plus a browser measurement of the rendered underline tabs",
+      "result": "Underline: root 40 with a 1px bottom rule in `tabs-fg-disable`; item 40 with padding 8/16 and an 8px internal gap; the selected item takes a 2px bottom rule in `Border-Primary`; labels 14/22 Medium — #E32321 when selected, #262626 otherwise. Button: container radius 8 with a 1px accent border, inner row gap 4, item radius 6. Every one of those matches, confirmed in the browser.",
+      "corrections": {
+        "root height": "Rendered 41 instead of 40. Figma strokes the bottom rule INSIDE the frame; the container was content-box, so the border was adding to the height. Same mistake ActionBar had."
+      },
+      "gaps": {
+        "third-set-not-modelled": "`tabs-for-orders` (16426:4355) is a third set: same shape as the button style but item padding 4/8 instead of 8/16, and it adds a `desktop=yes|no` axis. The library models the two general sets only. Whether orders needs its own tighter density or should use the shared one is a designer's call, not a build decision."
+      }
+    },
+    "text-field": {
+      "verified": true,
+      "node": "14291:131807 — component set `text-field` on page `↳ text-field ✅`",
+      "date": "2026-08-19",
+      "scope": "all 8 variants, plus a depth-3 walk of State=Default",
+      "result": "No discrepancies. Field 42 tall, radius 8, padding 10/16, gap 8; stack gap 4; label inset 4. Border 1px except State=Active at 2px. Label 14/22 Medium = title.md.medium; the required marker 12/18 Medium = label.md.medium; input and placeholder 14/22 Regular = body.md.regular; error 10/16 Regular = caption.md.regular; clear icon 16.",
+      "corrections": {},
+      "gaps": {}
+    },
+    "title-with-underline": {
+      "verified": true,
+      "node": "23599:392870",
+      "date": "2026-08-21",
+      "scope": "the `Head` frame on the carts page, walked to depth 4 with fills, strokes and per-side stroke weights",
+      "result": "VERIFIED PRESENT. Supersedes the 2026-08-20 record, which said VERIFIED ABSENT after searching only the token mirror. The correction is kept rather than overwritten: the mistake was the method, and the method is what the next check inherits.",
+      "corrections": {},
+      "gaps": {}
+    },
+    "toast": {
+      "verified": true,
+      "node": "14848:2072 `light-toast` (3 variants) and 14848:2109 `solid-toast` (4 variants), page `↳ toast-message ✅`",
+      "date": "2026-08-19",
+      "scope": "all 7 variants, plus a depth-4 walk of light-toast type=success",
+      "result": "358x62, radius 16, padding 8/16, shadow `0,1 blur2 @6%` + `0,1 blur3 @10%` = elevation.card. light-toast strokes 1px INSIDE with the type hue; solid-toast has no stroke. Icon circle 28 with 4 padding and a full radius; icon 20; close 20. Title 16/24 Semibold = title.lg.semibold; caption 14/22 Regular = body.md.regular; the gap between them is 0, which the library already had right.",
+      "corrections": {
+        "close-gap": "The gap between the content and the close button was rendering at 16 because one token was used for both rows. Figma says 8. Added `close-gap` and pointed the outer row at it."
+      },
+      "gaps": {
+        "warning-type": "`solid-toast` has four types — informative, success, warning, error — but `light-toast` has only three: it has no warning. Whether that is intentional needs a designer."
+      }
+    },
+    "toggle-switch": {
+      "verified": true,
+      "node": "14291:131527 — component set `toggle-switch` on page `↳ toggle-switch ✅`",
+      "date": "2026-08-19",
+      "scope": "both variants (active=true / active=false), every child node and effect",
+      "result": "Track 51x31 radius 9999; knob 27x27 radius 9999 inset 2 on every side, at x=2 off and x=22 on; on = toggle-bg-green, off = toggle-bg-soft-gray; knob = toggle-fg-white. All match.",
+      "corrections": {},
+      "gaps": {}
+    },
+    "tooltip": {
+      "verified": true,
+      "node": "14964:58281 — FRAME `Tooltip` on page `↳ tooltip ✅`. Not a component and not a component set, which is why earlier notes said Figma had no tooltip. It has one; it was never componentised.",
+      "date": "2026-08-19",
+      "scope": "the whole frame, depth 4",
+      "result": "326x98 = a 90px body plus an 8px arrow row. Body padding 12, radius 8, fill `colors/overlay/overlay-black-80%` — which is what `overlay-heavy` (#000000CC) already resolves to. Title 14/22 Medium and body 14/22 Regular, both `Color/Text/Text-Onbgcolor`. Arrow 16x8 in the same overlay fill. All match.",
+      "corrections": {
+        "shadow": "Was elevation.card — `0 1px 3px #0000001A, 0 1px 2px #0000000F`. Figma uses a different colour (#3F3F44, not black), different alphas (5% and 15%), and a 1px spread ring instead of the second shadow. Replaced with Figma's pair."
+      },
+      "gaps": {
+        "not-a-component": "The tooltip is a loose FRAME. Nothing can instance it, so no page in the file can reuse it and any change has to be copied by hand. It should be a component set.",
+        "no-colour-group": "There is no `colors/tooltip` variable group. The frame borrows `colors/overlay` and `Color/Text`, so the tokens here are authored against the semantic layer.",
+        "shadow-colour-off-palette": "#3F3F44 appears nowhere else in the system. Kept because Figma is the value authority, but it looks like a default from a UI kit rather than a decision."
+      }
+    },
+    "top-and-footer": {
+      "verified": true,
+      "node": "14924:2118 `header-bar-mobile` · `footer-mobile` on page `↳ footer ✅` · the page template at 23430:298541",
+      "date": "2026-08-19",
+      "scope": "all 3 header variants at node level, the footer instance, and the sticky action bar in the template",
+      "result": "Header 146/56/94 confirmed in the browser at mobile width. Corrections in this pass: phoenix opacity 40 to 70, HARD_LIGHT blend added, per-variant phoenix geometry, action wells given the tertiary button chrome, the app-bar logo swapped from the wordmark to the 31px mark, and the wordmark row modelled at 32 rather than 31.",
+      "corrections": {
+        "phoenix-opacity": "Was 40% (semantic.opacity.muted, taken from the Frontend). Figma says 70%.",
+        "phoenix-blend": "Was missing. Figma composites it with HARD_LIGHT.",
+        "phoenix-geometry": "Was one square `size` positioned with a percentage translate. Figma gives each variant its own box and offset, and the success one is 118x125 — not square."
+      },
+      "gaps": {
+        "profile-variants-disagree-on-their-own-padding": "`header-bar-profile-moblie` (14962:94338) has 9 variants, all 72 tall. One — type=lottery, state=login+no-active (14962:91594) — hugs with padding 8/16/8/16. The other eight are FIXED 72 with padding 0/16/0/16 and centre their 56-tall content, which lands in the same place, so nothing renders differently and the library models the padded one. It is still one variant edited and eight not: if the content ever grows, eight frames clip and one does not. A designer applies 8/16 to the rest. Read 2026-08-21."
+      }
+    }
+  }
+}

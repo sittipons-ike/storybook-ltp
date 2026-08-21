@@ -1,0 +1,492 @@
+{
+  "$meta": {
+    "purpose": "What the Frontend ships that Storybook does not, with the atomic level of each, so the team can decide what to build next instead of guessing.",
+    "generated": "2026-08-19",
+    "method": {
+      "frontend": "Every directory under lotteryplus-frontend-main/src/components with an index.tsx: 458 found. Usage counted by grepping real import statements, not estimated.",
+      "atomic_level": "Derived from composition, per Lark Standard §3: no component imports = atom, 1-2 = molecule, 3+ = organism. A component that imports a store, an API module or the router is marked `data` and is not a design-system component at all.",
+      "figma": "Checked live through the Desktop Bridge on 2026-08-19 by searching every page for a matching COMPONENT or COMPONENT_SET.",
+      "threshold": "Only components with 2 or more real usages are listed — §3.3 share-by-evidence."
+    },
+    "counts": {
+      "atom": 21,
+      "data": 15,
+      "molecule": 8,
+      "organism": 1,
+      "total": 45
+    }
+  },
+  "gaps": [
+    {
+      "name": "common/typography/seo",
+      "usage": 210,
+      "lines": 195,
+      "atomic_level": "atom",
+      "depends_on": [],
+      "figma": "Text Container (22496:24403, 3 variants) on page `writting`"
+    },
+    {
+      "name": "common/dash-line",
+      "usage": 46,
+      "lines": 13,
+      "atomic_level": "atom",
+      "depends_on": [],
+      "figma": null,
+      "status": "BUILT 2026-08-19 as Divider — from Figma colors/divider, no component existed"
+    },
+    {
+      "name": "common/typography",
+      "usage": 17,
+      "lines": 161,
+      "atomic_level": "atom",
+      "depends_on": [],
+      "figma": "Text Container (22496:24403) — same component"
+    },
+    {
+      "name": "common/skeleton",
+      "usage": 8,
+      "lines": 9,
+      "atomic_level": "atom",
+      "depends_on": [],
+      "figma": null
+    },
+    {
+      "name": "common/title-with-underline",
+      "usage": 6,
+      "lines": 45,
+      "atomic_level": "atom",
+      "depends_on": [],
+      "figma": null
+    },
+    {
+      "name": "transactions",
+      "usage": 5,
+      "lines": 146,
+      "atomic_level": "data",
+      "depends_on": [
+        "common/loading-spin",
+        "common/typography/seo",
+        "display-transactions"
+      ],
+      "figma": "not searched — below the build threshold",
+      "note": "Imports a store, an API module or the router. Belongs in a second Storybook inside the Frontend repo where the mocks already live, not in this one."
+    },
+    {
+      "name": "common/header-banner-safe",
+      "usage": 5,
+      "lines": 44,
+      "atomic_level": "atom",
+      "depends_on": [],
+      "figma": "safe banner gift/lottery/jidrit (20229:8507-8509)"
+    },
+    {
+      "name": "common/image-upload",
+      "usage": 5,
+      "lines": 247,
+      "atomic_level": "data",
+      "depends_on": [],
+      "figma": "not searched — below the build threshold",
+      "note": "Imports a store, an API module or the router. Belongs in a second Storybook inside the Frontend repo where the mocks already live, not in this one."
+    },
+    {
+      "name": "common/lottery-set-display",
+      "usage": 5,
+      "lines": 68,
+      "atomic_level": "atom",
+      "depends_on": [],
+      "figma": "not searched — below the build threshold"
+    },
+    {
+      "name": "common/lottery-image",
+      "usage": 4,
+      "lines": 27,
+      "atomic_level": "data",
+      "depends_on": [],
+      "figma": "not searched — below the build threshold",
+      "note": "Imports a store, an API module or the router. Belongs in a second Storybook inside the Frontend repo where the mocks already live, not in this one."
+    },
+    {
+      "name": "profile/edit-profile",
+      "usage": 4,
+      "lines": 76,
+      "atomic_level": "data",
+      "depends_on": [
+        "profile/edit-profile/edit-profile-form"
+      ],
+      "figma": "not searched — below the build threshold",
+      "note": "Imports a store, an API module or the router. Belongs in a second Storybook inside the Frontend repo where the mocks already live, not in this one."
+    },
+    {
+      "name": "order/tabs-order/tab-order-detail",
+      "usage": 3,
+      "lines": 78,
+      "atomic_level": "molecule",
+      "depends_on": [
+        "common/typography/seo"
+      ],
+      "figma": "not searched — below the build threshold"
+    },
+    {
+      "name": "common/jidrid-item",
+      "usage": 3,
+      "lines": 68,
+      "atomic_level": "molecule",
+      "depends_on": [
+        "common/button"
+      ],
+      "figma": "not searched — below the build threshold"
+    },
+    {
+      "name": "common/contacts-information",
+      "usage": 3,
+      "lines": 36,
+      "atomic_level": "atom",
+      "depends_on": [],
+      "figma": "contact (14291:122990) on page `banner`"
+    },
+    {
+      "name": "common/new-feature-label",
+      "usage": 3,
+      "lines": 14,
+      "atomic_level": "atom",
+      "depends_on": [],
+      "figma": null
+    },
+    {
+      "name": "common/notification/badge",
+      "usage": 3,
+      "lines": 29,
+      "atomic_level": "atom",
+      "depends_on": [],
+      "figma": null
+    },
+    {
+      "name": "common/accordion",
+      "usage": 3,
+      "lines": 41,
+      "atomic_level": "atom",
+      "depends_on": [],
+      "figma": null
+    },
+    {
+      "name": "common/jidrid-item-number",
+      "usage": 3,
+      "lines": 20,
+      "atomic_level": "atom",
+      "depends_on": [],
+      "figma": "not searched — below the build threshold"
+    },
+    {
+      "name": "common/infinity-scroll",
+      "usage": 3,
+      "lines": 38,
+      "atomic_level": "atom",
+      "depends_on": [],
+      "figma": null
+    },
+    {
+      "name": "common/lottery-set-display-modal",
+      "usage": 3,
+      "lines": 73,
+      "atomic_level": "atom",
+      "depends_on": [],
+      "figma": "not searched — below the build threshold"
+    },
+    {
+      "name": "cart/cart-price-summary/detail-line-item",
+      "usage": 3,
+      "lines": 73,
+      "atomic_level": "organism",
+      "depends_on": [
+        "common/modal/dialog-modal",
+        "common/tooltip",
+        "common/typography/seo"
+      ],
+      "figma": "not searched — below the build threshold"
+    },
+    {
+      "name": "safe/jidrid-lists-safe-page/byorder",
+      "usage": 2,
+      "lines": 119,
+      "atomic_level": "data",
+      "depends_on": [
+        "common/button",
+        "common/jidrid-item",
+        "common/jidrid-item-number",
+        "common/lottery-set-display",
+        "common/modal/option-modal",
+        "safe/title-item-lists"
+      ],
+      "figma": "not searched — below the build threshold",
+      "note": "Imports a store, an API module or the router. Belongs in a second Storybook inside the Frontend repo where the mocks already live, not in this one."
+    },
+    {
+      "name": "safe/empty-important-info",
+      "usage": 2,
+      "lines": 80,
+      "atomic_level": "data",
+      "depends_on": [
+        "common/button",
+        "common/typography/seo"
+      ],
+      "figma": "not searched — below the build threshold",
+      "note": "Imports a store, an API module or the router. Belongs in a second Storybook inside the Frontend repo where the mocks already live, not in this one."
+    },
+    {
+      "name": "home/user-active",
+      "usage": 2,
+      "lines": 24,
+      "atomic_level": "molecule",
+      "depends_on": [
+        "common/typography/seo"
+      ],
+      "figma": "not searched — below the build threshold"
+    },
+    {
+      "name": "information",
+      "usage": 2,
+      "lines": 16,
+      "atomic_level": "atom",
+      "depends_on": [],
+      "figma": "not searched — below the build threshold"
+    },
+    {
+      "name": "information/aboutus",
+      "usage": 2,
+      "lines": 35,
+      "atomic_level": "atom",
+      "depends_on": [],
+      "figma": "not searched — below the build threshold"
+    },
+    {
+      "name": "receive-gift/modal-receive-gift",
+      "usage": 2,
+      "lines": 50,
+      "atomic_level": "molecule",
+      "depends_on": [
+        "common/modal"
+      ],
+      "figma": "not searched — below the build threshold"
+    },
+    {
+      "name": "payment",
+      "usage": 2,
+      "lines": 59,
+      "atomic_level": "data",
+      "depends_on": [],
+      "figma": "not searched — below the build threshold",
+      "note": "Imports a store, an API module or the router. Belongs in a second Storybook inside the Frontend repo where the mocks already live, not in this one."
+    },
+    {
+      "name": "common/profile-image",
+      "usage": 2,
+      "lines": 45,
+      "atomic_level": "atom",
+      "depends_on": [],
+      "figma": "avatar (14291:133618, 10 variants)"
+    },
+    {
+      "name": "common/notification/timer",
+      "usage": 2,
+      "lines": 40,
+      "atomic_level": "atom",
+      "depends_on": [],
+      "figma": null
+    },
+    {
+      "name": "common/textarea",
+      "usage": 2,
+      "lines": 89,
+      "atomic_level": "molecule",
+      "depends_on": [
+        "common/input"
+      ],
+      "figma": null
+    },
+    {
+      "name": "common/jidrid-picked-display-list",
+      "usage": 2,
+      "lines": 36,
+      "atomic_level": "atom",
+      "depends_on": [],
+      "figma": "not searched — below the build threshold"
+    },
+    {
+      "name": "common/lotteries/lottery-card",
+      "usage": 2,
+      "lines": 294,
+      "atomic_level": "data",
+      "depends_on": [],
+      "figma": "not searched — below the build threshold",
+      "note": "Imports a store, an API module or the router. Belongs in a second Storybook inside the Frontend repo where the mocks already live, not in this one."
+    },
+    {
+      "name": "common/profile-navbar",
+      "usage": 2,
+      "lines": 40,
+      "atomic_level": "atom",
+      "depends_on": [],
+      "figma": "not searched — below the build threshold"
+    },
+    {
+      "name": "profile/coupon-button",
+      "usage": 2,
+      "lines": 159,
+      "atomic_level": "data",
+      "depends_on": [
+        "common/button",
+        "common/global-modal",
+        "common/loading-spin",
+        "common/modal/dialog-modal",
+        "common/typography/seo"
+      ],
+      "figma": "not searched — below the build threshold",
+      "note": "Imports a store, an API module or the router. Belongs in a second Storybook inside the Frontend repo where the mocks already live, not in this one."
+    },
+    {
+      "name": "prize-history",
+      "usage": 2,
+      "lines": 256,
+      "atomic_level": "data",
+      "depends_on": [],
+      "figma": "not searched — below the build threshold",
+      "note": "Imports a store, an API module or the router. Belongs in a second Storybook inside the Frontend repo where the mocks already live, not in this one."
+    },
+    {
+      "name": "cart/cart-status-bar",
+      "usage": 2,
+      "lines": 190,
+      "atomic_level": "data",
+      "depends_on": [
+        "common/typography/seo"
+      ],
+      "figma": "not searched — below the build threshold",
+      "note": "Imports a store, an API module or the router. Belongs in a second Storybook inside the Frontend repo where the mocks already live, not in this one."
+    },
+    {
+      "name": "my-safe",
+      "usage": 2,
+      "lines": 139,
+      "atomic_level": "data",
+      "depends_on": [],
+      "figma": "not searched — below the build threshold",
+      "note": "Imports a store, an API module or the router. Belongs in a second Storybook inside the Frontend repo where the mocks already live, not in this one."
+    },
+    {
+      "name": "my-safe/display-lottery-safe-by-order/display-mystery-box-by-order",
+      "usage": 2,
+      "lines": 179,
+      "atomic_level": "data",
+      "depends_on": [
+        "common/button",
+        "common/dash-line",
+        "common/typography/seo"
+      ],
+      "figma": "not searched — below the build threshold",
+      "note": "Imports a store, an API module or the router. Belongs in a second Storybook inside the Frontend repo where the mocks already live, not in this one."
+    },
+    {
+      "name": "my-safe/display-lottery-safe-by-order/display-header-by-order",
+      "usage": 2,
+      "lines": 71,
+      "atomic_level": "molecule",
+      "depends_on": [
+        "common/typography/seo"
+      ],
+      "figma": "not searched — below the build threshold"
+    },
+    {
+      "name": "my-safe/my-safe-prizes/prize",
+      "usage": 2,
+      "lines": 50,
+      "atomic_level": "atom",
+      "depends_on": [],
+      "figma": "not searched — below the build threshold"
+    },
+    {
+      "name": "my-safe/display-lottery-safe/display-lottery-set-image",
+      "usage": 2,
+      "lines": 48,
+      "atomic_level": "molecule",
+      "depends_on": [
+        "common/lottery-image"
+      ],
+      "figma": "not searched — below the build threshold"
+    },
+    {
+      "name": "header/title-with-info",
+      "usage": 2,
+      "lines": 92,
+      "atomic_level": "molecule",
+      "depends_on": [
+        "common/modal/dialog-modal",
+        "common/typography/seo"
+      ],
+      "figma": "not searched — below the build threshold"
+    },
+    {
+      "name": "help/payment",
+      "usage": 2,
+      "lines": 159,
+      "atomic_level": "data",
+      "depends_on": [
+        "common/button",
+        "common/image-upload",
+        "common/typography/seo"
+      ],
+      "figma": "not searched — below the build threshold",
+      "note": "Imports a store, an API module or the router. Belongs in a second Storybook inside the Frontend repo where the mocks already live, not in this one."
+    },
+    {
+      "name": "help/lottery",
+      "usage": 2,
+      "lines": 137,
+      "atomic_level": "data",
+      "depends_on": [
+        "common/button",
+        "common/image-upload",
+        "common/textarea",
+        "common/typography/seo"
+      ],
+      "figma": "not searched — below the build threshold",
+      "note": "Imports a store, an API module or the router. Belongs in a second Storybook inside the Frontend repo where the mocks already live, not in this one."
+    }
+  ],
+  "blocked_on_figma": {
+    "_note": "Real Frontend usage, no Figma component to build from. Each needs a designer before Storybook can hold a verified version — building from the Frontend alone would put Storybook ahead of the design. dash-line was taken off this list on 2026-08-19: Figma has no divider component but it does declare a colors/divider group, which was enough to build on.",
+    "items": [
+      {
+        "name": "common/skeleton",
+        "usage": 8
+      },
+      {
+        "name": "common/accordion",
+        "usage": 3
+      },
+      {
+        "name": "common/notification/badge",
+        "usage": 3
+      },
+      {
+        "name": "common/new-feature-label",
+        "usage": 3
+      },
+      {
+        "name": "common/title-with-underline",
+        "usage": 6
+      },
+      {
+        "name": "common/notification/timer",
+        "usage": 2
+      },
+      {
+        "name": "common/infinity-scroll",
+        "usage": 3
+      },
+      {
+        "name": "common/textarea",
+        "usage": 2
+      }
+    ]
+  }
+}

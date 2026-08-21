@@ -1,129 +1,252 @@
 // ═══════════════════════════════════════════
 // TextField Design Tokens
-// Source: Figma "Design Systems Web App Lotteryplus V.7.1"
-// Component set: "text-field" (14291:131807)
-// All values reference Foundation variables ONLY
+//
+// This file holds NO values. Every value lives in Figma, flows through design.md
+// and components.json (colours from the Figma colour mirror, layout/typography from
+// design-library/lotteryplus/components/text-field.json), and is generated into
+// foundations/tokens.css (CSS custom properties) and foundations/tokens.generated.ts
+// (resolved literals).
+//
+// What this file adds is types and lookup helpers, so TextField.tsx renders with CSS
+// variables while stories and tests can still read the literal a token resolves to.
+//
+// Regenerate the source values: python3 tools/gen-components.py && python3 tools/gen-tokens.py
+// Verify them against Figma:    python3 tools/verify-tokens.py
 // ═══════════════════════════════════════════
 
-// ── From Foundation: Spacing & Layout (2-semantic) ──
-export const SPACING = {
-  none: 0,       // spacing-none
-  sm: 4,         // spacing-sm → Label row paddingLeft, Label↔Field gap, wrapper gap
-  lg: 8,         // spacing-lg → Field internal gap
-  '2lg': 10,     // spacing-2lg → Field paddingTop/paddingBottom
-  '2xl': 16,     // spacing-2xl → Field paddingLeft/paddingRight
-} as const;
+import { component } from '../../foundations/tokens';
 
-// ── From Foundation: Border Radius (2-semantic) ──
-export const RADIUS = {
-  lg: 8,         // radius-lg → Field corner radius
-} as const;
+const t = component('text-field');
 
-// ── From Foundation: Border Width (2-semantic) ──
-export const BORDER_WIDTH = {
-  1: 1,          // dimension/border-width/1 → Default/Hover/Actived/ReadOnly/Complete/Error states
-  2: 2,          // dimension/border-width/2 → Active state
-} as const;
+/**
+ * Canonical states, per the Design System Standard, plus one approved extension.
+ *
+ * Figma names them Default / Hover / Active / Actived / Read Only / Complete /
+ * Error-Default / Error. The mapping to canonical vocabulary is:
+ *
+ *   Default       → rest
+ *   Hover         → hover
+ *   Active        → focus   (2px red border while the caret is in the field)
+ *   Actived       → rest    (a filled field is not a state — only the text colour
+ *                            differs, and that is `foreground` vs `placeholder`)
+ *   Read Only     → disabled
+ *   Complete      → complete  ← extension: a success affirmation the canonical six
+ *                              cannot express; backed by `--text-field-foreground-green`
+ *   Error-Default → error   (empty)
+ *   Error         → error   (filled)
+ *
+ * `active` (pressed) renders as `focus` — a text field has no distinct pressed look.
+ */
+export type TextFieldState =
+  | 'rest'
+  | 'hover'
+  | 'active'
+  | 'focus'
+  | 'disabled'
+  | 'error'
+  | 'complete';
 
-// ── From Foundation: Typography (typography collection) ──
-// All fonts: Graphik TH
-export const TYPOGRAPHY = {
-  label: {
-    fontFamily: "'Graphik TH', sans-serif",
-    fontSize: 14,       // title/m-med/size → size/m
-    fontWeight: 500,     // title/m-med/weight → Medium
-    lineHeight: '22px',  // title/m-med/line-height → line-height/m
+export const TEXT_FIELD_STATES: readonly TextFieldState[] = [
+  'rest',
+  'hover',
+  'active',
+  'focus',
+  'disabled',
+  'error',
+  'complete',
+] as const;
+
+/** The canonical six. `complete` sits outside it — see TextFieldState. */
+export const TEXT_FIELD_STATE_EXTENSIONS: readonly TextFieldState[] = ['complete'] as const;
+
+export interface TextFieldColorSet {
+  /** Field surface. */
+  background: string;
+  /** Field stroke. */
+  border: string;
+  /** Field stroke width — 2px while focused, 1px otherwise. */
+  borderWidth: string;
+  /** Input text colour once the field has a value. */
+  foreground: string;
+  /** Input text colour while the field is empty. */
+  placeholder: string;
+  /** Focus ring behind the stroke, or '' when the state draws none. */
+  ring: string;
+}
+
+/** Which Tier 2 token each state binds to, by property. Names only — no values. */
+const BINDINGS: Record<TextFieldState, Record<keyof TextFieldColorSet, string>> = {
+  rest: {
+    background: 'background-white',
+    border: 'border',
+    borderWidth: 'border-width',
+    foreground: 'foreground-dark',
+    placeholder: 'foreground-disable',
+    ring: '',
   },
-  required: {
-    fontFamily: "'Graphik TH', sans-serif",
-    fontSize: 12,       // label/m-reg/size → size/s
-    fontWeight: 500,     // label/m-med/weight → Medium
-    lineHeight: '18px',  // label/m-reg/line-height → line-height/s
+  hover: {
+    background: 'background-white',
+    border: 'foreground-gray',
+    borderWidth: 'border-width',
+    foreground: 'foreground-dark',
+    placeholder: 'foreground-disable',
+    ring: '',
   },
-  placeholder: {
-    fontFamily: "'Graphik TH', sans-serif",
-    fontSize: 14,       // body/m-reg/size → size/m
-    fontWeight: 400,     // body/m-reg/weight → Regular
-    lineHeight: '22px',  // body/m-reg/line-height → line-height/m
+  // Figma models the focused field with `text-field-bd-bg-active` (brand red at 40%),
+  // which is the ring behind the stroke. The stroke itself has no token of its own, so
+  // it borrows the nearest one — `foreground-red`, the same brand red at full opacity.
+  focus: {
+    background: 'background-white',
+    border: 'foreground-red',
+    borderWidth: 'border-width-focus',
+    foreground: 'foreground-dark',
+    placeholder: 'foreground-disable',
+    ring: 'ring-active',
   },
-  inputText: {
-    fontFamily: "'Graphik TH', sans-serif",
-    fontSize: 14,       // body/m-reg/size → size/m
-    fontWeight: 400,     // body/m-reg/weight → Regular
-    lineHeight: '22px',  // body/m-reg/line-height → line-height/m
+  active: {
+    background: 'background-white',
+    border: 'foreground-red',
+    borderWidth: 'border-width-focus',
+    foreground: 'foreground-dark',
+    placeholder: 'foreground-disable',
+    ring: 'ring-active',
+  },
+  disabled: {
+    background: 'background-disable',
+    border: 'border',
+    borderWidth: 'border-width',
+    foreground: 'foreground-gray',
+    placeholder: 'foreground-disable',
+    ring: '',
+  },
+  complete: {
+    background: 'background-white',
+    border: 'foreground-green',
+    borderWidth: 'border-width',
+    foreground: 'foreground-dark',
+    placeholder: 'foreground-disable',
+    ring: '',
   },
   error: {
-    fontFamily: "'Graphik TH', sans-serif",
-    fontSize: 10,       // caption/m-reg/size → size/2xs
-    fontWeight: 400,     // caption/m-reg/weight → Regular
-    lineHeight: '16px',  // caption/m-reg/line-height → line-height/2xs
+    background: 'background-white',
+    border: 'foreground-red',
+    borderWidth: 'border-width',
+    foreground: 'foreground-dark',
+    placeholder: 'foreground-disable',
+    ring: '',
   },
+};
+
+/** The Tier 2 token name behind one state/property pair — for docs and tables. */
+export const textFieldTokenName = (
+  state: TextFieldState,
+  prop: keyof TextFieldColorSet,
+): string => {
+  const token = BINDINGS[state][prop];
+  return token ? `--text-field-${token}` : '';
+};
+
+/** The literal a TextField token resolves to. Empty string when it is not declared. */
+export const textFieldValue = (token: string): string => t.value(token);
+
+/** Every Tier 2 token declared for this component — what the token-chain story enumerates. */
+export const textFieldTokenNames = (): string[] => t.names();
+
+/** CSS variable references for one state — what TextField.tsx renders with. */
+export const textFieldColors = (state: TextFieldState): TextFieldColorSet => {
+  const b = BINDINGS[state];
+  return {
+    background: t.ref(b.background),
+    border: t.ref(b.border),
+    borderWidth: t.ref(b.borderWidth),
+    foreground: t.ref(b.foreground),
+    placeholder: t.ref(b.placeholder),
+    ring: b.ring ? t.ref(b.ring) : '',
+  };
+};
+
+/** Resolved literals for one state — for stories, tables and tests. */
+export const textFieldColorValues = (state: TextFieldState): TextFieldColorSet => {
+  const b = BINDINGS[state];
+  return {
+    background: t.value(b.background),
+    border: t.value(b.border),
+    borderWidth: t.value(b.borderWidth),
+    foreground: t.value(b.foreground),
+    placeholder: t.value(b.placeholder),
+    ring: b.ring ? t.value(b.ring) : '',
+  };
+};
+
+/**
+ * Colours that do not vary with the field's state — the label row and the description.
+ * Figma draws all three from the flat palette directly, not from a state variant.
+ */
+export const TEXT_FIELD_TEXT = {
+  label: t.ref('foreground-dark'),
+  required: t.ref('foreground-red'),
+  description: t.ref('foreground-red'),
 } as const;
 
-// ── From Foundation: Component Tokens (3-component / TextField) ──
-export const TEXTFIELD_COLORS = {
-  // Field backgrounds
-  bg: {
-    white: '#FFFFFF',      // colors/text-field/text-field-bg-white
-    disable: '#F5F5F5',    // colors/text-field/text-field-bg-disable (Read Only)
-  },
-
-  // Field borders per state
-  border: {
-    default: '#D4D4D4',   // colors/text-field/text-field-border (Default/Actived/ReadOnly)
-    hover: '#737373',      // colors/text-field/text-field-fg-gray (Hover)
-    active: '#E32321',     // colors/text-field/text-field-bd-bg-active (Active)
-    complete: '#22C55E',   // colors/text-field/text-field-fg-green (Complete)
-    error: '#E32321',      // colors/text-field/text-field-fg-red (Error-Default/Error)
-  },
-
-  // Text colors
-  fg: {
-    dark: '#262626',       // colors/text-field/text-field-fg-dark (label, active/actived text)
-    placeholder: '#C9C9C9', // colors/text-field/text-field-fg-disable (placeholder text)
-    gray: '#737373',       // colors/text-field/text-field-fg-gray (hover border, read-only text)
-    red: '#E32321',        // colors/text-field/text-field-fg-red (required marker, error text)
-    green: '#22C55E',      // colors/text-field/text-field-fg-green (complete border)
-  },
-
-  // Label area
-  label: {
-    text: '#262626',       // colors/text-field/text-field-fg-dark
-    required: '#E32321',   // colors/text-field/text-field-fg-red
-  },
+/** Resolved literals for the state-independent text colours. */
+export const TEXT_FIELD_TEXT_VALUES = {
+  label: t.value('foreground-dark'),
+  required: t.value('foreground-red'),
+  description: t.value('foreground-red'),
 } as const;
 
-// ── State-specific mappings (for Token Verification) ──
-export const TEXTFIELD_STATE_MAP = {
-  default:       { bg: '#FFFFFF', border: '#D4D4D4', borderWidth: 1, textColor: '#C9C9C9', descVisible: false },
-  hover:         { bg: '#FFFFFF', border: '#737373', borderWidth: 1, textColor: '#C9C9C9', descVisible: false },
-  active:        { bg: '#FFFFFF', border: '#E32321', borderWidth: 2, textColor: '#262626', descVisible: false },
-  actived:       { bg: '#FFFFFF', border: '#D4D4D4', borderWidth: 1, textColor: '#262626', descVisible: false },
-  readOnly:      { bg: '#F5F5F5', border: '#D4D4D4', borderWidth: 1, textColor: '#737373', descVisible: false },
-  complete:      { bg: '#FFFFFF', border: '#22C55E', borderWidth: 1, textColor: '#262626', descVisible: false },
-  errorDefault:  { bg: '#FFFFFF', border: '#E32321', borderWidth: 1, textColor: '#C9C9C9', descVisible: true },
-  error:         { bg: '#FFFFFF', border: '#E32321', borderWidth: 1, textColor: '#262626', descVisible: true },
+/** Layout shared by every state. */
+export const TEXT_FIELD_BASE = {
+  radius: t.ref('radius'),
+  borderWidth: t.ref('border-width'),
+  borderWidthFocus: t.ref('border-width-focus'),
+  paddingY: t.ref('padding-y'),
+  paddingX: t.ref('padding-x'),
+  gap: t.ref('gap'),
+  stackGap: t.ref('stack-gap'),
+  labelPaddingX: t.ref('label-padding-x'),
+  labelGap: t.ref('label-gap'),
+  descriptionPaddingX: t.ref('description-padding-x'),
 } as const;
 
-// ── Layout dimensions from Figma ──
-export const TEXTFIELD_DIMENSIONS = {
-  // Field padding: top/right/bottom/left → 10/16/10/16
-  field: {
-    paddingTop: 10,        // spacing-2lg
-    paddingRight: 16,      // spacing-2xl
-    paddingBottom: 10,     // spacing-2lg
-    paddingLeft: 16,       // spacing-2xl
-    gap: 8,                // spacing-lg (between text and icon)
-  },
+/** Icon size stays numeric — it is a component prop, not a style. */
+export const TEXT_FIELD_CLEAR_ICON_SIZE =
+  Number(t.value('clear-icon-size').replace('px', '')) || 16;
 
-  // Clear icon (filled-close)
-  clearIconSize: 16,       // icons-size Size=16
+/** Typography roles. `placeholder` shares `input` — one Figma role, body/md/regular. */
+export type TextFieldTypographyRole = 'label' | 'required' | 'input' | 'description';
 
-  // Wrapper
-  wrapper: {
-    labelToFieldGap: 4,    // spacing-sm (VERTICAL gap)
-    labelPaddingLeft: 4,   // spacing-sm
-    labelInternalGap: 4,   // spacing-sm
-    descriptionPaddingLeft: 4, // spacing-sm
-  },
-} as const;
+export const TEXT_FIELD_TYPOGRAPHY_ROLES: readonly TextFieldTypographyRole[] = [
+  'label',
+  'required',
+  'input',
+  'description',
+] as const;
+
+export interface TextFieldTypeSet {
+  fontFamily: string;
+  fontSize: string;
+  fontWeight: string;
+  lineHeight: string;
+  letterSpacing: string;
+}
+
+/** CSS variable references for one typography role. */
+export const textFieldTypography = (role: TextFieldTypographyRole): TextFieldTypeSet => ({
+  fontFamily: t.ref(`typography-${role}-family`),
+  fontSize: t.ref(`typography-${role}-size`),
+  fontWeight: t.ref(`typography-${role}-weight`),
+  lineHeight: t.ref(`typography-${role}-line-height`),
+  letterSpacing: t.ref(`typography-${role}-tracking`),
+});
+
+/** Resolved literals for one typography role — for stories and tables. */
+export const textFieldTypographyValues = (
+  role: TextFieldTypographyRole,
+): TextFieldTypeSet => ({
+  fontFamily: t.value(`typography-${role}-family`),
+  fontSize: t.value(`typography-${role}-size`),
+  fontWeight: t.value(`typography-${role}-weight`),
+  lineHeight: t.value(`typography-${role}-line-height`),
+  letterSpacing: t.value(`typography-${role}-tracking`),
+});

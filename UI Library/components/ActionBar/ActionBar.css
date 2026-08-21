@@ -1,0 +1,54 @@
+/* ═══════════════════════════════════════════
+   ActionBar — Lotteryplus Design System
+
+   Structure only; every colour and dimension is a token applied in ActionBar.tsx.
+
+   Figma: no component set. Drawn inside `Guidline-UI Template › Layout` as the frame
+   named `Navbar` on `Order Page / Receipt detail`.
+   ═══════════════════════════════════════════ */
+
+.ltp-action-bar {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.ltp-action-bar * {
+  box-sizing: border-box;
+}
+
+.ltp-action-bar__buttons {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Figma draws one full-width button. The Frontend's two-button case gives the secondary
+   a third of the row, which Figma has not drawn — the split comes from
+   components/common/footer-button. */
+.ltp-action-bar__secondary {
+  flex: none;
+}
+
+.ltp-action-bar__primary {
+  flex: 1;
+  min-width: 0;
+}
+
+.ltp-action-bar__info {
+  margin: 0;
+  text-align: center;
+}
+
+/* The device's home affordance. Part of neither the bar nor the tab bar — it is the
+   safe-area both of them reserve, which is why it renders here and in NavigationBar. */
+.ltp-action-bar__home-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.ltp-action-bar__home-indicator span {
+  display: block;
+}

@@ -1,18 +1,25 @@
 import React from 'react';
-import {
-  BREADCRUMB_COLORS,
-  BREADCRUMB_DIMENSIONS,
-  TYPOGRAPHY,
-} from './tokens';
-import Icon from '../../icons/Icon';
+import '../../foundations/tokens.css';
+import Icon, { type IconSize } from '../../icons/Icon';
 import '../../icons/icon-data';
+import {
+  BREADCRUMB_BASE,
+  BREADCRUMB_ICON_SIZE,
+  BREADCRUMB_SEPARATOR_COLOR,
+  breadcrumbColors,
+  breadcrumbFontWeight,
+  type BreadcrumbState,
+} from './tokens';
 
 // ═══════════════════════════════════════════
 //  Breadcrumb — Lotteryplus Design System
 //  Figma component set: "breadcrumb" (14291:136385)
-//  5 Variants: Step 1 through Step 5
-//  Last item is always active/current page
-//  Uses Icon component for item icons & separators
+//  5 variants: Step 1 through Step 5
+//  The last crumb is the current page — canonical state `selected`.
+//
+//  Every style value is a CSS custom property from foundations/tokens.css, which is
+//  generated from Figma via design.md + components.json. There are no literal colours,
+//  sizes or font values in this file.
 // ═══════════════════════════════════════════
 
 export interface BreadcrumbItem {
@@ -29,13 +36,15 @@ export interface BreadcrumbItem {
 }
 
 export interface BreadcrumbProps {
-  /** Breadcrumb items (1-5). Last item is always the active/current page. */
+  /** Breadcrumb items (1-5). The last item is the current page — state `selected`. */
   items: BreadcrumbItem[];
-  /** Click handler for breadcrumb item (not called for active/last item) */
+  /** Click handler for a breadcrumb item (not called for the `selected` item) */
   onItemClick?: (key: string) => void;
   /** Additional className */
   className?: string;
 }
+
+const ICON_SIZE = BREADCRUMB_ICON_SIZE as IconSize;
 
 const Breadcrumb: React.FC<BreadcrumbProps> = ({
   items,
@@ -50,19 +59,22 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        gap: BREADCRUMB_DIMENSIONS.containerGap, // spacing-2xl = 16px
+        gap: BREADCRUMB_BASE.gap,
       }}
     >
       {items.map((item, index) => {
-        const isLast = index === items.length - 1;
-        const isActive = isLast;
+        // The last crumb is the current page: canonical state `selected`.
+        const state: BreadcrumbState =
+          index === items.length - 1 ? 'selected' : 'rest';
+        const isSelected = state === 'selected';
+        const colors = breadcrumbColors(state);
         const showIcon = item.showIcon !== false;
         const showText = item.showText !== false;
         const iconName = item.icon || 'outline-Home';
 
         return (
           <React.Fragment key={item.key}>
-            {/* Separator: arrow-right-S icon between items (not before first) */}
+            {/* Separator: arrow-right-S chevron between crumbs (not before the first) */}
             {index > 0 && (
               <span
                 style={{
@@ -70,24 +82,22 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0,
+                  color: BREADCRUMB_SEPARATOR_COLOR,
                 }}
               >
-                <Icon
-                  name="arrow-right-S"
-                  size={BREADCRUMB_DIMENSIONS.iconSize}
-                  customColor={BREADCRUMB_COLORS.icon.separator}
-                />
+                <Icon name="arrow-right-S" size={ICON_SIZE} color="inherit" />
               </span>
             )}
 
             {/* Breadcrumb item */}
             <span
-              role={isActive ? undefined : 'link'}
-              tabIndex={isActive ? undefined : 0}
-              aria-current={isActive ? 'page' : undefined}
-              onClick={!isActive ? () => onItemClick?.(item.key) : undefined}
+              className={`ltp-breadcrumb__item ltp-breadcrumb__item--${state}`}
+              role={isSelected ? undefined : 'link'}
+              tabIndex={isSelected ? undefined : 0}
+              aria-current={isSelected ? 'page' : undefined}
+              onClick={!isSelected ? () => onItemClick?.(item.key) : undefined}
               onKeyDown={
-                !isActive
+                !isSelected
                   ? (e) => {
                       if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault();
@@ -100,43 +110,38 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({
                 display: 'inline-flex',
                 flexDirection: 'row',
                 alignItems: 'center',
-                gap: BREADCRUMB_DIMENSIONS.itemGap, // spacing-lg = 8px
-                cursor: isActive ? 'default' : 'pointer',
+                gap: BREADCRUMB_BASE.itemGap,
+                cursor: isSelected ? 'default' : 'pointer',
                 flexShrink: 0,
               }}
             >
-              {/* Item icon */}
+              {/* Item icon — inherits the wrapper's colour so the token stays a var */}
               {showIcon && (
-                <Icon
-                  name={iconName}
-                  size={BREADCRUMB_DIMENSIONS.iconSize}
-                  customColor={
-                    isActive
-                      ? BREADCRUMB_COLORS.icon.active    // colors/icon/icon-fg-primary → #E32321
-                      : BREADCRUMB_COLORS.icon.inactive   // colors/icon/icon-fg-secondary → #262626
-                  }
-                />
+                <span
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    color: colors.icon,
+                  }}
+                >
+                  <Icon name={iconName} size={ICON_SIZE} color="inherit" />
+                </span>
               )}
 
-              {/* Item text */}
+              {/* Item text — typography/label/md, regular at rest, semibold when selected */}
               {showText && (
                 <span
                   style={{
-                    fontFamily: isActive
-                      ? TYPOGRAPHY.active.fontFamily
-                      : TYPOGRAPHY.inactive.fontFamily,
-                    fontSize: isActive
-                      ? TYPOGRAPHY.active.fontSize
-                      : TYPOGRAPHY.inactive.fontSize,
-                    fontWeight: isActive
-                      ? TYPOGRAPHY.active.fontWeight    // 600 Semibold
-                      : TYPOGRAPHY.inactive.fontWeight,  // 400 Regular
-                    lineHeight: isActive
-                      ? TYPOGRAPHY.active.lineHeight
-                      : TYPOGRAPHY.inactive.lineHeight,
-                    color: isActive
-                      ? BREADCRUMB_COLORS.text.active    // colors/breadcrumb/breadcrumb-fg-red → #E32321
-                      : BREADCRUMB_COLORS.text.inactive,  // colors/breadcrumb/breadcrumb-fg-dark → #141414
+                    fontFamily: BREADCRUMB_BASE.fontFamily,
+                    fontSize: BREADCRUMB_BASE.fontSize,
+                    fontWeight: breadcrumbFontWeight(
+                      state,
+                    ) as unknown as React.CSSProperties['fontWeight'],
+                    lineHeight: BREADCRUMB_BASE.lineHeight,
+                    letterSpacing: BREADCRUMB_BASE.tracking,
+                    color: colors.text,
                     whiteSpace: 'nowrap',
                   }}
                 >

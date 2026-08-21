@@ -47,12 +47,18 @@
 
 /* ── Step ── */
 
+/* Figma's `Step` is 40 wide on every step and never grows: the label is taken out of
+   layout and centred over the circle. Letting the label size the column is what made the
+   connectors look broken — a wide label widened its step, so the rule met the label's edge
+   on one side and the circle on the other. Width and height come from tokens in the TSX. */
 .ltp-progress-bar__step {
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
-  flex-shrink: 0;
+  flex: none;
+  /* The rule runs under the circles, so the circles have to paint over it. */
+  z-index: 1;
 }
 
 /* ── Circle ── */
@@ -75,11 +81,21 @@
 
 /* ── Label ── */
 
+/* Every label is one line, centred on the circle, free to overhang. Figma switches a
+   label to ABSOLUTE the moment it is wider than the 40px column and leaves the ones that
+   fit in flow — but an in-flow label FILLed to 40 and centred lands in exactly the same
+   place, so one rule covers both. `เติมนกแคช` (58 wide) is the first step of the nokcash
+   flow and still overhangs, which is why this is a width question and not a first/last
+   question. */
 .ltp-progress-bar__label {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   text-align: center;
   white-space: nowrap;
   transition: color 0.3s ease;
 }
+
 
 /* ── Connector (line between steps) ── */
 
@@ -89,11 +105,10 @@
   min-width: 0;
 }
 
+/* Figma's rule is wider than the gap it sits in and starts at a negative x, so it tucks
+   under the circle at both ends rather than butting against it. */
 .ltp-progress-bar__connector-track {
   position: absolute;
-  left: 0;
-  right: 0;
-  width: 100%;
 }
 
 .ltp-progress-bar__connector-fill {

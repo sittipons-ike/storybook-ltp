@@ -1,0 +1,38 @@
+{
+  "_comment": "Layout, sizing and typography for breadcrumb. Colours come from the Figma colour mirror; these do not, so they are authored here. Figma component set \"breadcrumb\" (14291:136385), 5 variants (Step 1 - Step 5); the last item is the current page and carries the `selected` state.",
+  "base": {
+    "gap": "{design.semantic.spacing.2xl}",
+    "item-gap": "{design.semantic.spacing.lg}",
+    "typography-family": "{design.semantic.typography.label.md.regular.family}",
+    "typography-size": "{design.semantic.typography.label.md.regular.size}",
+    "typography-line-height": "{design.semantic.typography.label.md.regular.line-height}",
+    "typography-tracking": "{design.semantic.typography.label.md.regular.tracking}",
+    "typography-weight-rest": "{design.semantic.typography.label.md.regular.weight}",
+    "typography-weight-selected": "{design.semantic.typography.label.md.semibold.weight}",
+    "icon-size": 24,
+    "_source": "icon-size — 24px, measured off the `icons-size` instance in every variant. No Figma *variable* backs it because design.md's semantic.iconography.sizes are still `tbd`, so the literal stays here. Measured, not assumed.",
+    "_verified_from": {
+      "node": "14291:136385 — component set `breadcrumb` on page `↳ breadcrumb ✅`",
+      "date": "2026-08-19",
+      "scope": "all 5 variants (State=Step 1..5), every child node",
+      "result": "No discrepancies. Segment gap 16 = spacing.2xl; inside-segment gap 8 = spacing.lg; text 12/18 Regular for past steps and 12/18 Semibold for the current one, which is exactly label.md.regular and label.md.semibold; past-step colour #141414 = secondary-dark; current #E32321 = primary; icon 24; separator is `arrow-right-S` inside an `icons-size Size=24, Colors=Secondary`."
+    },
+    "_figma_icons": {
+      "_comment": "The icons Figma instantiates for this component, read 2026-08-20 by walking the instance tree and keeping every main component whose parent set is `icons`. check-figma-icons.py holds the files in `sources` to exactly this set — an extra icon fails as loudly as a missing one, because an extra is one nobody compared. Files not listed in `sources` carry payload a caller passes, not a choice the design makes.",
+      "nodes": [
+        {
+          "node": "14291:136385",
+          "figma": "breadcrumb",
+          "sources": [
+            "Breadcrumb.tsx"
+          ],
+          "icons": {
+            "arrow-right-S": "the separator, from State=Step 2 onward",
+            "outline-Home": "the first crumb on every State, inside `Frame 1000013522`"
+          }
+        }
+      ]
+    }
+  },
+  "figma_node": "14291:136385"
+}

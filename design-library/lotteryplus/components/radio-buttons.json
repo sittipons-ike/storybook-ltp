@@ -1,0 +1,65 @@
+{
+  "_comment": "Layout, sizing and typography for radio-buttons. Colours come from the Figma colour mirror; these do not, so they are authored here.",
+  "figma_node": "14457:1351",
+  "base": {
+    "_source": {
+      "ring-width": "4px, read off the focus variants of `radio-buttons` (14457:1351) on 2026-08-19: a DROP_SHADOW with blur 0, offset 0 and spread 4 — which is the same construct as the `0 0 0 Npx` ring the component renders. Previously 3, labelled 'storybook-local, no Figma token backs it'. Figma did state it; nobody had looked.",
+      "ring-colour": "The same effect carries the colour at 40% alpha: #D4D4D4 on an unselected radio and #22C55E on a selected one. That matches `--radio-ring-gray` and the green ring already generated from the colour mirror, so no new token is needed."
+    },
+    "radius": "{design.semantic.radius.full}",
+    "size": 20,
+    "dot-size": 12,
+    "border-width": "{design.semantic.border-width.hairline}",
+    "ring-width": 4,
+    "card-radius": "{design.semantic.radius.lg}",
+    "card-height": 44,
+    "card-padding": "{design.semantic.spacing.2xl}",
+    "gap": "{design.semantic.spacing.lg}",
+    "group-gap": "{design.semantic.spacing.sm}",
+    "options-gap": "{design.semantic.spacing.2xl}",
+    "label-padding-left": "{design.semantic.spacing.sm}",
+    "label-gap": "{design.semantic.spacing.sm}",
+    "typography-label-family": "{design.semantic.typography.title.md.medium.family}",
+    "typography-label-size": "{design.semantic.typography.title.md.medium.size}",
+    "typography-label-line-height": "{design.semantic.typography.title.md.medium.line-height}",
+    "typography-label-weight": "{design.semantic.typography.title.md.medium.weight}",
+    "typography-required-family": "{design.semantic.typography.label.md.medium.family}",
+    "typography-required-size": "{design.semantic.typography.label.md.medium.size}",
+    "typography-required-line-height": "{design.semantic.typography.label.md.medium.line-height}",
+    "typography-required-weight": "{design.semantic.typography.label.md.medium.weight}",
+    "typography-optional-family": "{design.semantic.typography.label.md.medium.family}",
+    "typography-optional-size": "{design.semantic.typography.label.md.medium.size}",
+    "typography-optional-line-height": "{design.semantic.typography.label.md.medium.line-height}",
+    "typography-optional-weight": "{design.semantic.typography.label.md.medium.weight}",
+    "typography-option-family": "{design.semantic.typography.button.md.semibold.family}",
+    "typography-option-size": "{design.semantic.typography.button.md.semibold.size}",
+    "typography-option-line-height": "{design.semantic.typography.button.md.semibold.line-height}",
+    "typography-option-weight": "{design.semantic.typography.button.md.semibold.weight}",
+    "typography-error-family": "{design.semantic.typography.caption.md.regular.family}",
+    "typography-error-size": "{design.semantic.typography.caption.md.regular.size}",
+    "typography-error-line-height": "{design.semantic.typography.caption.md.regular.line-height}",
+    "typography-error-weight": "{design.semantic.typography.caption.md.regular.weight}",
+    "_corrections": {
+      "ring-width": "Was 3 with a note claiming Figma states nothing. Figma states 4. The note was the error, not the value's absence — `storybook-local` was being used to mean 'not checked' rather than 'checked and genuinely absent'."
+    },
+    "_verified_from": {
+      "node": "14457:1351",
+      "date": "2026-08-19",
+      "scope": "all 6 variants: size, radius, border, dot, focus effect"
+    },
+    "_figma_icons": {
+      "_comment": "The icons Figma instantiates for this component, read 2026-08-20 by walking the instance tree and keeping every main component whose parent set is `icons`. An icon Figma hides by default belongs in `icons` only when this component implements the state that reveals it; otherwise it is recorded under _figma_gaps instead, so the gate is not asking for a feature nobody built.",
+      "nodes": [
+        {
+          "node": "14457:1351",
+          "figma": "radio-buttons",
+          "note": "This component draws no icon at all in Figma. Recorded so that one appearing later has to be justified rather than slipping in.",
+          "sources": [
+            "RadioButton.tsx"
+          ],
+          "icons": {}
+        }
+      ]
+    }
+  }
+}

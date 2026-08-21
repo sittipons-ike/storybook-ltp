@@ -1,22 +1,25 @@
 import React from 'react';
-import {
-  SPACING,
-  RADIUS,
-  BORDER_WIDTH,
-  TYPOGRAPHY,
-  NAV_COLORS,
-  NAV_DIMENSIONS,
-  CART_GRADIENT,
-} from './tokens';
 import Icon from '../../icons/Icon';
-import '../../icons/icon-data';
+import '../../icons/icon-data'; // register all icons
+import '../../foundations/tokens.css';
+import {
+  NAVIGATION,
+  NAVIGATION_ICON,
+  NAVIGATION_DEFAULT_WIDTH,
+  navigationColors,
+  type NavigationState,
+} from './tokens';
 
 // ═══════════════════════════════════════════
 //  NavigationBar — Lotteryplus Design System
 //  Figma component set: "navigation-bar-v2" (14291:135864)
 //  10 variants: 5 states x 2 add-to-cart modes
-//  States: home | order | cart | safe | profile
+//  Selected key: home | order | cart | safe | profile
 //  Add-to-cart: no (normal) | yes (gradient cart button)
+//
+//  Every style value is a CSS custom property from foundations/tokens.css, which is
+//  generated from Figma via design.md + components.json + components/navigation-bar.json.
+//  There are no literal colours, sizes, or font values in this file.
 // ═══════════════════════════════════════════
 
 export interface NavItem {
@@ -26,15 +29,17 @@ export interface NavItem {
   label: string;
   /** Outline icon name (inactive state) */
   icon: string;
-  /** Filled icon name (active state) */
+  /** Filled icon name (selected state) */
   filledIcon: string;
   /** Label for cart mode (only for cart item) */
   cartLabel?: string;
+  /** Canonical `disabled` state — the item renders but cannot be chosen */
+  disabled?: boolean;
 }
 
 export interface NavigationBarProps {
-  /** Currently active tab key: 'home' | 'order' | 'cart' | 'safe' | 'profile' */
-  activeKey: string;
+  /** Currently selected tab key: 'home' | 'order' | 'cart' | 'safe' | 'profile' */
+  selectedKey: string;
   /** Click handler for nav items */
   onItemClick?: (key: string) => void;
   /** Nav items configuration */
@@ -49,8 +54,18 @@ export interface NavigationBarProps {
   showOrderBadge?: boolean;
   /** Badge count on safe item (outlined circle with number) */
   safeBadgeCount?: number;
-  /** Container width (default 390px mobile) */
+  /** Container width (defaults to the `--navigation-width` token) */
   width?: number;
+  /**
+   * Span the parent instead of Figma's fixed 390.
+   *
+   * Figma draws the bar on a 390pt canvas and divides it into five 78pt items, so 390 is
+   * the reference, not a constraint. A real iPhone 16 is 393pt wide and a fixed 390 leaves
+   * a 3pt strip of page showing beside a bar that is supposed to be pinned to the edge.
+   * With this on, the items divide whatever width they are given — which is what the
+   * fixed numbers were describing all along.
+   */
+  fullWidth?: boolean;
   /** Additional className */
   className?: string;
 }
@@ -58,13 +73,68 @@ export interface NavigationBarProps {
 const DEFAULT_ITEMS: NavItem[] = [
   { key: 'home', label: 'หน้าแรก', icon: 'outline-Home', filledIcon: 'filled-Home' },
   { key: 'order', label: 'คำสั่งซื้อ', icon: 'outline-order', filledIcon: 'filled-order' },
-  { key: 'cart', label: 'ตะกร้า', icon: 'outline-cart', filledIcon: 'filled-cart', cartLabel: 'ไปที่ตะกร้า' },
+  // The cart keeps `outline-cart` selected or not. Figma's `state` property lists
+  // home | order | safe | profile | not — there is no `state=cart`, and all ten
+  // variants draw the cart with the outline glyph. `filled-cart` exists in the icon
+  // set but no Figma node uses it, so it is not a default here. See
+  // components/navigation-bar.json > _figma_gaps > cart-has-no-selected-state.
+  { key: 'cart', label: 'ตะกร้า', icon: 'outline-cart', filledIcon: 'outline-cart', cartLabel: 'ไปที่ตะกร้า' },
   { key: 'safe', label: 'ตู้เซฟ', icon: 'outline-safe', filledIcon: 'filled-safe' },
   { key: 'profile', label: 'สมาชิก', icon: 'outline-member', filledIcon: 'filled-member' },
 ];
 
+/** Canonical precedence: disabled beats selected beats active beats focus beats hover. */
+const resolveState = (flags: {
+  disabled?: boolean;
+  selected: boolean;
+  active: boolean;
+  focused: boolean;
+  hovered: boolean;
+}): NavigationState =>
+  flags.disabled
+    ? 'disabled'
+    : flags.selected
+    ? 'selected'
+    : flags.active
+    ? 'active'
+    : flags.focused
+    ? 'focus'
+    : flags.hovered
+    ? 'hover'
+    : 'rest';
+
+/** Shared label typography — typography/button/xs/medium. */
+const labelStyle: React.CSSProperties = {
+  fontFamily: NAVIGATION.fontFamily,
+  fontSize: NAVIGATION.fontSize,
+  fontWeight: NAVIGATION.fontWeight as unknown as React.CSSProperties['fontWeight'],
+  lineHeight: NAVIGATION.lineHeight,
+  letterSpacing: NAVIGATION.tracking,
+  whiteSpace: 'nowrap',
+  textAlign: 'center',
+};
+
+/** Shared count-badge chrome — white disc, accent ring, accent numeral. */
+const badgeStyle: React.CSSProperties = {
+  position: 'absolute',
+  zIndex: 1,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: NAVIGATION.badgeSize,
+  height: NAVIGATION.badgeSize,
+  borderRadius: NAVIGATION.badgeRadius,
+  backgroundColor: NAVIGATION.background,
+  border: `${NAVIGATION.badgeBorderWidth} solid ${NAVIGATION.foregroundAccent}`,
+  fontFamily: NAVIGATION.fontFamily,
+  fontSize: NAVIGATION.fontSize,
+  fontWeight: NAVIGATION.fontWeight as unknown as React.CSSProperties['fontWeight'],
+  lineHeight: NAVIGATION.badgeLineHeight,
+  color: NAVIGATION.foregroundAccent,
+};
+
 const NavigationBar: React.FC<NavigationBarProps> = ({
-  activeKey,
+  selectedKey,
   onItemClick,
   items = DEFAULT_ITEMS,
   showAddToCart = false,
@@ -72,10 +142,13 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
   cartBadgeCount,
   showOrderBadge,
   safeBadgeCount,
-  width = NAV_DIMENSIONS.outerWidth,
+  width = NAVIGATION_DEFAULT_WIDTH,
+  fullWidth = false,
   className = '',
 }) => {
-  const itemWidth = width / items.length;
+  const boxWidth: number | string = fullWidth ? '100%' : width;
+  // When the bar flexes, the items flex with it; otherwise they keep Figma's 78pt.
+  const itemWidth = fullWidth ? undefined : width / items.length;
 
   return (
     <div
@@ -83,9 +156,11 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
       style={{
         display: 'flex',
         flexDirection: 'column',
-        width,
-        height: NAV_DIMENSIONS.outerHeight,
-        backgroundColor: NAV_COLORS.bgWhite,
+        width: boxWidth,
+        height: NAVIGATION.height,
+        // No background. Figma paints white on the 68px items and on the home-indicator
+        // strip, not on the container — so the top 22px of the bar is see-through and the
+        // page shows behind it. Checked on all 10 variants: root fill NONE, bar fill NONE.
       }}
     >
       {/* ── Navbar-Mobile: 5 nav items ── */}
@@ -95,14 +170,12 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
           flexDirection: 'row',
           alignItems: 'flex-end',
           justifyContent: 'center',
-          width,
-          height: NAV_DIMENSIONS.navbarHeight,
-          // Top border: 1px colors/navigation-bar/navigation-border
-          borderTop: `${BORDER_WIDTH[1]}px solid ${NAV_COLORS.border}`,
+          width: boxWidth,
+          height: NAVIGATION.barHeight,
         }}
       >
         {items.map((item) => {
-          const isActive = item.key === activeKey;
+          const selected = item.key === selectedKey;
           const isCart = item.key === 'cart';
           const isOrder = item.key === 'order';
           const isSafe = item.key === 'safe';
@@ -113,16 +186,28 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
 
           // Cart in add-to-cart mode
           if (isCart && showAddToCart) {
+            // Figma nests this: the `Cart` item is a white 78x90 cell and the gradient card
+            // fills it. The card's 8px corners are where the white actually shows.
             return (
-              <CartButton
+              <div
                 key={item.key}
-                item={item}
-                isActive={isActive}
-                cartTimer={cartTimer}
-                cartBadgeCount={cartBadgeCount}
-                onClick={() => onItemClick?.(item.key)}
-                width={itemWidth}
-              />
+                style={{
+                  display: 'flex',
+                  width: itemWidth,
+                  flex: itemWidth === undefined ? 1 : undefined,
+                  minWidth: 0,
+                  height: NAVIGATION.cartHeight,
+                  backgroundColor: NAVIGATION.background,
+                }}
+              >
+                <CartButton
+                  item={item}
+                  selected={selected}
+                  cartTimer={cartTimer}
+                  cartBadgeCount={cartBadgeCount}
+                  onClick={() => onItemClick?.(item.key)}
+                />
+              </div>
             );
           }
 
@@ -130,7 +215,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
             <NavItemButton
               key={item.key}
               item={item}
-              isActive={isActive}
+              selected={selected}
               showFilledBadge={showFilledBadge}
               outlineBadgeCount={outlineBadgeCount}
               onClick={() => onItemClick?.(item.key)}
@@ -146,17 +231,18 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
           display: 'flex',
           alignItems: 'flex-end',
           justifyContent: 'center',
-          width,
-          height: NAV_DIMENSIONS.homeIndicatorContainerHeight,
-          paddingBottom: 8,
+          width: boxWidth,
+          height: NAVIGATION.homeIndicatorContainerHeight,
+          paddingBottom: NAVIGATION.homeIndicatorPaddingBottom,
+          backgroundColor: NAVIGATION.background,
         }}
       >
         <div
           style={{
-            width: NAV_DIMENSIONS.homeIndicatorWidth,
-            height: NAV_DIMENSIONS.homeIndicatorHeight,
-            backgroundColor: NAV_DIMENSIONS.homeIndicatorColor,
-            borderRadius: NAV_DIMENSIONS.homeIndicatorRadius,
+            width: NAVIGATION.homeIndicatorWidth,
+            height: NAVIGATION.homeIndicatorHeight,
+            backgroundColor: NAVIGATION.homeIndicatorColor,
+            borderRadius: NAVIGATION.homeIndicatorRadius,
           }}
         />
       </div>
@@ -169,130 +255,141 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
 // ═══════════════════════════════════════════
 interface NavItemButtonProps {
   item: NavItem;
-  isActive: boolean;
-  /** Show filled-Error-2 badge (Order style — red filled circle with !) */
+  selected: boolean;
+  /** Show filled-Error-2 badge (Order style — accent filled circle with !) */
   showFilledBadge?: boolean;
-  /** Show outlined badge with count (Safe style — white bg, red stroke, number) */
+  /** Show outlined badge with count (Safe style — white bg, accent ring, number) */
   outlineBadgeCount?: number;
   onClick: () => void;
-  width: number;
+  /** Fixed item width, or undefined when the bar flexes and items share it evenly. */
+  width?: number;
 }
 
 const NavItemButton: React.FC<NavItemButtonProps> = ({
   item,
-  isActive,
+  selected,
   showFilledBadge,
   outlineBadgeCount,
   onClick,
   width,
 }) => {
+  const [hovered, setHovered] = React.useState(false);
+  const [focused, setFocused] = React.useState(false);
+  const [active, setActive] = React.useState(false);
+
+  const state = resolveState({
+    disabled: item.disabled,
+    selected,
+    active,
+    focused,
+    hovered,
+  });
+  const colors = navigationColors(state);
+  const disabled = state === 'disabled';
+
   return (
     <button
       type="button"
       className="ltp-navbar__item"
-      onClick={onClick}
-      aria-current={isActive ? 'page' : undefined}
+      onClick={disabled ? undefined : onClick}
+      disabled={disabled}
+      aria-current={selected ? 'page' : undefined}
+      onMouseEnter={() => !disabled && setHovered(true)}
+      onMouseLeave={() => {
+        if (!disabled) {
+          setHovered(false);
+          setActive(false);
+        }
+      }}
+      onFocus={() => !disabled && setFocused(true)}
+      onBlur={() => !disabled && setFocused(false)}
+      onMouseDown={() => !disabled && setActive(true)}
+      onMouseUp={() => !disabled && setActive(false)}
       style={{
         position: 'relative',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'flex-start',
+        // No fixed width means the bar is flexing; share the row evenly instead.
         width,
-        height: NAV_DIMENSIONS.itemHeight,
-        // Padding: top=0/right=4/bottom=12/left=4
-        // spacing-none / spacing-sm / spacing-xl / spacing-sm
-        paddingTop: NAV_DIMENSIONS.itemPaddingTop,
-        paddingRight: NAV_DIMENSIONS.itemPaddingRight,
-        paddingBottom: NAV_DIMENSIONS.itemPaddingBottom,
-        paddingLeft: NAV_DIMENSIONS.itemPaddingLeft,
-        gap: 0,
-        backgroundColor: NAV_COLORS.bgWhite,
+        flex: width === undefined ? 1 : undefined,
+        minWidth: 0,
+        height: NAVIGATION.itemHeight,
+        paddingTop: NAVIGATION.itemPaddingTop,
+        paddingRight: NAVIGATION.itemPaddingX,
+        paddingBottom: NAVIGATION.itemPaddingBottom,
+        paddingLeft: NAVIGATION.itemPaddingX,
+        gap: NAVIGATION.itemGap,
+        backgroundColor: NAVIGATION.background,
+        // Figma strokes 1px INSIDE on the item's top edge only. The five items tile with no
+        // gap, so their strokes form the continuous line across the bar.
         border: 'none',
-        cursor: 'pointer',
+        borderTop: `${NAVIGATION.borderWidth} solid ${NAVIGATION.borderColor}`,
+        boxSizing: 'border-box',
+        cursor: disabled ? 'not-allowed' : 'pointer',
         outline: 'none',
       }}
     >
-      {/* Selector bar: 70 x 4, bottom corners rounded 2px */}
-      {/* Figma: cornerRadius bl:2 br:2, gap to content = 10px (spacing-2lg) */}
+      {/* Selector bar — bottom corners rounded, hidden by taking the bar background */}
       <div
         style={{
-          width: NAV_DIMENSIONS.selectorBarWidth,
-          height: NAV_DIMENSIONS.selectorBarHeight,
-          backgroundColor: isActive
-            ? NAV_COLORS.fgRed      // colors/navigation-bar/navigation-fg-red
-            : NAV_COLORS.bgWhite,   // colors/navigation-bar/navigation-bg-white (invisible)
-          borderRadius: '0 0 2px 2px', // bottom-left:2 bottom-right:2
+          width: NAVIGATION.selectorWidth,
+          height: NAVIGATION.selectorHeight,
+          backgroundColor: colors.selector,
+          borderRadius: `0 0 ${NAVIGATION.selectorRadius} ${NAVIGATION.selectorRadius}`,
           flexShrink: 0,
         }}
       />
 
       {/* Content frame: icon + label, centered */}
-      {/* Gap between selector bar and content: 10px (spacing-2lg) from Figma itemSpacing */}
       <div
         style={{
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          width: NAV_DIMENSIONS.contentFrameWidth,
-          height: NAV_DIMENSIONS.contentFrameHeight,
-          gap: 0,
-          marginTop: 10, // spacing-2lg gap between selector bar and content
+          width: NAVIGATION.contentWidth,
+          height: NAVIGATION.contentHeight,
+          gap: NAVIGATION.itemGap,
+          marginTop: NAVIGATION.contentOffset,
           position: 'relative',
         }}
       >
         {/* Icon with badge wrapper */}
         <div style={{ position: 'relative', display: 'inline-flex' }}>
           <Icon
-            name={isActive ? item.filledIcon : item.icon}
-            size={NAV_DIMENSIONS.iconSize as 24}
-            color={isActive ? 'primary' : 'tertiary'}
+            name={selected ? item.filledIcon : item.icon}
+            size={NAVIGATION_ICON.size}
+            customColor={colors.icon}
           />
 
-          {/* Order-style badge: filled-Error-2 icon (20×20) overlapping icon top-right */}
-          {/* Figma: icons-size Size=20 Colors=Primary at x:38 y:8 → overlaps icon corner */}
+          {/* Order-style badge: filled-Error-2 icon overlapping the icon's top-right */}
           {showFilledBadge && (
             <span
               style={{
                 position: 'absolute',
-                top: -6,
-                right: -8,
+                top: NAVIGATION.orderBadgeOffsetTop,
+                right: NAVIGATION.orderBadgeOffsetRight,
                 zIndex: 1,
                 display: 'flex',
               }}
             >
               <Icon
                 name="filled-Error-2"
-                size={20}
-                customColor={NAV_COLORS.fgRed}
+                size={NAVIGATION_ICON.orderBadgeSize}
+                customColor={NAVIGATION.foregroundAccent}
               />
             </span>
           )}
 
-          {/* Safe-style badge: outlined circle (16×16) with count number */}
-          {/* Figma: Badge Frame at x:39 y:-5.4 within Content, radius:24, */}
-          {/* white bg + 1.5px red stroke, text 10px Medium red */}
+          {/* Safe-style badge: outlined circle with count number */}
           {outlineBadgeCount !== undefined && outlineBadgeCount > 0 && (
             <span
               style={{
-                position: 'absolute',
-                top: -5,
-                right: -7,
-                zIndex: 1,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 16,
-                height: 16,
-                borderRadius: 24,
-                backgroundColor: NAV_COLORS.bgWhite,
-                border: `1.5px solid ${NAV_COLORS.fgRed}`,
-                fontFamily: TYPOGRAPHY.fontFamily,
-                fontSize: 10,
-                fontWeight: 500,
-                lineHeight: 1,
-                color: NAV_COLORS.fgRed,
+                ...badgeStyle,
+                top: NAVIGATION.badgeOffsetTop,
+                right: NAVIGATION.badgeOffsetRight,
               }}
             >
               {outlineBadgeCount}
@@ -301,21 +398,7 @@ const NavItemButton: React.FC<NavItemButtonProps> = ({
         </div>
 
         {/* Label text */}
-        <span
-          style={{
-            fontFamily: TYPOGRAPHY.fontFamily,
-            fontSize: TYPOGRAPHY.fontSize,
-            fontWeight: TYPOGRAPHY.fontWeight,
-            lineHeight: TYPOGRAPHY.lineHeight,
-            color: isActive
-              ? NAV_COLORS.fgRed   // colors/navigation-bar/navigation-fg-red
-              : NAV_COLORS.fgDark, // colors/navigation-bar/navigation-fg-dark
-            whiteSpace: 'nowrap',
-            textAlign: 'center',
-          }}
-        >
-          {item.label}
-        </span>
+        <span style={{ ...labelStyle, color: colors.foreground }}>{item.label}</span>
       </div>
     </button>
   );
@@ -323,78 +406,65 @@ const NavItemButton: React.FC<NavItemButtonProps> = ({
 
 // ═══════════════════════════════════════════
 //  Cart Button (add-to-cart mode)
-//  Gradient background, timer pill, white badge
+//  Gradient background, timer pill, count badge
 // ═══════════════════════════════════════════
 interface CartButtonProps {
   item: NavItem;
-  isActive: boolean;
+  selected: boolean;
   cartTimer?: string;
   cartBadgeCount?: number;
   onClick: () => void;
-  width: number;
 }
 
 const CartButton: React.FC<CartButtonProps> = ({
   item,
-  isActive,
+  selected,
   cartTimer,
   cartBadgeCount,
   onClick,
-  width,
 }) => {
+  const disabled = item.disabled === true;
+
   return (
     <button
       type="button"
       className="ltp-navbar__cart-button"
-      onClick={onClick}
-      aria-current={isActive ? 'page' : undefined}
+      onClick={disabled ? undefined : onClick}
+      disabled={disabled}
+      aria-current={selected ? 'page' : undefined}
       style={{
         position: 'relative',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        width,
-        height: NAV_DIMENSIONS.cartButtonHeight,
-        // Padding: spacing-sm top/bottom/left/right, bottom=0
-        padding: `${SPACING.sm}px ${SPACING.sm}px 0 ${SPACING.sm}px`,
-        gap: 2,
-        background: CART_GRADIENT,
-        borderRadius: NAV_DIMENSIONS.cartButtonRadius, // radius-lg = 8px
+        width: '100%',
+        height: '100%',
+        paddingTop: NAVIGATION.cartPadding,
+        paddingRight: NAVIGATION.cartPadding,
+        paddingBottom: NAVIGATION.cartPaddingBottom,
+        paddingLeft: NAVIGATION.cartPadding,
+        gap: NAVIGATION.cartGap,
+        background: NAVIGATION.cartGradient,
+        borderRadius: NAVIGATION.cartRadius,
         border: 'none',
-        cursor: 'pointer',
+        cursor: disabled ? 'not-allowed' : 'pointer',
         outline: 'none',
-        alignSelf: 'flex-end',
       }}
     >
-      {/* Cart icon with outlined badge overlapping top-right corner */}
-      {/* Figma: Badge 16×16 at x:39.7 y:-3.4 within Content, icon at x:23 y:0 */}
+      {/* Cart icon with outlined badge overlapping the top-right corner */}
       <div style={{ position: 'relative', display: 'inline-flex' }}>
         <Icon
           name={item.icon}
-          size={NAV_DIMENSIONS.iconSize as 24}
-          color="onBg"
+          size={NAVIGATION_ICON.size}
+          customColor={NAVIGATION.foregroundOnCart}
         />
         {cartBadgeCount !== undefined && cartBadgeCount > 0 && (
           <span
             style={{
-              position: 'absolute',
-              top: -3,
-              right: -7,
-              zIndex: 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: 16,
-              height: 16,
-              borderRadius: 24,
-              backgroundColor: NAV_COLORS.bgWhite,
-              border: `1.5px solid ${NAV_COLORS.fgRed}`,
-              fontFamily: TYPOGRAPHY.fontFamily,
-              fontSize: 10,
-              fontWeight: 500,
-              lineHeight: 1,
-              color: NAV_COLORS.fgRed,
+              ...badgeStyle,
+              top: NAVIGATION.cartBadgeOffsetTop,
+              right: NAVIGATION.cartBadgeOffsetRight,
             }}
           >
             {cartBadgeCount}
@@ -403,17 +473,7 @@ const CartButton: React.FC<CartButtonProps> = ({
       </div>
 
       {/* Cart label: "ไปที่ตะกร้า" */}
-      <span
-        style={{
-          fontFamily: TYPOGRAPHY.fontFamily,
-          fontSize: TYPOGRAPHY.fontSize,
-          fontWeight: TYPOGRAPHY.fontWeight,
-          lineHeight: TYPOGRAPHY.lineHeight,
-          color: NAV_COLORS.fgWhite,
-          whiteSpace: 'nowrap',
-          textAlign: 'center',
-        }}
-      >
+      <span style={{ ...labelStyle, color: NAVIGATION.foregroundOnCart }}>
         {item.cartLabel || item.label}
       </span>
 
@@ -424,17 +484,17 @@ const CartButton: React.FC<CartButtonProps> = ({
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            paddingLeft: NAV_DIMENSIONS.timerPillPaddingX,
-            paddingRight: NAV_DIMENSIONS.timerPillPaddingX,
-            paddingTop: NAV_DIMENSIONS.timerPillPaddingY,
-            paddingBottom: NAV_DIMENSIONS.timerPillPaddingY,
-            border: `${NAV_DIMENSIONS.timerPillBorderWidth}px solid ${NAV_DIMENSIONS.timerPillBorderColor}`,
-            borderRadius: NAV_DIMENSIONS.timerPillRadius, // radius-full
-            fontFamily: TYPOGRAPHY.fontFamily,
-            fontSize: NAV_DIMENSIONS.timerFontSize,
-            fontWeight: TYPOGRAPHY.fontWeight,
-            lineHeight: 1,
-            color: NAV_COLORS.fgWhite,
+            paddingLeft: NAVIGATION.timerPaddingX,
+            paddingRight: NAVIGATION.timerPaddingX,
+            paddingTop: NAVIGATION.timerPaddingY,
+            paddingBottom: NAVIGATION.timerPaddingY,
+            border: `${NAVIGATION.timerBorderWidth} solid ${NAVIGATION.foregroundOnCart}`,
+            borderRadius: NAVIGATION.timerRadius,
+            fontFamily: NAVIGATION.fontFamily,
+            fontSize: NAVIGATION.fontSize,
+            fontWeight: NAVIGATION.fontWeight as unknown as React.CSSProperties['fontWeight'],
+            lineHeight: NAVIGATION.timerLineHeight,
+            color: NAVIGATION.foregroundOnCart,
           }}
         >
           {cartTimer}

@@ -1,0 +1,15 @@
+/* ═══════════════════════════════════════════
+   Divider — Lotteryplus Design System
+
+   Structure only; colour and thickness are tokens applied in Divider.tsx.
+
+   Figma has no divider component. The tone axis is Figma's `colors/divider` semantic
+   group; the shape comes from the Frontend's `common/dash-line`.
+   ═══════════════════════════════════════════ */
+
+.ltp-divider {
+  box-sizing: border-box;
+  width: 100%;
+  border: 0;
+  margin: 0;
+}

@@ -1,0 +1,311 @@
+{
+  "$meta": {
+    "purpose": "The page tier. Every route the Frontend ships, what it composes, and which of them Storybook holds — so a page is built from evidence rather than from a screenshot.",
+    "generated": "2026-08-21",
+    "goal": "Storybook holds a page for every Frontend route. Every item inside a page comes from this repo. Acceptance: no page reaches for a raw token, and every component it uses has been renamed per the Lark Standard.",
+    "method": {
+      "routes": "Every .tsx under lotteryplus-frontend-main/src/pages, minus _app, _document, 404, 500, the API route and the sitemap: 78 routes.",
+      "shape": "Read on 2026-08-21. Each page is the same two lines: a <Layout> carrying slot flags, wrapping exactly one body component. Nothing else. That is why the page tier is tractable — the shell is already modelled as AppShell, and the body is a composition of components.",
+      "selection": "The first six are the five destinations the bottom navbar can reach plus the lotto board, which is the product's core surface. Chosen because the navbar defines them as top-level, not by traffic — no analytics were consulted."
+    }
+  },
+  "slot_mapping": {
+    "_note": "The Frontend's Layout flags and AppShell's slots are the same six regions under different names. This table is the translation; a page that cannot be expressed through it is a finding, not a workaround.",
+    "hasTopNavbar + navbarType": "topNavbar",
+    "hasHeader": "header",
+    "hasBottomNavbar": "bottomNavbar",
+    "hasFooter": "footer",
+    "page body": "children",
+    "status bar": "statusBar — a device chrome AppShell adds and the Frontend has no equivalent for, because a browser draws its own",
+    "hasPaddingTop / isSquaredHeader / hasCurvedHeader / isShowPhoenixHeader": "cosmetic flags on the header fill, not slots. AppShell's headerStyle covers the squared/curved axis; the phoenix is a Header prop.",
+    "isPrivate / isDisableDetail / isDisabledTitle": "auth and data concerns. They decide what the app renders, not how the shell is laid out, so they do not cross into the library."
+  },
+  "navbar_types": {
+    "_note": "The Frontend's navbarType has four values. The library covers three. Read from components/layout/index.tsx on 2026-08-21.",
+    "default": {
+      "library": "Header variant=home",
+      "status": "covered"
+    },
+    "compact": {
+      "library": "Header variant=sub",
+      "status": "covered"
+    },
+    "profile": {
+      "library": "ProfileHeader",
+      "status": "covered"
+    },
+    "big_title": {
+      "library": null,
+      "status": "FOUND IN FIGMA, ORPHANED",
+      "figma_node": "14924:2116",
+      "figma_name": "top-navigation-mobile/lottery/main-page",
+      "figma_spec": "390x72, HORIZONTAL, gap 8, padding 0/16. Red bg with the 104x104 phoenix at x=287 y=23, bleeding right and bottom. A 314-wide `heading` column holding `text-heading` at 20/36 Semibold, left-aligned, with a 14/24 subtitle hidden by default. `icon-right` is the usual 36x36 tertiary button at x=338. Read 2026-08-21.",
+      "orphaned": "parent === null — it sits loose on the header page instead of inside `header-bar-mobile`, so it is not a variant of anything and Figma's own component panel cannot find it. This is the same node the inventory already flagged: 35 instances across the tabs, orders and All-page-in-App pages point at it.",
+      "authority": "Figma HAS this, so Figma wins — it is built from 14924:2116, not from the Frontend. The amended rule does not apply here.",
+      "frontend_disagrees": "The Frontend's `nav_big_title` is 96 tall (h-24) against Figma's 72, and centres nothing — otherwise the same shape. 24px is not a rounding difference, so one of the two is stale. Figma is the authority; the Frontend's height is recorded as the discrepancy.",
+      "used_by": [
+        "/orders/[[...type]]"
+      ],
+      "decision_needed": "A designer needs to adopt 14924:2116 into the `header-bar-mobile` set as a fourth variant, or state that it is retired and the Frontend's 96 is correct. Until then the library can build it, but it cannot be verified against a set."
+    }
+  },
+  "first_six": [
+    {
+      "route": "/",
+      "frontend_page": "src/pages/index.tsx",
+      "body": "components/home",
+      "layout_flags": [
+        "hasTopNavbar",
+        "hasPaddingTop",
+        "isShowPhoenixHeader",
+        "hasBottomNavbar",
+        "hasHeader"
+      ],
+      "shell": {
+        "topNavbar": "Header variant=home",
+        "header": "Header variant=home",
+        "bottomNavbar": "NavigationBar selected=home",
+        "footer": null
+      },
+      "body_sections": [
+        "HomeBannerSection",
+        "LotterySearchAndAnnouncements",
+        "LotteryLists",
+        "LotteryDetail",
+        "PreOrder",
+        "Footer",
+        "TwentyYearsModal"
+      ],
+      "library_covers": [
+        "Header",
+        "NavigationBar",
+        "Footer",
+        "Button",
+        "Skeleton",
+        "LotteryCard",
+        "Modal"
+      ],
+      "not_yet": [
+        "HomeBannerSection",
+        "LotterySearchAndAnnouncements",
+        "LotteryLists",
+        "PreOrder"
+      ]
+    },
+    {
+      "route": "/lottoboard",
+      "frontend_page": "src/pages/lottoboard/index.tsx",
+      "body": "components/lottoboard",
+      "layout_flags": [
+        "hasTopNavbar",
+        "hasPaddingTop",
+        "hasCurvedHeader",
+        "isShowPhoenixHeader",
+        "hasBottomNavbar",
+        "hasCompactNavbar",
+        "hasFooter"
+      ],
+      "shell": {
+        "topNavbar": "Header variant=sub",
+        "header": null,
+        "bottomNavbar": "NavigationBar",
+        "footer": "Footer"
+      },
+      "body_sections": [
+        "LotterySearch",
+        "LotterySearchBox",
+        "LottoCardsContainer",
+        "LottoCardsContainerSkeleton",
+        "ScrollToTopButton"
+      ],
+      "library_covers": [
+        "Header",
+        "NavigationBar",
+        "Footer",
+        "LottoBoard (SearchCard, NumberSearchBox, MenuButton, SetSelect)",
+        "Skeleton",
+        "InfiniteScroll"
+      ],
+      "not_yet": [
+        "ScrollToTopButton",
+        "LottoCardsContainer"
+      ],
+      "note": "The closest to buildable today — LottoBoard already models the search card, the number box, the menu buttons and the set stepper."
+    },
+    {
+      "route": "/cart",
+      "frontend_page": "src/pages/cart/index.tsx",
+      "body": "components/cart (+ cart/cart-empty)",
+      "layout_flags": [
+        "isPrivate",
+        "hasTopNavbar",
+        "navbarType.mobile=compact",
+        "isDisableDetail",
+        "hasFooter"
+      ],
+      "shell": {
+        "topNavbar": "Header variant=sub",
+        "header": null,
+        "bottomNavbar": null,
+        "footer": "ActionBar"
+      },
+      "body_sections": [
+        "CreditSafeToggler",
+        "NokCashCreditToggler",
+        "DiscountSummary",
+        "DetailLineItem",
+        "JidridPickedDisplayList",
+        "LotterySetDisplayModal",
+        "DialogModal",
+        "CartEmpty"
+      ],
+      "library_covers": [
+        "Header",
+        "ActionBar",
+        "Checkbox",
+        "Divider",
+        "ToggleSwitch",
+        "Modal",
+        "LotteryCard",
+        "ErrorState"
+      ],
+      "not_yet": [
+        "CreditSafeToggler",
+        "NokCashCreditToggler",
+        "DiscountSummary",
+        "DetailLineItem"
+      ],
+      "note": "Has two shapes — filled and empty. ErrorState already covers the empty one's anatomy."
+    },
+    {
+      "route": "/orders/[[...type]]",
+      "frontend_page": "src/pages/orders/[[...type]].tsx",
+      "body": "components/order",
+      "layout_flags": [
+        "isPrivate",
+        "hasTopNavbar",
+        "hasBottomNavbar",
+        "isShowPhoenixHeader",
+        "navbarType.mobile=big_title",
+        "hasFooter"
+      ],
+      "shell": {
+        "topNavbar": "Header — needs the big_title shape, Figma 14924:2116 (orphaned)",
+        "header": null,
+        "bottomNavbar": "NavigationBar selected=order",
+        "footer": "Footer"
+      },
+      "body_sections": [
+        "TabsOrderType",
+        "TabsOrderDesktop",
+        "OrderLottery",
+        "OrderNokCash"
+      ],
+      "library_covers": [
+        "NavigationBar",
+        "Footer",
+        "Tabs",
+        "LotteryCard",
+        "CountdownTimer"
+      ],
+      "not_yet": [
+        "big_title top navbar (spec known, node orphaned)",
+        "OrderLottery",
+        "OrderNokCash"
+      ],
+      "note": "No longer blocked on discovery — the shape is fully measured off Figma 14924:2116. Blocked only on whether that orphan is adopted as a fourth variant."
+    },
+    {
+      "route": "/safe",
+      "frontend_page": "src/pages/safe/index.tsx",
+      "body": "components/my-safe",
+      "layout_flags": [
+        "isPrivate",
+        "hasTopNavbar",
+        "hasHeader",
+        "hasPaddingTop",
+        "hasBottomNavbar",
+        "navbarType=profile",
+        "isDisabledTitle"
+      ],
+      "shell": {
+        "topNavbar": "ProfileHeader",
+        "header": "Header variant=home",
+        "bottomNavbar": "NavigationBar selected=safe",
+        "footer": null
+      },
+      "body_sections": [
+        "MySafeHeader",
+        "MySafeSummaryLottery",
+        "MySafePrizes",
+        "MySafeSectionAllPage",
+        "TabsSummaryAllLottery",
+        "MySafeEmpty",
+        "LoadingScreen"
+      ],
+      "library_covers": [
+        "ProfileHeader",
+        "Header",
+        "NavigationBar",
+        "Tabs",
+        "Button",
+        "Loading",
+        "ErrorState",
+        "LotteryCard"
+      ],
+      "not_yet": [
+        "MySafeSummaryLottery",
+        "MySafePrizes",
+        "MySafeSectionAllPage"
+      ]
+    },
+    {
+      "route": "/profile",
+      "frontend_page": "src/pages/profile/index.tsx",
+      "body": "components/profile",
+      "layout_flags": [
+        "isPrivate",
+        "hasTopNavbar",
+        "navbarType=profile",
+        "isDisabledTitle",
+        "hasPaddingTop",
+        "hasHeader",
+        "hasBottomNavbar"
+      ],
+      "shell": {
+        "topNavbar": "ProfileHeader",
+        "header": "Header variant=home",
+        "bottomNavbar": "NavigationBar selected=profile",
+        "footer": null
+      },
+      "body_sections": [
+        "Alert",
+        "AffiliateBanner",
+        "CouponBanner",
+        "NokShopBanner",
+        "HelpInfo"
+      ],
+      "library_covers": [
+        "ProfileHeader",
+        "Header",
+        "NavigationBar",
+        "Alert",
+        "Button",
+        "Divider",
+        "TitleWithUnderline"
+      ],
+      "not_yet": [
+        "AffiliateBanner",
+        "CouponBanner",
+        "NokShopBanner",
+        "HelpInfo"
+      ],
+      "note": "The lightest of the six, and the one that uses Alert — the component whose single call site nearly got it cut."
+    }
+  ],
+  "questions_for_the_team": [
+    "big_title exists in Figma as an orphan (14924:2116, 390x72) that 35 instances already point at, but it belongs to no component set. Adopt it into `header-bar-mobile` as a fourth variant? And which height is current — Figma's 72 or the Frontend's 96?",
+    "A page in Storybook cannot be a pixel copy of the Frontend's — /profile alone imports 19 modules, and most are product content (banners, help blocks) rather than design-system parts. Proposal: a page story is the shell plus the section structure, with product blocks stubbed at their real size and named, so what is missing is legible rather than faked. Confirm before the first page is built.",
+    "The remaining 72 routes are unranked. Order them by product priority, or by how much they reuse of what already exists?"
+  ]
+}

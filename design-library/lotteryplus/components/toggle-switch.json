@@ -1,0 +1,52 @@
+{
+  "_comment": "Layout, sizing and motion for toggle-switch. Colours come from the Figma colour mirror; these do not, so they are authored here. Figma: toggle-switch component set (14291:131527) — Track 51x31, Knob 27x27 at x:2/x:22, y:2.",
+  "base": {
+    "radius": "{design.semantic.radius.full}",
+    "padding": "{design.semantic.spacing.none}",
+    "track-width": 51,
+    "_source-track-width": "storybook-local, no Figma token backs it — 51px is a fixed frame width on the Track, and semantic.spacing has no 51 step",
+    "track-height": 31,
+    "_source-track-height": "storybook-local, no Figma token backs it — 31px is a fixed frame height on the Track, and semantic.spacing has no 31 step",
+    "knob-size": 27,
+    "_source-knob-size": "storybook-local, no Figma token backs it — 27px is a fixed frame size on the Knob, and semantic.spacing has no 27 step",
+    "knob-inset": "{design.semantic.spacing.xs}",
+    "knob-shadow": "{design.semantic.elevation.floating}",
+    "focus-ring-width": "{design.semantic.border-width.thin}",
+    "focus-ring-offset": "{design.semantic.spacing.xs}",
+    "transition-duration": "0.2s",
+    "_source-transition-duration": "storybook-local, no Figma token backs it — design.md semantic has no motion/duration group; the knob slide is authored in code",
+    "transition-timing": "ease-in-out",
+    "_source-transition-timing": "storybook-local, no Figma token backs it — design.md semantic has no motion/easing group",
+    "disabled-opacity": "{design.semantic.opacity.disabled}",
+    "_verified_from": {
+      "node": "14291:131527 — component set `toggle-switch` on page `↳ toggle-switch ✅`",
+      "date": "2026-08-19",
+      "scope": "both variants (active=true / active=false), every child node and effect",
+      "result": "Track 51x31 radius 9999; knob 27x27 radius 9999 inset 2 on every side, at x=2 off and x=22 on; on = toggle-bg-green, off = toggle-bg-soft-gray; knob = toggle-fg-white. All match."
+    },
+    "_source": {
+      "knob-shadow": "elevation.floating, and it is the right token: Figma stacks two drop shadows on the knob — blur 4 spread -1 offset (0,2) at 6%, and blur 6 spread -1 offset (0,4) at 10%. elevation.floating is `0 4px 6px -1px #0000001A, 0 2px 4px -1px #0000000F`, the same pair. Checked value by value on 2026-08-19.",
+      "transition-duration / transition-timing": "storybook-local. design.md has no motion group at any tier and Figma declares no motion, so these are the library's own."
+    },
+    "_library_additions": {
+      "_note": "Figma's set has exactly one property, `active`, with two values. Everything below is the library adding what a real control needs and Figma does not draw. Listed so nobody mistakes them for a reading of the design.",
+      "focus-ring-width / focus-ring-offset": "Figma draws no focus state. A toggle is keyboard-reachable, so it must show focus — this is an accessibility requirement, not a design decision taken from Figma. Figma should add the variant.",
+      "disabled-opacity": "Figma draws no disabled state either, but `disabled` is a real prop on the component."
+    },
+    "_figma_icons": {
+      "_comment": "The icons Figma instantiates for this component, read 2026-08-20 by walking the instance tree and keeping every main component whose parent set is `icons`. An icon Figma hides by default belongs in `icons` only when this component implements the state that reveals it; otherwise it is recorded under _figma_gaps instead, so the gate is not asking for a feature nobody built.",
+      "nodes": [
+        {
+          "node": "14291:131527",
+          "figma": "toggle-switch",
+          "note": "This component draws no icon at all in Figma. Recorded so that one appearing later has to be justified rather than slipping in.",
+          "sources": [
+            "ToggleSwitch.tsx"
+          ],
+          "icons": {}
+        }
+      ]
+    }
+  },
+  "figma_node": "14291:131527"
+}

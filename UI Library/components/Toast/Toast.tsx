@@ -1,16 +1,14 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Icon from '../../icons/Icon';
-import '../../icons/icon-data';
+import '../../icons/icon-data'; // register all icons
+import '../../foundations/tokens.css';
 import {
-  TOAST_TYPES,
-  TOAST_COLORS,
-  TOAST_DIMENSIONS,
-  TYPOGRAPHY,
-  SPACING,
-  RADIUS,
-  BORDER_WIDTH,
-  SHADOW,
-  CLOSE_ICON,
+  TOAST,
+  TOAST_ICONS,
+  TOAST_ICON_SIZE,
+  TOAST_CLOSE_ICON,
+  TOAST_CLOSE_ICON_SIZE,
+  toastColors,
   type ToastType,
   type ToastVariant,
 } from './tokens';
@@ -23,17 +21,16 @@ import './Toast.css';
 //    solid-toast (14848:2109): 4 types (informative, success, warning, error)
 //
 //  Structure: Container → Frame3 → Frame2 (icon + text) + close
-//  All values bound to Foundation variables:
-//  - Spacing: dimension/spacing/* (2-semantic)
-//  - Radius: dimension/breakpoint/radius/* (2-semantic)
-//  - Typography: title/m-semb, body/m-reg
-//  - Colors: colors/toast/* (3-component)
-//  - Shadow: dimension/shadow/sm
-//  - Icons: icons-size component (Size=20)
+//
+//  Every style value is a CSS custom property from foundations/tokens.css, which is
+//  generated from Figma via design.md + components.json (colours) and
+//  components/toast.json (layout, sizing, typography). There are no literal colours,
+//  sizes or font values in this file — changing one means changing Figma and
+//  regenerating, which is what keeps design and code from drifting apart.
 // ═══════════════════════════════════════════
 
 export interface ToastProps {
-  /** Variant style — matches Figma component set */
+  /** Variant style — matches Figma component set (light-toast / solid-toast) */
   variant?: ToastVariant;
   /** Toast type — matches Figma "type" variant property */
   type?: ToastType;
@@ -91,27 +88,18 @@ const Toast: React.FC<ToastProps> = ({
 
   if (!visible) return null;
 
-  const typeConfig = TOAST_TYPES[type];
-  const colors = TOAST_COLORS[variant];
+  const colors = toastColors(variant, type);
 
-  // Determine container colors based on variant
-  const containerBg = variant === 'light' ? typeConfig.lightBg : typeConfig.solidBg;
-  const containerBorder = variant === 'light'
-    ? `${BORDER_WIDTH[1]}px solid ${typeConfig.lightBorder}`
-    : 'none';
-
-  // Icon circle bg
-  const iconCircleBg = variant === 'light' ? typeConfig.lightIconBg : typeConfig.solidIconBg;
-  // Icon SVG color (white on light-toast icon circle, colored on solid-toast icon circle)
-  const iconSvgColor = variant === 'light' ? '#FFFFFF' : typeConfig.solidBg;
-
-  // Build CSS class
   const cssClass = [
     'ltp-toast',
+    `ltp-toast--${variant}`,
+    `ltp-toast--${type}`,
     animated && !dismissing ? 'ltp-toast--animated' : '',
     dismissing ? 'ltp-toast--dismissing' : '',
     className,
-  ].filter(Boolean).join(' ');
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <div
@@ -122,30 +110,25 @@ const Toast: React.FC<ToastProps> = ({
         flexDirection: 'row',
         alignItems: 'center',
 
-        // Padding: spacing-lg (8) top/bottom, spacing-2xl (16) left/right
-        paddingTop: TOAST_DIMENSIONS.padding.top,
-        paddingRight: TOAST_DIMENSIONS.padding.right,
-        paddingBottom: TOAST_DIMENSIONS.padding.bottom,
-        paddingLeft: TOAST_DIMENSIONS.padding.left,
+        paddingTop: TOAST.paddingY,
+        paddingRight: TOAST.paddingX,
+        paddingBottom: TOAST.paddingY,
+        paddingLeft: TOAST.paddingX,
 
-        // Gap: spacing-2xl = 16px
-        gap: TOAST_DIMENSIONS.gap,
+        // Figma's Frame 3: 8 between the content block and the close button. The inner row
+        // (icon to text) is a different gap — 16 — and using one token for both put the
+        // close button twice as far out as the design says.
+        gap: TOAST.closeGap,
+        borderRadius: TOAST.radius,
 
-        // Corner Radius: radius-2xl = 16px
-        borderRadius: TOAST_DIMENSIONS.borderRadius,
+        backgroundColor: colors.background,
+        // solid-toast draws no stroke in Figma; light-toast strokes with the type hue.
+        border: colors.border ? `${TOAST.borderWidth} solid ${colors.border}` : 'none',
 
-        // Background & Border
-        backgroundColor: containerBg,
-        border: containerBorder,
-
-        // Shadow: dimension/shadow/sm
-        boxShadow: SHADOW.sm,
-
-        // Box sizing
+        boxShadow: TOAST.shadow,
         boxSizing: 'border-box',
 
-        // Font family
-        fontFamily: "'Graphik TH', sans-serif",
+        fontFamily: TOAST.caption.fontFamily,
       }}
       role="alert"
       aria-live="polite"
@@ -157,76 +140,78 @@ const Toast: React.FC<ToastProps> = ({
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
-          gap: TOAST_DIMENSIONS.gap, // spacing-2xl = 16px
+          gap: TOAST.gap,
           flex: 1,
           minWidth: 0,
         }}
       >
         {/* ── Icon Circle ── */}
-        {/* Figma: 28x28, radius-full, padding spacing-sm (4px) */}
         {showIcon && (
           <div
             className="ltp-toast__icon"
             style={{
-              width: TOAST_DIMENSIONS.icon.circleSize,     // 28px
-              height: TOAST_DIMENSIONS.icon.circleSize,    // 28px
-              minWidth: TOAST_DIMENSIONS.icon.circleSize,
-              borderRadius: TOAST_DIMENSIONS.icon.circleRadius, // radius-full = 9999
-              backgroundColor: iconCircleBg,
+              width: TOAST.iconCircleSize,
+              height: TOAST.iconCircleSize,
+              minWidth: TOAST.iconCircleSize,
+              borderRadius: TOAST.iconCircleRadius,
+              backgroundColor: colors.iconCircle,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: TOAST_DIMENSIONS.icon.circlePadding, // spacing-sm = 4px
+              padding: TOAST.iconCirclePadding,
               boxSizing: 'border-box',
               flexShrink: 0,
             }}
           >
             <Icon
-              name={typeConfig.iconName}
-              size={TOAST_DIMENSIONS.icon.iconSize as any} // 20px
-              customColor={iconSvgColor}
+              name={TOAST_ICONS[type]}
+              size={TOAST_ICON_SIZE as any}
+              customColor={colors.icon}
             />
           </div>
         )}
 
-        {/* ── Text Frame ── */}
-        {/* Figma: VERTICAL, gap 0 */}
+        {/* ── Text Frame ── Figma: VERTICAL, gap 0 */}
         <div
           className="ltp-toast__text"
           style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: TOAST_DIMENSIONS.text.gap, // 0
+            gap: TOAST.textGap,
             flex: 1,
             minWidth: 0,
           }}
         >
-          {/* Title: title/m-semb → 16px Semibold */}
+          {/* Title — typography/title/lg/semibold */}
           {title && (
             <div
               className="ltp-toast__title"
               style={{
-                fontFamily: TYPOGRAPHY.title.fontFamily,
-                fontSize: TYPOGRAPHY.title.fontSize,
-                fontWeight: TYPOGRAPHY.title.fontWeight,
-                lineHeight: TYPOGRAPHY.title.lineHeight,
-                color: colors.title,
+                fontFamily: TOAST.title.fontFamily,
+                fontSize: TOAST.title.fontSize,
+                fontWeight: TOAST.title
+                  .fontWeight as unknown as React.CSSProperties['fontWeight'],
+                lineHeight: TOAST.title.lineHeight,
+                letterSpacing: TOAST.title.letterSpacing,
+                color: colors.text,
               }}
             >
               {title}
             </div>
           )}
 
-          {/* Caption: body/m-reg → 14px Regular */}
+          {/* Caption — typography/body/md/regular */}
           {caption && (
             <div
               className="ltp-toast__caption"
               style={{
-                fontFamily: TYPOGRAPHY.caption.fontFamily,
-                fontSize: TYPOGRAPHY.caption.fontSize,
-                fontWeight: TYPOGRAPHY.caption.fontWeight,
-                lineHeight: TYPOGRAPHY.caption.lineHeight,
-                color: colors.caption,
+                fontFamily: TOAST.caption.fontFamily,
+                fontSize: TOAST.caption.fontSize,
+                fontWeight: TOAST.caption
+                  .fontWeight as unknown as React.CSSProperties['fontWeight'],
+                lineHeight: TOAST.caption.lineHeight,
+                letterSpacing: TOAST.caption.letterSpacing,
+                color: colors.text,
               }}
             >
               {caption}
@@ -235,19 +220,18 @@ const Toast: React.FC<ToastProps> = ({
         </div>
       </div>
 
-      {/* ── Close Button ── */}
-      {/* Figma: filled-close, icons-size 20x20 */}
+      {/* ── Close Button ── Figma: filled-close, icons-size 20x20 */}
       {showClose && (
         <button
           className="ltp-toast__close"
           onClick={handleClose}
           aria-label="Close toast"
-          style={{ color: colors.closeIcon }}
+          style={{ color: colors.text }}
         >
           <Icon
-            name={CLOSE_ICON.name}
-            size={CLOSE_ICON.size as any}
-            customColor={colors.closeIcon}
+            name={TOAST_CLOSE_ICON}
+            size={TOAST_CLOSE_ICON_SIZE as any}
+            customColor={colors.text}
           />
         </button>
       )}

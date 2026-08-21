@@ -1,0 +1,34 @@
+{
+  "_comment": "Figma DOES have this — `Head` (23599:392870) on the carts page, pointed out by the user on 2026-08-21. The 2026-08-20 record claimed VERIFIED ABSENT and was wrong: the search ran against the token mirror, which holds colour groups, and a frame that declares no colour group of its own cannot appear there. Absence from the token mirror is not absence from Figma. Rebuilt from the node.",
+  "figma_node": "23599:392870",
+  "base": {
+    "padding-x": "{design.semantic.spacing.2xl}",
+    "gap": "{design.semantic.spacing.lg}",
+    "icon-gap": "{design.semantic.spacing.lg}",
+    "line-width": "{design.semantic.border-width.hairline}",
+    "accent-color": "{design.semantic.colors.border.primary}",
+    "rule-color": "{design.semantic.colors.border.accent.gray-light}",
+    "title-size": "{design.semantic.typography.title.lg.semibold.size}",
+    "title-line-height": "{design.semantic.typography.title.lg.semibold.line-height}",
+    "title-weight": "{design.semantic.typography.title.lg.semibold.weight}",
+    "color-primary": "{design.semantic.colors.text.primary.default}",
+    "color-secondary": "{design.semantic.colors.text.secondary.default}",
+    "_source": {
+      "structure": "`Head` 390x34, VERTICAL, 16 of side padding. Inside it a 358-wide row holding one HUG column — the title with its own rule directly under it — and then, as the row's sibling, a second rule running the full 358. Two stacked rules, not one line shared between a title and a filler.",
+      "gap": "8 between the title and its rule, from `Frame 44470`. The first build used 4, taken from the Frontend's `pb-1`.",
+      "accent-color": "#E32321 — the rule under the title, 1px on its top edge only.",
+      "rule-color": "#D4D4D4 = border.accent.gray-light. The first build used border.secondary (#262626), which is near-black — the Frontend's `border-secondary` class, and far too heavy.",
+      "title-color": "This instance draws the title in #E32321. The Frontend offers primary | secondary and defaults to secondary; the default here follows Figma."
+    },
+    "_frontend_evidence": {
+      "component": "lotteryplus-frontend-main/src/components/common/title-with-underline — 12 usages",
+      "differs_from_figma": "The Frontend puts the title and the filler rule side by side on one baseline (`flex items-end`, the title's border-bottom red and the filler's grey). Figma stacks two full rules instead. Figma wins."
+    },
+    "_verified_from": {
+      "node": "23599:392870",
+      "date": "2026-08-21",
+      "scope": "the `Head` frame on the carts page, walked to depth 4 with fills, strokes and per-side stroke weights",
+      "result": "VERIFIED PRESENT. Supersedes the 2026-08-20 record, which said VERIFIED ABSENT after searching only the token mirror. The correction is kept rather than overwritten: the mistake was the method, and the method is what the next check inherits."
+    }
+  }
+}
