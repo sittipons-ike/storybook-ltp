@@ -127,7 +127,9 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
         <Stack direction="row" align="center" justify="space-between" gap="2xl">
           <Stack direction="row" align="center" gap="lg" style={{ width: 'auto' }}>
             <Surface radius="lg" elevation="none" padding="none" clip style={{ width: 'auto' }}>
-              <img src={NOK_CASH_CARD} alt="" width={69} height={44} style={{ display: 'block' }} />
+              {/* Figma's `Card` inside nokcash-profile: 76×48, and it is what makes the
+                  balance row 48 tall — the text stack beside it is only 45. */}
+              <img src={NOK_CASH_CARD} alt="" width={76} height={48} style={{ display: 'block' }} />
             </Surface>
             <Stack gap="none" style={{ width: 'auto' }}>
               <Text role="body-md-medium" tone="secondary">นกแคชของฉัน</Text>

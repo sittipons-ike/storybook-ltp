@@ -18,8 +18,9 @@ export const PROFILE_SUMMARY = {
   cardRadius: t.ref('profile-summary-card-radius'),
   accentWidth: t.ref('profile-summary-accent-width'),
   accentColor: t.ref('profile-summary-accent-color'),
-  borderWidth: t.ref('profile-summary-border-width'),
-  borderColor: t.ref('profile-summary-border-color'),
-  ruleGap: t.ref('profile-summary-rule-gap'),
+  ruleHeight: t.ref('profile-summary-rule-height'),
+  ruleColor: t.ref('profile-summary-rule-color'),
+  ruleDash: t.ref('profile-summary-rule-dash'),
+  ruleDashGap: t.ref('profile-summary-rule-dash-gap'),
   background: t.ref('header-background'),
 } as const;

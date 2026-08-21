@@ -763,6 +763,22 @@
         "modelled": "tooltip",
         "unmodelled": [],
         "note": "Zero component sets. Tooltip has neither a colour group nor a component set — the library models it from the semantic layer alone."
+      },
+      {
+        "page": "profile",
+        "sets": 9,
+        "modelled": "header-profile (as ProfileSummary) + header-bar-profile-moblie (as ProfileHeader)",
+        "unmodelled": [
+          "nokcash-profile",
+          "summary-icon-profile",
+          ".info-slot-profile",
+          ".hamburger-slot-profile",
+          "hamburger-slot-profile",
+          "infomation-menu-card",
+          "[Mobile] menu-banner",
+          "[Desktop] menu-banner"
+        ],
+        "note": "Read 2026-08-21 while fixing the ProfileSummary rule. The first two are the insides of the block the library already ships: `nokcash-profile` (15006:91960) is the balance row — a 76x48 card, a 14/22 label over a 16/24 figure, and the top-up button — and `summary-icon-profile` (15006:91931) is one counter, a 32px logo beside a 16/24 figure over a 10/18 unit, instantiated three times. ProfileSummary takes both as `balance` and `counters` slots, so the Profile page draws them by hand: right values, right roles, but three copies of one counter rather than one component used three times. Figma has componentised them and the library has not — that is the gap, and it is the only one on this page where Figma is ahead of us rather than the other way round. The leading-dot sets are Figma-private helpers."
       }
     ]
   },
