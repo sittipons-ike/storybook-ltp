@@ -1,5 +1,5 @@
 # Project Spec — Lotteryplus Design System
-_Last updated: 2026-08-21 22:40_
+_Last updated: 2026-08-22 00:20_
 
 ## Current State
 
@@ -193,6 +193,12 @@ UI Library/
 - 2026-08-21 — **deploy Storybook ขึ้น GitHub Pages** จาก build เดียวกับที่ผ่าน gate
   (artifact เก็บทุก PR ให้ reviewer โหลดไปกดดูได้)
 - 2026-08-21 — **`CONTRIBUTING.md`** — กฎทั้งหมดพร้อมเหตุผลว่ากันบั๊กตัวไหน
+
+- 2026-08-21 — **Header ได้ variant ที่ 4: `main`** จาก Figma `type=type4` (23625:34736)
+  390×68 · หัวข้อชิดซ้าย `display/xl-semb` + counters ขวา — คือ `big_title` ที่ FE วาดที่ 96, Figma บอก 68
+- 2026-08-21 — **หัวข้อใหญ่ทั้งสองที่ใช้ `display/xl/semibold`** (main + success) ตามที่ดีไซเนอร์ restyle
+- 2026-08-21 — **icon ครบ 157 = เท่า Figma เป๊ะ** เพิ่ม 6 ตัวที่ขาด · `IconData` รองรับ stroke icon แล้ว
+  ด่าน icon เป็น **set equality** ทั้งสองทิศ (`figma-icon-names.json`)
 
 ## Next Up
 
