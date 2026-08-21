@@ -1,0 +1,43 @@
+name: design system
+
+# The ten checks in tools/check.sh only ever ran on one laptop. Everything they protect —
+# tokens matching Figma, icons matching the drawings they claim, typography bound to a
+# role, pages not reaching past components — is the kind of thing that comes back the
+# moment nobody is looking. This is what makes them apply to everyone.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # The generators and every checker are Python; the version only has to be recent
+      # enough for the walrus operator and f-strings, which 3.11 comfortably is.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - run: npm ci
+
+      # `check.sh` regenerates first and fails if the committed output differs, so this
+      # single step also proves the generated files in the repo are the ones the sources
+      # produce — not something edited by hand.
+      - name: Run the gate
+        run: npm run check
+
+      # A gate that passes on a tree that cannot build is a gate that lies.
+      - name: Build Storybook
+        run: npm run build-storybook
