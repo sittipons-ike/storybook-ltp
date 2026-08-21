@@ -8,13 +8,17 @@ import Text from '../../components/Text/Text';
 import Badge from '../../components/Badge/Badge';
 import Icon from '../../icons/Icon';
 import '../../icons/icon-data';
+import Logo from '../../logos/Logo';
 import type { Banner, Profile as ProfileData, Wallet, WebConfig } from '../../fixtures/types';
-import { BANNER_RATIO, NOK_CASH_CARD, STAT_ICONS, STAT_ICON_SIZE } from './fixtures';
+import { BANNER_RATIO, NOK_CASH_CARD } from './fixtures';
 
 /**
  * _frontend_route: /profile
+ * Figma:           [Mobile] Profile (22483:144307), 390 x 1310
  * Frontend page:   src/pages/profile/index.tsx
- * Frontend body:   src/components/profile/index.tsx
+ *
+ * Built from Figma. The first version of this file was built from the Frontend alone and
+ * came out wrong in ways the Frontend could not reveal — see components/profile.json.
  */
 
 export interface ProfileMenuItem {
@@ -22,7 +26,7 @@ export interface ProfileMenuItem {
   title: string;
   /** Shown when the row has nothing linked yet — the Frontend's `isInfoIconShow`. */
   needsAttention?: boolean;
-  /** `new-feature-label` — the Frontend puts "ใหม่!" on ประวัติการถูกรางวัล. */
+  /** Figma puts "ใหม่!" on ประวัติการถูกรางวัล. */
   badge?: string;
 }
 
@@ -30,31 +34,34 @@ export interface ProfilePageProps {
   profile: ProfileData;
   wallet: Wallet;
   config: WebConfig;
-  /** Called when เติมนกแคช is pressed. */
-  onTopUp?: () => void;
-  /** The three banners. */
   couponBanner: Banner;
   affiliateBanner: Banner;
   nokshopBanner: Banner;
-  /** Rows under ข้อมูลสมาชิก. Data, because the Frontend keeps them in a constants file. */
   menu: ProfileMenuItem[];
-  /** Rows under ช่วยเหลือ. */
   help: ProfileMenuItem[];
+  onTopUp?: () => void;
 }
 
 const thb = (value: string) => Number(value).toLocaleString('en-US');
 
-/** `constants/profile` → PROFILE_HEADER_CARD_INFO, in order. */
+/**
+ * The three counters under the rule. Figma draws each as `summary-icon-profile`,
+ * 92 x 42, and the glyphs are `gp-*` marks from the logo set rather than icons.
+ */
 const STATS = [
-  { key: 'points', unit: 'นกพอยต์' },
-  { key: 'lotteryCount', unit: 'สลากของฉัน' },
-  { key: 'coupons', unit: 'คูปองส่วนลด' },
+  { key: 'points', unit: 'นกพอยต์', logo: 'gp-nokpoints-1' },
+  { key: 'lotteryCount', unit: 'สลากของฉัน', logo: 'gp-lottery' },
+  { key: 'coupons', unit: 'คูปองส่วนลด', logo: 'gp-coupon' },
 ] as const;
 
-/**
- * A tappable row: icon, label, chevron. The Frontend draws this as `profile-info/info`
- * in two places with the same markup, so it is one thing here.
- */
+/** Figma's `Frame 24798`: a 24-tall row, 16 above the content it heads. */
+const SectionHeading: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <Text role="title-lg-semibold" tone="secondary" as="p">
+    {children}
+  </Text>
+);
+
+/** Figma's `.info-slot-profile`: 56 tall, 16 of padding, an 8 gap, white. */
 const MenuRow: React.FC<{ item: ProfileMenuItem; last: boolean }> = ({ item, last }) => (
   <>
     <Stack direction="row" align="center" justify="space-between" padding="2xl" as="li">
@@ -64,7 +71,6 @@ const MenuRow: React.FC<{ item: ProfileMenuItem; last: boolean }> = ({ item, las
         {item.badge && <Badge label={item.badge} />}
       </Stack>
       <Stack direction="row" align="center" gap="lg" style={{ width: 'auto' }}>
-        {/* The Frontend shows a filled red info mark on a row with nothing linked yet. */}
         {item.needsAttention && <Icon name="filled-info" size="sm" color="primary" />}
         <Icon name="arrow-right-S" size="sm" color="tertiary" />
       </Stack>
@@ -73,7 +79,6 @@ const MenuRow: React.FC<{ item: ProfileMenuItem; last: boolean }> = ({ item, las
   </>
 );
 
-/** A banner is a picture that links somewhere. Its ratio is fixed; its artwork is not. */
 const BannerImage: React.FC<{ banner: Banner }> = ({ banner }) => (
   <img
     src={banner.src}
@@ -85,15 +90,11 @@ const BannerImage: React.FC<{ banner: Banner }> = ({ banner }) => (
 /**
  * ProfilePage — /profile
  *
- * The body of the Frontend's profile route, composed from this library and nothing else.
+ * Every piece of data arrives as a prop and nothing is fetched, so each state is one
+ * story away rather than whatever the store happens to hold.
  *
- * It takes every piece of data as a prop and fetches nothing. That is what makes it the
- * designer's copy rather than a second implementation: the real page can only show
- * whichever state its store happens to hold, while here each state is one story away —
- * underage, no bank account, affiliate off, a balance long enough to break the card.
- *
- * Spacing goes through Stack. A page may not reach for a token directly (check-pages.py),
- * because 78 pages writing raw tokens is a rename nobody can finish.
+ * Spacing goes through Stack and Surface. A page may not name a token directly
+ * (check-pages.py): 78 pages writing raw tokens is a rename nobody finishes.
  */
 const ProfilePage: React.FC<ProfilePageProps> = ({
   profile,
@@ -106,87 +107,92 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
   help,
   onTopUp,
 }) => (
-  <Stack gap="2xl" paddingX="2xl" paddingY="2xl" maxWidth={448}>
-    {profile.isUnderage && (
-      <Alert
-        title="ยังไม่สามารถซื้อลอตเตอรี่ได้"
-        description="จะสามารถใช้บริการได้เมื่ออายุครบ 20 ปี"
-      />
-    )}
-
-    {/* ── นกแคช ─────────────────────────────── */}
-    <Surface padding="2xl" gap="none">
-      {/* นกแคช + เติมนกแคช — `profile_card_main_body`: space-between, gap-4 */}
-      <Stack direction="row" align="center" justify="space-between" gap="2xl">
-        <Stack direction="row" align="center" gap="lg" style={{ width: 'auto' }}>
-          <Surface radius="lg" elevation="none" padding="none" style={{ width: 'auto' }} clip>
-            <img src={NOK_CASH_CARD} alt="" width={69} height={44} style={{ display: 'block' }} />
-          </Surface>
-          <Stack gap="none" style={{ width: 'auto' }}>
-            <Text role="label-md-regular" tone="secondary">นกแคชของฉัน</Text>
-            <Text role="title-lg-semibold" tone="primary">{thb(wallet.balance)}</Text>
-          </Stack>
+  <Stack gap="2xl">
+    {/* ── header-profile: a red block wrapping two white cards ──────────────
+        Figma 390x187, 16 of padding, filled with the brand red. The Frontend has
+        no equivalent — it puts the balance card straight on the page — which is why
+        building from the Frontend alone produced a white card floating on grey. */}
+    <Surface tone="primary" radius="none" elevation="none" padding="2xl" gap="none">
+      {profile.isUnderage && (
+        <Stack style={{ marginBottom: 16 }}>
+          <Alert
+            title="ยังไม่สามารถซื้อลอตเตอรี่ได้"
+            description="จะสามารถใช้บริการได้เมื่ออายุครบ 20 ปี"
+          />
         </Stack>
-        <Button variant="secondary" size="lg" onClick={onTopUp}>
-          เติมนกแคช
-        </Button>
-      </Stack>
+      )}
 
-      {/* The dashed rule the Frontend draws in brand red, `mt-4` above and `pt-4` below. */}
-      <Divider tone="primary" lineStyle="dashed" spacing={16} />
-
-      {/* Three counters — `header-card-info`, space-between, pt-4 */}
-      <Stack direction="row" align="center" justify="space-between" gap="sm">
-        {STATS.map((stat) => (
-          <Stack
-            key={stat.unit}
-            direction="row"
-            align="center"
-            justify="center"
-            gap="lg"
-            style={{ width: 'auto' }}
-          >
-            <img src={STAT_ICONS[stat.key]} alt="" width={STAT_ICON_SIZE} height={STAT_ICON_SIZE} />
+      {/* Balance — Figma's first `Nok Cash`: 358x80, 16 padding, white, top corners only. */}
+      <Surface radius="2xl" elevation="none" padding="2xl" style={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}>
+        <Stack direction="row" align="center" justify="space-between" gap="2xl">
+          <Stack direction="row" align="center" gap="lg" style={{ width: 'auto' }}>
+            <Surface radius="lg" elevation="none" padding="none" clip style={{ width: 'auto' }}>
+              <img src={NOK_CASH_CARD} alt="" width={69} height={44} style={{ display: 'block' }} />
+            </Surface>
             <Stack gap="none" style={{ width: 'auto' }}>
-              <Text role="body-md-semibold" tone="primary">{thb(wallet[stat.key])}</Text>
-              <Text role="button-xs-medium" tone="tertiary">{stat.unit}</Text>
+              <Text role="body-md-medium" tone="secondary">นกแคชของฉัน</Text>
+              <Text role="title-lg-semibold" tone="primary">{thb(wallet.balance)}</Text>
             </Stack>
           </Stack>
-        ))}
-      </Stack>
+          <Button variant="secondary" size="lg" onClick={onTopUp}>
+            เติมนกแคช
+          </Button>
+        </Stack>
+      </Surface>
+
+      {/* Figma's `Line`: white, dashed 4/4, sitting on the seam between the two cards. */}
+      <Surface radius="none" elevation="none" paddingX="2xl">
+        <Divider tone="light-gray" lineStyle="dashed" />
+      </Surface>
+
+      {/* Counters — Figma's second `Nok Cash`: 358x74, 16 padding, white, bottom corners. */}
+      <Surface radius="2xl" elevation="none" padding="2xl" style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
+        <Stack direction="row" align="center" justify="space-between" gap="xl">
+          {STATS.map((stat) => (
+            <Stack key={stat.unit} direction="row" align="center" gap="sm" style={{ width: 'auto' }}>
+              <Logo name={stat.logo} alt="" size={32} />
+              <Stack gap="none" style={{ width: 'auto' }}>
+                <Text role="title-lg-semibold" tone="primary">{thb(wallet[stat.key])}</Text>
+                <Text role="button-xs-medium" tone="tertiary">{stat.unit}</Text>
+              </Stack>
+            </Stack>
+          ))}
+        </Stack>
+      </Surface>
     </Surface>
 
-    {/* ── คูปองส่วนลด ────────────────────────── */}
-    <Stack gap="lg">
-      <Text role="title-lg-semibold" tone="secondary" as="p">คูปองส่วนลด</Text>
-      <BannerImage banner={couponBanner} />
-    </Stack>
+    {/* ── Coupon: everything below the red block. Figma gap 16, side padding 16. ── */}
+    <Stack gap="2xl" paddingX="2xl" paddingY="none" style={{ marginBottom: 16 }}>
+      <Stack gap="2xl">
+        <SectionHeading>คูปองส่วนลด</SectionHeading>
+        <BannerImage banner={couponBanner} />
+      </Stack>
 
-    {/* ── ข้อมูลสมาชิก ───────────────────────── */}
-    <Stack gap="lg">
-      <Text role="title-lg-semibold" tone="secondary" as="p">ข้อมูลสมาชิก</Text>
-      <Surface as="ul" gap="none" clip style={{ margin: 0, padding: 0, listStyle: 'none' }}>
-        {menu.map((item, i) => (
-          <MenuRow key={item.title} item={item} last={i === menu.length - 1} />
-        ))}
-      </Surface>
-    </Stack>
+      <Stack gap="2xl">
+        <SectionHeading>ข้อมูลสมาชิก</SectionHeading>
+        <Surface as="ul" gap="none" clip style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+          {menu.map((item, i) => (
+            <MenuRow key={item.title} item={item} last={i === menu.length - 1} />
+          ))}
+        </Surface>
+      </Stack>
 
-    {/* ── บริการ ─────────────────────────────── */}
-    <Stack gap="lg">
-      <Text role="title-lg-semibold" tone="secondary" as="p">บริการ</Text>
-      {config.isEnabledAffiliate && <BannerImage banner={affiliateBanner} />}
-      {config.isEnableNokshop && <BannerImage banner={nokshopBanner} />}
-    </Stack>
+      <Stack gap="2xl">
+        <SectionHeading>บริการ</SectionHeading>
+        <Stack gap="2xl">
+          {config.isEnabledAffiliate && <BannerImage banner={affiliateBanner} />}
+          {config.isEnableNokshop && <BannerImage banner={nokshopBanner} />}
+        </Stack>
+      </Stack>
 
-    {/* ── ช่วยเหลือ ──────────────────────────── */}
-    <Stack gap="lg">
-      <Text role="title-lg-semibold" tone="secondary" as="p">ช่วยเหลือ</Text>
-      <Surface as="ul" gap="none" clip style={{ margin: 0, padding: 0, listStyle: 'none' }}>
-        {help.map((item, i) => (
-          <MenuRow key={item.title} item={item} last={i === help.length - 1} />
-        ))}
-      </Surface>
+      <Stack gap="2xl">
+        <SectionHeading>ช่วยเหลือ</SectionHeading>
+        <Surface as="ul" gap="none" clip style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+          {help.map((item, i) => (
+            <MenuRow key={item.title} item={item} last={i === help.length - 1} />
+          ))}
+        </Surface>
+      </Stack>
     </Stack>
   </Stack>
 );

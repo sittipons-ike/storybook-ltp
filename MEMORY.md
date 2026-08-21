@@ -166,3 +166,13 @@
 - **เกิดอะไร:** ต้องตัดสินว่ารูปแบนเนอร์เก็บที่ไหน — เกือบเหมาว่า "รูปทั้งหมด → assets/"
 - **ทำไม:** ดูจากชนิดไฟล์ (เป็น .png เหมือนกัน) แทนที่จะดูว่าใครเป็นเจ้าของและเปลี่ยนบ่อยแค่ไหน — FE ดึงแบนเนอร์จาก API เป็น `{ images: [{url, type}] }` มี scheduler เปลี่ยนทุกสัปดาห์
 - **ครั้งหน้าทำยังไง:** ถามว่า "ของนี้มาจากไหน" ไม่ใช่ "เป็นไฟล์อะไร" — มาจาก API → `fixtures/` (เป็น URL ในข้อมูล) · หลายหน้าใช้ร่วม → `UI Library/assets/` · หน้าเดียวใช้ → `pages/<หน้า>/assets/` แล้ว import เข้ามาเป็น URL ผ่าน Vite (มี `images.d.ts` ให้ TS) ไฟล์หายจะพังตอน build ไม่ใช่รูปแตกตอนรัน
+
+## 2026-08-21 · React ลบ shorthand ทิ้ง ถ้า longhand ตามหลังเป็น undefined
+- **เกิดอะไร:** `Stack` เขียน `{ padding: '16px', paddingLeft: undefined, paddingRight: undefined, ... }` — ผลคือ **ไม่มี padding เลยสักด้าน** การ์ดทุกใบใน `/profile` แบนติดกันหมด และ inline style ที่ออกมาไม่มีคำว่า padding ปรากฏเลย
+- **ทำไม:** React เขียน style ตามลำดับ key ผ่าน `setProperty`/`removeProperty` — `paddingLeft: undefined` แปลเป็น removeProperty ซึ่ง**ลบสิ่งที่ shorthand ตั้งไว้ก่อนหน้า** ทีละด้านจนหมด · ไม่ throw ไม่ warn เห็นได้ทางเดียวคือวัด computed style
+- **ครั้งหน้าทำยังไง:** ใน component ที่รับ padding/margin เป็น prop ห้ามผสม shorthand กับ longhand — resolve เป็น 4 ด้านก่อนเสมอ (`paddingTop: space(paddingY ?? padding)` …) และเวลาตรวจงาน layout ให้ดู `getComputedStyle().padding` ไม่ใช่ดูว่า prop ถูกส่งไปแล้วหรือยัง
+
+## 2026-08-21 · bezel ของ mockup ต้องอยู่นอกจอ ไม่ใช่กินจอ
+- **เกิดอะไร:** `DeviceFrame` ตั้ง `width: 393` + `border: 10px` + `box-sizing: border-box` → พื้นที่จอจริงเหลือ **373** ทุกอย่างที่วัดข้างในเลยเตี้ย/แคบกว่าเครื่องจริง 20pt โดยที่ตัวเลข 393 ยังโชว์อยู่ในโค้ด
+- **ทำไม:** ใส่ border-box อัตโนมัติเพราะเป็นนิสัยจากการทำ component (ที่นั่นถูก) แต่ frame ของเครื่องคนละเรื่อง — 393 คือ **ขนาดจอ** ขอบเครื่องอยู่นอกนั้น
+- **ครั้งหน้าทำยังไง:** frame จำลองอุปกรณ์ให้ใช้ `box-sizing: content-box` แล้ววัดยืนยันว่า element ในสุด (`.ltp-shell`) กว้างเท่าสเปกเป๊ะ ก่อนเชื่อว่า mock ถูก

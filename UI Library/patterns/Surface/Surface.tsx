@@ -7,12 +7,20 @@ export type Elevation =
   | 'none' | 'flat' | 'raised' | 'card' | 'floating' | 'popover' | 'modal' | 'hero' | 'inner';
 
 /** The page-level backgrounds a card can sit on. */
-export type SurfaceTone = 'default' | 'soft-light' | 'light';
+export type SurfaceTone = 'default' | 'soft-light' | 'light' | 'primary';
+
+/** `primary` is the brand red; the rest are page backgrounds. */
+const TONE_VAR: Record<SurfaceTone, string> = {
+  default: '--sys-color-background-default',
+  'soft-light': '--sys-color-background-soft-light',
+  light: '--sys-color-background-light',
+  primary: '--sys-color-primary-default',
+};
 
 export interface SurfaceProps {
   children?: React.ReactNode;
   /** Corner radius, by name. `2xl` (16) is what the Frontend's cards use. */
-  radius?: 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
+  radius?: 'none' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
   elevation?: Elevation;
   tone?: SurfaceTone;
   padding?: Space;
@@ -74,7 +82,7 @@ const Surface: React.FC<SurfaceProps> = ({
     className={className}
     style={{
       borderRadius: `var(--sys-radius-${radius})`,
-      background: `var(--sys-color-background-${tone})`,
+      background: `var(${TONE_VAR[tone]})`,
       boxShadow: `var(--sys-elevation-${elevation})`,
       overflow: clip ? 'hidden' : undefined,
       ...style,

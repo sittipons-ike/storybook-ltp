@@ -4,7 +4,6 @@ import ProfilePage, { type ProfileMenuItem } from './Profile';
 import AppShell from '../../patterns/AppShell/AppShell';
 import DeviceFrame from '../../patterns/DeviceFrame/DeviceFrame';
 import StatusBar from '../../components/StatusBar/StatusBar';
-import Header from '../../components/Header/Header';
 import NavigationBar from '../../components/NavigationBar/NavigationBar';
 import ProfileHeader from '../../components/Header/ProfileHeader';
 import { AFFILIATE_BANNER, COUPON_BANNER, NOKSHOP_BANNER } from './fixtures';
@@ -64,17 +63,18 @@ const Caption: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 );
 
 /**
- * The shell the Frontend's `<Layout>` builds for this route, filled with our components.
+ * The shell, filled to match Figma's `[Mobile] Profile` (22483:144307): a status bar, the
+ * 72-tall profile header, the body, and the navigation bar. Four slots, 47 + 72 + … + 124.
  *
- * `src/pages/profile/index.tsx` passes hasTopNavbar + navbarType=profile + hasHeader +
- * hasBottomNavbar, which maps onto four of AppShell's six slots. The fifth, `statusBar`,
- * has no Frontend equivalent because a browser draws its own — here the mock supplies it.
+ * The `header` slot stays empty on purpose. The Frontend's page passes `hasHeader`, which
+ * draws the 146-tall red block with the wordmark — and Figma's profile page has no such
+ * block. Following the Frontend here is what put an extra 146px of red at the top of the
+ * first version of this story.
  */
 const InShell: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <AppShell
     statusBar={<StatusBar />}
     topNavbar={<ProfileHeader name="สิทธิพร ใจดีมาก" memberId="P240497" />}
-    header={<Header variant="home" />}
     bottomNavbar={<NavigationBar selectedKey="profile" fullWidth />}
   >
     {children}

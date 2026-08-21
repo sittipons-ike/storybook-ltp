@@ -74,11 +74,14 @@ const Stack: React.FC<StackProps> = ({
       boxSizing: 'border-box',
       flexDirection: direction,
       gap: space(gap),
-      padding: space(padding),
-      paddingLeft: space(paddingX),
-      paddingRight: space(paddingX),
-      paddingTop: space(paddingY),
-      paddingBottom: space(paddingY),
+      // Four longhands, never the shorthand. React writes style properties in key order
+      // and an `undefined` longhand *removes* what a shorthand set before it — so
+      // `padding: 16px` followed by `paddingLeft: undefined` leaves no padding at all,
+      // silently. Resolving each side first means there is nothing to undo.
+      paddingTop: space(paddingY ?? padding),
+      paddingRight: space(paddingX ?? padding),
+      paddingBottom: space(paddingY ?? padding),
+      paddingLeft: space(paddingX ?? padding),
       alignItems: align,
       justifyContent: justify,
       flexWrap: wrap ? 'wrap' : undefined,

@@ -48,7 +48,10 @@ const DeviceFrame: React.FC<DeviceFrameProps> = ({
   <div
     className={className}
     style={{
-      boxSizing: 'border-box',
+      // content-box, so the bezel sits *outside* the screen. Under border-box a 10px
+      // bezel eats 20 points of a 393-point screen and every measurement inside the
+      // frame comes out 20 short of the device it claims to be.
+      boxSizing: 'content-box',
       position: 'relative',
       display: 'flex',
       flexDirection: 'column',
