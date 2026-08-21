@@ -95,7 +95,19 @@ const Text: React.FC<TextProps> = ({
       color: `var(${TONE_VAR[tone]})`,
       textAlign: align,
       ...(truncate
-        ? { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }
+        ? {
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap' as const,
+            // `overflow: hidden` clips at the padding box, and Thai ink runs ~5px below
+            // the baseline — against a bare line box that leaves about a pixel, which
+            // one engine's rounding keeps and another's cuts (ตู้ became ต้ that way in
+            // the Header). Pad the clip box, hand the space back with negative margin.
+            paddingTop: 8,
+            paddingBottom: 8,
+            marginTop: -8,
+            marginBottom: -8,
+          }
         : null),
       ...style,
     }}

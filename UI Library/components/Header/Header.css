@@ -28,6 +28,12 @@
   user-select: none;
 }
 
+/* `overflow: hidden` is here for the ellipsis, but it also clips vertically — and Thai
+   ink runs 4.8px below the baseline (the foot of ◌ู) while a 16/24 line box leaves it
+   only ~1.2px of room. That margin survives one engine's rounding and not another's,
+   which is how the same build showed a full ตู้ on one machine and ต้ on the next.
+   The padding grows the clip box so ink can never reach its edge; the negative margin
+   hands the space back, so layout stays exactly 24. */
 .ltp-header__title,
 .ltp-header__subtitle,
 .ltp-header__slogan {
@@ -35,6 +41,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  margin-top: -8px;
+  margin-bottom: -8px;
 }
 
 /* Both action wells keep their footprint whether or not they hold a control, so the

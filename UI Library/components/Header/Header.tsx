@@ -407,7 +407,8 @@ const Header: React.FC<HeaderProps> = ({
             fontSize: HEADER.titleSize,
             lineHeight: HEADER.titleLineHeight,
             fontWeight: HEADER.titleWeight,
-            height: HEADER.subTitleHeight,
+            // No fixed height: line-height already sets the 24px line, and a fixed
+            // height would re-shrink the padded clip box the CSS just grew.
           }}
         >
           {title}

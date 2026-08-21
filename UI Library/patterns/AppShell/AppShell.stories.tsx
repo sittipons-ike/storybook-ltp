@@ -276,10 +276,12 @@ export const Filled: StoryObj = {
               <AppShell
                 statusBar={<StatusBar />}
                 topNavbar={
+                  // Figma ships the sub-page header with its subtitle hidden — one line
+                  // is the default, and the shell shows the default. The two-line form
+                  // stays in Header's own stories, labelled as the opt-in it is.
                   <Header
                     variant="sub"
                     title="ตู้เซฟของฉัน"
-                    subtitle="งวดวันที่ 1 มิถุนายน 2568"
                     actionRight={<HeaderAction icon="filled-navigation" label="เมนู" />}
                   />
                 }
