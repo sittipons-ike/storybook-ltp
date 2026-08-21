@@ -1239,11 +1239,12 @@
   --text-field-typography-description-line-height: var(--sys-type-caption-md-regular-line-height);
   --text-field-typography-description-weight: var(--sys-type-caption-md-regular-weight);
   --text-field-typography-description-tracking: var(--sys-type-caption-md-regular-tracking);
+  --title-underline-padding-x: var(--sys-spacing-2xl);
   --title-underline-gap: var(--sys-spacing-lg);
-  --title-underline-underline-padding: var(--sys-spacing-sm);
-  --title-underline-underline-width: var(--sys-border-width-hairline);
+  --title-underline-icon-gap: var(--sys-spacing-lg);
+  --title-underline-line-width: var(--sys-border-width-hairline);
   --title-underline-accent-color: var(--sys-color-border-primary);
-  --title-underline-rule-color: var(--sys-color-border-secondary);
+  --title-underline-rule-color: var(--sys-color-border-accent-gray-light);
   --title-underline-title-size: var(--sys-type-title-lg-semibold-size);
   --title-underline-title-line-height: var(--sys-type-title-lg-semibold-line-height);
   --title-underline-title-weight: var(--sys-type-title-lg-semibold-weight);

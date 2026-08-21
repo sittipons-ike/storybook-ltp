@@ -269,10 +269,10 @@
     },
     "title-with-underline": {
       "verified": true,
-      "node": null,
-      "date": "2026-08-20",
-      "scope": "token mirror searched for underline; frontend component read in full",
-      "result": "VERIFIED ABSENT in Figma. Frontend is the authority per the amended rule (user decision 2026-08-20).",
+      "node": "23599:392870",
+      "date": "2026-08-21",
+      "scope": "the `Head` frame on the carts page, walked to depth 4 with fills, strokes and per-side stroke weights",
+      "result": "VERIFIED PRESENT. Supersedes the 2026-08-20 record, which said VERIFIED ABSENT after searching only the token mirror. The correction is kept rather than overwritten: the mistake was the method, and the method is what the next check inherits.",
       "corrections": {},
       "gaps": {}
     },

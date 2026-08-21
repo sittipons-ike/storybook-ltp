@@ -32,9 +32,17 @@ export const Tones: StoryObj = {
     <div style={{ fontFamily: sans, maxWidth: 520 }}>
       <h2 style={{ fontSize: 20, margin: '0 0 6px' }}>title-with-underline</h2>
       <p style={{ margin: '0 0 24px', fontSize: 13, lineHeight: 1.75, color: sys('color-text-tertiary-default') }}>
-        ไม่มีใน Figma — ตรวจแล้ว 2026-08-20 สร้างจาก FE (12 ที่ใช้) เส้นสองท่อน:
-        ใต้ตัวอักษรเป็น <code style={{ fontFamily: mono }}>border.primary</code> ที่เหลือเป็น{' '}
-        <code style={{ fontFamily: mono }}>border.secondary</code> ทั้งคู่ห่างจากเนื้อหา 4px
+        Figma: <code style={{ fontFamily: mono }}>Head</code> (23599:392870) หน้า carts — เส้น{' '}
+        <strong>ซ้อนกันสองเส้น</strong> แดงใต้ตัวอักษรกว้างเท่าคำ แล้วเทา{' '}
+        <code style={{ fontFamily: mono }}>border.accent.gray-light</code> เต็มความกว้างอยู่ใต้ลงไปอีกชั้น
+      </p>
+      <p style={{ margin: '0 0 24px', padding: '12px 14px', fontSize: 13, lineHeight: 1.7,
+                  background: sys('color-status-warning-soft-light'),
+                  borderLeft: `3px solid ${sys('color-status-warning-default')}`,
+                  color: sys('color-text-secondary-default') }}>
+        เคยบันทึกไว้ว่า Figma ไม่มีตัวนี้ — <strong>ผิด</strong> ตอนนั้นค้นแต่ใน token mirror
+        ซึ่งเก็บเฉพาะกลุ่มสี frame ที่ไม่มีกลุ่มสีของตัวเองจึงไม่มีทางโผล่ · ของเดิมที่สร้างจาก FE
+        วางเส้นแดงกับเส้นเทา<strong>เรียงข้างกันบนเส้นเดียว</strong> ซึ่งคนละโครงกับ Figma
       </p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>

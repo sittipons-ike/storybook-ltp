@@ -1,9 +1,8 @@
 // ═══════════════════════════════════════════
 // TitleWithUnderline Design Tokens
 //
-// No values here. Figma has no component (verified absent 2026-08-20); authored in
-// design-library/lotteryplus/components/title-with-underline.json from the
-// Frontend's common/title-with-underline, per the amended authority rule.
+// Measured off Figma's `Head` (23599:392870) on the carts page.
+// Authored in design-library/lotteryplus/components/title-with-underline.json.
 //
 // Regenerate: python3 tools/gen-tokens.py
 // ═══════════════════════════════════════════
@@ -15,9 +14,10 @@ const t = component('title-underline');
 export type TitleTone = 'primary' | 'secondary';
 
 export const TITLE_UNDERLINE = {
+  paddingX: t.ref('padding-x'),
   gap: t.ref('gap'),
-  underlinePadding: t.ref('underline-padding'),
-  underlineWidth: t.ref('underline-width'),
+  iconGap: t.ref('icon-gap'),
+  lineWidth: t.ref('line-width'),
   accentColor: t.ref('accent-color'),
   ruleColor: t.ref('rule-color'),
   titleSize: t.ref('title-size'),
