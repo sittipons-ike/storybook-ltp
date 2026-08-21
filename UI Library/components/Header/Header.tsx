@@ -3,6 +3,7 @@ import '../../foundations/tokens.css';
 import Icon from '../../icons/Icon';
 import '../../icons/icon-data'; // register all icons
 import LtpMark from './LtpMark';
+import { asset } from '../../foundations/asset';
 import { HEADER } from './tokens';
 import './Header.css';
 
@@ -66,13 +67,13 @@ export interface HeaderProps {
   className?: string;
 }
 
-const PHOENIX_SRC = '/brand/phoenix-logo.png';
+const PHOENIX_SRC = asset('brand/phoenix-logo.png');
 /**
  * The Thai wordmark. Figma draws it as a 246×31 vector inside the header's `heading`
  * frame; served here as the same raster the Frontend ships, because the design system owns
  * a copy rather than reaching into the Frontend's public folder.
  */
-const WORDMARK_SRC = '/brand/ltpplus-w_logo-flat.png';
+const WORDMARK_SRC = asset('brand/ltpplus-w_logo-flat.png');
 
 /**
  * The watermark bird, bled off the header's right and bottom edges and clipped.

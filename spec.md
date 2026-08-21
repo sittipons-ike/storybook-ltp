@@ -221,6 +221,7 @@ UI Library/
 
 ## Next Up
 
+- [x] ~~**asset path พังบน Pages**~~ — แก้แล้ว 2026-08-21: `asset()` + base จากชื่อ repo + ด่านที่ 11
 - [ ] **Storybook ยัง public — ตั้งใจพักไว้ (2026-08-21)** · `sittipons-ike.github.io/storybook-ltp`
       ใครมีลิงก์เปิดได้ · GitHub Pages ไม่มีระบบจำกัดคนดูนอกจาก Enterprise Cloud
       ถ้าจะ private ต้องย้าย host: Chromatic (ผูกสิทธิ์กับ collaborator, คนดูต้องมี GitHub)

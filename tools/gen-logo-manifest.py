@@ -63,6 +63,8 @@ def build() -> str:
         "// brand marks and none may be tinted.",
         "// ===================================================================",
         "",
+        "import { asset } from '../foundations/asset';",
+        "",
         "export interface LogoEntry {",
         "  /** File stem, and the name Logo takes. */",
         "  name: string;",
@@ -85,7 +87,7 @@ def build() -> str:
     lines.append("export type LogoName = (typeof LOGOS)[number]['name'];")
     lines.append("")
     lines.append("/** Where the marks are served from — see `staticDirs` in .storybook/main.ts. */")
-    lines.append("export const LOGO_BASE = '/logos';")
+    lines.append("export const LOGO_BASE = 'logos';")
     lines.append("")
     lines.append("const BY_NAME = new Map(LOGOS.map((l) => [l.name, l]));")
     lines.append("")
@@ -93,7 +95,7 @@ def build() -> str:
     lines.append("")
     lines.append("export const logoSrc = (name: string): string | undefined => {")
     lines.append("  const entry = BY_NAME.get(name);")
-    lines.append("  return entry ? `${LOGO_BASE}/${entry.file}` : undefined;")
+    lines.append("  return entry ? asset(`${LOGO_BASE}/${entry.file}`) : undefined;")
     lines.append("};")
     lines.append("")
     return "\n".join(lines)

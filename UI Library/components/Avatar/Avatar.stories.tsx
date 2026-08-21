@@ -3,6 +3,7 @@ import React from 'react';
 import Avatar from './Avatar';
 import { avatarBase, avatarTokenNames, avatarValue, AVATAR_SPEC } from './tokens';
 import { sys } from '../../foundations/tokens';
+import { asset } from '../../foundations/asset';
 
 // ═══════════════════════════════════════════
 //  Avatar — Figma `avatar` (14291:133618), 10 variants across 3 axes.
@@ -54,13 +55,13 @@ export const Variants: StoryObj = {
       </p>
       <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap' }}>
         <Cell label="member · light">
-          <Avatar type="member" surface="light" src="/brand/phoenix-logo.png" alt="สมาชิก" />
+          <Avatar type="member" surface="light" src={asset('brand/phoenix-logo.png')} alt="สมาชิก" />
         </Cell>
         <Cell label="member · light · edit">
-          <Avatar type="member" surface="light" src="/brand/phoenix-logo.png" alt="สมาชิก" showEdit />
+          <Avatar type="member" surface="light" src={asset('brand/phoenix-logo.png')} alt="สมาชิก" showEdit />
         </Cell>
         <Cell label="member · red" onRed>
-          <Avatar type="member" surface="red" src="/brand/phoenix-logo.png" alt="สมาชิก" />
+          <Avatar type="member" surface="red" src={asset('brand/phoenix-logo.png')} alt="สมาชิก" />
         </Cell>
         <Cell label="guest · light">
           <Avatar type="guest" surface="light" alt="ผู้เยี่ยมชม" />
@@ -81,7 +82,7 @@ export const Variants: StoryObj = {
       <div style={{ display: 'flex', gap: 18, alignItems: 'flex-end', flexWrap: 'wrap' }}>
         {[24, 32, 40, 56, 72].map((s) => (
           <Cell key={s} label={`${s}px${s === 40 ? ' · base' : s === 56 ? ' · profile' : ''}`}>
-            <Avatar type="member" surface="light" size={s} src="/brand/phoenix-logo.png" alt="สมาชิก" />
+            <Avatar type="member" surface="light" size={s} src={asset('brand/phoenix-logo.png')} alt="สมาชิก" />
           </Cell>
         ))}
       </div>

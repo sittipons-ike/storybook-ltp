@@ -71,6 +71,25 @@ python3 tools/check-typography.py | sed 's/^/  /' || bad "a typography literal i
 step "Pages compose, they do not reach for tokens"
 python3 tools/check-pages.py | sed 's/^/  /' || bad "a page reads a token directly — that is what the rename has to find later"
 
+step "Static assets resolve against the base path"
+# Fonts, logos and brand marks are served as plain files out of `staticDirs`. Nothing
+# rewrites their URLs, so a path written from the domain root works on localhost and 404s
+# under GitHub Pages' /<repo>/ — which is exactly what shipped: every font and all 112
+# logos were broken in production while the local Storybook looked perfect. `asset()`
+# resolves against import.meta.env.BASE_URL; this refuses any path that skips it.
+asset_hits=$(grep -rnoE "['\"\`(]/(fonts|logos|brand|assets|images|img)/[^'\"\`)]*" \
+        "UI Library" .storybook \
+        --include='*.ts' --include='*.tsx' --include='*.css' 2>/dev/null \
+        | grep -v 'foundations/asset.ts' \
+        | grep -v '\.storybook/fonts.ts' \
+        | grep -v 'node_modules' || true)
+if [ -z "$asset_hits" ]; then
+  ok "every static asset path goes through asset()"
+else
+  bad "asset path written from the domain root — wrap it in asset() from foundations/asset:"
+  printf '%s\n' "$asset_hits" | sed 's/^/      /'
+fi
+
 step "TypeScript"
 tsc_out=$(npx tsc --noEmit -p tsconfig.json 2>&1 || true)
 unexpected=$(printf '%s\n' "$tsc_out" | grep -E "error TS" || true)

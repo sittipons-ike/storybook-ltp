@@ -8,6 +8,8 @@
 // brand marks and none may be tinted.
 // ===================================================================
 
+import { asset } from '../foundations/asset';
+
 export interface LogoEntry {
   /** File stem, and the name Logo takes. */
   name: string;
@@ -135,7 +137,7 @@ export const LOGOS: readonly LogoEntry[] = [
 export type LogoName = (typeof LOGOS)[number]['name'];
 
 /** Where the marks are served from — see `staticDirs` in .storybook/main.ts. */
-export const LOGO_BASE = '/logos';
+export const LOGO_BASE = 'logos';
 
 const BY_NAME = new Map(LOGOS.map((l) => [l.name, l]));
 
@@ -143,5 +145,5 @@ export const logoEntry = (name: string): LogoEntry | undefined => BY_NAME.get(na
 
 export const logoSrc = (name: string): string | undefined => {
   const entry = BY_NAME.get(name);
-  return entry ? `${LOGO_BASE}/${entry.file}` : undefined;
+  return entry ? asset(`${LOGO_BASE}/${entry.file}`) : undefined;
 };
