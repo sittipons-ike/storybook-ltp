@@ -8,31 +8,31 @@ import nokCashCard from './assets/nok-cash-nok-cash-card.png';
 /**
  * The three banners this page carries.
  *
- * They are fixtures rather than assets because that is what they are in the product: the
- * Frontend fetches `{ images: [{ url, type }] }` and the artwork changes on a schedule.
- * The `url` here points at a file checked in beside the page so the story renders without
- * a network; when this moves into the product repo the fetch replaces the fixture and the
- * page does not change, because the page only ever saw a URL.
+ * Fixtures rather than assets because a designer swaps them — this week's artwork,
+ * next week's, or none — while the frame around them does not move. The files sit beside
+ * the page and are imported, so a missing one is a build error rather than a broken image.
  */
 export const COUPON_BANNER: Banner = {
-  images: [{ url: couponBanner, type: 'MOBILE' }],
-  redirectUrl: { name: 'coupon', url: '/coupon' },
+  src: couponBanner,
+  alt: 'คูปองส่วนลด',
+  href: '/coupon',
 };
 
 export const AFFILIATE_BANNER: Banner = {
-  images: [{ url: affiliateBanner, type: 'MOBILE' }],
-  redirectUrl: { name: 'affiliate', url: '/affiliate' },
+  src: affiliateBanner,
+  alt: 'แนะนำเพื่อน',
+  href: '/affiliate',
 };
 
 export const NOKSHOP_BANNER: Banner = {
-  images: [{ url: nokshopBanner, type: 'MOBILE' }],
-  redirectUrl: { name: 'nokshop', url: '/nok-shop' },
+  src: nokshopBanner,
+  alt: 'Nok Shop',
+  href: '/nok-shop',
 };
 
 /**
- * Artwork, not data: the little card next to the balance is part of the design and does
- * not arrive from anywhere. It sits in this page's own assets because no other page uses
- * it — the rule is in fixtures/README.md.
+ * Artwork, not a fixture: the little card beside the balance is part of the design and
+ * nobody swaps it. It lives in this page's own assets because no other page draws it.
  */
 export const NOK_CASH_CARD = nokCashCard;
 

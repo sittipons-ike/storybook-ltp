@@ -1,74 +1,53 @@
 /**
- * Shapes copied from the Frontend, not imported from it.
+ * The shapes the page tier renders.
  *
- * Importing `@/types/...` would tie this library to a checkout of
- * `lotteryplus-frontend-main`. Each type below names the file it was copied from, so when
- * the Frontend's shape changes the drift shows up in a diff instead of hiding behind a
- * path alias. Only the fields the page tier actually renders are carried across.
+ * These are not API responses. Nothing in this repo fetches, and nothing should: this is
+ * the designer's copy of the product, where a state is chosen rather than arrived at.
+ *
+ * So a shape here carries what a page *draws*, not what a server *sends*. The first
+ * version of this file copied the Frontend's API envelopes wholesale and ended up with
+ * `Profile` at 21 fields for a page that renders 2, and a `Banner` wrapping an array of
+ * `{ url, type: 'WEB' | 'MOBILE' }` for a page that shows one picture. That structure
+ * described a transport nobody here uses.
+ *
+ * Field names still match the Frontend where they overlap, so moving a page into the
+ * product repo is a matter of feeding it real data rather than rewriting it.
  */
 
-/** src/types/user/index.ts — `Profile` */
+/** Who the page is about. Grows a field when a page actually draws one. */
 export interface Profile {
-  id: string;
-  userId: string;
   firstName: string;
   lastName: string;
-  nickName: string;
-  gender: 'MALE' | 'FEMALE' | string;
-  phone: string;
-  bankName: string;
-  bankNo: string;
-  address: Address;
-  lineId: string;
-  name: string;
-  banExpiredAt: string | null;
-  suspended: boolean;
-  birthDate: string;
-  birthDay: Birthday;
-  verifyStatus: string;
-  profileImageURL: string;
-  achievement: string[];
-  tier: string;
+  /** Shown beside the name in the profile header. */
+  memberId: string;
+  /** Present once the member links an account — several rows branch on this. */
+  bankAccount?: { bankName: string; bankNo: string };
+  /** Under 20 cannot buy, which is a state the page has to be able to show. */
+  isUnderage?: boolean;
 }
 
-/** src/types/user/index.ts — `Address` */
-export interface Address {
-  province: string;
-  subdistrict: string;
-  district: string;
-  zipcode: string;
-  addressDetail: string;
-}
-
-/** src/types/user/index.ts — `Birthday` */
-export interface Birthday {
-  year: number;
-  month: number;
-  day: number;
-}
-
-/** src/types — `UserNokCashBalance`. A string because the balance outgrows a safe integer. */
+/** Nok cash. A string because the balance outgrows a safe integer — 13 digits in practice. */
 export interface Wallet {
   balance: string;
 }
 
 /**
- * src/types/ads-banner — the shape every banner arrives in. `url` is what makes a banner
- * data rather than artwork: it is fetched, it is scheduled, and it changes weekly.
+ * A banner: a picture that links somewhere.
+ *
+ * It stays a fixture rather than an asset because a designer swaps it — this week's
+ * artwork, next week's, or none at all — while the frame around it never moves. Artwork
+ * that is part of the design itself, like the little nok-cash card, is an asset.
  */
-export interface BannerImage {
-  url: string;
-  type: 'WEB' | 'MOBILE';
-}
-
 export interface Banner {
-  images: BannerImage[];
-  redirectUrl?: { name: string; url: string };
+  src: string;
+  alt: string;
+  /** Where tapping it goes. Recorded so a page can show the affordance honestly. */
+  href?: string;
 }
 
 /**
- * src/store/config — the flags that decide which sections a page renders at all.
- * They are props here, so a story can show the page with a section on and with it off.
+ * The flags that decide whether a section renders at all. Props, so one story can show
+ * the page with a section and another without it.
  */
 export interface WebConfig {
   isEnabledAffiliate: boolean;

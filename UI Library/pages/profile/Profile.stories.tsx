@@ -10,8 +10,9 @@ import { AFFILIATE_BANNER, COUPON_BANNER, NOKSHOP_BANNER } from './fixtures';
 import {
   PROFILE,
   PROFILE_NO_BANK,
+  PROFILE_UNDERAGE,
   WALLET,
-  WALLET_TYPICAL,
+  WALLET_LONG,
   WEB_CONFIG,
 } from '../../fixtures/user';
 
@@ -82,7 +83,7 @@ export const InTheShell: StoryObj = {
           <InShell>
             <ProfilePage
               profile={PROFILE}
-              wallet={WALLET_TYPICAL}
+              wallet={WALLET}
               config={WEB_CONFIG}
               menu={MENU}
               help={HELP}
@@ -101,17 +102,17 @@ export const EveryState: StoryObj = {
     const cases: { caption: string; props: React.ComponentProps<typeof ProfilePage> }[] = [
       {
         caption: 'ปกติ',
-        props: { profile: PROFILE, wallet: WALLET_TYPICAL, config: WEB_CONFIG, menu: MENU, help: HELP, ...BANNERS },
+        props: { profile: PROFILE, wallet: WALLET, config: WEB_CONFIG, menu: MENU, help: HELP, ...BANNERS },
       },
       {
         caption: 'อายุไม่ถึง 20 — Alert ขึ้น',
-        props: { profile: PROFILE, wallet: WALLET_TYPICAL, config: WEB_CONFIG, menu: MENU, help: HELP, isUnderage: true, ...BANNERS },
+        props: { profile: PROFILE_UNDERAGE, wallet: WALLET, config: WEB_CONFIG, menu: MENU, help: HELP, ...BANNERS },
       },
       {
         caption: 'ยังไม่ผูกบัญชีธนาคาร — แถวนั้นมีจุดเตือน',
         props: {
           profile: PROFILE_NO_BANK,
-          wallet: WALLET_TYPICAL,
+          wallet: WALLET,
           config: WEB_CONFIG,
           menu: MENU.map((m) => (m.title === 'บัญชีธนาคาร' ? { ...m, needsAttention: true } : m)),
           help: HELP,
@@ -122,7 +123,7 @@ export const EveryState: StoryObj = {
         caption: 'ปิด affiliate + nokshop — หัวข้อบริการว่าง',
         props: {
           profile: PROFILE,
-          wallet: WALLET_TYPICAL,
+          wallet: WALLET,
           config: { isEnabledAffiliate: false, isEnableNokshop: false },
           menu: MENU,
           help: HELP,
@@ -131,7 +132,7 @@ export const EveryState: StoryObj = {
       },
       {
         caption: 'ยอดนกแคช 13 หลัก — ตัวเลขจริงจาก mock ของ FE',
-        props: { profile: PROFILE, wallet: WALLET, config: WEB_CONFIG, menu: MENU, help: HELP, ...BANNERS },
+        props: { profile: PROFILE, wallet: WALLET_LONG, config: WEB_CONFIG, menu: MENU, help: HELP, ...BANNERS },
       },
     ];
 

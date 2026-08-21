@@ -26,7 +26,7 @@ export interface ProfilePageProps {
   profile: ProfileData;
   wallet: Wallet;
   config: WebConfig;
-  /** The three banners, each already a fetched URL. */
+  /** The three banners. */
   couponBanner: Banner;
   affiliateBanner: Banner;
   nokshopBanner: Banner;
@@ -34,8 +34,6 @@ export interface ProfilePageProps {
   menu: ProfileMenuItem[];
   /** Rows under ช่วยเหลือ. */
   help: ProfileMenuItem[];
-  /** Under 20 cannot buy — the condition the Alert renders on. */
-  isUnderage?: boolean;
 }
 
 const thb = (satang: string) => Number(satang).toLocaleString('en-US');
@@ -61,16 +59,13 @@ const MenuRow: React.FC<{ item: ProfileMenuItem; last: boolean }> = ({ item, las
 );
 
 /** A banner is a picture that links somewhere. Its ratio is fixed; its artwork is not. */
-const BannerImage: React.FC<{ banner: Banner; alt: string }> = ({ banner, alt }) => {
-  const image = banner.images.find((i) => i.type === 'MOBILE') ?? banner.images[0];
-  return (
-    <img
-      src={image.url}
-      alt={alt}
-      style={{ display: 'block', width: '100%', aspectRatio: BANNER_RATIO }}
-    />
-  );
-};
+const BannerImage: React.FC<{ banner: Banner }> = ({ banner }) => (
+  <img
+    src={banner.src}
+    alt={banner.alt}
+    style={{ display: 'block', width: '100%', aspectRatio: BANNER_RATIO }}
+  />
+);
 
 /**
  * ProfilePage — /profile
@@ -94,10 +89,9 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
   nokshopBanner,
   menu,
   help,
-  isUnderage = false,
 }) => (
   <Stack gap="2xl" paddingX="2xl" paddingY="2xl" maxWidth={448}>
-    {isUnderage && (
+    {profile.isUnderage && (
       <Alert
         title="ยังไม่สามารถซื้อลอตเตอรี่ได้"
         description="จะสามารถใช้บริการได้เมื่ออายุครบ 20 ปี"
@@ -121,7 +115,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
     {/* ── คูปองส่วนลด ────────────────────────── */}
     <Stack gap="lg">
       <TitleWithUnderline title="คูปองส่วนลด" />
-      <BannerImage banner={couponBanner} alt="คูปองส่วนลด" />
+      <BannerImage banner={couponBanner} />
     </Stack>
 
     {/* ── ข้อมูลสมาชิก ───────────────────────── */}
@@ -137,8 +131,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
     {/* ── บริการ ─────────────────────────────── */}
     <Stack gap="lg">
       <TitleWithUnderline title="บริการ" />
-      {config.isEnabledAffiliate && <BannerImage banner={affiliateBanner} alt="แนะนำเพื่อน" />}
-      {config.isEnableNokshop && <BannerImage banner={nokshopBanner} alt="Nok Shop" />}
+      {config.isEnabledAffiliate && <BannerImage banner={affiliateBanner} />}
+      {config.isEnableNokshop && <BannerImage banner={nokshopBanner} />}
     </Stack>
 
     {/* ── ช่วยเหลือ ──────────────────────────── */}

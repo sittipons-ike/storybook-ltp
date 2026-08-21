@@ -5,27 +5,36 @@ Real data for the page tier, in the Frontend's own shapes.
 ## Why this exists
 
 A page in this library takes its data as props and never fetches. That is what makes it
-the designer's copy of the product: every state — empty, loading, error, full — is one
-story away, where the real app can only show whichever state its data happens to be in.
+the designer's copy of the product: every state — empty, full, edge — is one story away,
+where the real app can only show whichever state its data happens to be in.
 
-The data has to be real for that to be worth anything, so these shapes are lifted from
-`lotteryplus-frontend-main/src/types` and the values from `src/mock/data`, which is what
-the Frontend's own MSW handlers serve. Nothing here is invented.
+The values are real: taken from `lotteryplus-frontend-main/src/mock/data`, which is what
+the Frontend's own MSW handlers serve. A 13-digit nok-cash balance is in there because a
+balance that long is what finds a card that assumed four.
 
 ## The rule
 
-    comes from an API   → fixtures/          (this folder)
-    used by many pages  → UI Library/assets/
-    used by one page    → that page's own assets/
+    designer swaps it to see a state   → fixtures/          (this folder)
+    part of the design, many pages     → UI Library/assets/
+    part of the design, one page       → that page's own assets/
 
-A banner is data, not artwork: the Frontend fetches `{ images: [{ url, type }] }` from
-`ads-banner` and `banner-schedulers`, and the picture changes weekly on a schedule. So a
-banner's URL lives in a fixture. The *frame* it sits in is a component.
+Nothing here fetches, and the split is not about where data comes from — an earlier
+version of this file said "comes from an API", which was the wrong question for a repo
+that has no API. The question is whether a designer changes it.
 
-## When this moves into the product repo
+A banner is a fixture: this week's artwork, next week's, or none at all, and each is a
+state worth looking at. The little nok-cash card beside the balance is an asset: it is
+part of the design and nobody swaps it. Both are `.png` — the file type decides nothing.
 
-Swap the fixture for the API call. Nothing else changes, because the page never knew
-where its props came from — which is the whole point of the arrangement.
+## Shapes carry what a page draws
+
+Not what a server sends. The first version copied the Frontend's API envelopes and ended
+up with `Profile` at 21 fields for a page that renders 2, and a banner wrapped in
+`{ images: [{ url, type: 'WEB' | 'MOBILE' }] }` for a page that shows one picture. That
+structure described a transport nobody here uses.
+
+Field names still match the Frontend where they overlap, so moving a page into the product
+repo means feeding it real data rather than rewriting it.
 
 ## Types are copied, not imported
 
