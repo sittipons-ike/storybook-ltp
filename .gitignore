@@ -31,3 +31,10 @@ agent-monitor/*.log
 
 # Cloned external repos / scratch
 open-design/
+
+# Vendored for reference — another team owns these, not ours to version
+lotteryplus-frontend-main/
+
+# Decks and one-off wireframes — not part of the library
+slide/
+wireframe/
