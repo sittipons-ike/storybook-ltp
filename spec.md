@@ -1,5 +1,5 @@
 # Project Spec — Lotteryplus Design System
-_Last updated: 2026-08-21 03:05_
+_Last updated: 2026-08-21 12:30_
 
 ## Current State
 
@@ -11,7 +11,7 @@ _Last updated: 2026-08-21 03:05_
 | Token | 1,111 vars · verify ตรง Figma 169/169 · ไม่มี drift |
 | Component | 26 ตัว (เพิ่ม **Avatar · ProfileHeader · Logo · ErrorState · LotteryCard**) · verify ระดับ node ครบ |
 | Asset | **112 logo/graphic** จาก Figma → `assets/logos/` (26 svg · 86 png · ไม่เข้า bundle) |
-| Pattern | 2 ตัว — AppShell (5 slot) + BareScreen · วัดจาก FE 81 หน้า และเทียบ Figma Template UI แล้ว |
+| Pattern | 5 ตัว (+ **Stack · Surface · DeviceFrame** — structural primitive ที่ทำให้ page ไม่ต้องแตะ token) — AppShell (5 slot) + BareScreen · วัดจาก FE 81 หน้า และเทียบ Figma Template UI แล้ว |
 | Storybook | 179 stories · จัดตาม **atomic design** แล้ว: Foundations → Atoms → Molecules → Organisms → Patterns → System |
 | Gate | `check.sh` **8 ด่าน** · icon set-equality บังคับแล้ว **20/20** — เพิ่มด่าน *icon ตรงกับที่ Figma วาด* (set equality) ต่อจากด่าน icon resolve + ด่าน `_verified_from` |
 
@@ -164,6 +164,23 @@ Storybook (เป้าหมาย SSOT) · FE (ตัวให้ยืม imp
 
 - 2026-08-20 — **กฎ authority แก้:** "Figma ชนะเสมอ*เมื่อ Figma มี* — ไม่มีให้ตาม FE"
   (user ตัดสิน) → 7 ตัวใน `blocked_on_figma` ปลดล็อก สร้างจาก FE พร้อม `_verified_from` ระบุที่มา
+
+## Page Tier — โครงที่ตกลงแล้ว (2026-08-21)
+
+```
+UI Library/
+  fixtures/            ← ข้อมูลจริง ยก type จาก FE (types.ts · user.ts)
+  pages/profile/
+    Profile.tsx        ← รับข้อมูลเป็น prop ไม่ fetch · ไม่แตะ token
+    Profile.stories.tsx
+    fixtures.ts        ← banner = URL (มาจาก API) + artwork เฉพาะหน้า
+    assets/            ← 14 รูปของหน้านี้
+```
+
+**กฎเก็บรูป:** มาจาก API → `fixtures/` · หลายหน้าใช้ → `UI Library/assets/` · หน้าเดียว → อยู่กับหน้านั้น
+
+**หน้าแรกเสร็จแล้ว** `/profile` · 5 state (ปกติ · อายุไม่ถึง 20 · ไม่มีบัญชีธนาคาร · ปิด flag · ยอด 13 หลัก)
+ยืนยันแล้วว่ายอด `5,239,822,249,018` ไม่ทำการ์ดแตก
 
 ## Next Up
 
