@@ -151,3 +151,8 @@
 - **เกิดอะไร:** เกือบสรุปว่า Skeleton พัง (`width: 0`) และ InfiniteScroll ไม่ทำงาน — ที่จริง `document.hidden === true` ทำให้ `#storybook-root` กว้าง 0 (`%` ทุกตัวเลยเป็น 0), `window.innerHeight` = 0 (IntersectionObserver intersect ไม่ได้เลย), และ `setTimeout` ถูก throttle เป็น ≥1000ms
 - **ทำไม:** อ่านตัวเลขที่วัดได้โดยไม่ถามว่า environment วัดได้จริงมั้ย — เคยพลาดแบบเดียวกันมาแล้วตอน CSS animation ค้างที่ keyframe 0%
 - **ครั้งหน้าทำยังไง:** ก่อนสรุปว่าอะไรพังจากตัวเลขใน browser ให้เช็ค `document.hidden` + `innerHeight` ก่อนเสมอ ถ้าซ่อนอยู่ให้เชื่อเฉพาะค่าที่ไม่ขึ้นกับ viewport (px คงที่, computed style, DOM structure) และสิ่งที่ต้องมี viewport (`%`, IntersectionObserver, animation, timer) ต้องหาทางพิสูจน์ทางอื่น — เช่นใส่ปุ่มเรียก callback เดียวกันใน story
+
+## 2026-08-21 · สคริปต์ commit ที่ไล่ path เองมือ = ตกของแบบเงียบๆ
+- **เกิดอะไร:** `commit-plan.sh` ไล่ directory ใต้ `UI Library/` ด้วยมือ 6 ตัว แต่มี 8 ตัว — `icons/` กับ `pages/` ตกไป commit 6 ก้อนผ่านหมดดูเรียบร้อย ทั้งที่ `icon-data.ts` (ตัวแก้ key ซ้ำ 4 คู่) ไม่ได้เข้า → ที่ HEAD component จะ import icon จากไฟล์เวอร์ชันเก่าที่ยัง duplicate อยู่
+- **ทำไม:** `check.sh` รันกับ working tree ไม่ใช่กับ HEAD เลยเขียวทั้งที่ commit ไม่ครบ — ไม่มีใครถาม git ว่า "เหลืออะไรอีก" มีแต่เชื่อลิสต์ที่พิมพ์เอง
+- **ครั้งหน้าทำยังไง:** สคริปต์ commit ทุกตัวต้องมี coverage check ปิดท้าย — `git status --porcelain -uall` ลบ path ที่ตั้งใจข้าม ถ้าเหลืออะไรให้ร้อง และหลัง commit ชุดใหญ่ให้ `git clone` แบรนช์นั้นออกมาที่อื่นแล้วรัน gate จาก clone จริง ไม่ใช่จาก working tree
