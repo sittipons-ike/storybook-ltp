@@ -2440,7 +2440,9 @@
           "profile-summary-*": "The `header-profile` block on [Mobile] Profile: 390x187, 16 of padding, filled with the brand red and rounded 24 on its BOTTOM corners only. Inside it two white cards that read as one: 358x80 rounded 16/16/0/0 with a 3px gold top edge (#EAB308, INSIDE), then a 1px white dashed rule (4/4) with 16 above it, then 358x74 rounded 0/0/16/16 with a 1px white border all round. The Frontend has none of this — it puts a plain white card on the page background — which is why building /profile from the Frontend alone produced the wrong shape. Read 2026-08-21.",
           "header-success-*": "The success meta row (label + value) sits on legacy 14/24 styles no role carries — see _unmigrated_type. Confirmed correct as drawn; literals until a role exists.",
           "subtitle-removed": "Figma's sub-page variant draws a hidden subtitle layer (งวดวันที่ …, 14/24 Medium). The product never shows it — decided with the user 2026-08-21 — so the component does not model it and its literals left with it. If the product ever grows a draw date under the title, this is the layer to re-read: header-bar-mobile > type=sub-page > heading, the hidden TEXT under text-center.",
-          "header-success-title": "Bound to typography/title/lg/semibold per the user's decision 2026-08-21. Figma still draws this layer at 22/34 on a legacy style; that drawing is the stale side. The bar keeps its 94 height via min-height, so the smaller line sits centred in the same block."
+          "header-success-title": "Bound to typography/title/lg/semibold per the user's decision 2026-08-21. Figma still draws this layer at 22/34 on a legacy style; that drawing is the stale side. The bar keeps its 94 height via min-height, so the smaller line sits centred in the same block.",
+          "profile-padding-y": "8 — added by the designer in Figma on 2026-08-21; the variant now carries padding 8/16/8/16 and the bar stays 72. Re-read off 14962:94338 the same day.",
+          "profile-meta": "The member-id row carries the text style `typography/caption/l-reg` — read off the layer's own style id on 2026-08-21. The overlay used to bind label/md/regular, picked because its numbers matched (12/18 mobile, 14 desktop on both roles). Same values, wrong word: the binding is vocabulary, and Figma's own style name is the vocabulary that counts. Why the row 'looks big' in Storybook: both roles are responsive on the VIEWPORT, so a desktop browser shows the 14px desktop step even inside a 393px phone mock — the phone itself shows 12. A container-query migration would fix the mock; noted, not done."
         },
         "_binding": {
           "header": "header-bar-mobile 14924:2118, variants type=home-page | sub-page | success",
@@ -2540,6 +2542,7 @@
         "header-icon-size": 24,
         "profile-height": 72,
         "profile-padding-x": "{design.semantic.spacing.2xl}",
+        "profile-padding-y": "{design.semantic.spacing.lg}",
         "profile-gap": "{design.semantic.spacing.lg}",
         "profile-avatar-size": 56,
         "profile-stack-gap": "{design.semantic.spacing.md}",
@@ -2549,9 +2552,9 @@
         "profile-name-weight": "{design.semantic.typography.title.lg.semibold.weight}",
         "profile-chevron-size": 20,
         "profile-meta-gap": "{design.semantic.spacing.sm}",
-        "profile-meta-size": "{design.semantic.typography.label.md.regular.size}",
-        "profile-meta-line-height": "{design.semantic.typography.label.md.regular.line-height}",
-        "profile-meta-weight": "{design.semantic.typography.label.md.regular.weight}",
+        "profile-meta-size": "{design.semantic.typography.caption.lg.regular.size}",
+        "profile-meta-line-height": "{design.semantic.typography.caption.lg.regular.line-height}",
+        "profile-meta-weight": "{design.semantic.typography.caption.lg.regular.weight}",
         "profile-pill-height": 20,
         "profile-pill-padding-x": "{design.semantic.spacing.lg}",
         "profile-pill-gap": "{design.semantic.spacing.sm}",

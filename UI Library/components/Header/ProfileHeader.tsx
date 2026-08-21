@@ -140,7 +140,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         height: PROFILE_HEADER.height,
         alignItems: 'center',
         gap: PROFILE_HEADER.gap,
-        padding: `0 ${PROFILE_HEADER.paddingX}`,
+        // 8/16 — the designer added the vertical inset in Figma on 2026-08-21.
+        padding: `${PROFILE_HEADER.paddingY} ${PROFILE_HEADER.paddingX}`,
         background: HEADER.background,
         color: HEADER.foreground,
       }}

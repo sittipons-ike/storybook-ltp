@@ -1290,6 +1290,7 @@ export const TOKEN_VALUES = {
   "--topfoot-header-icon-size": "24px",
   "--topfoot-profile-height": "72px",
   "--topfoot-profile-padding-x": "16px",
+  "--topfoot-profile-padding-y": "8px",
   "--topfoot-profile-gap": "8px",
   "--topfoot-profile-avatar-size": "56px",
   "--topfoot-profile-stack-gap": "6px",

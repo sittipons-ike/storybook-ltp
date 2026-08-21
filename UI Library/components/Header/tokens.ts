@@ -93,6 +93,7 @@ export const HEADER = {
 export const PROFILE_HEADER = {
   height: t.ref('profile-height'),
   paddingX: t.ref('profile-padding-x'),
+  paddingY: t.ref('profile-padding-y'),
   gap: t.ref('profile-gap'),
 
   avatarSize: t.ref('profile-avatar-size'),

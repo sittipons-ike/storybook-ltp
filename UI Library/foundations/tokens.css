@@ -1389,6 +1389,7 @@
   --topfoot-header-icon-size: 24px;
   --topfoot-profile-height: 72px;
   --topfoot-profile-padding-x: var(--sys-spacing-2xl);
+  --topfoot-profile-padding-y: var(--sys-spacing-lg);
   --topfoot-profile-gap: var(--sys-spacing-lg);
   --topfoot-profile-avatar-size: 56px;
   --topfoot-profile-stack-gap: var(--sys-spacing-md);
@@ -1398,9 +1399,9 @@
   --topfoot-profile-name-weight: var(--sys-type-title-lg-semibold-weight);
   --topfoot-profile-chevron-size: 20px;
   --topfoot-profile-meta-gap: var(--sys-spacing-sm);
-  --topfoot-profile-meta-size: var(--sys-type-label-md-regular-size);
-  --topfoot-profile-meta-line-height: var(--sys-type-label-md-regular-line-height);
-  --topfoot-profile-meta-weight: var(--sys-type-label-md-regular-weight);
+  --topfoot-profile-meta-size: var(--sys-type-caption-lg-regular-size);
+  --topfoot-profile-meta-line-height: var(--sys-type-caption-lg-regular-line-height);
+  --topfoot-profile-meta-weight: var(--sys-type-caption-lg-regular-weight);
   --topfoot-profile-pill-height: 20px;
   --topfoot-profile-pill-padding-x: var(--sys-spacing-lg);
   --topfoot-profile-pill-gap: var(--sys-spacing-sm);
