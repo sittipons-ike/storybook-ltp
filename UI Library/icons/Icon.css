@@ -1,9 +1,10 @@
 /* ============================================================
    Icon Component — Lotteryplus Design System
-   Figma: icons-size component set
-   Sizes: 12 | 16 | 20 | 24 | 32 | 40 | 48 | 56 | 64 | 72
-   Colors: Primary (#E32321) | Secondary (#262626) |
-           Tertiary (#737373) | On BG (#FFFFFF)
+   Figma: icons-size component set (10 sizes x 4 colours)
+
+   Sizes and colours are tokens, not values in this file:
+     --icon-size-*        from components/icon.json
+     --icon-foreground-*  from Figma's colors/icon group
    ============================================================ */
 
 .ltp-icon {
@@ -14,8 +15,10 @@
   vertical-align: middle;
 }
 
+/* Shown when a name is not registered. Deliberately conspicuous — a dashed outline reads
+   as "something is wrong here" rather than as an intentionally empty slot. */
 .ltp-icon--missing {
-  border: 1px dashed #D4D4D4;
-  border-radius: 4px;
-  background: #FAFAFA;
+  border: var(--sys-border-width-hairline) dashed var(--sys-color-border-accent-gray-light);
+  border-radius: var(--sys-radius-sm);
+  background: var(--sys-color-background-soft-light);
 }
