@@ -1344,8 +1344,8 @@
   --topfoot-header-background: var(--sys-color-primary-default);
   --topfoot-header-foreground: var(--sys-color-text-on-bgcolor);
   --topfoot-header-phoenix-opacity: 70%;
-  --topfoot-header-home-height: 146px;
-  --topfoot-header-home-padding-top: var(--sys-spacing-lg);
+  --topfoot-header-home-height: 154px;
+  --topfoot-header-home-padding-top: var(--sys-spacing-2xl);
   --topfoot-header-home-padding-x: var(--sys-spacing-2xl);
   --topfoot-header-home-padding-bottom: var(--sys-spacing-5xl);
   --topfoot-header-home-gap: var(--sys-spacing-2xl);
@@ -1359,11 +1359,11 @@
   --topfoot-header-slogan-size: var(--sys-type-sub-title-lg-medium-size);
   --topfoot-header-slogan-line-height: var(--sys-type-sub-title-lg-medium-line-height);
   --topfoot-header-slogan-weight: var(--sys-type-sub-title-lg-medium-weight);
-  --topfoot-header-sub-height: 56px;
+  --topfoot-header-sub-height: 68px;
   --topfoot-header-sub-padding-x: var(--sys-spacing-2xl);
+  --topfoot-header-sub-padding-y: var(--sys-spacing-2xl);
   --topfoot-header-sub-gap: var(--sys-spacing-lg);
-  --topfoot-header-sub-heading-padding-y: var(--sys-spacing-2xl);
-  --topfoot-header-sub-title-height: 24px;
+  --topfoot-header-sub-title-height: 36px;
   --topfoot-header-main-height: 68px;
   --topfoot-header-main-padding: var(--sys-spacing-2xl);
   --topfoot-header-main-gap: var(--sys-spacing-lg);
@@ -1373,7 +1373,7 @@
   --topfoot-header-title-size: var(--sys-type-title-lg-semibold-size);
   --topfoot-header-title-line-height: var(--sys-type-title-lg-semibold-line-height);
   --topfoot-header-title-weight: var(--sys-type-title-lg-semibold-weight);
-  --topfoot-header-success-height: 94px;
+  --topfoot-header-success-height: 96px;
   --topfoot-header-success-padding: var(--sys-spacing-2xl);
   --topfoot-header-success-gap: var(--sys-spacing-sm);
   --topfoot-header-success-title-size: var(--sys-type-display-xl-semibold-size);
@@ -1419,9 +1419,10 @@
   --topfoot-profile-summary-card-radius: var(--sys-radius-2xl);
   --topfoot-profile-summary-accent-width: 3px;
   --topfoot-profile-summary-accent-color: var(--sys-color-status-warning-default);
-  --topfoot-profile-summary-border-width: var(--sys-border-width-hairline);
-  --topfoot-profile-summary-border-color: var(--sys-color-foreground-white);
-  --topfoot-profile-summary-rule-gap: var(--sys-spacing-2xl);
+  --topfoot-profile-summary-rule-height: 1px;
+  --topfoot-profile-summary-rule-color: var(--sys-color-foreground-white);
+  --topfoot-profile-summary-rule-dash: 4px;
+  --topfoot-profile-summary-rule-dash-gap: 4px;
   --topfoot-profile-noti-size: 32px;
   --topfoot-profile-badge-diameter: 16px;
   --topfoot-profile-badge-padding-x: var(--sys-spacing-md);

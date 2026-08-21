@@ -9,7 +9,8 @@ import { sys } from '../../foundations/tokens';
 // ═══════════════════════════════════════════
 //  Header — Figma `header-bar-mobile` (14924:2118)
 //
-//  Three variants, verified against Figma on 2026-08-19. Every number on this page is
+//  Four variants, re-read from Figma on 2026-08-21 after the designer switched every
+//  frame to hug and moved the padding onto the bars. Every number on this page is
 //  read from the component set; nothing is estimated.
 // ═══════════════════════════════════════════
 
@@ -66,7 +67,7 @@ const Counter: React.FC<{ value: string; icon: string }> = ({ value, icon }) => 
 
 // ═══════════════════════════════════════════
 export const Variants: StoryObj = {
-  name: 'Three variants',
+  name: 'Four variants',
   render: () => (
     <div style={{ fontFamily: sans, display: 'flex', flexDirection: 'column', gap: 32 }}>
       <div style={{ maxWidth: 640 }}>
@@ -79,7 +80,7 @@ export const Variants: StoryObj = {
         </p>
       </div>
 
-      <Device label="type=home-page" sub="146px · หน้าหลักที่กดจาก Navbar">
+      <Device label="type=home-page" sub="154px · หน้าหลักที่กดจาก Navbar">
         <Header
           variant="home"
           actionRight={
@@ -106,7 +107,7 @@ export const Variants: StoryObj = {
         />
       </Device>
 
-      <Device label="type=sub-page" sub="56px · หน้าที่ไม่ได้กดจาก Navbar">
+      <Device label="type=sub-page" sub="68px · หน้าที่ไม่ได้กดจาก Navbar">
         <Header
           variant="sub"
           title="ตู้เซฟของฉัน"
@@ -114,7 +115,7 @@ export const Variants: StoryObj = {
         />
       </Device>
 
-      <Device label="type=success" sub="94px · หน้าจบ flow">
+      <Device label="type=success" sub="96px · หน้าจบ flow">
         <Header
           variant="success"
           title="คำสั่งซื้อสำเร็จ"
@@ -146,10 +147,12 @@ export const Anatomy: StoryObj = {
       verticalAlign: 'top',
     };
     const rows: [string, string, string][] = [
-      ['type=home-page', '146px', 'padding 8/16/32 · gap 16 · app bar 36 · logo 31 · wordmark row 32'],
-      ['type=sub-page', '56px', 'padding 0/16 · gap 8 · action well 36 · icon 24'],
-      ['type=success', '94px', 'padding 16 · gap 4'],
-      ['background', 'colors/top-and-footer/topfoot-bg-red', '#E32321 — same red for all three'],
+      ['type=home-page', '154px', 'padding 16/16/32 · gap 16 · app bar 36 · logo 31 · wordmark row 32'],
+      ['type=type4 · main', '68px', 'padding 16 · gap 8 · title display/xl-semb, left · counters right'],
+      ['type=sub-page', '68px', 'padding 16 · gap 8 · heading box 36 · action well 36 · icon 24'],
+      ['type=success', '96px', 'padding 16 · gap 4'],
+      ['every frame', 'hug', 'all four hug on their primary axis as of 2026-08-21 — the height is whatever the content adds up to, so a taller title grows the bar instead of being clipped by it'],
+      ['background', 'colors/top-and-footer/topfoot-bg-red', '#E32321 — same red for all four'],
       ['foreground', 'Color/Text/Text-Onbgcolor', '#FFFFFF'],
       ['app bar right gap', '12px', "Figma's Frame 1000012514, not an action well"],
       ['action control', 'button · Size=M, Type=Tertiary', '36×36 · radius-lg · 1px border · 6 padding · 24 glyph'],

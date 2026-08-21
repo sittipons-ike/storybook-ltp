@@ -15,7 +15,7 @@ import './Header.css';
  *
  * The set spans two shell slots, which its name hides. `home` and `success` are headers —
  * the tall red block the Frontend renders behind `hasHeader`. `sub` is a top navbar — the
- * 56px bar the Frontend renders behind `hasTopNavbar`. They are kept in one component
+ * 68px bar the Frontend renders behind `hasTopNavbar`. They are kept in one component
  * because Figma models them as one set, and Figma is the structure authority; the slot
  * each belongs to is recorded here so a composition cannot get it wrong by accident.
  */
@@ -410,8 +410,11 @@ const Header: React.FC<HeaderProps> = ({
       style={{
         ...base,
         alignItems: 'center',
-        height: HEADER.subHeight,
-        padding: `0 ${HEADER.subPaddingX}`,
+        // Figma hugs: 16 + a 36-tall heading + 16 = 68. minHeight rather than height so a
+        // title that ever wraps grows the bar the way the Figma frame would, instead of
+        // spilling out of a fixed one.
+        minHeight: HEADER.subHeight,
+        padding: `${HEADER.subPaddingY} ${HEADER.subPaddingX}`,
         gap: HEADER.subGap,
       }}
     >
@@ -428,7 +431,10 @@ const Header: React.FC<HeaderProps> = ({
           <HeaderAction icon="arrow-left-L" label="ย้อนกลับ" onClick={onBack} bordered={false} />
         )}
       </ActionWell>
-      {/* Figma's `heading` frame: 16 of vertical padding around a 24px title line.
+      {/* Figma's `heading` frame: a 36-tall box holding a 24px title line centred in it.
+          The 16 of vertical padding that used to sit here moved onto the bar when the
+          designer switched the variant to hug (2026-08-21) — same 68 either way, but the
+          padding belongs to whichever frame Figma puts it on.
           Figma also draws a hidden subtitle layer in here (งวดวันที่ …); the product never
           shows it, so it is not modelled — decided with the user 2026-08-21. */}
       <div
@@ -441,8 +447,7 @@ const Header: React.FC<HeaderProps> = ({
           flexDirection: 'column',
           justifyContent: 'center',
           textAlign: 'center',
-          paddingTop: HEADER.subHeadingPaddingY,
-          paddingBottom: HEADER.subHeadingPaddingY,
+          height: HEADER.subTitleHeight,
         }}
       >
         <p

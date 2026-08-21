@@ -232,7 +232,7 @@ export const Filled: StoryObj = {
                 marginBottom: 10,
               }}
             >
-              status-bar + header(home · 146) + main + bottom-navbar
+              status-bar + header(home · 154) + main + bottom-navbar
             </div>
             <div style={deviceFrame}>
               <AppShell
@@ -347,7 +347,7 @@ export const FigmaTemplates: StoryObj = {
           }}
         >
           <strong>Figma เปิด slot บนแค่ช่องเดียว ส่วน Frontend เปิดสองช่อง</strong>{' '}
-          <code style={{ fontFamily: mono }}>type=home-page</code> สูง 146px มี app bar
+          <code style={{ fontFamily: mono }}>type=home-page</code> สูง 154px มี app bar
           (โลโก้ · 1,050 · 10 · hamburger) รวมอยู่ในตัวเลย ส่วน Frontend แยกเป็น TopNavbar
           กับ Header คนละ component — shell เลยเก็บไว้ 2 slot ตามฝั่ง FE แล้ว template ของ Figma
           ก็แค่ปล่อย <code style={{ fontFamily: mono }}>top-navbar</code> ว่างไว้
@@ -357,7 +357,7 @@ export const FigmaTemplates: StoryObj = {
           <div>
             <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 2 }}>หน้าหลักที่กดจาก Navbar</div>
             <div style={{ fontSize: 11, fontFamily: mono, color: sys('color-text-tertiary-default'), marginBottom: 10 }}>
-iPhone 16 · 393×852 — status-bar + header(home · 146) + main + bottom-navbar
+iPhone 16 · 393×852 — status-bar + header(home · 154) + main + bottom-navbar
             </div>
             <div style={deviceFrame}>
               <AppShell

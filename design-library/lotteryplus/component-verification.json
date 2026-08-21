@@ -325,7 +325,7 @@
         "phoenix-geometry": "Was one square `size` positioned with a percentage translate. Figma gives each variant its own box and offset, and the success one is 118x125 — not square."
       },
       "gaps": {
-        "success-frame-is-two-short-of-its-own-content": "type=success (22447:63726) is set to a FIXED height of 94, but its own auto-layout adds up to 96: 16 of padding, a 64-tall `Head` (Heading 36 + gap 4 + Number 24), and 16 more. The title was restyled to display/xl-semb (20/36) on 2026-08-21 — taller than the 22/34 legacy style's box was set for — and the frame was not resized with it. The library renders 96, because clamping to 94 would clip a line the design asks for. Either the frame goes to 96 or it goes back to hug; a designer picks. Read 2026-08-21."
+        "profile-variants-disagree-on-their-own-padding": "`header-bar-profile-moblie` (14962:94338) has 9 variants, all 72 tall. One — type=lottery, state=login+no-active (14962:91594) — hugs with padding 8/16/8/16. The other eight are FIXED 72 with padding 0/16/0/16 and centre their 56-tall content, which lands in the same place, so nothing renders differently and the library models the padded one. It is still one variant edited and eight not: if the content ever grows, eight frames clip and one does not. A designer applies 8/16 to the rest. Read 2026-08-21."
       }
     }
   }
