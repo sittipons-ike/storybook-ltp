@@ -1,8 +1,10 @@
 # Project Spec — Lotteryplus Design System
-_Last updated: 2026-08-21 18:20_
+_Last updated: 2026-08-22 19:35_
 
 ## Current State
-_Restructured 2026-08-21: `UI Library` → `ui` · feature tier ที่ `features/` (profile = UI ครบ, gamification = docs ครบ, avatar = assets) · `~/Lottery+` ยุบเข้า repo ทั้งหมด (ของหนักอยู่ `_source/` gitignored, ของเก่าอยู่ `archive/`) · helper/page metadata ตรง Lark §3.7 แล้ว_
+_หน้าที่สองของ page tier เสร็จ 2026-08-22: `features/home/` — `/` ทั้งหน้า 390×4651 วัดจาก Figma `21085:96373` ทีละ node · 14 feature component + 13 asset · `npm run check` เขียว_
+
+_Restructured 2026-08-21: `UI Library` → `ui` · feature tier ที่ `features/` (profile = UI ครบ, home = UI ครบ, gamification = docs ครบ, avatar = assets) · `~/Lottery+` ยุบเข้า repo ทั้งหมด (ของหนักอยู่ `_source/` gitignored, ของเก่าอยู่ `archive/`) · helper/page metadata ตรง Lark §3.7 แล้ว_
 
 
 สร้าง **Storybook เป็น Single Source of Truth** ให้ทีม Design + Dev sync กันแบบ code-based
@@ -183,6 +185,37 @@ ui/
 
 **หน้าแรกเสร็จแล้ว** `/profile` · 5 state (ปกติ · อายุไม่ถึง 20 · ไม่มีบัญชีธนาคาร · ปิด flag · ยอด 13 หลัก)
 ยืนยันแล้วว่ายอด `5,239,822,249,018` ไม่ทำการ์ดแตก
+
+**หน้าที่สองเสร็จแล้ว** `/` (2026-08-22) · `features/home/` ตามโครง `features/_template`
+prd.md · ux-home.md · page.yaml (§3.7) · fixtures.ts · components/ 11 ตัว · pages/ 3 story
+
+| บล็อก | Figma | วัดได้ |
+|---|---|---|
+| header `type=home-page` | 154 | 154 ✅ |
+| `main-home-card` + search | 266 | 266 ✅ |
+| แถวโฆษณา | 112 | 112 ✅ |
+| แบนเนอร์ + จุด | 120 | 120 ✅ |
+| นาทีทอง (`Lottery-1`) | 763 | 763 ✅ |
+| เลขชุด | 390 | 390 ✅ |
+| เลขท้าย 2/3 · เลขหน้า 3 | 499 | 500 (ดู debt ข้างล่าง) |
+| quick menu | 284 | 284 ✅ |
+| SEO | 210 | 209 |
+| บริการเสริม | 306 · การ์ด 258 | 306 · 258 ✅ |
+| footer | 190 | 190 ✅ |
+
+**Feature component (scope: feature — ขึ้น `ui/` เมื่อมีที่ใช้ซ้ำ ≥2 ตาม §3.3):**
+`LotteryTile` · `LotterySection` · `FlashSaleBanner` · `CountdownPanel` · `QuickMenuGrid` ·
+`CarouselDots` · `SeoPanel` · `AddOnServiceCard` · `HomeAdsRow` · `PromoBanner` ·
+`SearchBoard` · `HomeRedBlock` · `HomeFooter` · `HeaderCounter`
+
+**หนี้ที่บันทึกไว้ (ไม่ใช่บั๊กของเรา — Figma ใช้ style เก่า):**
+- หัวข้อหมวด + หัว SEO ชี้ `typography/heading/h2` / `[NEW] Typo/Heading/H2` = 28/42 **Medium**
+  แต่ชุด local style ของไฟล์มีแค่ `h2-semb` (Semibold) → ใช้ `heading-h2-semibold`
+- subtitle ชี้ `[NEW] Typo/Sub-Title/L-Med` = 14/**21** ส่วน local `sub-title/l-med` = 14/**22**
+  → หมวดที่มี subtitle เลยสูงกว่า Figma 1px (499 → 500)
+- `lottery-card` ใช้ฟอนต์ดิบทั้งใบ (14/24, 12/22, 16/26, 8/10) ไม่มี role รองรับ
+  บันทึกเป็น `UNBOUND_TYPE` ใน `features/home/components/tokens.ts` พร้อม node id
+- `tools/import-figma-assets.py` ตัวใหม่ — ทางลำเลียง asset จาก Figma ลง `features/<name>/assets`
 
 - 2026-08-21 — **variant ปุ่มเปลี่ยนชื่อให้ตรงกับที่มันวาด** (ตัดสิน: ทางเลือก A)
   `tertiary`→`outline` (มีเส้น 6 token) · `outline`→`ghost` (ไม่มีเส้นเลย) · `link` ขึ้นทะเบียน extension
