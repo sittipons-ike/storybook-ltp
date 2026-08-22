@@ -21,7 +21,7 @@ import { TOKEN_VALUES, type TokenName } from '../../foundations/tokens.generated
  * none, so the two names were the wrong way round. Figma still uses the old labels and
  * catches up in Phase 3.
  */
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'link';
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'link' | 'special';
 
 /** Canonical states, per the Design System Standard. */
 export type ButtonState = 'rest' | 'hover' | 'focus' | 'active' | 'disabled';
@@ -35,7 +35,9 @@ export const BUTTON_VARIANTS: readonly ButtonVariant[] = [
   'outline',
   'ghost',
   'link',
+  'special',
 ] as const;
+
 
 export const BUTTON_STATES: readonly ButtonState[] = [
   'rest',
@@ -90,6 +92,36 @@ export const buttonColorValues = (
   foreground: buttonValue(`${variant}-foreground-${state}`),
   border: buttonValue(`${variant}-border-${state}`),
 });
+
+/**
+ * The randomise control's own values — a gradient, a glow and a height the size axis has no
+ * step for. `special` is the one variant whose geometry is not shared, because Figma draws
+ * it as a fixed 114x54 component rather than a size of `button`.
+ *
+ * Figma: `button-special / status=random-number` (`14291:131519`), read 2026-08-22.
+ */
+export const BUTTON_SPECIAL = {
+  width: ref('special-width'),
+  height: ref('special-height'),
+  scrimActive: ref('special-scrim-active'),
+  glowColor: ref('special-glow-color'),
+  glowBlur: ref('special-glow-blur'),
+  glowTop: {
+    left: ref('special-glow-top-x'),
+    top: ref('special-glow-top-y'),
+    width: ref('special-glow-top-width'),
+    height: ref('special-glow-top-height'),
+  },
+  glowBottom: {
+    left: ref('special-glow-bottom-x'),
+    top: ref('special-glow-bottom-y'),
+    width: ref('special-glow-bottom-width'),
+    height: ref('special-glow-bottom-height'),
+  },
+} as const;
+
+/** The focus ring Figma states on `special`: 0 0 0 4px, primary at 24%. */
+export const buttonShadow = (variant: ButtonVariant): string => ref(`${variant}-shadow`);
 
 /** Layout and typography shared by every variant. */
 export const BUTTON_BASE = {

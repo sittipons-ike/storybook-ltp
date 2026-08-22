@@ -33,8 +33,9 @@ HEX = re.compile(r"#[0-9A-Fa-f]{6}\b")
 
 # Prose may name a colour to explain something — `check-pages.py` makes the same allowance,
 # for the same reason: a comment renders nothing. Only whole comment lines are skipped, so a
-# literal with a comment after it on the same line is still caught.
-COMMENT = re.compile(r"^\s*(//|\*|/\*)")
+# literal with a comment after it on the same line is still caught. `{/*` is here because
+# JSX comments are the ones component files actually use.
+COMMENT = re.compile(r"^\s*(//|\*|/\*|\{/\*)")
 
 # (path relative to the repo, literal) -> why it may stay.
 #

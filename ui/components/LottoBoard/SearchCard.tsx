@@ -8,7 +8,6 @@ import '../../icons/icon-data';
 import '../../foundations/tokens.css';
 import {
   SEARCH_CARD,
-  RANDOMIZE_ICON_SIZE,
   LOTTO_BOARD_COLORS,
   lottoBoardText,
   FONT_FAMILY,
@@ -163,39 +162,22 @@ const SearchCard: React.FC<SearchCardProps> = ({
           paddingRight: SEARCH_CARD.paddingX,
         }}
       >
-        {/* Randomise — Figma's `button-special` (14291:131519): a 114x54 tile filled with a
-            dark-to-red gradient. It is not a Button variant in Figma, so it is not one here.
-            Its glyph is `filled-AI`, read off `Frame 1000012333` on 2026-08-20. The overlay
-            used to record that no glyph existed in the set; the glyph was there all along,
-            inside an instance nobody had walked. */}
-        <button
-          type="button"
+        {/* Randomise — Figma's `button-special / status=random-number` (14291:131519).
+            It used to be a hand-rolled `<button>` here, because Figma keeps it in a separate
+            set from `button` and the library read that as "not a Button". Reading all twelve
+            variants showed the set is four unrelated controls, and this one is a button in
+            every way the atom shares — same radius, same type role, an icon and a label. It
+            is `variant="special"` now; the gradient, the glow and the 54 live with the atom.
+            Decision and scope: phase3-vocabulary.md §2. */}
+        <Button
+          variant="special"
+          showIcon
+          iconName="filled-AI"
           onClick={handleRandom}
           disabled={disabled}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: SEARCH_CARD.randomizeGap,
-            flex: 'none',
-            width: SEARCH_CARD.randomizeWidth,
-            height: SEARCH_CARD.randomizeHeight,
-            borderRadius: SEARCH_CARD.randomizeRadius,
-            background: SEARCH_CARD.randomizeGradient,
-            color: SEARCH_CARD.randomizeForeground,
-            border: 'none',
-            cursor: disabled ? 'not-allowed' : 'pointer',
-            opacity: disabled ? SEARCH_CARD.opacityDisabled : undefined,
-            ...lottoBoardText('menu'),
-          }}
         >
-          <Icon
-            name="filled-AI"
-            size={RANDOMIZE_ICON_SIZE as IconSize}
-            customColor={SEARCH_CARD.randomizeForeground}
-          />
           สุ่มตัวเลข
-        </button>
+        </Button>
 
         {/* Search — `Size=L, Type=Primary` with `layoutSizingVertical: FILL`, so it takes
             the row's 54 rather than L's own 44. The row is 54 because `button-special` is;
