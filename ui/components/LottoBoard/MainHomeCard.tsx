@@ -7,8 +7,9 @@ import { lottoBoardRef } from './tokens';
  * MainHomeCard — Figma `main-home-card` (`14854:33344`)
  *
  * The near-white card the number search sits in on the home page: 390×266, radius 16, 16 of
- * padding top and bottom and none at the sides, filled #FAFAFA → #FFFFFF. Inside it is
- * `lotto-board-mobile Type=All`, which `SearchCard` already draws.
+ * padding top and bottom and none at the sides, filled `background.soft-light` to
+ * `background.default` top to bottom. Inside it is `lotto-board-mobile Type=All`, which
+ * `SearchCard` already draws.
  *
  * It belongs here rather than beside the page. Figma models it as a seven-variant component
  * set in the `lotto state` section — the same board with the state that replaced it —

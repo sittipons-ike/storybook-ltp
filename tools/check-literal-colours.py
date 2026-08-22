@@ -31,6 +31,11 @@ SUFFIXES = {".ts", ".tsx", ".css"}
 
 HEX = re.compile(r"#[0-9A-Fa-f]{6}\b")
 
+# Prose may name a colour to explain something — `check-pages.py` makes the same allowance,
+# for the same reason: a comment renders nothing. Only whole comment lines are skipped, so a
+# literal with a comment after it on the same line is still caught.
+COMMENT = re.compile(r"^\s*(//|\*|/\*)")
+
 # (path relative to the repo, literal) -> why it may stay.
 #
 # The bar: a colour that is not ours to choose. A brand's own hex is the brand's, and
@@ -70,6 +75,8 @@ def main() -> int:
                 continue
             scanned += 1
             for n, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+                if COMMENT.match(line):
+                    continue
                 for hexcode in HEX.findall(line):
                     if ".stories." in path.name:
                         story_hits.setdefault(rel, set()).add(hexcode.upper())
