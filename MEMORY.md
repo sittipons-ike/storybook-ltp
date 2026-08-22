@@ -253,3 +253,8 @@
 - **เกิดอะไร:** quick menu สูง 302 แทน 284 — เกิน 18 พอดี 1 บรรทัด
 - **ทำไม:** `ศูนย์ช่วยเหลือ` กว้าง 73 ในคอลัมน์ 72 Figma วางที่ x=-0.5 ให้ล้นออกข้างละครึ่ง แต่ CSS ตัดขึ้นบรรทัดใหม่ ทำให้ทุกแถวสูงขึ้น
 - **ครั้งหน้าทำยังไง:** ตอนอ่าน text ใน grid ให้เทียบ `text.width` กับ `parent.width` — กว้างกว่า + `x` ติดลบ = ตั้งใจให้ล้น ต้องใส่ `white-space: nowrap` ไม่ใช่ปล่อยให้ wrap (ตระกูลเดียวกับบทเรียน ProgressBar ABSOLUTE + negative x)
+
+## 2026-08-22 · สร้าง component ไว้ผิดชั้น 3 ครั้งในหน้าเดียว — เพราะถามคำถามผิด
+- **เกิดอะไร:** ทำ `HomeFooter` · `SearchBoard` · `HeaderCounter` เป็น feature component ที่ `features/home/components/` ทั้งที่ทั้งสามเป็นของ `ui/` — user ทักเองทั้งสามครั้ง (footer ก่อน แล้ว header + search board)
+- **ทำไม:** ถามว่า *"หน้านี้ต้องการอะไร"* แล้วสร้างสิ่งนั้นขึ้นมาที่ระดับหน้า · คำถามที่ถูกคือ *"Figma วาดของชิ้นนี้ไว้ที่ไหน"* — `main-home-card` เป็น COMPONENT_SET 7 variant ใน section `lotto state`, counter อยู่ใน main component `header-bar-mobile`, glyph ของ footer อยู่ใน `footer-mobile` · ผมเห็นแค่ instance บนหน้า เลยนึกว่าเป็นการประกอบของหน้า
+- **ครั้งหน้าทำยังไง:** ก่อนสร้าง component ใหม่ทุกครั้ง ให้ `getMainComponentAsync()` จาก instance ที่หน้าใช้ แล้วดู 2 อย่าง: (1) main component อยู่ section ไหน — อยู่ใน Organism/Component section = ของระบบ (2) `instance.overrides.length` — **ถ้า 0 แปลว่าหน้าไม่ได้เปลี่ยนอะไรเลย ของชิ้นนั้นเป็นของ component ไม่ใช่ของหน้า** ถ้าเข้าเงื่อนไขให้สร้างที่ `ui/` พร้อม overlay + token namespace ตั้งแต่แรก · ที่ `features/<name>/components/` เก็บเฉพาะของที่ Figma ไม่มี component ให้ หรือหน้าประกอบเอง

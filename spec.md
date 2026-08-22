@@ -2,7 +2,7 @@
 _Last updated: 2026-08-22 19:35_
 
 ## Current State
-_หน้าที่สองของ page tier เสร็จ 2026-08-22: `features/home/` — `/` ทั้งหน้า 390×4651 วัดจาก Figma `21085:96373` ทีละ node · 13 feature component (+13 story) · 6 asset ของหน้า + 7 asset ที่ยกขึ้น ui/ · `npm run check` เขียว_
+_หน้าที่สองของ page tier เสร็จ 2026-08-22: `features/home/` — `/` ทั้งหน้า 390×4651 วัดจาก Figma `21085:96373` ทีละ node · 11 feature component (+11 story) · 6 asset ของหน้า · อีก 3 component + 7 asset ยกขึ้น ui/ แล้ว · `npm run check` เขียว_
 
 _Restructured 2026-08-21: `UI Library` → `ui` · feature tier ที่ `features/` (profile = UI ครบ, home = UI ครบ, gamification = docs ครบ, avatar = assets) · `~/Lottery+` ยุบเข้า repo ทั้งหมด (ของหนักอยู่ `_source/` gitignored, ของเก่าอยู่ `archive/`) · helper/page metadata ตรง Lark §3.7 แล้ว_
 
@@ -206,8 +206,8 @@ prd.md · ux-home.md · page.yaml (§3.7) · fixtures.ts · components/ 11 ต�
 **Feature component (scope: feature — ขึ้น `ui/` เมื่อมีที่ใช้ซ้ำ ≥2 ตาม §3.3):**
 `LotteryTile` · `LotterySection` · `FlashSaleBanner` · `CountdownPanel` · `QuickMenuGrid` ·
 `CarouselDots` · `SeoPanel` · `AddOnServiceCard` · `HomeAdsRow` · `PromoBanner` ·
-`SearchBoard` · `HomeRedBlock` · `HeaderCounter`
-ทุกตัวมี `.stories.tsx` ของตัวเองแล้ว → เห็นใน Storybook กลุ่ม `Features/Home/*` (25 story)
+`HomeRedBlock`
+ทุกตัวมี `.stories.tsx` ของตัวเองแล้ว → เห็นใน Storybook กลุ่ม `Features/Home/*`
 
 **หนี้ที่บันทึกไว้ (ไม่ใช่บั๊กของเรา — Figma ใช้ style เก่า):**
 - หัวข้อหมวด + หัว SEO ชี้ `typography/heading/h2` / `[NEW] Typo/Heading/H2` = 28/42 **Medium**
@@ -222,6 +222,16 @@ prd.md · ux-home.md · page.yaml (§3.7) · fixtures.ts · components/ 11 ต�
   glyph 5 ช่อง + ชิป visitor/DBD อยู่ใน main component (`14291:133483`) ไม่ใช่ของหน้า
   → ย้ายเข้า `ui/assets/brand/` เสิร์ฟผ่าน `asset()` · story เดิมที่ใช้ icon มั่วๆ แทน (กระดิ่ง=Facebook)
   ถูกเอาออก · `features/home/components/HomeFooter.tsx` ลบทิ้ง
+- 2026-08-22 — **3 ตัวที่ทำผิดที่ ยกขึ้น `ui/` แล้ว** (user ทัก ถูกทั้งสามครั้ง)
+  หลักฐานเดียวกันทุกตัว: Figma model มันเป็น component ของระบบ และ instance ที่ `/` **override 0**
+  · `SearchBoard` → `ui/components/LottoBoard/MainHomeCard` — `main-home-card` เป็น COMPONENT_SET
+    **7 variant** (`14854:33344`) ทำแล้ว 1 · อีก 6 ลง `_figma_gaps` พร้อมความสูง ไม่ stub เปล่า
+    ได้ token namespace `main-*` ต่อจาก cell-/menu-/set-/card-
+  · `HeaderCounter` → `ui/components/Header/` — อยู่ใน main component `type=home-page` (`21282:140741`)
+    `Header.stories.tsx` เคยมี `Counter` ของตัวเองซ้ำอีกตัว เอาออกแล้ว ใช้ตัวเดียวกับที่ page ใช้
+  · `HomeFooter` → default ของ `ui/components/Footer`
+  **ข้อสังเกต:** ทั้งสามเกิดจากถามว่า "หน้านี้ต้องการอะไร" แทนที่จะถามว่า "Figma วาดของนี้ไว้ที่ไหน"
+  เกณฑ์ที่ใช้ได้จริง = ดึง main component แล้วดู `overrides.length` ถ้า 0 แปลว่าเป็นของ component
 - 2026-08-22 — **ด่านสีเปลี่ยนเป็นนับได้** `tools/check-literal-colours.py` แทน `grep -v` ทั้งไฟล์
   ยกเว้นทีละ literal พร้อมเหตุผล + node · fail ทั้งตอนมีตัวใหม่และตอน entry ค้าง (ทดสอบทั้งสองทางแล้ว)
   story ยังไม่บังคับ แต่**นับให้เห็นทุกครั้ง** — ตอนนี้ 40 ตัวใน 6 ไฟล์ เป็นงานแยกต่างหาก
