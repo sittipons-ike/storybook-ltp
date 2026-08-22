@@ -302,3 +302,35 @@ python3 tools/import-figma-logos.py <saved-result.txt>
 `noti-error` and `Card` are on the same page but are neither 80x80 nor marks — they are a
 notification illustration set and a card graphic, and they need their own decision before
 anything imports them.
+
+### Artwork that belongs to one page
+
+A picture only one page draws does not go to `ui/assets/logos` — it goes beside the page, in
+`features/<name>/assets`, and is imported so a missing file is a build error rather than a
+broken image. `import-figma-assets.py` is the same conveyance with a destination argument:
+
+```js
+const targets = [
+  ['home-headline', '21084:85073'],
+  ['lottery-ticket-face', 'I21084:85095;14291:138147;14291:138121'],
+];
+const b64 = (u8) => { let s = ''; const C = 0x8000;
+  for (let i = 0; i < u8.length; i += C) s += String.fromCharCode.apply(null, u8.subarray(i, i + C));
+  return btoa(s); };
+const items = [];
+for (const [name, id] of targets) {
+  const n = await figma.getNodeByIdAsync(id);
+  const png = await n.exportAsync({format: 'PNG', constraint: {type: 'SCALE', value: 3}});
+  items.push({name, kind: 'png', w: n.width, h: n.height, bytes: png.length, data: b64(png)});
+}
+return {items};
+```
+
+```bash
+python3 tools/import-figma-assets.py <saved-result.txt> features/home/assets
+```
+
+The bridge only writes a result to a file once it is too large to return inline, so a small
+export comes back in the conversation instead. Pad the batch with one big node when that
+happens — the padding file is deleted after the import, and the artwork never has to be
+copied by hand.
