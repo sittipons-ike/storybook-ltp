@@ -148,12 +148,17 @@ const SearchCard: React.FC<SearchCardProps> = ({
         <SetSelect quantity={setQty} onQuantityChange={setSetQty} disabled={disabled} />
       )}
 
-      {/* Bottom actions */}
+      {/* Bottom actions — Figma's `Search` row: 390x54, gap 8, 16 of side padding, children
+          centred. It hugs, and the 54 comes from `button-special`; stating it as a minimum
+          as well is what `search-height` is for, and keeps the row honest if the randomise
+          control is ever hidden. */}
       <div
         style={{
           display: 'flex',
           flexDirection: 'row',
+          alignItems: 'center',
           gap: SEARCH_CARD.actionsGap,
+          minHeight: SEARCH_CARD.searchHeight,
           paddingLeft: SEARCH_CARD.paddingX,
           paddingRight: SEARCH_CARD.paddingX,
         }}
@@ -192,11 +197,14 @@ const SearchCard: React.FC<SearchCardProps> = ({
           สุ่มตัวเลข
         </button>
 
-        {/* Search */}
+        {/* Search — `Size=L, Type=Primary` with `layoutSizingVertical: FILL`, so it takes
+            the row's 54 rather than L's own 44. The row is 54 because `button-special` is;
+            Figma hugs it rather than stating a height twice. */}
         <Button
           variant="primary"
           size="lg"
           fullWidth
+          fullHeight
           onClick={handleSearch}
           disabled={disabled}
         >

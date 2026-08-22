@@ -31,6 +31,18 @@ export interface ButtonProps {
   onClick?: () => void;
   /** Full width */
   fullWidth?: boolean;
+  /**
+   * Fill the row's height instead of standing at the size's own.
+   *
+   * Figma's Auto Layout sizes on both axes and this component only modelled one. The search
+   * row on the home page is where it showed: `button` there is `Size=L` with
+   * `layoutSizingVertical: FILL` (`I21084:85041;14854:25314` → `Search`), so it stretches to
+   * the 54 that `button-special` beside it sets, while L on its own is 44. Without this the
+   * two controls in that row are 10px apart in height.
+   *
+   * `minHeight` still holds the size's own height, so a shorter row cannot squash it.
+   */
+  fullHeight?: boolean;
   /** HTML button type */
   htmlType?: 'button' | 'submit' | 'reset';
   /** Additional className */
@@ -62,6 +74,7 @@ const Button: React.FC<ButtonProps> = ({
   disabled = false,
   onClick,
   fullWidth = false,
+  fullHeight = false,
   htmlType = 'button',
   className = '',
 }) => {
@@ -91,7 +104,9 @@ const Button: React.FC<ButtonProps> = ({
     alignItems: 'center',
     justifyContent: 'center',
 
-    height: dimensions.height,
+    height: fullHeight ? 'auto' : dimensions.height,
+    alignSelf: fullHeight ? 'stretch' : undefined,
+    minHeight: fullHeight ? dimensions.height : undefined,
     // Figma draws the icon-only button as a square — 44, 36 or 28 on a side. Letting the
     // width come from content made it 2px wider than tall, because the transparent 1px
     // border every variant carries counts toward an auto width under border-box.
