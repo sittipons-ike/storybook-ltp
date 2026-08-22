@@ -1,4 +1,4 @@
-import type { Banner } from '../../fixtures/types';
+import type { Banner } from '../../ui/fixtures/types';
 
 import couponBanner from './assets/profile-coupon-menu-banner.png';
 import affiliateBanner from './assets/profile-affiliate-menu-banner.png';

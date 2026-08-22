@@ -1178,11 +1178,11 @@
     "infinity-scroll": {
       "name": "infinity-scroll",
       "responsibility": "Load the next page when the end scrolls into view",
-      "composition_level": "helper",
+      "type": "helper",
       "dependencies": [],
       "scope": "global",
       "shared": true,
-      "folder": "global/components/infinity-scroll",
+      "folder": "global/helpers/infinity-scroll",
       "css_prefix": "infinite-scroll",
       "storybook": "InfiniteScroll",
       "figma_group": null,

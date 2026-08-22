@@ -1,17 +1,17 @@
 import React from 'react';
-import Stack from '../../patterns/Stack/Stack';
-import Surface from '../../patterns/Surface/Surface';
-import Alert from '../../components/Alert/Alert';
-import Divider from '../../components/Divider/Divider';
-import Button from '../../components/Button/Button';
-import Text from '../../components/Text/Text';
-import Badge from '../../components/Badge/Badge';
-import ProfileSummary from '../../components/ProfileSummary/ProfileSummary';
-import Icon from '../../icons/Icon';
-import '../../icons/icon-data';
-import Logo from '../../logos/Logo';
-import type { Banner, Profile as ProfileData, Wallet, WebConfig } from '../../fixtures/types';
-import { NOK_CASH_CARD } from './fixtures';
+import Stack from '../../../ui/patterns/Stack/Stack';
+import Surface from '../../../ui/patterns/Surface/Surface';
+import Alert from '../../../ui/components/Alert/Alert';
+import Divider from '../../../ui/components/Divider/Divider';
+import Button from '../../../ui/components/Button/Button';
+import Text from '../../../ui/components/Text/Text';
+import Badge from '../../../ui/components/Badge/Badge';
+import ProfileSummary from '../../../ui/components/ProfileSummary/ProfileSummary';
+import Icon from '../../../ui/icons/Icon';
+import '../../../ui/icons/icon-data';
+import Logo from '../../../ui/logos/Logo';
+import type { Banner, Profile as ProfileData, Wallet, WebConfig } from '../../../ui/fixtures/types';
+import { NOK_CASH_CARD } from '../fixtures';
 
 /**
  * _frontend_route: /profile

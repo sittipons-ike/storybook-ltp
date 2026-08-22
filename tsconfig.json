@@ -12,5 +12,5 @@
     "resolveJsonModule": true,
     "isolatedModules": true
   },
-  "include": ["ui/**/*", ".storybook/**/*"]
+  "include": ["ui/**/*", "features/**/*", ".storybook/**/*"]
 }

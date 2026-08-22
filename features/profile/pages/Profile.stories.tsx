@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import ProfilePage, { type ProfileMenuItem } from './Profile';
-import AppShell from '../../patterns/AppShell/AppShell';
-import DeviceFrame from '../../patterns/DeviceFrame/DeviceFrame';
-import StatusBar from '../../components/StatusBar/StatusBar';
-import { AVATAR } from './fixtures';
-import NavigationBar from '../../components/NavigationBar/NavigationBar';
-import ProfileHeader from '../../components/Header/ProfileHeader';
-import { AFFILIATE_BANNER, COUPON_BANNER, NOKSHOP_BANNER } from './fixtures';
+import AppShell from '../../../ui/patterns/AppShell/AppShell';
+import DeviceFrame from '../../../ui/patterns/DeviceFrame/DeviceFrame';
+import StatusBar from '../../../ui/components/StatusBar/StatusBar';
+import { AVATAR } from '../fixtures';
+import NavigationBar from '../../../ui/components/NavigationBar/NavigationBar';
+import ProfileHeader from '../../../ui/components/Header/ProfileHeader';
+import { AFFILIATE_BANNER, COUPON_BANNER, NOKSHOP_BANNER } from '../fixtures';
 import {
   PROFILE,
   PROFILE_NO_BANK,
@@ -15,7 +15,7 @@ import {
   WALLET,
   WALLET_LONG,
   WEB_CONFIG,
-} from '../../fixtures/user';
+} from '../../../ui/fixtures/user';
 
 // ═══════════════════════════════════════════
 //  /profile — the first page of the page tier.
