@@ -1,7 +1,7 @@
 import React from 'react';
 import Stack from '../../../ui/patterns/Stack/Stack';
 import Footer from '../../../ui/components/Footer/Footer';
-import SearchBoard from '../components/SearchBoard';
+import MainHomeCard from '../../../ui/components/LottoBoard/MainHomeCard';
 import HomeAdsRow, { type HomeAd } from '../components/HomeAdsRow';
 import PromoBanner, { type Promo } from '../components/PromoBanner';
 import LotterySection, { type LotterySectionProps } from '../components/LotterySection';
@@ -72,7 +72,7 @@ const HomePage: React.FC<HomePageProps> = ({
     <Stack gap="2xl">
       {/* ── main-home-card ─────────────────────────────────────────────────
           The search card, on the red the header leaves behind it. `21084:85041` */}
-      <SearchBoard type="All" onSearch={onSearch} />
+      <MainHomeCard type="All" onSearch={onSearch} />
 
       {/* ── Frame 1000013549: the ad row and the promo banner. `22244:118772` ── */}
       <Stack gap="2xl">

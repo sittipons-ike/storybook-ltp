@@ -30,7 +30,7 @@ Unhappy paths the page has to be able to show, and how:
 |---|---|---|---|---|
 | 0 | StatusBar | `21084:85178` | 47 | `ui/components/StatusBar` |
 | 1 | Header `type=home-page` | `21282:143458` | 154 | `ui/components/Header` variant `home` |
-| 2 | `main-home-card` + `lotto-board-mobile` | `21084:85041` | 266 | `SearchBoard` ครอบ `ui/components/LottoBoard/SearchCard` |
+| 2 | `main-home-card` + `lotto-board-mobile` | `21084:85041` | 266 | `ui/components/LottoBoard/MainHomeCard` |
 | 3 | แถวโฆษณา 2 ช่อง | `22244:118774` | 112 | `HomeAdsRow` (รูป) |
 | 4 | แบนเนอร์ + จุดบอกหน้า | `22244:118794` | 120 | `PromoBanner` + `CarouselDots` |
 | 5 | บล็อกแดง — 5 หมวดสลาก | `21084:85067` | 2810 | `LotterySection` + `LotteryTile` + `CountdownPanel` |
@@ -53,8 +53,9 @@ Unhappy paths the page has to be able to show, and how:
 ## Components
 
 **Reuse จาก `ui/`** — ไม่แตะ ไม่ fork:
-`StatusBar` · `Header` (variant `home`) · `NavigationBar` · `Footer` (ไม่ต้องส่ง prop — ดูด้านล่าง) · `SearchCard` (LottoBoard) ·
-`Button` · `Text` · `Icon` · `Logo` · `Divider` · `Stack` · `Surface` · `DeviceFrame` · `AppShell`
+`StatusBar` · `Header` (variant `home`) + `HeaderCounter` · `NavigationBar` · `Footer` (ไม่ต้องส่ง prop) ·
+`MainHomeCard` (LottoBoard) · `Button` · `Text` · `Icon` · `Logo` · `Divider` · `Stack` · `Surface` ·
+`DeviceFrame` · `AppShell`
 
 **ใหม่เฉพาะ feature นี้** — อยู่ที่ `features/home/components/`, `scope: feature`
 (ขึ้น `ui/` ได้ต่อเมื่อมีหลักฐานใช้ซ้ำ ≥2 ที่ ตาม Lark §3.3):
@@ -71,11 +72,24 @@ Unhappy paths the page has to be able to show, and how:
 | `AddOnServiceCard` | `add-on-service` (`16821:38580`) | การ์ดบริการเสริม |
 | `HomeAdsRow` | `Frame 1000013545` | โฆษณา 2 ช่อง — เป็นรูปที่ดีไซเนอร์สลับได้ |
 | `PromoBanner` | `Banner Promote` | แบนเนอร์ + จุดบอกหน้า |
-| `SearchBoard` | `main-home-card` | กรอบไล่สีที่ครอบ SearchCard + แถบแดงที่โผล่ใต้ header |
 | `HomeRedBlock` | `Lottery` (`21084:85067`, `85173`) | พื้นแดงมุมบน 24 — มีเพื่อให้ page ไม่ต้องพูดคำว่า "แดง" |
-| `HeaderCounter` | `appbar-main` (`21282:140831`) | ตัวเลขนกแคช/สลากบน header — story แตะ token ไม่ได้ เลยต้องเป็น component |
 
-### Footer — ของที่ยกกลับขึ้นไปที่ส่วนกลาง (2026-08-22)
+### สามตัวที่ยกกลับขึ้นไปที่ส่วนกลาง (2026-08-22)
+
+ตอนแรกทำเป็น feature component ทั้งสาม แล้วพบว่าผิด — Figma model มันเป็น component ของระบบ
+และ instance ที่หน้า `/` **override 0** ทุกตัว แปลว่าของพวกนี้เป็นของ component ไม่ใช่ของหน้า
+
+| เดิม | ย้ายไป | หลักฐาน |
+|---|---|---|
+| `SearchBoard` | `ui/components/LottoBoard/MainHomeCard` | `main-home-card` เป็น COMPONENT_SET 7 variant (`14854:33344`) ใน section `lotto state` |
+| `HeaderCounter` | `ui/components/Header/HeaderCounter` | อยู่ใน main component `header-bar-mobile / type=home-page` (`21282:140741`) |
+| `HomeFooter` | default ของ `ui/components/Footer` | glyph อยู่ใน `footer-mobile` (`14291:133483`) |
+
+`main-home-card` ทำแล้ว 1 variant — อีก 6 (sold-out · closed-for-service · maintenance ·
+coming-soon · live-broadcast · end-live-broadcast) บันทึกไว้ที่ `lotto-board.json → _figma_gaps`
+พร้อมความสูง ไม่ได้ stub เปล่าไว้ เพราะ variant ที่เรนเดอร์กรอบว่างจะอ่านเหมือนทำเสร็จ
+
+#### Footer
 
 ตอนแรกหน้านี้มี `HomeFooter` ของตัวเอง เพราะ `ui/components/Footer` ตั้ง `socials` กับ `chips`
 เป็น `[]` — เรียก `<Footer />` เปล่าๆ แล้วได้แถบแดงว่าง ทุกหน้าต้องหา glyph มาใส่เอง
@@ -112,7 +126,7 @@ asset ไปอยู่ `ui/assets/brand/` เสิร์ฟผ่าน `asse
    ประกาศ 1px (499 → 500) ตัวเลขที่เหลือทั้งหน้าตรงเป๊ะ
 3. `Top-bar` (`21084:85177`) สูงคงที่ 193 ทั้งที่ลูกรวมกัน 201 — header ล้นกรอบแม่ 8px
    และ `Top-BG` แดงยาวถึง 209 ผลคือการ์ดค้นหาเริ่มที่ 193 ซ้อนใต้แถบแดง
-   หน้านี้จึงวางการ์ดชิดใต้ header แล้วให้พื้นแดงต่อลงมาอีก 8px (`SearchBoard bleed`)
+   หน้านี้จึงวางการ์ดชิดใต้ header แล้วให้พื้นแดงต่อลงมาอีก 8px (`MainHomeCard bleed`)
 4. การ์ด `lottery-card` ใช้ฟอนต์ดิบ (`GraphikTH/L-Medium`, `Title/GraphikTH/M-SemiBold`, `8`, `6`)
    ไม่ได้ผูก text style — ตัวเลข 8 กับ 6 ไม่มีขั้นไหนใน type scale รองรับ
    บันทึกเป็นหนี้ไว้ที่ `LotteryTile.tsx` แล้ว

@@ -1400,6 +1400,13 @@
         "randomize-gap": "{design.semantic.spacing.sm}",
         "search-height": 54,
         "card-max-width": 400,
+        "main-radius": "{design.semantic.radius.2xl}",
+        "main-padding-y": "{design.semantic.spacing.2xl}",
+        "main-gradient": "linear-gradient(180deg, #FAFAFA 0%, #FFFFFF 100%)",
+        "_source-main-gradient": "Two stops, top to bottom, on `main-home-card` (14854:33341). Both ends have a role — background.soft-light and background.default — but a gradient is one CSS value, so it is authored whole here rather than assembled in the component from two refs.",
+        "main-bleed-height": 8,
+        "_source-main-bleed-height": "`Top-BG` (21084:85034) paints the page red to y=209 while the header stops at 201, so the card sits on 8px of red rather than on the page background. Figma gets there by letting the header overflow a fixed-height `Top-bar`; the card carries it instead, which keeps the shell honest — a slot that says 154 is 154.",
+        "main-bleed-background": "{design.semantic.colors.background.accent-red}",
         "_source-card-max-width": "storybook-local, no Figma token backs it — the search-card frame is 400 wide in Figma and design.md's breakpoints start at 321/361/390, none of which is 400",
         "opacity-disabled": "{design.semantic.opacity.disabled}",
         "opacity-limit-reached": "{design.semantic.opacity.muted}",
@@ -1437,10 +1444,10 @@
           "typography-number": "The digits in the number cells carry the text style `typography/display/xl-semb` — 20/36 Semibold, read off lotto-board-mobile (14583:89931) on 2026-08-21, and the style id is set on the layer, so this is Figma's own naming rather than a guess. The overlay used to say 24/32 weight 700, which matched no layer and no role: an invented value that survived because nothing forced typography to bind."
         },
         "_verified_from": {
-          "node": "14583:89931 `lotto-board-mobile` (3 variants), 14583:89963 `menu-button` (3), 14583:90116 `number-search-box-2` (7), 19002:25158 `search-card` (3) — page `↳ search-lottery ✅`",
-          "date": "2026-08-19",
-          "scope": "variant lists for all four sets, depth-3 walks, plus a rendered screenshot of lotto-board-mobile",
-          "result": "Cell 53x64 with 8 padding, radius 8, a 1px `lotto-board-border` stroke and elevation.card; cell gap 8; row padding 16. Menu row 390x44 with three 114x44 buttons, gap 8, radius 8. Search row: a 114x54 randomise button and a 236x54 search button, gap 8. All geometry matches.",
+          "node": "14583:89931 `lotto-board-mobile` (3 variants), 14583:89963 `menu-button` (3), 14583:90116 `number-search-box-2` (7), 19002:25158 `search-card` (3) — page `↳ search-lottery ✅` · 14854:33344 `main-home-card` (7 variants) — page `↳ home ✅`, read 2026-08-22",
+          "date": "2026-08-22",
+          "scope": "variant lists for all four sets, depth-3 walks, plus a rendered screenshot of lotto-board-mobile · 2026-08-22: the `main-home-card` set — variant list, and `type=search-card` at node level against its instance on `/` (21084:85041), which overrides nothing.",
+          "result": "Cell 53x64 with 8 padding, radius 8, a 1px `lotto-board-border` stroke and elevation.card; cell gap 8; row padding 16. Menu row 390x44 with three 114x44 buttons, gap 8, radius 8. Search row: a 114x54 randomise button and a 236x54 search button, gap 8. All geometry matches. 2026-08-22: main-home-card 390x266, radius 16, 16 of padding top and bottom and none at the sides, filled #FAFAFA to #FFFFFF top to bottom. It wraps `lotto-board-mobile Type=All` unchanged. Six sibling variants recorded as a gap.",
           "corrections": {
             "header layout": "Figma lays the title and the draw date side by side on one 24px row with an 8px gap, and puts `ล้างค่า` at the far end. The library stacked the title above the date.",
             "date colour": "`Color/Text/Text-Secondary` (#262626) — the same weight as body copy, not a dimmed grey.",
@@ -1450,7 +1457,8 @@
         "_figma_gaps": {
           "button-special-not-a-button-variant": "Figma models the randomise control as its own component set, `button-special` (14291:131519, 12 variants), rather than a variant of `button`. The library renders its shape inside LottoBoard. Whether it should become a Button variant is a designer's call.",
           "search-card-is-a-second-set": "`search-card` (19002:25158) repeats lotto-board-mobile with a different title and a root gap of 8 instead of 16. Two sets for one thing.",
-          "randomise-glow": "Figma layers two blurred #262626 ellipses over the gradient (LAYER_BLUR 16) for a glow. The library renders the gradient alone — close, but not the same thing. Recorded rather than approximated."
+          "randomise-glow": "Figma layers two blurred #262626 ellipses over the gradient (LAYER_BLUR 16) for a glow. The library renders the gradient alone — close, but not the same thing. Recorded rather than approximated.",
+          "main-home-card-six-states-not-built": "`main-home-card` (14854:33344) is a 7-variant set and only `type=search-card` is built. The other six are the board replaced by a state: sold-out (478), closed-for-service (612), maintenance (660), coming-soon (612), live-broadcast (349), end-live-broadcast (349). Each holds its own illustration and copy, none of which has been measured. Listed rather than stubbed, because a variant that renders an empty frame reads as built."
         },
         "_figma_icons": {
           "_comment": "The icons Figma instantiates for this component, read 2026-08-20 by walking the instance tree and keeping every main component whose parent set is `icons`. check-figma-icons.py holds the files in `sources` to exactly this set — an extra icon fails as loudly as a missing one, because an extra is one nobody compared. Files not listed in `sources` carry payload a caller passes, not a choice the design makes.",
@@ -1471,7 +1479,7 @@
           ]
         }
       },
-      "figma_node": "14583:89931 (lotto-board-mobile) · 14583:89963 (menu-button) · 14583:90116 (number-search-box-2) · 19002:25158 (search-card)"
+      "figma_node": "14583:89931 (lotto-board-mobile) · 14583:89963 (menu-button) · 14583:90116 (number-search-box-2) · 19002:25158 (search-card) · 14854:33344 (main-home-card, 7 variants)"
     },
     "modal": {
       "name": "modal",

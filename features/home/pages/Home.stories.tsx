@@ -6,7 +6,7 @@ import DeviceFrame from '../../../ui/patterns/DeviceFrame/DeviceFrame';
 import StatusBar from '../../../ui/components/StatusBar/StatusBar';
 import NavigationBar from '../../../ui/components/NavigationBar/NavigationBar';
 import Header, { HeaderAction } from '../../../ui/components/Header/Header';
-import HeaderCounter from '../components/HeaderCounter';
+import HeaderCounter from '../../../ui/components/Header/HeaderCounter';
 import {
   AD_FEATURE,
   AD_STACKED,

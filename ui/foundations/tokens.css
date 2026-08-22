@@ -970,6 +970,11 @@
   --lotto-board-randomize-gap: var(--sys-spacing-sm);
   --lotto-board-search-height: 54px;
   --lotto-board-card-max-width: 400px;
+  --lotto-board-main-radius: var(--sys-radius-2xl);
+  --lotto-board-main-padding-y: var(--sys-spacing-2xl);
+  --lotto-board-main-gradient: linear-gradient(180deg, #FAFAFA 0%, #FFFFFF 100%);
+  --lotto-board-main-bleed-height: 8px;
+  --lotto-board-main-bleed-background: var(--sys-color-background-accent-red);
   --lotto-board-opacity-disabled: var(--sys-opacity-disabled);
   --lotto-board-opacity-limit-reached: var(--sys-opacity-muted);
   --lotto-board-typography-title-family: var(--sys-type-title-lg-semibold-family);

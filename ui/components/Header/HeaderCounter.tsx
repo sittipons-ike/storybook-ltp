@@ -1,8 +1,8 @@
 import React from 'react';
-import '../../../ui/foundations/tokens.css';
-import Icon from '../../../ui/icons/Icon';
-import '../../../ui/icons/icon-data';
-import { sys } from '../../../ui/foundations/tokens';
+import '../../foundations/tokens.css';
+import Icon from '../../icons/Icon';
+import '../../icons/icon-data';
+import { sys } from '../../foundations/tokens';
 
 /**
  * HeaderCounter — Figma `Button / CTA Button / Medium` inside `appbar-main` (`21282:140831`)
@@ -11,9 +11,14 @@ import { sys } from '../../../ui/foundations/tokens';
  * number, 4 apart, in white on the red bar. Figma models it as a button frame with its fill
  * turned off (`visible: false`), so there is no chip — an icon and a number.
  *
- * It lives here rather than in the Header story because the shell in `Home.stories.tsx`
- * needs it and `check-pages.py` holds `pages/*` — stories included — to composing: a story
- * may not name a token, and a counter is nothing but tokens.
+ * It lives beside Header because Figma draws it inside `header-bar-mobile`, and the home
+ * instance on `/` (`21282:143458`) overrides nothing. It was briefly a feature component,
+ * which was the wrong home for the same reason the footer's glyphs were: artwork that is
+ * part of a component is not the page's to re-supply.
+ *
+ * The *values* are the page's, though — a balance and a ticket count are per-member — so
+ * Header takes the assembled row as `actionRight` rather than owning the numbers. What the
+ * component owns is which icon, which type role, and the 4 between them.
  */
 export interface HeaderCounterProps {
   /** `outline-NokPoints-W` for nok cash, `outline-Lottery` for the ticket count. */
