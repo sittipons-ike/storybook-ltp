@@ -13,7 +13,7 @@
 | Source | Value | Verdict |
 |---|---|---|
 | Figma `colors/warning/default` | `#EAB308` → alias `colors/yellow/500` | ✅ source of truth |
-| Storybook UI Library | `#EAB308` | ✅ correct |
+| Storybook ui | `#EAB308` | ✅ correct |
 | FE `--warning-default` | `#f59e0b` (Tailwind amber.500) | ❌ **drift — must fix** |
 
 Full Figma warning ladder (all alias `colors/yellow/*`):

@@ -31,7 +31,7 @@ OVERLAY_DIR = LIB / "components"
 # Editorial metadata — a human decides these, not the pull. Groups absent here are
 # skipped (they are app surfaces, not design-system components).
 #
-# `storybook` names the folder under `UI Library/components/`, or None when Figma has
+# `storybook` names the folder under `ui/components/`, or None when Figma has
 # tokens for a surface the library does not model as a component. A list when one Figma
 # colour group backs several components — `colors/top-and-footer` paints the header, the
 # site footer and the sticky action bar, and splitting the group to match would be a
@@ -142,7 +142,9 @@ META: dict[str, dict] = {
     },
     "infinity-scroll": {
         "responsibility": "Load the next page when the end scrolls into view",
-        "composition_level": "helper", "scope": "global",
+        # Lark §3.7: a helper is its own `type`, not a rung on the atomic ladder — it has
+        # no composition_level, no variants, no states, and it lives under helpers/.
+        "type": "helper", "scope": "global",
         "dependencies": [], "prefix": "infinite-scroll", "storybook": "InfiniteScroll",
         "figma_group": None,
     },
@@ -334,7 +336,9 @@ def build(mirror: dict) -> dict:
         scope = meta["scope"]
 
         folder = f"global/components/{name}"
-        if scope == "project":
+        if meta.get("type") == "helper":
+            folder = f"global/helpers/{name}"
+        elif scope == "project":
             folder = f"projects/{meta.get('project', 'lotteryplus')}/components/{name}"
         elif scope == "feature":
             folder = (
@@ -345,7 +349,14 @@ def build(mirror: dict) -> dict:
         entry = {
             "name": name,
             "responsibility": meta["responsibility"],
-            "composition_level": meta["composition_level"],
+        }
+        # §3.7: helpers carry `type`, everything on the atomic ladder carries
+        # `composition_level` — never both.
+        if meta.get("type") == "helper":
+            entry["type"] = "helper"
+        else:
+            entry["composition_level"] = meta["composition_level"]
+        entry |= {
             "dependencies": meta["dependencies"],
             "scope": scope,
             "shared": scope == "global",

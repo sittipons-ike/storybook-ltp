@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════
 // Static asset paths
 //
-// Fonts, logos and brand marks are served as files out of `UI Library/assets` via
+// Fonts, logos and brand marks are served as files out of `ui/assets` via
 // Storybook's `staticDirs` — they are never imported, so nothing rewrites their URLs at
 // build time. That makes the path a string the code has to get right on its own.
 //
@@ -17,7 +17,7 @@
 // ═══════════════════════════════════════════
 
 /**
- * Resolve a path inside `UI Library/assets` against wherever this build is mounted.
+ * Resolve a path inside `ui/assets` against wherever this build is mounted.
  *
  * Pass the path without a leading slash — `asset('logos/gp-lottery.png')`. A leading slash
  * is tolerated and stripped, because that is the shape everyone will type out of habit.

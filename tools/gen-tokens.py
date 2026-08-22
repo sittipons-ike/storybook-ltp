@@ -24,7 +24,7 @@ import yaml
 REPO = Path(__file__).resolve().parent.parent
 DEFAULT_DESIGN = REPO / "design-library" / "lotteryplus" / "design.md"
 DEFAULT_COMPONENTS = REPO / "design-library" / "lotteryplus" / "components.json"
-DEFAULT_OUT = REPO / "UI Library" / "foundations" / "tokens.css"
+DEFAULT_OUT = REPO / "ui" / "foundations" / "tokens.css"
 
 # Semantic group -> CSS var segment. Groups absent here keep their own name.
 GROUP_ALIAS = {

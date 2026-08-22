@@ -528,7 +528,7 @@ semantic:
   #   1. designer picks the replacement for Dropdown's 10px padding (8 or 12) — changes field height
   #   2. remove spacing-2lg in Figma
   #   3. re-pull, drop this line, migrate Dropdown
-  # Known consumers: UI Library/components/Dropdown (field paddingTop/Bottom, list gap).
+  # Known consumers: ui/components/Dropdown (field paddingTop/Bottom, list gap).
   spacing:
     none: '{primitive.spacing.0}'
     xs:   '{primitive.spacing.2}'

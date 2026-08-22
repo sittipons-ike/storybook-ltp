@@ -1,4 +1,4 @@
-import { asset } from '../UI Library/foundations/asset';
+import { asset } from '../ui/foundations/asset';
 
 // ═══════════════════════════════════════════
 // Graphik TH — the real product font.

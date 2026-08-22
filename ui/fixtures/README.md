@@ -15,7 +15,7 @@ balance that long is what finds a card that assumed four.
 ## The rule
 
     designer swaps it to see a state   → fixtures/          (this folder)
-    part of the design, many pages     → UI Library/assets/
+    part of the design, many pages     → ui/assets/
     part of the design, one page       → that page's own assets/
 
 Nothing here fetches, and the split is not about where data comes from — an earlier

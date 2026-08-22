@@ -1,0 +1,19 @@
+# Page manifest — Lark Standard §3.7 (page)
+name: profile-page
+responsibility: "ศูนย์รวมบัญชีของสมาชิก — ยอดเงิน แต้ม สลาก คูปอง และเมนูข้อมูลส่วนตัว"
+
+type: page
+pattern: app-shell
+organisms:
+  - profile-header       # header-bar-profile-moblie (14962:94338)
+  - profile-summary      # header-profile (15006:92124)
+  - navigation-bar       # bottom tab bar
+
+scope: project
+project: lotteryplus
+folder: projects/lotteryplus/pages/profile
+
+# Library-local facts, beyond what §3.7 asks for:
+frontend_route: /profile
+figma: "[Mobile] Profile (22483:144307)"
+status: designer-state   # real fixtures, no API

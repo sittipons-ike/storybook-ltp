@@ -38,3 +38,8 @@ lotteryplus-frontend-main/
 # Decks and one-off wireframes — not part of the library
 slide/
 wireframe/
+
+# Raw source material — heavy binaries live beside the docs distilled from them,
+# in the same folder on disk, without entering git. Time Machine still sees them.
+_source/
+archive/

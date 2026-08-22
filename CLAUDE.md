@@ -4,6 +4,25 @@
 
 ---
 
+## 🗂️ Repo Structure — feature-first (2026-08-21)
+
+```
+ui/               design system กลาง — foundations / components / patterns (shared เท่านั้น)
+features/<name>/  หนึ่ง feature หนึ่ง folder: prd.md · ux-<name>.md · pages/ · components/ · fixtures
+brand/            brand book (md) — ไฟล์ดิบใน _source/
+design-library/   spec ที่วัดจาก Figma — source of truth ของค่าทุกตัว
+tools/            generators + ด่านตรวจ (npm run check)
+```
+
+### กติกาเมื่อสร้าง UI ให้ feature ใหม่ — บังคับ
+
+1. **อ่าน `features/<name>/prd.md` + `ux-*.md` ก่อนเริ่ม** — ถ้ายังไม่มี ให้ copy `features/_template/` แล้วบอก user ว่าต้องเติมเอกสารก่อน
+2. **Reuse ก่อนสร้าง** — เช็ค `ui/components` + `design-library/lotteryplus/components.json` ก่อนเสมอ
+3. **Component ใหม่ลง `features/<name>/components/`** ไม่ใช่ `ui/` — จะย้ายขึ้น ui/ ได้ต่อเมื่อมีหลักฐานใช้ซ้ำ ≥2 ที่ (Lark §3.3)
+4. **Figma ชนะเสมอเมื่อ Figma มี** — วัดจริง ห้ามเดา บันทึกลง design-library
+5. `_source/` = ไฟล์ดิบ gitignored — เอกสารที่ agent อ่านต้องเป็น md ที่ track แล้วเท่านั้น
+6. `npm run check` เขียวก่อน commit ทุกครั้ง
+
 ## 🎨 Design Skills Registry
 
 ทีมเราใช้ **skill-based workflow** สำหรับงานออกแบบ Skills เหล่านี้เก็บไว้ที่ 2 ที่:

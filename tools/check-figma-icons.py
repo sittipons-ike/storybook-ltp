@@ -21,7 +21,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-LIB = ROOT / "UI Library"
+LIB = ROOT / "ui"
 DESIGN = ROOT / "design-library"
 SEARCH_ROOTS = (LIB / "components", LIB / "patterns")
 

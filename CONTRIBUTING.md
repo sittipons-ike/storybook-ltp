@@ -108,11 +108,11 @@ Standard does not ask for.
 ```
 design-library/lotteryplus/    the source of truth — design.md, overlays, inventories
 tools/                          generators and the ten checks
-UI Library/foundations/         generated; never edit by hand
-UI Library/components/          30 components
-UI Library/patterns/            AppShell, Stack, Surface, DeviceFrame, BareScreen
-UI Library/pages/               the page tier
-UI Library/fixtures/            real data, in the Frontend's shapes
+ui/foundations/         generated; never edit by hand
+ui/components/          30 components
+ui/patterns/            AppShell, Stack, Surface, DeviceFrame, BareScreen
+ui/pages/               the page tier
+ui/fixtures/            real data, in the Frontend's shapes
 MEMORY.md                       every mistake, its root cause, and what to do instead
 spec.md                         where the project is and what is next
 ```

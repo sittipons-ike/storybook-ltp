@@ -36,7 +36,7 @@ export interface LogoProps {
  * `<img>` does not, which is why these render as one. The restriction is structural rather
  * than a rule somebody has to remember.
  *
- * Nothing here is bundled: the files live in `UI Library/assets/logos` and are served by
+ * Nothing here is bundled: the files live in `ui/assets/logos` and are served by
  * `staticDirs`, so the browser caches them separately and the JavaScript stays small.
  */
 const Logo: React.FC<LogoProps> = ({ name, size = 80, width, height, alt, className = '' }) => {

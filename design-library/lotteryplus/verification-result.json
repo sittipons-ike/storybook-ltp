@@ -1,8 +1,8 @@
 {
-  "_comment": "Written by tools/verify-tokens.py. Do not hand-edit. UI Library/foundations/VerificationReport.stories.tsx renders this verbatim.",
+  "_comment": "Written by tools/verify-tokens.py. Do not hand-edit. ui/foundations/VerificationReport.stories.tsx renders this verbatim.",
   "ranAgainst": {
     "snapshot": "design-library/lotteryplus/figma-snapshot.json",
-    "css": "UI Library/foundations/tokens.css",
+    "css": "ui/foundations/tokens.css",
     "figmaFile": "Design Systems Web App Lotteryplus V.7.1",
     "figmaFileKey": "inmmHQID7awAWFcEJzedZa",
     "collection": "2-semantic",

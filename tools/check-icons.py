@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-LIB = REPO / "UI Library"
+LIB = REPO / "ui"
 ICON_DATA = LIB / "icons" / "icon-data.ts"
 
 # Two forms, kept deliberately narrow.

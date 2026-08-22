@@ -59,7 +59,7 @@ def main() -> int:
         "_comment": (
             "Written by tools/collect-verification.py from each components/<name>.json "
             "`base._verified_from`. Do not hand-edit — "
-            "UI Library/foundations/VerificationReport.stories.tsx renders it verbatim."
+            "ui/foundations/VerificationReport.stories.tsx renders it verbatim."
         ),
         "counts": {
             "overlays": len(components),

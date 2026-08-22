@@ -4,7 +4,7 @@
     "generated": "2026-08-19",
     "sources": {
       "figma": "Design Systems Web App Lotteryplus V.7.1 — read two ways. `colors/*` groups in the 3-component collection give 25 token groups; the Atoms/Molecules/Organism pages give 21 component pages holding ~54 component sets. The first pass used only the token groups and therefore missed every component Figma ships without one.",
-      "storybook": "UI Library/components/* plus icons (15)",
+      "storybook": "ui/components/* plus icons (15)",
       "frontend": "lotteryplus-frontend-main/src/components/common/* (52) — `feUsage` counts files that import it, excluding its own folder"
     },
     "decision_rule": "Lark Standard §3.3 — Share by evidence: raise scope only with two real usages, no change of responsibility needed, and an owner. `feUsage` is that evidence, measured rather than assumed.",
@@ -787,7 +787,7 @@
     "counted": "107 components on Figma's `logos-and-graphics` page: 101 at 80x80, four `logo-icon/*` sets at 32 with a Default and a Hover, plus `noti-error` and `Card`, which are components rather than marks.",
     "why_not_icons": "70 of the 107 carry unbound multi-colour fills — 229 distinct colours across the page — and several are third-party brand marks. `Icon` exposes a `color` prop; putting these behind it would let any caller tint a bank's logo. Rendering them as `<img>` removes that by construction rather than by a rule someone has to remember.",
     "format_rule": "Measured, not preferred: export SVG, keep it if 20KB or under, otherwise compare against a 3x PNG and keep the smaller. `gp-jidrit-search` went from 412KB to 26KB, `logo-bank-gsb` from 187KB to 18KB. Final set: 109 files, 26 SVG and 83 PNG, 2.6MB on disk and none of it bundled.",
-    "where": "UI Library/assets/logos, served by `staticDirs`. The manifest at UI Library/logos/logos.generated.ts is built by listing that directory, so it cannot name a file that is not there.",
+    "where": "ui/assets/logos, served by `staticDirs`. The manifest at ui/logos/logos.generated.ts is built by listing that directory, so it cannot name a file that is not there.",
     "not_imported": "Nothing. Both hold-outs were resolved on 2026-08-19 and neither turned out to be an asset question: `noti-error` is a component set that arranges an illustration, a heading and the action bar — it became the ErrorState organism, and its three illustrations were already in the manifest. `Card` is a card face plus an id — it became LotteryCard, and its three rasters were exported as `card-lottery-l|m|s`.",
     "figma_gap": "`logo-bank-gsb` is 39 paths with a single 57KB `d` attribute — 25x the next largest logo. It looks auto-traced rather than drawn, and it is the reason that logo had to ship as a raster. Confirmed on 2026-08-19: it exports at 187KB as SVG against 18KB as a 3x PNG, so it ships as a raster and cannot be recoloured or scaled cleanly. Worth redrawing.",
     "line_drawn": "Artwork is an asset; an arrangement of artwork is a component. `noti-error` sits on the logos-and-graphics page and looks like a picture, but opening it shows nothing new was ever drawn — every part already existed in the library."

@@ -22,7 +22,10 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-PAGES = ROOT / "UI Library" / "pages"
+# Pages live inside their feature: features/<name>/pages/*.tsx. The old ui/pages
+# location is scanned too so a stray page cannot hide there unchecked.
+FEATURES = ROOT / "features"
+LEGACY_PAGES = ROOT / "ui" / "pages"
 INVENTORY = ROOT / "design-library" / "lotteryplus" / "page-inventory.json"
 
 RAW_TOKEN = re.compile(r"\bsys\s*\(|\bcomponent\s*\(")
@@ -51,12 +54,13 @@ def offences(path):
 
 
 def main():
-    if not PAGES.is_dir():
-        print("  pages checked         : 0 (UI Library/pages does not exist yet)")
-        print("  rule                  : a page may not read tokens directly — components only")
-        return 0
-
-    files = sorted(PAGES.rglob("*.tsx"))
+    files = []
+    if FEATURES.is_dir():
+        # _template holds skeletons, not pages
+        files += [f for f in FEATURES.rglob("pages/*.tsx") if "_template" not in f.parts]
+    if LEGACY_PAGES.is_dir():
+        files += list(LEGACY_PAGES.rglob("*.tsx"))
+    files = sorted(files)
     if not files:
         print("  pages checked         : 0 (no pages authored yet)")
         return 0

@@ -21,7 +21,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 DEFAULT_SNAPSHOT = REPO / "design-library" / "lotteryplus" / "figma-snapshot.json"
-DEFAULT_CSS = REPO / "UI Library" / "foundations" / "tokens.css"
+DEFAULT_CSS = REPO / "ui" / "foundations" / "tokens.css"
 
 VAR_RE = re.compile(r"^\s*(--sys-[a-z0-9-]+)\s*:\s*(.+?);", re.IGNORECASE)
 
@@ -127,7 +127,7 @@ def main() -> int:
     result = {
         "_comment": (
             "Written by tools/verify-tokens.py. Do not hand-edit. "
-            "UI Library/foundations/VerificationReport.stories.tsx renders this verbatim."
+            "ui/foundations/VerificationReport.stories.tsx renders this verbatim."
         ),
         "ranAgainst": {
             "snapshot": str(args.snapshot.relative_to(REPO)),
