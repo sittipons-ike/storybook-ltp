@@ -37,10 +37,10 @@ Reads `design.md` and `components.json`, resolves every ref, and writes two file
 python3 tools/gen-tokens.py
 ```
 
-- **`UI Library/foundations/tokens.css`** — Tier 1 (`--sys-*`, semantic) and Tier 2
+- **`ui/foundations/tokens.css`** — Tier 1 (`--sys-*`, semantic) and Tier 2
   (`--btn-*` and friends, per-component aliases pointing at Tier 1). This is what
   components render with.
-- **`UI Library/foundations/tokens.generated.ts`** — the same tokens with every ref
+- **`ui/foundations/tokens.generated.ts`** — the same tokens with every ref
   resolved to a literal. Stories and tests import this so a verification table can never
   claim a value the component does not actually render.
 
@@ -198,7 +198,7 @@ return { count: Object.keys(out).length, colors: out };
 4. **A new hue** gets adopted from Figma's primitive collection — 16 unreferenced Tailwind
    hues already live there — never by pasting a hex.
 5. **No literal colours in component code.** A component reads its Tier 2 token through the
-   `component()` helper in `UI Library/foundations/tokens.ts`; stories read the resolved
+   `component()` helper in `ui/foundations/tokens.ts`; stories read the resolved
    literal from the same source, so a verification table cannot claim a value the component
    does not render.
 
@@ -255,7 +255,7 @@ surface.
 
 ## Brand assets
 
-`UI Library/assets/` is served by Storybook via `staticDirs` in `.storybook/main.ts`. The
+`ui/assets/` is served by Storybook via `staticDirs` in `.storybook/main.ts`. The
 phoenix watermark and the flat wordmark live in `assets/brand/` because Header renders them.
 They are copies, not references: reading them out of `lotteryplus-frontend-main/public`
 would make every Header story depend on the Frontend being checked out beside this repo.
@@ -266,7 +266,7 @@ The `logos-and-graphics` page holds 107 marks — bank and social logos, and the
 illustrations. They are not icons: 70 of them carry unbound multi-colour fills (229
 distinct colours across the page), several are third-party brand marks, and none may be
 recoloured. Putting them in `icon-data.ts` would hand every caller a `color` prop that
-tints a bank's logo, so they live in `UI Library/assets/logos/` and are served as files.
+tints a bank's logo, so they live in `ui/assets/logos/` and are served as files.
 
 Format is decided by measurement, not preference. Export the SVG; if it is 20KB or under
 the artwork is flat enough for SVG to win, and if it is over, a 3x PNG is between 6 and 16

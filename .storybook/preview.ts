@@ -1,7 +1,7 @@
 import type { Preview } from '@storybook/react';
 // Generated from Figma via design.md + components.json — see tools/README.md.
 // Loaded globally so every story can reference --sys-* / component tokens.
-import '../UI Library/foundations/tokens.css';
+import '../ui/foundations/tokens.css';
 import './preview.css';
 import { installFonts } from './fonts';
 

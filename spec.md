@@ -38,9 +38,9 @@ Storybook (เป้าหมาย SSOT) · FE (ตัวให้ยืม imp
   อยู่ในตัว **ไม่มี** แถบ 72px แยก → ไม่ต้องสร้าง top navbar เพิ่ม
 - 2026-08-19 — Figma เปิด slot บนช่องเดียว FE เปิดสองช่อง (TopNavbar + Header)
   shell เก็บ 2 slot ตาม FE แล้ว template ของ Figma ปล่อย `top-navbar` ว่าง
-- 2026-08-19 — brand asset (นกฟีนิกซ์, wordmark) copy เข้า `UI Library/assets/brand/`
+- 2026-08-19 — brand asset (นกฟีนิกซ์, wordmark) copy เข้า `ui/assets/brand/`
   ไม่ใช่อ้างไปที่ FE public เพื่อให้ story ไม่ผูกกับการ checkout FE
-- 2026-08-19 — **Graphik TH ของจริง** 7 น้ำหนัก (.otf) เข้า `UI Library/assets/fonts/GraphikThai/`
+- 2026-08-19 — **Graphik TH ของจริง** 7 น้ำหนัก (.otf) เข้า `ui/assets/fonts/GraphikThai/`
   + `@font-face` ใน preview.css — ชุดเดียวกับที่ FE โหลดใน `_app.tsx` Sarabun เหลือเป็น fallback
 - 2026-08-19 — **mockup ใช้ขนาด iPhone 16 จริง** 393×852pt (token `--topfoot-device-*`)
   ไม่ใช้ 390×844 ของ Figma frame เพราะ frame = canvas ที่วาด ไม่ใช่สเปกเครื่อง
@@ -168,7 +168,7 @@ Storybook (เป้าหมาย SSOT) · FE (ตัวให้ยืม imp
 ## Page Tier — โครงที่ตกลงแล้ว (2026-08-21)
 
 ```
-UI Library/
+ui/
   fixtures/            ← ข้อมูลจริง ยก type จาก FE (types.ts · user.ts)
   pages/profile/
     Profile.tsx        ← รับข้อมูลเป็น prop ไม่ fetch · ไม่แตะ token
@@ -177,7 +177,7 @@ UI Library/
     assets/            ← 14 รูปของหน้านี้
 ```
 
-**กฎเก็บรูป:** มาจาก API → `fixtures/` · หลายหน้าใช้ → `UI Library/assets/` · หน้าเดียว → อยู่กับหน้านั้น
+**กฎเก็บรูป:** มาจาก API → `fixtures/` · หลายหน้าใช้ → `ui/assets/` · หน้าเดียว → อยู่กับหน้านั้น
 
 **หน้าแรกเสร็จแล้ว** `/profile` · 5 state (ปกติ · อายุไม่ถึง 20 · ไม่มีบัญชีธนาคาร · ปิด flag · ยอด 13 หลัก)
 ยืนยันแล้วว่ายอด `5,239,822,249,018` ไม่ทำการ์ดแตก
@@ -212,7 +212,7 @@ UI Library/
   ขอบทอง 3px เปลี่ยน border-top → inset shadow (INSIDE ห้ามกินพื้นที่) · การ์ดล่าง**ไม่มี** border
   (strokes ว่าง — เคยอ่าน strokeWeight แทน paint list) · บล็อกวัดได้ 187 = 16+80+1+74+16 ตรง Figma
 - **ProfileSummary มี story ตัวเองแล้ว** (`Organisms/ProfileSummary`) + ตอบ user: ก้อนนี้เป็น
-  component อยู่ที่ `UI Library/components/ProfileSummary/` · ข้างในยังเป็น slot เพราะ Figma
+  component อยู่ที่ `ui/components/ProfileSummary/` · ข้างในยังเป็น slot เพราะ Figma
   componentise `nokcash-profile` + `summary-icon-profile` ไว้แล้วแต่ library ยังไม่มี —
   บันทึกลง component-inventory.json (page profile: 9 sets, unmodelled 8)
 - **AppShell: bottom-navbar เป็น overlay แล้ว** — user ทักพื้นเทาโผล่บน strip โปร่ง 22px ·

@@ -153,7 +153,7 @@
 - **ครั้งหน้าทำยังไง:** ก่อนสรุปว่าอะไรพังจากตัวเลขใน browser ให้เช็ค `document.hidden` + `innerHeight` ก่อนเสมอ ถ้าซ่อนอยู่ให้เชื่อเฉพาะค่าที่ไม่ขึ้นกับ viewport (px คงที่, computed style, DOM structure) และสิ่งที่ต้องมี viewport (`%`, IntersectionObserver, animation, timer) ต้องหาทางพิสูจน์ทางอื่น — เช่นใส่ปุ่มเรียก callback เดียวกันใน story
 
 ## 2026-08-21 · สคริปต์ commit ที่ไล่ path เองมือ = ตกของแบบเงียบๆ
-- **เกิดอะไร:** `commit-plan.sh` ไล่ directory ใต้ `UI Library/` ด้วยมือ 6 ตัว แต่มี 8 ตัว — `icons/` กับ `pages/` ตกไป commit 6 ก้อนผ่านหมดดูเรียบร้อย ทั้งที่ `icon-data.ts` (ตัวแก้ key ซ้ำ 4 คู่) ไม่ได้เข้า → ที่ HEAD component จะ import icon จากไฟล์เวอร์ชันเก่าที่ยัง duplicate อยู่
+- **เกิดอะไร:** `commit-plan.sh` ไล่ directory ใต้ `ui/` ด้วยมือ 6 ตัว แต่มี 8 ตัว — `icons/` กับ `pages/` ตกไป commit 6 ก้อนผ่านหมดดูเรียบร้อย ทั้งที่ `icon-data.ts` (ตัวแก้ key ซ้ำ 4 คู่) ไม่ได้เข้า → ที่ HEAD component จะ import icon จากไฟล์เวอร์ชันเก่าที่ยัง duplicate อยู่
 - **ทำไม:** `check.sh` รันกับ working tree ไม่ใช่กับ HEAD เลยเขียวทั้งที่ commit ไม่ครบ — ไม่มีใครถาม git ว่า "เหลืออะไรอีก" มีแต่เชื่อลิสต์ที่พิมพ์เอง
 - **ครั้งหน้าทำยังไง:** สคริปต์ commit ทุกตัวต้องมี coverage check ปิดท้าย — `git status --porcelain -uall` ลบ path ที่ตั้งใจข้าม ถ้าเหลืออะไรให้ร้อง และหลัง commit ชุดใหญ่ให้ `git clone` แบรนช์นั้นออกมาที่อื่นแล้วรัน gate จาก clone จริง ไม่ใช่จาก working tree
 
@@ -165,7 +165,7 @@
 ## 2026-08-21 · แยก asset 3 ชั้นตามอายุของมัน ไม่ใช่ตามชนิดไฟล์
 - **เกิดอะไร:** ต้องตัดสินว่ารูปแบนเนอร์เก็บที่ไหน — เกือบเหมาว่า "รูปทั้งหมด → assets/"
 - **ทำไม:** ดูจากชนิดไฟล์ (เป็น .png เหมือนกัน) แทนที่จะดูว่าใครเป็นเจ้าของและเปลี่ยนบ่อยแค่ไหน — FE ดึงแบนเนอร์จาก API เป็น `{ images: [{url, type}] }` มี scheduler เปลี่ยนทุกสัปดาห์
-- **ครั้งหน้าทำยังไง:** ถามว่า "ของนี้มาจากไหน" ไม่ใช่ "เป็นไฟล์อะไร" — มาจาก API → `fixtures/` (เป็น URL ในข้อมูล) · หลายหน้าใช้ร่วม → `UI Library/assets/` · หน้าเดียวใช้ → `pages/<หน้า>/assets/` แล้ว import เข้ามาเป็น URL ผ่าน Vite (มี `images.d.ts` ให้ TS) ไฟล์หายจะพังตอน build ไม่ใช่รูปแตกตอนรัน
+- **ครั้งหน้าทำยังไง:** ถามว่า "ของนี้มาจากไหน" ไม่ใช่ "เป็นไฟล์อะไร" — มาจาก API → `fixtures/` (เป็น URL ในข้อมูล) · หลายหน้าใช้ร่วม → `ui/assets/` · หน้าเดียวใช้ → `pages/<หน้า>/assets/` แล้ว import เข้ามาเป็น URL ผ่าน Vite (มี `images.d.ts` ให้ TS) ไฟล์หายจะพังตอน build ไม่ใช่รูปแตกตอนรัน
 
 ## 2026-08-21 · React ลบ shorthand ทิ้ง ถ้า longhand ตามหลังเป็น undefined
 - **เกิดอะไร:** `Stack` เขียน `{ padding: '16px', paddingLeft: undefined, paddingRight: undefined, ... }` — ผลคือ **ไม่มี padding เลยสักด้าน** การ์ดทุกใบใน `/profile` แบนติดกันหมด และ inline style ที่ออกมาไม่มีคำว่า padding ปรากฏเลย
@@ -225,6 +225,6 @@
 ## 2026-08-21 · deploy ที่ subpath — absolute asset path พังเงียบ
 - **เกิดอะไร:** Storybook deploy ขึ้น GitHub Pages ที่ `/storybook-ltp/` แล้วฟอนต์ Graphik TH ทั้ง 7 น้ำหนัก + โลโก้ 112 ตัว + brand mark 404 ทั้งหมด ทั้งเว็บเรนเดอร์ด้วยฟอนต์ fallback และรูปแตกเป็นกล่อง `?` — ตอน dev ที่ localhost ปกติทุกอย่าง ผู้ใช้เห็นก่อน ไม่ใช่ผมหรือด่าน 10 ขั้น
 - **ทำไม:** ไฟล์ใน `staticDirs` ไม่ได้ถูก import จึงไม่มีอะไร rewrite URL ให้ — path เป็น string ที่โค้ดต้องเขียนถูกเอง และทุกที่เขียนจาก domain root (`/logos/…`, `url('/fonts/…')`) ซึ่งถูกเฉพาะตอนเว็บอยู่ที่ root พอ mount ใต้ `/<repo>/` ก็ชี้ผิดทันที ด่านที่มีอยู่มองไม่เห็นเพราะไฟล์ deploy ครบจริงและ path ก็ดูถูกต้องดี — สิ่งที่ผิดคือความสัมพันธ์ระหว่าง path กับที่ที่เว็บถูก mount ซึ่งไม่มีใครตรวจ
-- **ครั้งหน้าทำยังไง:** static asset ทุกตัวต้องผ่าน `asset()` (`UI Library/foundations/asset.ts`) ที่ resolve กับ `import.meta.env.BASE_URL` เสมอ ห้ามเขียน `/fonts/…` `/logos/…` `/brand/…` ตรงๆ — ด่าน "Static assets resolve against the base path" ใน check.sh บล็อกให้แล้ว และ CI ส่ง `STORYBOOK_BASE_PATH` จากชื่อ repo
+- **ครั้งหน้าทำยังไง:** static asset ทุกตัวต้องผ่าน `asset()` (`ui/foundations/asset.ts`) ที่ resolve กับ `import.meta.env.BASE_URL` เสมอ ห้ามเขียน `/fonts/…` `/logos/…` `/brand/…` ตรงๆ — ด่าน "Static assets resolve against the base path" ใน check.sh บล็อกให้แล้ว และ CI ส่ง `STORYBOOK_BASE_PATH` จากชื่อ repo
 - **จุดที่เกือบพลาดซ้ำ:** เดาว่า Vite rewrite `url()` ใน CSS ให้ตาม base — **ไม่จริง** Vite แก้ให้เฉพาะ asset ที่ตัวเองปล่อยออกมา ส่วน absolute `url()` ที่คนพิมพ์เองมันปล่อยผ่าน พิสูจน์ด้วยการ build จริงแล้ว grep output ก่อนเชื่อ เลยต้องย้าย `@font-face` ออกจาก CSS ไปสร้างใน `.storybook/fonts.ts`
 - **บทเรียนกว้างกว่านั้น:** ทุกด่านที่เขียนมาตรวจ "ค่าถูกไหม" แต่บั๊กนี้คือ "ค่าถูกในบริบทไหน" — build แล้วเสิร์ฟที่ path จริงคือวิธีเดียวที่จับได้ ตรวจแต่ source ไม่พอ

@@ -24,7 +24,7 @@
     },
     "_source": {
       "sizes and id offsets": "Read off each variant. The ID is positioned absolutely, not laid out, and the two offsets are not the same fraction of the card — 6.7%/80.5% on L against 6.5%/75% on M — so they are held per size rather than derived.",
-      "artwork": "Exported at 3x per size into UI Library/assets/logos as `card-lottery-l|m|s`. Three files because Figma uses three different images, not one scaled."
+      "artwork": "Exported at 3x per size into ui/assets/logos as `card-lottery-l|m|s`. Three files because Figma uses three different images, not one scaled."
     },
     "_figma_gaps": {
       "id-is-not-laid-out": "The ID is absolutely positioned on each size instead of being an auto-layout child, which is why its offsets had to be copied per size rather than expressed once.",

@@ -17,10 +17,10 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-LOGOS = REPO / "UI Library" / "assets" / "logos"
+LOGOS = REPO / "ui" / "assets" / "logos"
 # Not inside assets/: that directory is served verbatim by `staticDirs`, and a
 # TypeScript module has no business being downloadable alongside the artwork.
-OUT = REPO / "UI Library" / "logos" / "logos.generated.ts"
+OUT = REPO / "ui" / "logos" / "logos.generated.ts"
 
 # Prefix -> the group a mark belongs to. Figma's own naming, not a taxonomy invented here.
 GROUPS = [
@@ -57,7 +57,7 @@ def build() -> str:
         "// logos.generated.ts — GENERATED FILE, DO NOT EDIT BY HAND",
         "// Regenerate: python3 tools/gen-logo-manifest.py",
         "//",
-        "// Built by listing UI Library/assets/logos, so every entry is a file that",
+        "// Built by listing ui/assets/logos, so every entry is a file that",
         "// exists. Marks are served from that directory via `staticDirs`; they are not",
         "// bundled and they are deliberately not recolourable — several are third-party",
         "// brand marks and none may be tinted.",

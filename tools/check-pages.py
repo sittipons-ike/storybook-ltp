@@ -22,7 +22,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-PAGES = ROOT / "UI Library" / "pages"
+PAGES = ROOT / "ui" / "pages"
 INVENTORY = ROOT / "design-library" / "lotteryplus" / "page-inventory.json"
 
 RAW_TOKEN = re.compile(r"\bsys\s*\(|\bcomponent\s*\(")
@@ -52,7 +52,7 @@ def offences(path):
 
 def main():
     if not PAGES.is_dir():
-        print("  pages checked         : 0 (UI Library/pages does not exist yet)")
+        print("  pages checked         : 0 (ui/pages does not exist yet)")
         print("  rule                  : a page may not read tokens directly — components only")
         return 0
 

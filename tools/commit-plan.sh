@@ -60,23 +60,23 @@ step "chore(tooling): token/component generators and the 8-step gate" \
 
 # ── 2. the source of truth the generators read, then what they emit
 step "feat(tokens): design-library source of truth and generated token tiers" \
-  design-library/ "UI Library/foundations/"
+  design-library/ "ui/foundations/"
 
 # icons are a registry the components import by name, so they land before the components
 step "feat(icons): icon registry, deduplicated against Figma's own duplicate names" \
-  "UI Library/icons/"
+  "ui/icons/"
 
 # ── 3. assets before the components that reference them
 step "feat(assets): Graphik TH, brand marks and 112 Figma logos" \
-  "UI Library/assets/" "UI Library/logos/"
+  "ui/assets/" "ui/logos/"
 
 # ── 4. the components themselves
 step "feat(components): Header, Footer, ActionBar, Avatar, Divider, ErrorState, LotteryCard" \
-  "UI Library/components/"
+  "ui/components/"
 
 # ── 5. compositions on top of components
 step "feat(patterns): AppShell and BareScreen, plus the component inventory story" \
-  "UI Library/patterns/" "UI Library/system/" "UI Library/pages/"
+  "ui/patterns/" "ui/system/" "ui/pages/"
 
 # ── 6. project memory last — it describes everything above
 step "docs: project spec, memory and the Phase 2 rename table" \
@@ -99,7 +99,7 @@ echo
 echo "════════════════════════════════════════════"
 echo "  Coverage check"
 echo "════════════════════════════════════════════"
-# Listing directories by hand is how `UI Library/icons` was missed the first time:
+# Listing directories by hand is how `ui/icons` was missed the first time:
 # six commits went in and the icon registry stayed behind, so HEAD referenced icons
 # it did not contain. This asks git what is left instead of trusting the list above.
 missed=$(git status --porcelain -uall \

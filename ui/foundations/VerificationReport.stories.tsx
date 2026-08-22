@@ -194,7 +194,7 @@ export const FullReport: StoryObj = {
         <Section
           n={1}
           title="Token chain — live"
-          source="getComputedStyle in this document  vs  UI Library/foundations/tokens.generated.ts"
+          source="getComputedStyle in this document  vs  ui/foundations/tokens.generated.ts"
         >
           <p style={{ margin: '0 0 12px', fontSize: 13, lineHeight: 1.75, color: muted(), maxWidth: 660 }}>
             อ่านค่าที่หน้านี้ resolve จริงทุกตัว แล้วเทียบกับที่ generator เขียนไว้ — คนละแหล่งกัน

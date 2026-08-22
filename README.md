@@ -30,7 +30,7 @@ PJ-Lottery Plus/
 │   ├── preview.ts           # Story sort order, layout
 │   └── preview.css          # Global styles (Graphik TH font)
 │
-├── UI Library/
+├── ui/
 │   ├── components/          # 12 Design System Components
 │   │   ├── Breadcrumb/      # Navigation breadcrumbs
 │   │   ├── Button/          # Primary/Secondary/Tertiary/Outline/Link × L/M/S

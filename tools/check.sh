@@ -18,12 +18,12 @@ python3 tools/gen-components.py >/dev/null && python3 tools/gen-tokens.py >/dev/
 python3 tools/verify-tokens.py >/dev/null
 python3 tools/collect-verification.py >/dev/null
 python3 tools/gen-logo-manifest.py >/dev/null
-if git diff --quiet -- "UI Library/foundations/tokens.css" \
-      "UI Library/foundations/tokens.generated.ts" \
+if git diff --quiet -- "ui/foundations/tokens.css" \
+      "ui/foundations/tokens.generated.ts" \
       "design-library/lotteryplus/components.json" \
       "design-library/lotteryplus/verification-result.json" \
       "design-library/lotteryplus/component-verification.json" \
-      "UI Library/logos/logos.generated.ts" 2>/dev/null; then
+      "ui/logos/logos.generated.ts" 2>/dev/null; then
   ok "regenerating changed nothing"
 else
   bad "regenerating changed a tracked file — commit the regenerated output"
@@ -35,7 +35,7 @@ python3 tools/verify-tokens.py | sed 's/^/  /' || bad "token verification failed
 step "No literal colours in component code"
 # Scan every source directory, not just components/ — Icon lives in icons/ and went
 # unchecked for the whole first pass because this list was too narrow.
-hits=$(grep -rnE "#[0-9A-Fa-f]{6}\b" "UI Library/components" "UI Library/icons" "UI Library/system" \
+hits=$(grep -rnE "#[0-9A-Fa-f]{6}\b" "ui/components" "ui/icons" "ui/system" \
         --include='*.ts' --include='*.tsx' --include='*.css' 2>/dev/null \
         | grep -v '\.stories\.tsx' \
         | grep -v 'icon-data\.ts' || true)
@@ -57,7 +57,7 @@ python3 tools/check-figma-icons.py | sed 's/^/  /' || bad "an icon resolves but 
 
 step "No forbidden naming patterns"
 # snake_case tokens and abbreviated CSS properties both violate the Standard.
-naming=$(grep -rnE -- "--[a-z-]+-(bg|fg)-|[a-z]+_[a-z]+:" "UI Library/foundations/tokens.css" 2>/dev/null || true)
+naming=$(grep -rnE -- "--[a-z-]+-(bg|fg)-|[a-z]+_[a-z]+:" "ui/foundations/tokens.css" 2>/dev/null || true)
 if [ -z "$naming" ]; then
   ok "none found"
 else
@@ -78,7 +78,7 @@ step "Static assets resolve against the base path"
 # logos were broken in production while the local Storybook looked perfect. `asset()`
 # resolves against import.meta.env.BASE_URL; this refuses any path that skips it.
 asset_hits=$(grep -rnoE "['\"\`(]/(fonts|logos|brand|assets|images|img)/[^'\"\`)]*" \
-        "UI Library" .storybook \
+        "ui" .storybook \
         --include='*.ts' --include='*.tsx' --include='*.css' 2>/dev/null \
         | grep -v 'foundations/asset.ts' \
         | grep -v '\.storybook/fonts.ts' \

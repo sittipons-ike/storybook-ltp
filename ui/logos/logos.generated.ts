@@ -2,7 +2,7 @@
 // logos.generated.ts — GENERATED FILE, DO NOT EDIT BY HAND
 // Regenerate: python3 tools/gen-logo-manifest.py
 //
-// Built by listing UI Library/assets/logos, so every entry is a file that
+// Built by listing ui/assets/logos, so every entry is a file that
 // exists. Marks are served from that directory via `staticDirs`; they are not
 // bundled and they are deliberately not recolourable — several are third-party
 // brand marks and none may be tinted.

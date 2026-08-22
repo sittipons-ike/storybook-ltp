@@ -31,7 +31,7 @@ OVERLAY_DIR = LIB / "components"
 # Editorial metadata — a human decides these, not the pull. Groups absent here are
 # skipped (they are app surfaces, not design-system components).
 #
-# `storybook` names the folder under `UI Library/components/`, or None when Figma has
+# `storybook` names the folder under `ui/components/`, or None when Figma has
 # tokens for a surface the library does not model as a component. A list when one Figma
 # colour group backs several components — `colors/top-and-footer` paints the header, the
 # site footer and the sticky action bar, and splitting the group to match would be a

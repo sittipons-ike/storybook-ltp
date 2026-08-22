@@ -16,7 +16,7 @@ const meta: Meta = {
       description: {
         component:
           'Version Log สำหรับ Design System — UX/UI team อัพเดทการเปลี่ยนแปลงที่นี่ ให้ Dev (FE) เข้ามาดูและอัพเดทตาม\n\n' +
-          '**วิธีใช้:** แก้ไขไฟล์ `UI Library/system/changelog.ts` แล้ว push ขึ้น Git',
+          '**วิธีใช้:** แก้ไขไฟล์ `ui/system/changelog.ts` แล้ว push ขึ้น Git',
       },
     },
   },
@@ -173,7 +173,7 @@ export const FullChangelog: StoryObj = {
         <div style={{ marginTop: 32, padding: 20, borderRadius: 12, backgroundColor: '#F9FAFB', border: '1px solid #E5E5E5' }}>
           <h4 style={{ fontSize: 14, fontWeight: 700, marginBottom: 8 }}>How to update</h4>
           <ol style={{ fontSize: 13, color: '#525252', lineHeight: 1.8, paddingLeft: 20, margin: 0 }}>
-            <li>UX/UI: แก้ไข <code style={{ backgroundColor: '#E5E5E5', padding: '1px 4px', borderRadius: 3, fontSize: 12 }}>UI Library/system/changelog.ts</code></li>
+            <li>UX/UI: แก้ไข <code style={{ backgroundColor: '#E5E5E5', padding: '1px 4px', borderRadius: 3, fontSize: 12 }}>ui/system/changelog.ts</code></li>
             <li>เพิ่ม entry ใหม่ที่ด้านบนสุดของ array (latest first)</li>
             <li>ระบุ <code style={{ backgroundColor: '#E5E5E5', padding: '1px 4px', borderRadius: 3, fontSize: 12 }}>devAction: 'update-required'</code> ถ้าต้องการให้ Dev อัพเดท</li>
             <li>Dev (FE): อัพเดทตาม notes แล้วเปลี่ยน <code style={{ backgroundColor: '#E5E5E5', padding: '1px 4px', borderRadius: 3, fontSize: 12 }}>completed: true</code></li>

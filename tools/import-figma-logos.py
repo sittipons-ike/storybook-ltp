@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Write logo exports from a saved figma_execute result into UI Library/assets/logos/.
+"""Write logo exports from a saved figma_execute result into ui/assets/logos/.
 
 The bridge saves large results to a file rather than returning them inline. That file is
 the input here, so the artwork goes straight from Figma to disk without passing through a
@@ -19,7 +19,7 @@ import re
 import sys
 from pathlib import Path
 
-OUT = Path(__file__).resolve().parent.parent / "UI Library" / "assets" / "logos"
+OUT = Path(__file__).resolve().parent.parent / "ui" / "assets" / "logos"
 
 # Figma names are human labels: `logo-bank-bay`, `gp-jidrit-leval-5-Disable`,
 # `gp-jidrid-wait 2`, `logo-icon/facebook`. The file name has to be stable and safe.

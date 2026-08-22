@@ -25,7 +25,7 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-ICON_DATA = REPO / "UI Library" / "icons" / "icon-data.ts"
+ICON_DATA = REPO / "ui" / "icons" / "icon-data.ts"
 
 # Paths from Figma use absolute M/L/C/Z only — no arcs, so every number is a coordinate
 # and a translate is just addition. Assert that rather than assume it.

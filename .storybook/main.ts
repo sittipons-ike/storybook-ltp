@@ -6,11 +6,11 @@ import type { StorybookConfig } from '@storybook/react-vite';
 declare const process: { env: Record<string, string | undefined> };
 
 const config: StorybookConfig = {
-  stories: ['../UI Library/**/*.stories.@(ts|tsx)'],
+  stories: ['../ui/**/*.stories.@(ts|tsx)'],
   // The header carries two brand marks. They live in the design system rather than being
   // read out of lotteryplus-frontend-main/public, so a story does not depend on the
   // Frontend checkout sitting next to this one.
-  staticDirs: ['../UI Library/assets'],
+  staticDirs: ['../ui/assets'],
   addons: ['@storybook/addon-essentials'],
   framework: {
     name: '@storybook/react-vite',
