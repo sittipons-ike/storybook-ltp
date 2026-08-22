@@ -16,6 +16,8 @@ tools/            generators + ด่านตรวจ (npm run check)
 
 ### กติกาเมื่อสร้าง UI ให้ feature ใหม่ — บังคับ
 
+> ฉบับเต็ม (ตัวจริง) อยู่ `features/_template/README.md` — แก้กฎที่นั่นที่เดียว ด้านล่างคือฉบับย่อ
+
 1. **อ่าน `features/<name>/prd.md` + `ux-*.md` ก่อนเริ่ม** — ถ้ายังไม่มี ให้ copy `features/_template/` แล้วบอก user ว่าต้องเติมเอกสารก่อน
 2. **Reuse ก่อนสร้าง** — เช็ค `ui/components` + `design-library/lotteryplus/components.json` ก่อนเสมอ
 3. **Component ใหม่ลง `features/<name>/components/`** ไม่ใช่ `ui/` — จะย้ายขึ้น ui/ ได้ต่อเมื่อมีหลักฐานใช้ซ้ำ ≥2 ที่ (Lark §3.3)

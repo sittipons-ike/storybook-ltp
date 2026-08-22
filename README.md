@@ -156,3 +156,15 @@ Components are extracted from Figma using MCP tools:
 ## License
 
 Internal use only — Lotteryplus Design System.
+
+## เอกสารอยู่ไหน
+
+| อยากรู้เรื่อง | อ่าน |
+|---|---|
+| กฎการเขียนโค้ด + ด่านทั้ง 11 | [CONTRIBUTING.md](CONTRIBUTING.md) |
+| token / สี / typography ทั้งระบบ | [design-library/lotteryplus/design.md](design-library/lotteryplus/design.md) |
+| สร้าง UI ให้ feature ใหม่ | [features/_template/README.md](features/_template/README.md) |
+| pipeline ของ generator และด่าน | [tools/README.md](tools/README.md) |
+| ทำไมถึงตัดสินใจแบบนี้ | [docs/decisions/](docs/decisions/) |
+| กับดักที่เคยเจอ | [MEMORY.md](MEMORY.md) |
+| สถานะโปรเจกต์ + งานถัดไป | [spec.md](spec.md) |

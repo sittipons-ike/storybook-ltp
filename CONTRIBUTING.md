@@ -15,8 +15,8 @@ file — and if it cannot, that is a bug regardless of how right it looks.
 npm run check
 ```
 
-Ten checks. CI runs the same command on every pull request, so a red gate locally is a
-red pull request. They are not style preferences:
+Eleven checks. CI runs the same command on every pull request, so a red gate locally is
+a red pull request. They are not style preferences:
 
 | Check | What it caught |
 |---|---|
@@ -29,6 +29,7 @@ red pull request. They are not style preferences:
 | No forbidden naming patterns | — |
 | **Typography binds a role or names itself as debt** | lottery digits at 24/32/700 that no layer and no role carried |
 | **Pages compose, they do not reach for tokens** | a page that knew what `--sys-elevation-card` was called |
+| **Static assets resolve against the base path** | every font and all 112 logos 404'd on Pages while localhost looked perfect |
 | TypeScript | — |
 
 ## Adding or changing a component
@@ -72,6 +73,24 @@ When you need spacing or a surface, that is what `Stack`, `Surface`, `Text` and
 
 Every page carries `_frontend_route` naming the route it stands for.
 
+## Features
+
+One requirement, one folder. `features/<name>/` holds the PRD, the UX blueprint, the
+pages, the fixtures and any component that exists only for that feature. The full
+workflow — what an agent reads first, where new components land, when one graduates to
+`ui/components` — lives in **`features/_template/README.md`**, which is the single
+authoritative copy; this file and `CLAUDE.md` point there rather than restating it, so
+the rules cannot drift apart.
+
+The short version: read `prd.md` and `ux-*.md` before building, reuse `ui/` before
+creating, and a component leaves its feature only with evidence of reuse in two or more
+places (Lark §3.3 — share by evidence).
+
+`_source/` directories hold raw material — decks, PDFs, asset packs. They are gitignored
+by name, so heavy binaries live on disk beside the docs distilled from them without
+entering git. **Anything an agent must read has to be a tracked `.md`**, because an
+ignored file does not exist in CI, in a fresh clone, or on a teammate's machine.
+
 ## Working with Thai
 
 - **Never let a clip box equal a bare line box.** Thai ink runs about 5px below the
@@ -86,6 +105,16 @@ Every page carries `_frontend_route` naming the route it stands for.
 Proportions belong to the file. Do not declare `aspectRatio` over a bitmap — the banners
 were stretched 16% because a Frontend `width={416} height={96}` was read as the artwork's
 shape when it was the box being reserved. Check with `sips -g pixelWidth -g pixelHeight`.
+
+## Static assets
+
+Fonts, logos and brand images are served as plain files out of `staticDirs` — nothing
+rewrites their URLs at build time. Every path goes through `asset()` from
+`ui/foundations/asset.ts`, never a bare `/logos/…` or `url('/fonts/…')`. A root-relative
+path is only correct when the site is mounted at the root; GitHub Pages mounts this one
+under `/storybook-ltp/`, which is how the whole deployed library once rendered in a
+fallback font with 112 broken images while every gate stayed green. The eleventh check
+now refuses the bare form, and CI derives the base from the repo name.
 
 ## Naming
 
@@ -106,15 +135,19 @@ Standard does not ask for.
 ## Where things are
 
 ```
-design-library/lotteryplus/    the source of truth — design.md, overlays, inventories
-tools/                          generators and the ten checks
-ui/foundations/         generated; never edit by hand
-ui/components/          30 components
-ui/patterns/            AppShell, Stack, Surface, DeviceFrame, BareScreen
-ui/pages/               the page tier
-ui/fixtures/            real data, in the Frontend's shapes
-MEMORY.md                       every mistake, its root cause, and what to do instead
-spec.md                         where the project is and what is next
+design-library/lotteryplus/   the source of truth — design.md, overlays, inventories
+tools/                        generators and the eleven checks
+ui/foundations/               generated; never edit by hand
+ui/components/                the shared components — shared: true only
+ui/patterns/                  AppShell, Stack, Surface, DeviceFrame, BareScreen
+ui/fixtures/                  real data, in the Frontend's shapes
+features/<name>/              one feature: prd.md, ux-*.md, pages/, components/, fixtures
+features/_template/           copy this when a requirement arrives; its README is the law
+brand/                        brand book chapters (md); raw files in brand/_source/
+docs/                         sitemap, decisions (ADRs)
+archive/                      retired experiments — gitignored, kept, not used
+MEMORY.md                     every mistake, its root cause, and what to do instead
+spec.md                       where the project is and what is next
 ```
 
 Read `MEMORY.md` before a big change. It is not a changelog — it is the list of traps.
