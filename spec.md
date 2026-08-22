@@ -2,6 +2,8 @@
 _Last updated: 2026-08-21 18:20_
 
 ## Current State
+_Restructured 2026-08-21: `UI Library` → `ui` · feature tier ที่ `features/` (profile = UI ครบ, gamification = docs ครบ, avatar = assets) · `~/Lottery+` ยุบเข้า repo ทั้งหมด (ของหนักอยู่ `_source/` gitignored, ของเก่าอยู่ `archive/`) · helper/page metadata ตรง Lark §3.7 แล้ว_
+
 
 สร้าง **Storybook เป็น Single Source of Truth** ให้ทีม Design + Dev sync กันแบบ code-based
 ตอนนี้ครบ 3 ชั้นแล้ว: token → component → pattern
