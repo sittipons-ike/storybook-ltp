@@ -11,7 +11,7 @@ organisms:
   - lottery-section      # Lottery / Lottery-1..4 (21084:85067)
   - quick-menu           # menu-nok-more-mobile Var.2 (21086:143142)
   - add-on-service       # add-on-service (21086:148859)
-  - footer               # footer-mobile (21084:85176)
+  - footer               # footer-mobile (21084:85176) — ui/components/Footer defaults
   - navigation-bar       # navigation-bar/Mobile-v2 state=home (21084:85180)
 
 scope: project
@@ -39,5 +39,4 @@ feature_components:      # scope: feature — ขึ้น ui/ ได้เม�
   - PromoBanner         # Banner Promote (22244:118794)
   - SearchBoard         # main-home-card type=search-card (21084:85041)
   - HomeRedBlock        # Lottery section ground (21084:85067, 85173)
-  - HomeFooter          # footer-mobile as this page fills it (21084:85176)
   - HeaderCounter       # appbar counters (21282:140831)

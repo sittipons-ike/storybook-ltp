@@ -37,7 +37,7 @@ Unhappy paths the page has to be able to show, and how:
 | 6 | บริการ (quick menu 5+5) | `21086:143142` | 284 | `QuickMenuGrid` + `CarouselDots` |
 | 7 | SEO | `21084:85163` | 210 | `SeoPanel` |
 | 8 | บริการเสริม | `21084:85173` | 306 | `AddOnServiceCard` |
-| 9 | Footer | `21084:85176` | 190 | `ui/components/Footer` |
+| 9 | Footer | `21084:85176` | 190 | `ui/components/Footer` — `<Footer />` เปล่าๆ |
 | 10 | NavigationBar `state=home` | `21084:85180` | 124 | `ui/components/NavigationBar` |
 
 หมวดสลากทั้ง 5 (บล็อก 5) ใช้โครงเดียวกัน ต่างกันที่หัวข้อกับชนิดการ์ด:
@@ -53,7 +53,7 @@ Unhappy paths the page has to be able to show, and how:
 ## Components
 
 **Reuse จาก `ui/`** — ไม่แตะ ไม่ fork:
-`StatusBar` · `Header` (variant `home`) · `NavigationBar` · `Footer` · `SearchCard` (LottoBoard) ·
+`StatusBar` · `Header` (variant `home`) · `NavigationBar` · `Footer` (ไม่ต้องส่ง prop — ดูด้านล่าง) · `SearchCard` (LottoBoard) ·
 `Button` · `Text` · `Icon` · `Logo` · `Divider` · `Stack` · `Surface` · `DeviceFrame` · `AppShell`
 
 **ใหม่เฉพาะ feature นี้** — อยู่ที่ `features/home/components/`, `scope: feature`
@@ -73,8 +73,19 @@ Unhappy paths the page has to be able to show, and how:
 | `PromoBanner` | `Banner Promote` | แบนเนอร์ + จุดบอกหน้า |
 | `SearchBoard` | `main-home-card` | กรอบไล่สีที่ครอบ SearchCard + แถบแดงที่โผล่ใต้ header |
 | `HomeRedBlock` | `Lottery` (`21084:85067`, `85173`) | พื้นแดงมุมบน 24 — มีเพื่อให้ page ไม่ต้องพูดคำว่า "แดง" |
-| `HomeFooter` | `footer-mobile` (`21084:85176`) | เนื้อที่หน้านี้เติมลง `ui/components/Footer` — glyph 5 ตัว + 2 ชิป |
 | `HeaderCounter` | `appbar-main` (`21282:140831`) | ตัวเลขนกแคช/สลากบน header — story แตะ token ไม่ได้ เลยต้องเป็น component |
+
+### Footer — ของที่ยกกลับขึ้นไปที่ส่วนกลาง (2026-08-22)
+
+ตอนแรกหน้านี้มี `HomeFooter` ของตัวเอง เพราะ `ui/components/Footer` ตั้ง `socials` กับ `chips`
+เป็น `[]` — เรียก `<Footer />` เปล่าๆ แล้วได้แถบแดงว่าง ทุกหน้าต้องหา glyph มาใส่เอง
+
+พอไปอ่าน main component (`14291:133483`) พบว่า glyph ทั้ง 5 ช่องกับชิป 2 อันอยู่**ข้างใน**
+`footer-mobile` เอง และ instance ที่หน้า `/` (`21084:85176`) ไม่ override อะไรเลยสักจุด
+แปลว่าของพวกนี้เป็นของ component ไม่ใช่ของหน้า → ย้ายขึ้นเป็น default ของ `Footer` แล้ว
+asset ไปอยู่ `ui/assets/brand/` เสิร์ฟผ่าน `asset()` (ทางเดียวกับ phoenix/wordmark ของ header)
+
+`HomeFooter` เลยถูกลบ หน้านี้ใช้ `<Footer />` ตรงๆ
 
 ## Edge cases
 
