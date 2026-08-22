@@ -315,10 +315,10 @@
     },
     "top-and-footer": {
       "verified": true,
-      "node": "14924:2118 `header-bar-mobile` · `footer-mobile` on page `↳ footer ✅` · the page template at 23430:298541",
-      "date": "2026-08-19",
-      "scope": "all 3 header variants at node level, the footer instance, and the sticky action bar in the template",
-      "result": "Header 146/56/94 confirmed in the browser at mobile width. Corrections in this pass: phoenix opacity 40 to 70, HARD_LIGHT blend added, per-variant phoenix geometry, action wells given the tertiary button chrome, the app-bar logo swapped from the wordmark to the 31px mark, and the wordmark row modelled at 32 rather than 31.",
+      "node": "14924:2118 `header-bar-mobile` · `footer-mobile` on page `↳ footer ✅` · the page template at 23430:298541 · `footer-mobile` main component 14291:133483 (re-read 2026-08-22)",
+      "date": "2026-08-22",
+      "scope": "all 3 header variants at node level, the footer instance, and the sticky action bar in the template · 2026-08-22: the footer's own artwork — the five social tiles in `Frame 43983` (14291:133486) and the two chips in `Frame 43624` (14291:133509), read off the main component and confirmed against the `/` instance (21084:85176), which overrides none of it.",
+      "result": "Header 146/56/94 confirmed in the browser at mobile width. Corrections in this pass: phoenix opacity 40 to 70, HARD_LIGHT blend added, per-variant phoenix geometry, action wells given the tertiary button chrome, the app-bar logo swapped from the wordmark to the 31px mark, and the wordmark row modelled at 32 rather than 31. 2026-08-22: the footer rendered an empty red band with nothing passed, because socials and chips defaulted to []. The glyphs belong to the component — Figma draws them inside `footer-mobile` — so the five channel marks and the visitor/DBD chips are now its defaults, exported to ui/assets/brand and served through asset(). The stories' stand-in icons (a bell for Facebook, a tick for TikTok) are gone: they resolved and drew the wrong thing. Height measured 190 in the browser at mobile width, matching Figma.",
       "corrections": {
         "phoenix-opacity": "Was 40% (semantic.opacity.muted, taken from the Frontend). Figma says 70%.",
         "phoenix-blend": "Was missing. Figma composites it with HARD_LIGHT.",

@@ -1,8 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import Footer from './Footer';
-import Icon from '../../icons/Icon';
-import '../../icons/icon-data'; // register all icons
 import { sys } from '../../foundations/tokens';
 
 // ═══════════════════════════════════════════
@@ -20,14 +18,10 @@ export default meta;
 const sans = "'Graphik TH', sans-serif";
 const mono = 'ui-monospace, SFMono-Regular, Menlo, monospace';
 
-// Brand colours, taken from the Figma artwork. Deliberately not tokens — see Footer.tsx.
-const SOCIALS = [
-  { label: 'Facebook', color: '#337FFF', icon: <Icon name="outline-notification" size={16} color="onBg" /> },
-  { label: 'X', color: '#000000', icon: <Icon name="outline-close" size={16} color="onBg" /> },
-  { label: 'TikTok', color: '#000000', icon: <Icon name="outline-check" size={16} color="onBg" /> },
-  { label: 'LINE', color: '#3ACE01', icon: <Icon name="outline-check" size={16} color="onBg" /> },
-  { label: 'YouTube', color: '#FF0000', icon: <Icon name="arrow-right-S" size={16} color="onBg" /> },
-];
+// The five channels used to be declared here with stand-in icons — a bell for Facebook, a
+// tick for TikTok — which resolved fine and drew the wrong thing. They are the component's
+// own artwork (the glyphs live inside `footer-mobile` in Figma), so they moved into
+// Footer.tsx as defaults. `<Footer />` now draws what Figma draws with nothing passed.
 
 export const Default: StoryObj = {
   name: 'footer-mobile',
@@ -62,10 +56,7 @@ export const Default: StoryObj = {
           overflow: 'hidden',
         }}
       >
-        <Footer
-          socials={SOCIALS}
-          chips={[{ label: 'ติดต่อเรา' }, { label: 'ศูนย์ช่วยเหลือ' }]}
-        />
+        <Footer />
       </div>
     </div>
   ),
