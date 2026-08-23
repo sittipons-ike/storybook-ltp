@@ -46,7 +46,13 @@ export interface MissionHeroProps {
   campaignWindow: string;
 }
 
-/** The red block under the header: what you get, for which mission, within which window. */
+/**
+ * The block under the header: the reward photographed full-bleed, with the wording over
+ * its lower half.
+ *
+ * The readability is structural rather than hopeful — see the gradient's note in the
+ * stylesheet. Nothing here depends on how light or dark a given campaign photograph is.
+ */
 export const MissionHero: React.FC<MissionHeroProps> = ({
   kindLabel,
   reward,
@@ -56,18 +62,16 @@ export const MissionHero: React.FC<MissionHeroProps> = ({
 }) => (
   <div className="ltp-mission-block__hero">
     <div className="ltp-mission-block__art">
-      {/* Decorative: the reward's name is directly underneath. */}
+      {/* Decorative: the reward's name is written across it. */}
       <img src={image} alt="" />
     </div>
-    <Stack gap="sm">
+    <div className="ltp-mission-block__scrim" aria-hidden="true" />
+    <div className="ltp-mission-block__hero-text">
       <span className="ltp-mission-block__kind">{kindLabel}</span>
       <span className="ltp-mission-block__reward">{reward}</span>
-      {/* The colour goes through `style`, not a class. Text writes its tone as an inline
-          `color`, and an inline style beats a class — a `.hero-meta { color }` rule never
-          applied, so these two lines rendered #262626 on the dark red at 1.94:1. */}
       <Text role="body-md-regular" style={HERO_META}>{name}</Text>
       <Text role="caption-lg-regular" style={HERO_META}>{campaignWindow}</Text>
-    </Stack>
+    </div>
   </div>
 );
 

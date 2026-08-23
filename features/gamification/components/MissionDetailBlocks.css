@@ -14,29 +14,30 @@
 
 /* The hero carries the same red as the header above it, so reward and page read as one
    block rather than two stripes. */
-/* Brand red, continuous with the header above it — one block, as the design draws it.
-   Its lines are white for the same reason the card's band is: the tint the design uses
-   measures 3.80:1 on this red, and white reads 4.64:1. */
+/* The hero is one photograph with the wording sitting on it.
+   
+   The picture fills the whole block, and a gradient of the brand red rises over its lower
+   half — transparent at the top, fully opaque well before the text begins. That is what
+   makes this readable rather than hopeful: the text never sits on the photograph itself,
+   it sits on solid #E32321, which is the same pair already measured at 4.64:1. A scrim
+   that merely darkens would leave the ratio depending on whatever the photo happens to be
+   underneath, which is not something a campaign swap can be trusted to preserve.
+   
+   The stops are in px, not percentages, so the fade finishes at a known distance and the
+   text's 216px offset always clears it — a percentage would move with the block's height
+   and could leave the first line over a half-faded picture. */
 .ltp-mission-block__hero {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--sys-spacing-xl);
-  padding: var(--sys-spacing-2xl);
   background: var(--sys-color-background-accent-red);
   color: var(--sys-color-text-on-bgcolor);
+  overflow: hidden;
 }
 
-/* The photograph fills the panel edge to edge.
-   
-   240 rather than the 150 the design drew: the supplied shots are square, and `cover` into
-   358x150 keeps only 42% of their height — the lid of the lunchbox and nothing else. At
-   240 it keeps about three quarters, which is the whole product. Landscape crops would let
-   the panel go back to 150, and that is worth asking the team for. */
 .ltp-mission-block__art {
-  height: 240px;
-  border-radius: var(--sys-radius-2xl);
-  background: var(--sys-color-background-default);
-  overflow: hidden;
+  position: absolute;
+  inset: 0;
 }
 
 .ltp-mission-block__art img {
@@ -44,7 +45,32 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  /* The product sits in the middle of these shots, so centre it in the part of the block
+     the gradient leaves clear rather than anchoring to an edge. */
+  object-position: center 40%;
+}
+
+.ltp-mission-block__scrim {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--sys-color-background-accent-red) 0%, transparent) 0px,
+    color-mix(in srgb, var(--sys-color-background-accent-red) 0%, transparent) 144px,
+    color-mix(in srgb, var(--sys-color-background-accent-red) 30%, transparent) 196px,
+    color-mix(in srgb, var(--sys-color-background-accent-red) 82%, transparent) 236px,
+    var(--sys-color-background-accent-red) 256px
+  );
+}
+
+/* Sits below the point where the gradient is fully opaque. */
+.ltp-mission-block__hero-text {
+  position: relative;
+  margin-top: 264px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-sm);
+  padding: 0 var(--sys-spacing-2xl) var(--sys-spacing-2xl);
 }
 
 .ltp-mission-block__kind {
