@@ -26,12 +26,14 @@
   color: var(--sys-color-text-on-bgcolor);
 }
 
-/* The photograph fills the panel edge to edge. The sources are square and this panel is
-   358x150, so `cover` crops the top and bottom of a tall product — landscape crops would
-   show the whole thing, and that is a request to the team rather than something to solve
-   by letterboxing the picture. */
+/* The photograph fills the panel edge to edge.
+   
+   240 rather than the 150 the design drew: the supplied shots are square, and `cover` into
+   358x150 keeps only 42% of their height — the lid of the lunchbox and nothing else. At
+   240 it keeps about three quarters, which is the whole product. Landscape crops would let
+   the panel go back to 150, and that is worth asking the team for. */
 .ltp-mission-block__art {
-  height: 150px;
+  height: 240px;
   border-radius: var(--sys-radius-2xl);
   background: var(--sys-color-background-default);
   overflow: hidden;
@@ -57,10 +59,6 @@
   font-size: var(--sys-type-display-xl-semibold-size);
   line-height: 28px;
   font-weight: var(--sys-type-display-xl-semibold-weight);
-}
-
-.ltp-mission-block__hero-meta {
-  color: var(--sys-color-primary-light);
 }
 
 .ltp-mission-block__count {
@@ -143,6 +141,20 @@
   justify-content: center;
 }
 
+/* 44 tall so the target clears the minimum even though the label is one line. */
+.ltp-mission-block__link {
+  min-height: 44px;
+  padding: 0 var(--sys-spacing-lg);
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--sys-color-text-primary-default);
+  font-family: var(--sys-type-button-md-semibold-family);
+  font-size: var(--sys-type-button-md-semibold-size);
+  line-height: var(--sys-type-button-md-semibold-line-height);
+  font-weight: var(--sys-type-button-md-semibold-weight);
+}
+
 /* The banner that replaces the progress card once the mission is finished. */
 /* Stack's spacing scale skips 10 (`2lg` exists as a token but not in its union), and the
    design asks for 10 here — so the gap is set where the token can be named directly. */
@@ -169,5 +181,3 @@
   justify-content: center;
 }
 
-.ltp-mission-block__banner-title { color: var(--sys-color-status-success-darker); }
-.ltp-mission-block__banner-body { color: var(--sys-color-status-success-dark); }

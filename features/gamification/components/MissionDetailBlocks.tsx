@@ -1,5 +1,6 @@
 import React from 'react';
 import '../../../ui/foundations/tokens.css';
+import { sys } from '../../../ui/foundations/tokens';
 import Stack from '../../../ui/patterns/Stack/Stack';
 import Button from '../../../ui/components/Button/Button';
 import Surface from '../../../ui/patterns/Surface/Surface';
@@ -20,6 +21,17 @@ import './MissionDetailBlocks.css';
 //  They are components rather than page markup for one reason: they carry tokens, and the
 //  page tier may not (tools/check-pages.py). The page decides which of them appear.
 // ═══════════════════════════════════════════
+
+/**
+ * Colours handed to `Text` as inline style rather than through a class.
+ *
+ * Text sets its tone with an inline `color`, and inline beats a class no matter how the
+ * stylesheet is written — styling one of these from the outside with a CSS rule silently
+ * does nothing. `style` is spread last inside Text, so it wins.
+ */
+const HERO_META = { color: sys('color-primary-light') } as const;
+const BANNER_TITLE = { color: sys('color-status-success-darker') } as const;
+const BANNER_BODY = { color: sys('color-status-success-dark') } as const;
 
 export interface MissionHeroProps {
   /** The reward type, as an eyebrow — which of the three endings this one has (§2.1.1). */
@@ -47,8 +59,11 @@ export const MissionHero: React.FC<MissionHeroProps> = ({
     <Stack gap="sm">
       <span className="ltp-mission-block__kind">{kindLabel}</span>
       <span className="ltp-mission-block__reward">{reward}</span>
-      <Text role="body-md-regular" className="ltp-mission-block__hero-meta">{name}</Text>
-      <Text role="caption-lg-regular" className="ltp-mission-block__hero-meta">{campaignWindow}</Text>
+      {/* The colour goes through `style`, not a class. Text writes its tone as an inline
+          `color`, and an inline style beats a class — a `.hero-meta { color }` rule never
+          applied, so these two lines rendered #262626 on the dark red at 1.94:1. */}
+      <Text role="body-md-regular" style={HERO_META}>{name}</Text>
+      <Text role="caption-lg-regular" style={HERO_META}>{campaignWindow}</Text>
     </Stack>
   </div>
 );
@@ -95,8 +110,8 @@ export const MissionDoneBanner: React.FC<{ title: string; body: string }> = ({ t
       <Icon name="filled-check" size="xs" color="onBg" />
     </span>
     <Stack gap="none">
-      <Text role="title-lg-semibold" className="ltp-mission-block__banner-title">{title}</Text>
-      <Text role="caption-lg-regular" className="ltp-mission-block__banner-body">{body}</Text>
+      <Text role="title-lg-semibold" style={BANNER_TITLE}>{title}</Text>
+      <Text role="caption-lg-regular" style={BANNER_BODY}>{body}</Text>
     </Stack>
   </Stack>
 );
@@ -193,17 +208,23 @@ export const MissionFooter: React.FC<MissionFooterProps> = ({ cta, onCta, links,
       {cta.label}
     </Button>
 
+    {/* Text links, in brand red — which is what the design draws, and what passes.
+        `Button variant="link"` is the reuse-first choice and was the first attempt, but the
+        design system paints it `status-info-default` (#3B82F6), and blue on white measures
+        3.68:1 against the 4.5 that 14px text needs. Red reads 4.64. That is a defect in the
+        shared link variant rather than in this screen — raised separately; it is not fixed
+        here because every other page using it would move with it. */}
     {links && links.length > 0 && (
       <div className="ltp-mission-block__links">
         {links.map((label) => (
-          <Button
+          <button
             key={label}
-            variant="link"
-            size="lg"
+            type="button"
+            className="ltp-mission-block__link"
             onClick={onLink ? () => onLink(label) : undefined}
           >
             {label}
-          </Button>
+          </button>
         ))}
       </div>
     )}

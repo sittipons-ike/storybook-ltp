@@ -1,6 +1,7 @@
 import React from 'react';
 import Stack from '../../../ui/patterns/Stack/Stack';
 import Tabs from '../../../ui/components/Tabs/Tabs';
+import Surface from '../../../ui/patterns/Surface/Surface';
 import Button from '../../../ui/components/Button/Button';
 import Text from '../../../ui/components/Text/Text';
 import Skeleton from '../../../ui/components/Skeleton/Skeleton';
@@ -106,12 +107,18 @@ const MissionListPage: React.FC<MissionListPageProps> = ({
         style={{ display: 'block', width: '100%', height: 'auto' }}
       />
 
-      <Tabs
-        variant="underline"
-        items={tabs.map((t) => ({ key: t.key, label: t.label }))}
-        activeKey={activeTab}
-        onChange={onTabChange}
-      />
+      {/* On white, not on the page's own soft-light. The active tab is brand red, which
+          reads 4.64:1 on white and 4.44:1 on soft-light — under the 4.5 its 14px label
+          needs. Tabs draws no background of its own, so the surface is the page's to
+          provide, and the design puts one there for the same reason. */}
+      <Surface tone="default" radius="none" elevation="none" padding="none" gap="none">
+        <Tabs
+          variant="underline"
+          items={tabs.map((t) => ({ key: t.key, label: t.label }))}
+          activeKey={activeTab}
+          onChange={onTabChange}
+        />
+      </Surface>
 
       <Stack gap="xl" padding="2xl" grow>
         {loading ? (
