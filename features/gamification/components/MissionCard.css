@@ -32,26 +32,25 @@
   cursor: pointer;
 }
 
-/* The reward band. Red is the reward's colour on this screen and nothing else's — the
-   page behind stays #FAFAFA, so the band is the only thing that reads as an offer.
+/* The reward band, in brand red — the same red the header uses. The page behind stays
+   soft-light, so the band is the only thing on the screen that reads as an offer.
    
-   It is `primary-dark`, not the brand red the header uses. The band carries two tinted
-   lines at 10px and 12px, and on #E32321 that tint measures 3.80:1 — under the 4.5 small
-   text needs. Deepening the band to #991B1B takes the same tint to 6.82:1 and the white
-   reward line to 8.31:1, which keeps the three-tone hierarchy the design drew instead of
-   flattening every line to white to survive the lighter red. */
+   Every line on it is white. The design tints the eyebrow and the mission name with
+   `primary-light`, and on this red that measures 3.80:1 — under the 4.5 that 10px and 12px
+   text needs. On white the same lines read 4.64:1, so the three levels are told apart by
+   size, weight and tracking instead of by a tint that cannot be read. */
 .ltp-mission-card__band {
   display: flex;
   align-items: stretch;
   gap: var(--sys-spacing-xl);
   padding: var(--sys-spacing-xl);
-  background: var(--sys-color-primary-dark);
+  background: var(--sys-color-background-accent-red);
   color: var(--sys-color-text-on-bgcolor);
 }
 
 /* A mission already collected is not an offer any more: the band steps back a shade. */
 .ltp-mission-card__band--claimed {
-  background: var(--sys-color-primary-darker);
+  background: var(--sys-color-primary-dark);
 }
 
 /* The reward, photographed, filling its tile edge to edge — `cover`, not `contain`, so a
@@ -82,13 +81,14 @@
   gap: var(--sys-spacing-sm);
 }
 
-/* The reward type, set as an eyebrow: which of the three endings this one has. */
+/* The reward type, set as an eyebrow: which of the three endings this one has. Small and
+   tracked out rather than tinted — see the band's note. */
 .ltp-mission-card__kind {
   font-size: var(--sys-type-caption-md-regular-size);
   line-height: var(--sys-type-caption-md-regular-line-height);
   font-weight: var(--sys-type-label-md-semibold-weight);
   letter-spacing: 0.08em;
-  color: var(--sys-color-primary-light);
+  color: var(--sys-color-text-on-bgcolor);
 }
 
 .ltp-mission-card__reward {
@@ -101,7 +101,7 @@
 .ltp-mission-card__name {
   font-size: var(--sys-type-caption-lg-regular-size);
   line-height: var(--sys-type-caption-lg-regular-line-height);
-  color: var(--sys-color-primary-light);
+  color: var(--sys-color-text-on-bgcolor);
 }
 
 .ltp-mission-card__body {

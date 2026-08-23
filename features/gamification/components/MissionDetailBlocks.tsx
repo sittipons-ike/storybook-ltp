@@ -28,8 +28,11 @@ import './MissionDetailBlocks.css';
  * Text sets its tone with an inline `color`, and inline beats a class no matter how the
  * stylesheet is written — styling one of these from the outside with a CSS rule silently
  * does nothing. `style` is spread last inside Text, so it wins.
+ *
+ * The hero's secondary lines are white, not the design's `primary-light`: that tint reads
+ * 3.80:1 on brand red and white reads 4.64:1.
  */
-const HERO_META = { color: sys('color-primary-light') } as const;
+const HERO_META = { color: sys('color-text-on-bgcolor') } as const;
 const BANNER_TITLE = { color: sys('color-status-success-darker') } as const;
 const BANNER_BODY = { color: sys('color-status-success-dark') } as const;
 

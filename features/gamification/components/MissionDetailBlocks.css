@@ -14,15 +14,15 @@
 
 /* The hero carries the same red as the header above it, so reward and page read as one
    block rather than two stripes. */
-/* `primary-dark` for the same reason the card's band is: the hero carries tinted lines at
-   10, 12 and 14px, and that tint on the brand red measures 3.80:1. Here it reads 6.82:1,
-   and the header above stays #E32321 — chrome and content as two depths of the same red. */
+/* Brand red, continuous with the header above it — one block, as the design draws it.
+   Its lines are white for the same reason the card's band is: the tint the design uses
+   measures 3.80:1 on this red, and white reads 4.64:1. */
 .ltp-mission-block__hero {
   display: flex;
   flex-direction: column;
   gap: var(--sys-spacing-xl);
   padding: var(--sys-spacing-2xl);
-  background: var(--sys-color-primary-dark);
+  background: var(--sys-color-background-accent-red);
   color: var(--sys-color-text-on-bgcolor);
 }
 
@@ -52,7 +52,7 @@
   line-height: var(--sys-type-caption-md-regular-line-height);
   font-weight: var(--sys-type-label-md-semibold-weight);
   letter-spacing: 0.08em;
-  color: var(--sys-color-primary-light);
+  color: var(--sys-color-text-on-bgcolor);
 }
 
 .ltp-mission-block__reward {
