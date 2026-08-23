@@ -50,16 +50,19 @@
   object-position: center 42%;
 }
 
-/* Clear for the top half, then a long soft ramp — enough to carry the type, not enough to
-   wash the colour out of the product. */
+/* The fade the earlier pass had: clear through the upper third, then a long ramp that is
+   well on its way to opaque before it reaches the seam. The lighter version that replaced
+   it read as a hard edge at this height — 183px of picture leaves no room for a fade that
+   only starts to bite near the bottom. Same four stops as before, expressed as a share of
+   the picture's own box so they hold at any height. */
 .ltp-mission-block__scrim {
   position: absolute;
   inset: 0;
   background-image: linear-gradient(
     180deg,
-    color-mix(in srgb, var(--sys-color-background-accent-red) 0%, transparent) 52%,
-    color-mix(in srgb, var(--sys-color-background-accent-red) 22%, transparent) 72%,
-    color-mix(in srgb, var(--sys-color-background-accent-red) 68%, transparent) 90%,
+    color-mix(in srgb, var(--sys-color-background-accent-red) 0%, transparent) 38%,
+    color-mix(in srgb, var(--sys-color-background-accent-red) 30%, transparent) 62%,
+    color-mix(in srgb, var(--sys-color-background-accent-red) 82%, transparent) 88%,
     var(--sys-color-background-accent-red) 100%
   );
 }
