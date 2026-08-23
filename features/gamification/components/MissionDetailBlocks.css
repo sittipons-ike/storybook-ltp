@@ -16,28 +16,29 @@
    block rather than two stripes. */
 /* The hero is one photograph with the wording sitting on it.
    
-   The picture fills the whole block, and a gradient of the brand red rises over its lower
-   half — transparent at the top, fully opaque well before the text begins. That is what
-   makes this readable rather than hopeful: the text never sits on the photograph itself,
-   it sits on solid #E32321, which is the same pair already measured at 4.64:1. A scrim
-   that merely darkens would leave the ratio depending on whatever the photo happens to be
-   underneath, which is not something a campaign swap can be trusted to preserve.
+   Three parts stacked: the picture, a fade over its lower half, and the text on solid red
+   below. The fade lives INSIDE the picture's box and ends exactly where the text block
+   begins, so the two meet seamlessly however tall the text grows — a long mission name
+   takes room from the picture rather than landing on a half-faded one.
    
-   The stops are in px, not percentages, so the fade finishes at a known distance and the
-   text's 216px offset always clears it — a percentage would move with the block's height
-   and could leave the first line over a half-faded picture. */
+   That is also what makes it readable rather than hopeful. The text never sits on the
+   photograph: it sits on #E32321, a pair already measured at 4.64:1, so the reading does
+   not depend on how light the next campaign's product shot happens to be. A scrim that
+   merely darkens would hand that decision to the photograph. */
 .ltp-mission-block__hero {
   position: relative;
   display: flex;
   flex-direction: column;
+  aspect-ratio: 4 / 3;
   background: var(--sys-color-background-accent-red);
   color: var(--sys-color-text-on-bgcolor);
   overflow: hidden;
 }
 
 .ltp-mission-block__art {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .ltp-mission-block__art img {
@@ -45,32 +46,32 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* The product sits in the middle of these shots, so centre it in the part of the block
-     the gradient leaves clear rather than anchoring to an edge. */
-  object-position: center 40%;
+  /* The product sits mid-frame in these shots; bias it up out of the fade. */
+  object-position: center 42%;
 }
 
+/* Clear for the top half, then a long soft ramp — enough to carry the type, not enough to
+   wash the colour out of the product. */
 .ltp-mission-block__scrim {
   position: absolute;
   inset: 0;
   background-image: linear-gradient(
     180deg,
-    color-mix(in srgb, var(--sys-color-background-accent-red) 0%, transparent) 0px,
-    color-mix(in srgb, var(--sys-color-background-accent-red) 0%, transparent) 144px,
-    color-mix(in srgb, var(--sys-color-background-accent-red) 30%, transparent) 196px,
-    color-mix(in srgb, var(--sys-color-background-accent-red) 82%, transparent) 236px,
-    var(--sys-color-background-accent-red) 256px
+    color-mix(in srgb, var(--sys-color-background-accent-red) 0%, transparent) 52%,
+    color-mix(in srgb, var(--sys-color-background-accent-red) 22%, transparent) 72%,
+    color-mix(in srgb, var(--sys-color-background-accent-red) 68%, transparent) 90%,
+    var(--sys-color-background-accent-red) 100%
   );
 }
 
-/* Sits below the point where the gradient is fully opaque. */
 .ltp-mission-block__hero-text {
   position: relative;
-  margin-top: 264px;
+  flex: none;
   display: flex;
   flex-direction: column;
   gap: var(--sys-spacing-sm);
   padding: 0 var(--sys-spacing-2xl) var(--sys-spacing-2xl);
+  background: var(--sys-color-background-accent-red);
 }
 
 .ltp-mission-block__kind {
