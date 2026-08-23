@@ -1,6 +1,5 @@
 /* MissionCard — features/gamification
- *
- * No Figma node. Built from prd-dev.md AC-301 / AC-503 and ux-gamification.md §4.3.
+ * Design: Claude Design project b20d61e7 › `Mission Screens.dc.html` (2026-08-23)
  */
 .ltp-mission-card,
 .ltp-mission-card * {
@@ -8,39 +7,184 @@
 }
 
 .ltp-mission-card {
-  display: block;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   padding: 0;
   border: none;
-  background: none;
   font: inherit;
   color: inherit;
   text-align: left;
+  background: var(--sys-color-background-default);
+  border-radius: var(--sys-radius-2xl);
+  overflow: hidden;
+  box-shadow: var(--sys-elevation-card);
 }
 
 .ltp-mission-card--pressable {
   cursor: pointer;
 }
 
-/* §4.2 — a mission whose reward ran out or whose window closed stays on the list, greyed.
-   Hiding it reads as the system having lost it (Nielsen #1). */
-.ltp-mission-card--closed {
-  opacity: 0.72;
+/* The reward band. Red is the reward's colour on this screen and nothing else's — the
+   page behind stays #FAFAFA, so the band is the only thing that reads as an offer. */
+.ltp-mission-card__band {
+  display: flex;
+  align-items: stretch;
+  gap: var(--sys-spacing-xl);
+  padding: var(--sys-spacing-xl);
+  background: var(--sys-color-background-accent-red);
+  color: var(--sys-color-text-on-bgcolor);
 }
 
-/* The reward mark: a square that holds the reward-type glyph. Mid-fi carries the type,
-   not the product photo — the artwork is campaign data that does not exist yet. */
-.ltp-mission-card__mark {
-  flex: 0 0 auto;
-  width: 56px;
-  height: 56px;
-  border-radius: var(--sys-radius-2xl);
+/* A mission already collected is not an offer any more: the band steps back a shade. */
+.ltp-mission-card__band--claimed {
+  background: var(--sys-color-primary-dark);
+}
+
+/* Reward artwork does not exist yet — campaign material, not design material. A hatched
+   box says "a picture goes here" without pretending to be one. */
+.ltp-mission-card__art {
+  width: 88px;
+  height: 88px;
+  flex: none;
+  border-radius: var(--sys-radius-lg);
+  background: repeating-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.18) 0 6px,
+    rgba(255, 255, 255, 0.06) 6px 12px
+  );
+  display: flex;
+  align-items: flex-end;
+  padding: var(--sys-spacing-md);
+}
+
+.ltp-mission-card__art-label {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 9px;
+  line-height: 12px;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.ltp-mission-card__band-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-sm);
+}
+
+/* The reward type, set as an eyebrow: which of the three endings this one has. */
+.ltp-mission-card__kind {
+  font-size: var(--sys-type-caption-md-regular-size);
+  line-height: var(--sys-type-caption-md-regular-line-height);
+  font-weight: var(--sys-type-label-md-semibold-weight);
+  letter-spacing: 0.08em;
+  color: var(--sys-color-primary-light);
+}
+
+.ltp-mission-card__reward {
+  font-size: var(--sys-type-display-xl-semibold-size);
+  line-height: 26px;
+  font-weight: var(--sys-type-display-xl-semibold-weight);
+  text-wrap: pretty;
+}
+
+.ltp-mission-card__name {
+  font-size: var(--sys-type-caption-lg-regular-size);
+  line-height: var(--sys-type-caption-lg-regular-line-height);
+  color: var(--sys-color-primary-light);
+}
+
+.ltp-mission-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-lg);
+  padding: var(--sys-spacing-xl);
+}
+
+.ltp-mission-card__progress-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sys-spacing-lg);
+}
+
+.ltp-mission-card__count {
+  font-variant-numeric: tabular-nums;
+}
+
+.ltp-mission-card__meta {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: var(--sys-spacing-md);
+  flex-wrap: wrap;
+  padding-top: var(--sys-spacing-sm);
 }
 
-.ltp-mission-card__mark--nokpoint { background: var(--sys-color-primary-soft-light); }
-.ltp-mission-card__mark--coupon   { background: var(--sys-color-status-warning-soft-light); }
-.ltp-mission-card__mark--physical { background: var(--sys-color-status-info-soft-light); }
-.ltp-mission-card__mark--closed   { background: var(--sys-color-background-light); }
+/* One pill, five tones — the status is the only thing on the card that changes colour,
+   so the colour has to mean the status and nothing else. */
+.ltp-mission-card__pill {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 var(--sys-spacing-lg);
+  border-radius: var(--sys-radius-full);
+  font-size: var(--sys-type-label-md-semibold-size);
+  line-height: var(--sys-type-label-md-semibold-line-height);
+  font-weight: var(--sys-type-label-md-semibold-weight);
+}
+
+/* A number nobody has confirmed is drawn as a machine value, not as UI copy, so it cannot
+   be mistaken for the real quota when the screen is reviewed (OPEN-08). */
+.ltp-mission-card__tbd {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 var(--sys-spacing-lg);
+  border-radius: var(--sys-radius-lg);
+  background: var(--sys-color-status-warning-soft-light);
+  color: var(--sys-color-status-warning-darker);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+  line-height: 16px;
+}
+
+/* ── closed: ran out, or ran late ──────────────────────────────────────────────
+   §4.2 keeps these on the list rather than hiding them, so they need a shape that reads
+   as "not for you now" at a glance — smaller, flat, grey, no reward band. */
+.ltp-mission-card--closed {
+  flex-direction: row;
+  gap: var(--sys-spacing-xl);
+  padding: var(--sys-spacing-xl);
+  background: var(--sys-color-background-light);
+  border: 1px solid var(--sys-color-background-gray-soft-light);
+  box-shadow: none;
+}
+
+.ltp-mission-card__closed-art {
+  width: 64px;
+  height: 64px;
+  flex: none;
+  border-radius: var(--sys-radius-lg);
+  border: 1px solid var(--sys-color-background-gray-soft-light);
+  background: repeating-linear-gradient(
+    135deg,
+    var(--sys-color-background-gray-soft-light) 0 6px,
+    var(--sys-color-background-default) 6px 12px
+  );
+}
+
+.ltp-mission-card__closed-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-xs);
+}
+
+.ltp-mission-card__closed-pill {
+  margin-top: var(--sys-spacing-sm);
+  align-self: flex-start;
+  background: var(--sys-color-background-gray-soft-light);
+  color: var(--sys-color-text-tertiary-default);
+}

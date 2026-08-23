@@ -12,24 +12,39 @@
 | `user-flow.md` | flow เดิม 29 nodes + decision points |
 | `tickets.md` | T1 (mission flow ทั้งเส้น) · T2 (entry points — เฟสถัดไป) |
 
-## ที่มาของดีไซน์ — ไม่มี Figma
+## ที่มาของดีไซน์
 
-**ตัดสิน 2026-08-23:** ไม่อ้างอิง Figma mock ใน `Marketing view` (`7gVv3oV6G6xzldSjIxoSxb`)
-เอกสารด้านบนคือ authority เดียว และค่าทุกตัวมาจาก design system (`ui/` + `design-library/lotteryplus`)
+**ไม่ใช้ Figma** — ตัดสิน 2026-08-23 · mock ใน `Marketing view` (`7gVv3oV6G6xzldSjIxoSxb`) ออกจาก scope
 
-ผลที่ตามมาที่ควรรู้ก่อนรีวิว:
-- หน้าจอเป็น **mid-fi** ตามที่ ticket T1 กำหนด — โครงหน้าและลำดับข้อมูลถูกต้อง แต่ยังไม่ใช่ visual design
-- ภาพรางวัลยังไม่มี — การ์ดใช้ **เครื่องหมายบอกชนิดรางวัล** (`NOKPOINT` / `E_COUPON` / `PHYSICAL`) แทนภาพสินค้า เพราะ artwork เป็น campaign data ที่ยังไม่มี
-- ถ้าภายหลังทีมกลับมาใช้ Figma กฎเดิมกลับมาใช้ทันที: Figma ชนะเมื่อ Figma มี — ต้อง re-verify แล้วอัปเดตบันทึก
+**ดีไซน์ปัจจุบันมาจาก Claude Design** — project `b20d61e7-5cd9-4bcd-8ab5-2e382d2b5991` ›
+`Mission Screens.dc.html` (artboard 2a–2e) import เข้ามา 2026-08-23
+
+| ชั้น | authority |
+|---|---|
+| เนื้อหา · กลไก · AC | `prd-dev.md` v1.0 + `ux-gamification.md` |
+| รูปหน้า · ลำดับ · สถานะ | Claude Design `Mission Screens.dc.html` |
+| ค่าทุกตัว (สี ตัวอักษร ระยะ เงา) | `ui/foundations/tokens.css` |
+
+ดีไซน์ถูกวาดจาก repo นี้โดยตรง — **สีทุกตัวในไฟล์ resolve เป็น `--sys-*` ที่มีอยู่แล้ว ไม่มีสีใหม่เข้าระบบ**
+และ header คือ `ui/components/Header variant="sub" phoenix` ตัวเดิมไม่แก้อะไรเลย
+
+ที่ตั้งใจต่างจากดีไซน์ 2 จุด:
+- **empty state** ดีไซน์วาง placeholder 120×120 ไว้ — เราใช้ `gp-quick-menu-news` จาก logo set จริงแทน เพราะมีของอยู่แล้ว
+- **สีเทาการ์ดที่ปิดแล้ว** `#A3A3A3` ไม่มี role ใน `colors/text` (ตัว `disable` = `#D4D4D4` จางเกินอ่าน) จึงดึงจาก tertiary accent scale ตรงๆ
+
+**ภาพรางวัลยังไม่มี** — เป็น campaign asset ที่ยังไม่ถูกสร้าง การ์ดกับ hero ใช้กล่อง placeholder ที่เขียนบอกตัวเองว่าเป็น placeholder
 
 ## Components ที่เพิ่มในเฟสนี้ (`scope: feature`)
 
 | Component | ทำไมไม่ reuse ของเดิม |
 |---|---|
-| `MissionCard` | `ui/components/Card` คือหน้าสลาก คนละของ |
-| `MissionProgress` | `ui/components/ProgressBar` คือ stepper ของ checkout (step มีชื่อ+ไอคอน) ส่วนภารกิจคือ **นับเทียบเป้า** เช่น `0/999 ใบ` |
+| `MissionCard` + `MissionClosedCard` | `ui/components/Card` คือหน้าสลาก คนละของ |
+| `MissionProgress` | `ui/components/ProgressBar` คือ stepper ของ checkout (step มีชื่อ+ไอคอน) ส่วนภารกิจคือ **นับเทียบเป้า** เช่น `38/50 ใบ` |
+| `MissionDetailBlocks` | section ของ MSN-210 (hero · progress · steps · facts · footer) — อยู่ชั้น component เพราะถือ token ส่วน page ถือไม่ได้ (`check-pages.py`) |
 
-ทั้งสองตัวย้ายขึ้น `ui/components` ได้เมื่อมีหลักฐานใช้ซ้ำ ≥2 feature (Lark §3.3)
+ทั้งหมดย้ายขึ้น `ui/components` ได้เมื่อมีหลักฐานใช้ซ้ำ ≥2 feature (Lark §3.3)
+
+**ที่ reuse ตรงๆ ไม่แก้:** `Header` · `Tabs` · `Button` · `Divider` · `Skeleton` · `Logo` · `Icon` · `Text` · `Surface` · `Stack` · `AppShell` · `DeviceFrame` · `StatusBar`
 
 ## หน้าที่ทำแล้ว
 
@@ -42,3 +57,6 @@
 
 `MSN-301/302/310/311/330` claim 3 เส้นทาง · `MSN-910/911/920/921/922` system states ·
 loading อีก 4 จุด · state map 1 หน้า (AC22)
+
+> ⚠️ **รีวิวที่ browser แคบกว่า 768px** — typography ของ design system ผูกกับ viewport ไม่ใช่ container
+> จอกว้างจะได้ type ขนาด desktop แล้วเทียบขนาดไม่ตรงกับดีไซน์

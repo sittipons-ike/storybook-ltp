@@ -1,0 +1,169 @@
+/* MissionDetailBlocks — features/gamification
+ * Design: Claude Design project b20d61e7 › `Mission Screens.dc.html`, artboards 2b–2d
+ *
+ * These are the detail screen's own sections rather than page code. They live in the
+ * component tier because they carry tokens, and a page may not (tools/check-pages.py):
+ * the page composes them and decides which appear.
+ */
+/* Every block root and everything inside it. Written as a prefix match because these are
+   three separate roots, and a content-box would put the hero's padding outside its 390. */
+[class^='ltp-mission-block__'],
+[class^='ltp-mission-block__'] * {
+  box-sizing: border-box;
+}
+
+/* The hero carries the same red as the header above it, so reward and page read as one
+   block rather than two stripes. */
+.ltp-mission-block__hero {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-xl);
+  padding: var(--sys-spacing-2xl);
+  background: var(--sys-color-background-accent-red);
+  color: var(--sys-color-text-on-bgcolor);
+}
+
+.ltp-mission-block__art {
+  height: 150px;
+  border-radius: var(--sys-radius-2xl);
+  background: repeating-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.18) 0 8px,
+    rgba(255, 255, 255, 0.06) 8px 16px
+  );
+  display: flex;
+  align-items: flex-end;
+  padding: var(--sys-spacing-2lg);
+}
+
+.ltp-mission-block__art-label {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+  line-height: 16px;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.ltp-mission-block__kind {
+  font-size: var(--sys-type-caption-md-regular-size);
+  line-height: var(--sys-type-caption-md-regular-line-height);
+  font-weight: var(--sys-type-label-md-semibold-weight);
+  letter-spacing: 0.08em;
+  color: var(--sys-color-primary-light);
+}
+
+.ltp-mission-block__reward {
+  font-size: var(--sys-type-display-xl-semibold-size);
+  line-height: 28px;
+  font-weight: var(--sys-type-display-xl-semibold-weight);
+}
+
+.ltp-mission-block__hero-meta {
+  color: var(--sys-color-primary-light);
+}
+
+.ltp-mission-block__count {
+  font-variant-numeric: tabular-nums;
+}
+
+/* The step marks: done, in progress, not reached. Three shapes rather than three shades,
+   because the difference has to survive a greyscale print of the review. */
+.ltp-mission-block__mark {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  margin-top: 1px;
+  border-radius: var(--sys-radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--sys-type-caption-md-regular-size);
+  line-height: var(--sys-type-caption-md-regular-line-height);
+  font-weight: var(--sys-type-label-md-semibold-weight);
+}
+
+.ltp-mission-block__mark--done {
+  background: var(--sys-color-status-success-light);
+  color: var(--sys-color-status-success-darker);
+}
+
+.ltp-mission-block__mark--wait {
+  background: var(--sys-color-status-warning-soft-light);
+  color: var(--sys-color-status-warning-darker);
+}
+
+.ltp-mission-block__mark--todo {
+  background: var(--sys-color-background-light);
+  color: var(--sys-color-text-tertiary-default);
+}
+
+/* BP-02 — quota, how long the reward lasts, and the terms. Given its own tint so it
+   cannot be skimmed past on the way to the button. */
+.ltp-mission-block__facts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-2lg);
+  padding: var(--sys-spacing-2xl);
+  border-radius: var(--sys-radius-2xl);
+  background: var(--sys-color-status-warning-soft-light);
+}
+
+.ltp-mission-block__fact {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sys-spacing-xl);
+}
+
+/* A value the product has not settled reads as a machine value, never as an answer. */
+.ltp-mission-block__pending {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  line-height: 18px;
+  color: var(--sys-color-status-warning-darker);
+}
+
+/* The bar the CTA sits in. Sticky, because the terms above it are long and a CTA that
+   scrolls away is a CTA the user has to hunt for. */
+.ltp-mission-block__footer {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-xl);
+  padding: var(--sys-spacing-2xl);
+  background: var(--sys-color-background-default);
+  border-top: 1px solid var(--sys-color-background-gray-soft-light);
+}
+
+.ltp-mission-block__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sys-spacing-2xl);
+  justify-content: center;
+}
+
+/* The banner that replaces the progress card once the mission is finished. */
+/* Stack's spacing scale skips 10 (`2lg` exists as a token but not in its union), and the
+   design asks for 10 here — so the gap is set where the token can be named directly. */
+.ltp-mission-block__banner {
+  gap: var(--sys-spacing-2lg);
+  border-radius: var(--sys-radius-2xl);
+  background: var(--sys-color-status-success-soft-light);
+}
+
+.ltp-mission-block__step {
+  gap: var(--sys-spacing-2lg);
+}
+
+.ltp-mission-block__banner-mark {
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border-radius: var(--sys-radius-full);
+  background: var(--sys-color-status-success-default);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ltp-mission-block__banner-title { color: var(--sys-color-status-success-darker); }
+.ltp-mission-block__banner-body { color: var(--sys-color-status-success-dark); }

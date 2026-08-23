@@ -1,79 +1,64 @@
 import React from 'react';
 import '../../../ui/foundations/tokens.css';
-import Surface from '../../../ui/patterns/Surface/Surface';
-import Stack from '../../../ui/patterns/Stack/Stack';
+import { sys } from '../../../ui/foundations/tokens';
 import Text from '../../../ui/components/Text/Text';
-import Badge from '../../../ui/components/Badge/Badge';
-import Divider from '../../../ui/components/Divider/Divider';
-import Icon from '../../../ui/icons/Icon';
-import '../../../ui/icons/icon-data';
 import MissionProgress from './MissionProgress';
 import './MissionCard.css';
 
 // ═══════════════════════════════════════════
 //  MissionCard — features/gamification · scope: feature
 //
-//  Source: prd-dev.md v1.0 — AC-301 (the five things a card must carry), AC-302,
-//  AC-503 (quota shown before the user starts), §5.2 (state machine), MECH-05.
-//  Layout order: ux-gamification.md §4.3.
+//  Design: Claude Design project b20d61e7 › `Mission Screens.dc.html` (2026-08-23).
+//  Requirements: prd-dev.md v1.0 AC-301 (the five things a card carries), AC-503,
+//  MECH-05 · ux-gamification.md §4.2 (ordering) §4.3 (reading order).
 //
-//  MECH-05 is why there is no claim button here. Claiming happens on the mission detail
-//  screen and nowhere else, so the card's only job is to be readable and to open.
+//  The card has no claim button. Claiming happens on the detail screen and nowhere else
+//  (MECH-05) — one claim point is one place to get idempotency right (ST-02).
 // ═══════════════════════════════════════════
 
-/** §5.1 `Reward.type`. Decides the glyph and the mark's tint, nothing else. */
-export type RewardType = 'NOKPOINT' | 'E_COUPON' | 'PHYSICAL';
-
-/** §5.2, trimmed to what the list can be in: LOCKED never reaches a card. */
-export type MissionState =
-  | 'IN_PROGRESS'
-  | 'COMPLETED'
-  | 'CLAIMED'
-  | 'EXPIRED'
-  | 'OUT_OF_STOCK';
-
-const MARK: Record<RewardType, { icon: string; tint: string; label: string }> = {
-  NOKPOINT: { icon: 'filled-NokPoints', tint: 'nokpoint', label: 'นกพอยต์' },
-  E_COUPON: { icon: 'filled-discount', tint: 'coupon', label: 'คูปองส่วนลด' },
-  PHYSICAL: { icon: 'filled-GiftBox', tint: 'physical', label: 'ของรางวัล' },
-};
+/** §2.1.1 — the three endings a reward can have. Shown as the band's eyebrow. */
+export type RewardKind = 'นกพอยต์' | 'คูปอง' | 'ของส่งถึงบ้าน';
 
 /**
- * The status line under the reward. Two of these are refusals, and BP-05 asks refusals to
- * give a reason rather than borrow the language of an error, which is why they are
- * spelled out here instead of sharing one "unavailable" string.
+ * Where the mission stands, in the user's terms rather than the state machine's.
+ * `pending` is §5.2.1: counted, not settled — visible, but not yet earned (SET-01).
  */
-const STATUS: Partial<Record<MissionState, { label: string; tone: 'success' | 'tertiary' }>> = {
-  COMPLETED: { label: 'ทำครบแล้ว กดเข้าไปรับรางวัล', tone: 'success' },
-  CLAIMED: { label: 'รับรางวัลแล้ว', tone: 'tertiary' },
-  EXPIRED: { label: 'หมดเวลาแล้ว', tone: 'tertiary' },
-  OUT_OF_STOCK: { label: 'ของรางวัลหมดแล้ว', tone: 'tertiary' },
+export type MissionTone = 'ready' | 'doing' | 'pending' | 'idle' | 'claimed';
+
+const TONE: Record<MissionTone, { background: string; color: string }> = {
+  ready: { background: sys('color-status-success-light'), color: sys('color-status-success-darker') },
+  doing: { background: sys('color-primary-light'), color: sys('color-primary-darker') },
+  pending: { background: sys('color-status-warning-soft-light'), color: sys('color-status-warning-darker') },
+  idle: { background: sys('color-background-light'), color: sys('color-tertiary-accent-lg') },
+  claimed: { background: sys('color-status-info-soft-light'), color: sys('color-status-info-darker') },
 };
 
 export interface MissionCardProps {
-  /** §5.1 `Mission.id`. */
-  id?: string;
-  /** ชื่อภารกิจ — AC-301 #1. */
-  title: string;
-  /** The reward, in the user's words: "หูฟัง Sony" · "20 นกพ้อย". AC-301 #1. */
+  /** ชื่อภารกิจ — AC-301 #1, second line of the band. */
+  name: string;
+  /** The reward in the user's words: "กล่องข้าวร่ำรวย" · "10 นกพอยต์". Leads the band. */
   reward: string;
-  rewardType: RewardType;
+  kind: RewardKind;
   /** เงื่อนไขแบบอ่านจบใน 1 บรรทัด — AC-301 #2. */
-  condition: string;
+  cond: string;
 
-  state?: MissionState;
-
-  /** AC-301 #3 — the real numbers, plus the checkpoints between them. */
-  current?: number;
-  target?: number;
-  pending?: number;
-  milestones?: number[];
+  /** AC-301 #3 — the real count, and the marks along the way. */
+  current: number;
+  target: number;
+  marks?: number[];
   unit?: string;
 
-  /** AC-301 #4 — how many days are left. A number, so the copy stays in one place. */
-  daysLeft?: number;
-  /** AC-301 #5 / AC-503 — how many are left, when the reward is limited. */
-  stockLeft?: number;
+  tone: MissionTone;
+  /** What the pill says. Written per mission because a refusal owes a reason (BP-05). */
+  statusLabel: string;
+
+  /** AC-301 #4 — "เหลืออีก 9 วัน". Empty on a mission that is already finished. */
+  daysLabel?: string;
+  /**
+   * AC-301 #5 / AC-503 — this reward is limited. The number itself is still TBD
+   * (OPEN-08), so the card says so rather than showing one.
+   */
+  quota?: boolean;
 
   onOpen?: () => void;
   className?: string;
@@ -82,118 +67,112 @@ export interface MissionCardProps {
 /**
  * MissionCard — one row of MSN-201 / MSN-202.
  *
- * Reads top to bottom in the order §4.3 sets: the reward first, because it is the only
- * reason to stop and read; then whether it is doable; then where the user stands; then how
- * long is left and how many are left.
+ * Reads in the order §4.3 sets: the reward first, because it is the only reason to stop;
+ * then whether it is doable; then where the user stands; then how long and how many are
+ * left.
  */
 const MissionCard: React.FC<MissionCardProps> = ({
-  title,
+  name,
   reward,
-  rewardType,
-  condition,
-  state = 'IN_PROGRESS',
-  current = 0,
-  target = 0,
-  pending = 0,
-  milestones,
+  kind,
+  cond,
+  current,
+  target,
+  marks,
   unit,
-  daysLeft,
-  stockLeft,
+  tone,
+  statusLabel,
+  daysLabel,
+  quota = false,
   onOpen,
   className = '',
-}) => {
-  const closed = state === 'EXPIRED' || state === 'OUT_OF_STOCK';
-  const mark = MARK[rewardType];
-  const status = STATUS[state];
-  const showProgress = state === 'IN_PROGRESS' && target > 0;
-  const showFooter = daysLeft !== undefined || stockLeft !== undefined;
-
-  return (
-    <button
-      type="button"
-      onClick={onOpen}
-      className={`ltp-mission-card${closed ? ' ltp-mission-card--closed' : ''}${
-        onOpen ? ' ltp-mission-card--pressable' : ''
-      } ${className}`}
+}) => (
+  <button
+    type="button"
+    onClick={onOpen}
+    className={`ltp-mission-card${onOpen ? ' ltp-mission-card--pressable' : ''} ${className}`}
+  >
+    <div
+      className={`ltp-mission-card__band${
+        tone === 'claimed' ? ' ltp-mission-card__band--claimed' : ''
+      }`}
     >
-      <Surface radius="2xl" elevation="card" padding="2xl" gap="xl">
-        <Stack direction="row" gap="2xl" align="flex-start">
-          <span
-            className={`ltp-mission-card__mark ltp-mission-card__mark--${
-              closed ? 'closed' : mark.tint
-            }`}
-          >
-            <Icon
-              name={mark.icon}
-              size="lg"
-              color={closed ? 'tertiary' : 'primary'}
-              aria-label={mark.label}
-            />
-          </span>
+      <div className="ltp-mission-card__art">
+        <span className="ltp-mission-card__art-label">ภาพรางวัล</span>
+      </div>
+      <div className="ltp-mission-card__band-text">
+        <span className="ltp-mission-card__kind">{kind}</span>
+        <span className="ltp-mission-card__reward">{reward}</span>
+        <span className="ltp-mission-card__name">{name}</span>
+      </div>
+    </div>
 
-          <Stack gap="none">
-            {/* §4.3 order 1 — the reward leads, the mission name qualifies it. */}
-            <Text role="title-lg-semibold" tone="secondary">{reward}</Text>
-            <Text role="caption-lg-regular" tone="tertiary">{title}</Text>
-          </Stack>
+    <div className="ltp-mission-card__body">
+      <Text role="body-md-regular" tone="secondary" style={{ textWrap: 'pretty' }}>{cond}</Text>
 
-          <span style={{ display: 'flex', flex: '0 0 auto' }}>
-            <Icon name="arrow-right-S" size="sm" color="tertiary" />
-          </span>
-        </Stack>
+      <div className="ltp-mission-card__progress-head">
+        <Text role="caption-lg-regular" tone="tertiary">ความคืบหน้า</Text>
+        <Text role="title-lg-semibold" tone="primary" className="ltp-mission-card__count">
+          {current.toLocaleString('en-US')}/{target.toLocaleString('en-US')}
+          {unit ? ` ${unit}` : ''}
+        </Text>
+      </div>
 
-        {/* §4.3 order 2 — AC-301 asks this to be readable in one line, so it gets the
-            card's full width rather than the column left over beside the mark. */}
-        <Text role="body-md-regular" tone="secondary">{condition}</Text>
+      <MissionProgress current={current} target={target} marks={marks} />
 
-        {status && (
-          <Text role="body-md-medium" tone={status.tone}>{status.label}</Text>
-        )}
+      <div className="ltp-mission-card__meta">
+        <span className="ltp-mission-card__pill" style={TONE[tone]}>{statusLabel}</span>
+        {daysLabel && <Text role="caption-lg-regular" tone="secondary">{daysLabel}</Text>}
+        {quota && <span className="ltp-mission-card__tbd">สิทธิ์คงเหลือ · รอข้อมูล</span>}
+      </div>
+    </div>
+  </button>
+);
 
-        {showProgress && (
-          <MissionProgress
-            current={current}
-            target={target}
-            pending={pending}
-            milestones={milestones}
-            unit={unit}
-            muted={closed}
-          />
-        )}
+export interface MissionClosedCardProps {
+  name: string;
+  reward: string;
+  cond: string;
+  /** "ของรางวัลหมดแล้ว" · "หมดเวลาแล้ว" — the reason, not a generic unavailable. */
+  statusLabel: string;
+  onOpen?: () => void;
+  className?: string;
+}
 
-        {showFooter && (
-          <>
-            <Divider tone="light-gray" lineStyle="solid" />
-            <Stack direction="row" align="center" justify="space-between" gap="lg">
-              {/* §4.3 order 4 — "ต้องรีบไหม" */}
-              {daysLeft !== undefined ? (
-                <Stack direction="row" align="center" gap="sm" style={{ width: 'auto' }}>
-                  <Icon name="filled-clock" size="2xs" color="tertiary" />
-                  <Text role="caption-lg-regular" tone="tertiary">
-                    {daysLeft > 0 ? `เหลืออีก ${daysLeft} วัน` : 'วันสุดท้าย'}
-                  </Text>
-                </Stack>
-              ) : (
-                <span />
-              )}
-
-              {/* §4.3 order 5 / AC-503 — "ยังทันไหม", before the user starts.
-                  When the mission is already closed the status line above has said so, and
-                  a badge repeating it is the same sentence twice. */}
-              {stockLeft !== undefined &&
-                (stockLeft > 0 ? (
-                  <Text role="caption-lg-regular" tone="tertiary">
-                    เหลือ {stockLeft.toLocaleString('th-TH')} สิทธิ์
-                  </Text>
-                ) : (
-                  state !== 'OUT_OF_STOCK' && <Badge label="ของหมดแล้ว" tone="neutral" />
-                ))}
-            </Stack>
-          </>
-        )}
-      </Surface>
-    </button>
-  );
-};
+/**
+ * A mission that has run out of stock or run out of time.
+ *
+ * §4.2 keeps it on the list, greyed, rather than removing it: a mission that disappears
+ * reads as the system having lost it (Nielsen #1). It gets a flatter, shorter shape so
+ * the eye skips it without having to read it.
+ */
+export const MissionClosedCard: React.FC<MissionClosedCardProps> = ({
+  name,
+  reward,
+  cond,
+  statusLabel,
+  onOpen,
+  className = '',
+}) => (
+  <button
+    type="button"
+    onClick={onOpen}
+    className={`ltp-mission-card ltp-mission-card--closed${
+      onOpen ? ' ltp-mission-card--pressable' : ''
+    } ${className}`}
+  >
+    <div className="ltp-mission-card__closed-art" />
+    <div className="ltp-mission-card__closed-text">
+      {/* The grey the design greys these out with is #A3A3A3, and no `colors/text` role
+          declares it — Text's `disable` is #D4D4D4, which is too faint to read. It comes
+          from the tertiary accent scale instead, passed through rather than approximated. */}
+      <Text role="title-lg-semibold" style={{ color: sys('color-tertiary-accent-md') }}>{reward}</Text>
+      <Text role="caption-lg-regular" style={{ color: sys('color-tertiary-accent-md') }}>
+        {name} · {cond}
+      </Text>
+      <span className="ltp-mission-card__pill ltp-mission-card__closed-pill">{statusLabel}</span>
+    </div>
+  </button>
+);
 
 export default MissionCard;

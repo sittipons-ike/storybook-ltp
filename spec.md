@@ -1,5 +1,5 @@
 # Project Spec — Lotteryplus Design System
-_Last updated: 2026-08-23 17:10_
+_Last updated: 2026-08-23 19:40_
 
 ## Current State
 _Restructured 2026-08-21: `UI Library` → `ui` · feature tier ที่ `features/` (profile = UI ครบ, gamification = docs ครบ, avatar = assets) · `~/Lottery+` ยุบเข้า repo ทั้งหมด (ของหนักอยู่ `_source/` gitignored, ของเก่าอยู่ `archive/`) · helper/page metadata ตรง Lark §3.7 แล้ว_
@@ -7,6 +7,8 @@ _Restructured 2026-08-21: `UI Library` → `ui` · feature tier ที่ `featu
 _2026-08-23: เริ่ม UI ของ `features/gamification` (ticket T1) — `MSN-200/201/202/900` + loading ขึ้นแล้ว_
 _**ตัดสินสำคัญ:** ฟีเจอร์นี้ **ไม่อ้างอิง Figma** · mock ใน `Marketing view` (7gVv3oV6G6xzldSjIxoSxb) ถูกตัดออกจาก scope
 โดย user 2026-08-23 → authority คือ `prd-dev.md` v1.0 + `ux-gamification.md` และค่าทุกตัวมาจาก design system_
+_**รูปหน้ามาจาก Claude Design** — project `b20d61e7` › `Mission Screens.dc.html` import 2026-08-23 ·
+อ่านผ่าน `DesignSync` (MCP `claude_design` ไม่ได้ต่อใน session) · สีทุกตัวในไฟล์ resolve เป็น `--sys-*` เดิม ไม่มีสีใหม่_
 
 
 สร้าง **Storybook เป็น Single Source of Truth** ให้ทีม Design + Dev sync กันแบบ code-based
@@ -230,6 +232,7 @@ ui/
 ### features/gamification — ticket T1 (mission flow ทั้งเส้น)
 - [x] `MSN-200 / 201 / 202 / 900` + loading skeleton · components `MissionCard` · `MissionProgress` (scope: feature)
 - [x] `MSN-210` รายละเอียดภารกิจ — CTA 5 สถานะ · จุด claim เดียว (MECH-05) · ปลายทางครบ 3 แบบ (AC7)
+- [x] ทั้ง 2 หน้า redesign ตาม Claude Design แล้ว — การ์ดเป็นแถบรางวัลแดง + เนื้อขาว · หน้า detail มีบล็อก "สิ่งที่ต้องรู้ก่อนกด" เหนือ CTA
 - [ ] `MSN-301 / 302 / 310 / 311 / 330` claim 3 เส้นทาง (`NOKPOINT` · `E_COUPON` · `PHYSICAL`)
 - [ ] `MSN-910 / 911 / 920 / 921 / 922` system states + loading อีก 4 จุด
 - [ ] T2 entry points (`MSN-001 / 002 / 003 / 500`) — เฟสถัดไป ยังไม่เริ่ม

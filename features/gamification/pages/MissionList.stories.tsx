@@ -6,6 +6,7 @@ import DeviceFrame from '../../../ui/patterns/DeviceFrame/DeviceFrame';
 import StatusBar from '../../../ui/components/StatusBar/StatusBar';
 import Header from '../../../ui/components/Header/Header';
 import {
+  MISSIONS_CLOSED,
   MISSIONS_DONE,
   MISSIONS_OPEN,
   MISSION_EMPTY,
@@ -16,15 +17,17 @@ import {
 // ═══════════════════════════════════════════
 //  MSN-200 — หน้าภารกิจ · ticket T1
 //
-//  Built from features/gamification/prd-dev.md v1.0 and ux-gamification.md. No Figma
-//  frame stands behind it — the mock was taken out of scope on 2026-08-23.
+//  Design: Claude Design project b20d61e7 › `Mission Screens.dc.html`, artboards 2a · 2e.
+//  Requirements: prd-dev.md v1.0 · ux-gamification.md.
 //
 //  Placeholders on this screen, per the ticket's Definition of Done:
-//    · จำนวนสิทธิ์คงเหลือ  — TBD, รอ OPEN-08 (โควตาต่อรางวัลยังเป็น TBD ทั้งคอลัมน์)
+//    · จำนวนสิทธิ์คงเหลือ  — TBD, รอ OPEN-08 · การ์ดบอกว่า "รอข้อมูล" แทนตัวเลข
+//    · ภาพรางวัล           — ยังไม่มี artwork · ใช้กล่อง placeholder ที่บอกตัวเองว่าเป็น placeholder
 //    · ขั้น STARTER        — TBD, รอ OPEN-07 · ยังไม่มีเงื่อนไขและรางวัล จึงไม่มีการ์ด
 //    · วันเริ่มรอบถัดไป     — TBD, รอ OPEN-11 · empty state จึงไม่ระบุวัน (SLA-01)
 //
-//  Each tab is its own story rather than a click, because a review has to see both at once.
+//  รีวิวที่ความกว้าง browser ต่ำกว่า 768px — typography ของ design system ผูกกับ viewport
+//  ไม่ใช่ container จอกว้างจะได้ type ขนาด desktop แล้วเทียบขนาดไม่ตรง
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof MissionListPage> = {
@@ -41,7 +44,7 @@ const Caption: React.FC<{ children: React.ReactNode }> = ({ children }) => (
       fontSize: 11,
       opacity: 0.6,
       marginBottom: 8,
-      maxWidth: 320,
+      maxWidth: 360,
       lineHeight: 1.5,
     }}
   >
@@ -50,17 +53,17 @@ const Caption: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 );
 
 /**
- * The shell the page sits in: the device status strip and the sub-page navbar carrying the
- * feature name and the way back.
+ * The shell: the device status strip and the sub-page navbar with the feature name, the
+ * way back, and the phoenix watermark. That header is `ui/components/Header` at
+ * `variant="sub"` unchanged — the design drew it from the same component.
  *
- * No bottom tab bar. The mission list is reached from the home banner or the service row
- * (ENT-01 / ENT-02), not from a top-level tab, and drawing one would promise a destination
- * the app does not have.
+ * No bottom tab bar. The list is reached from the home banner or the service row
+ * (ENT-01 / ENT-02), not from a top-level tab.
  */
 const InShell: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <AppShell
     statusBar={<StatusBar />}
-    topNavbar={<Header variant="sub" title={MISSION_FEATURE_TITLE} />}
+    topNavbar={<Header variant="sub" phoenix title={MISSION_FEATURE_TITLE} />}
   >
     {children}
   </AppShell>
@@ -71,7 +74,7 @@ export const TabOpen: StoryObj = {
   render: () => (
     <div style={{ padding: 24 }}>
       <Caption>
-        MSN-201 · เรียงตาม §4.2 — ใกล้สำเร็จ → ใกล้หมดเวลา → ยังไม่เริ่ม → ของหมด/หมดอายุ (disabled ไม่ซ่อน)
+        MSN-201 · ครบทุกสถานะ — ทำครบรอรับ · กำลังทำ · กำลังตรวจสอบยอด · ยังไม่เริ่ม · รับแล้ว · ของหมด · หมดเวลา
       </Caption>
       <DeviceFrame scroll>
         <InShell>
@@ -79,6 +82,7 @@ export const TabOpen: StoryObj = {
             tabs={MISSION_TABS}
             activeTab="open"
             missions={MISSIONS_OPEN}
+            closed={MISSIONS_CLOSED}
             empty={MISSION_EMPTY.open}
           />
         </InShell>
@@ -92,7 +96,7 @@ export const TabDone: StoryObj = {
   render: () => (
     <div style={{ padding: 24 }}>
       <Caption>
-        MSN-202 · ประวัติภารกิจที่จบแล้ว · ไม่มีปุ่มรับรางวัลบนการ์ด — จุด claim อยู่ที่ MSN-210 เท่านั้น (MECH-05)
+        MSN-202 · ไม่มีปุ่มรับรางวัลบนการ์ด — จุด claim อยู่ที่ MSN-210 เท่านั้น (MECH-05)
       </Caption>
       <DeviceFrame scroll>
         <InShell>
@@ -160,39 +164,4 @@ export const Loading: StoryObj = {
       </DeviceFrame>
     </div>
   ),
-};
-
-/** Every state of the screen side by side — the review view. */
-export const EveryState: StoryObj = {
-  name: 'ทุก state เรียงกัน',
-  render: () => {
-    const cases = [
-      { caption: 'MSN-201 · ทั้งหมด', tab: 'open', missions: MISSIONS_OPEN, empty: MISSION_EMPTY.open, loading: false },
-      { caption: 'MSN-202 · สำเร็จแล้ว', tab: 'done', missions: MISSIONS_DONE, empty: MISSION_EMPTY.done, loading: false },
-      { caption: 'MSN-900 · ทั้งหมด ว่าง', tab: 'open', missions: [], empty: MISSION_EMPTY.open, loading: false },
-      { caption: 'MSN-900 · สำเร็จแล้ว ว่าง', tab: 'done', missions: [], empty: MISSION_EMPTY.done, loading: false },
-      { caption: 'Loading', tab: 'open', missions: [], empty: MISSION_EMPTY.open, loading: true },
-    ];
-
-    return (
-      <div style={{ padding: 24, display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'flex-start' }}>
-        {cases.map(({ caption, tab, missions, empty, loading }) => (
-          <div key={caption}>
-            <Caption>{caption}</Caption>
-            <DeviceFrame scroll>
-              <InShell>
-                <MissionListPage
-                  tabs={MISSION_TABS}
-                  activeTab={tab}
-                  missions={missions}
-                  empty={empty}
-                  loading={loading}
-                />
-              </InShell>
-            </DeviceFrame>
-          </div>
-        ))}
-      </div>
-    );
-  },
 };
