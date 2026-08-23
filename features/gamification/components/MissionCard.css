@@ -33,34 +33,36 @@
 }
 
 /* The reward band. Red is the reward's colour on this screen and nothing else's — the
-   page behind stays #FAFAFA, so the band is the only thing that reads as an offer. */
+   page behind stays #FAFAFA, so the band is the only thing that reads as an offer.
+   
+   It is `primary-dark`, not the brand red the header uses. The band carries two tinted
+   lines at 10px and 12px, and on #E32321 that tint measures 3.80:1 — under the 4.5 small
+   text needs. Deepening the band to #991B1B takes the same tint to 6.82:1 and the white
+   reward line to 8.31:1, which keeps the three-tone hierarchy the design drew instead of
+   flattening every line to white to survive the lighter red. */
 .ltp-mission-card__band {
   display: flex;
   align-items: stretch;
   gap: var(--sys-spacing-xl);
   padding: var(--sys-spacing-xl);
-  background: var(--sys-color-background-accent-red);
+  background: var(--sys-color-primary-dark);
   color: var(--sys-color-text-on-bgcolor);
 }
 
 /* A mission already collected is not an offer any more: the band steps back a shade. */
 .ltp-mission-card__band--claimed {
-  background: var(--sys-color-primary-dark);
+  background: var(--sys-color-primary-darker);
 }
 
-/* The reward, photographed. The tile is white rather than transparent: the shots are cut
-   out on white, and a white-on-red tile reads as a product card while the same image laid
-   straight on the band would read as a hole in it. */
+/* The reward, photographed, filling its tile edge to edge — `cover`, not `contain`, so a
+   picture never sits in a letterboxed frame. White underneath for the shots that carry
+   transparency. */
 .ltp-mission-card__art {
   width: 88px;
   height: 88px;
   flex: none;
   border-radius: var(--sys-radius-lg);
   background: var(--sys-color-background-default);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--sys-spacing-md);
   overflow: hidden;
 }
 
@@ -68,7 +70,8 @@
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
+  object-position: center;
 }
 
 .ltp-mission-card__band-text {
@@ -188,9 +191,11 @@
   gap: var(--sys-spacing-xs);
 }
 
+/* `tertiary` reads 3.76:1 on this pill and 4.35:1 on the card — both under 4.5. Greyed
+   out still has to be readable; `tertiary-accent-lg` clears it at 6.20 and 7.17. */
 .ltp-mission-card__closed-pill {
   margin-top: var(--sys-spacing-sm);
   align-self: flex-start;
   background: var(--sys-color-background-gray-soft-light);
-  color: var(--sys-color-text-tertiary-default);
+  color: var(--sys-color-tertiary-accent-lg);
 }

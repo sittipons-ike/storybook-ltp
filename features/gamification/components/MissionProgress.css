@@ -50,13 +50,17 @@
 }
 
 /* A ring rather than a border: the dot stays 8px whether it is reached or not, so the row
-   does not shift as progress moves. */
+   does not shift as progress moves.
+   
+   The ring is `tertiary`, not `gray-light`: at 1px on white, #D4D4D4 measures 1.48:1 and
+   an unreached mark simply disappears — this row is how far there is left to go, so its
+   marks are content, not decoration, and owe the 3:1 that non-text content does. */
 .ltp-mission-progress__dot {
   width: 8px;
   height: 8px;
   border-radius: var(--sys-radius-full);
   background: var(--sys-color-background-default);
-  box-shadow: 0 0 0 1px var(--sys-color-background-gray-light);
+  box-shadow: 0 0 0 1px var(--sys-color-border-tertiary);
 }
 
 .ltp-mission-progress__dot--reached {

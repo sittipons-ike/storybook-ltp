@@ -171,11 +171,12 @@ export const MissionClosedCard: React.FC<MissionClosedCardProps> = ({
   >
     <div className="ltp-mission-card__closed-art" />
     <div className="ltp-mission-card__closed-text">
-      {/* The grey the design greys these out with is #A3A3A3, and no `colors/text` role
-          declares it — Text's `disable` is #D4D4D4, which is too faint to read. It comes
-          from the tertiary accent scale instead, passed through rather than approximated. */}
-      <Text role="title-lg-semibold" style={{ color: sys('color-tertiary-accent-md') }}>{reward}</Text>
-      <Text role="caption-lg-regular" style={{ color: sys('color-tertiary-accent-md') }}>
+      {/* The design greys these out with #A3A3A3, which measures 2.31:1 on the card's own
+          #F5F5F5 — half of what small text needs. `tertiary-accent-lg` is the same scale
+          two steps darker and reads 7.17:1, so the card still recedes without going
+          unreadable. Text's own `disable` role is #D4D4D4 and is fainter still. */}
+      <Text role="title-lg-semibold" style={{ color: sys('color-tertiary-accent-lg') }}>{reward}</Text>
+      <Text role="caption-lg-regular" style={{ color: sys('color-tertiary-accent-lg') }}>
         {name} · {cond}
       </Text>
       <span className="ltp-mission-card__pill ltp-mission-card__closed-pill">{statusLabel}</span>

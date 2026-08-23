@@ -7,6 +7,7 @@ import StatusBar from '../../../ui/components/StatusBar/StatusBar';
 import Header from '../../../ui/components/Header/Header';
 import {
   MISSIONS_CLOSED,
+  MISSION_BANNER,
   MISSIONS_DONE,
   MISSIONS_OPEN,
   MISSION_EMPTY,
@@ -79,6 +80,8 @@ export const TabOpen: StoryObj = {
       <DeviceFrame scroll>
         <InShell>
           <MissionListPage
+            banner={MISSION_BANNER}
+            bannerAlt={MISSION_FEATURE_TITLE}
             tabs={MISSION_TABS}
             activeTab="open"
             missions={MISSIONS_OPEN}
@@ -101,6 +104,8 @@ export const TabDone: StoryObj = {
       <DeviceFrame scroll>
         <InShell>
           <MissionListPage
+            banner={MISSION_BANNER}
+            bannerAlt={MISSION_FEATURE_TITLE}
             tabs={MISSION_TABS}
             activeTab="done"
             missions={MISSIONS_DONE}
@@ -121,7 +126,9 @@ export const Empty: StoryObj = {
         <DeviceFrame>
           <InShell>
             <MissionListPage
-              tabs={MISSION_TABS}
+              banner={MISSION_BANNER}
+            bannerAlt={MISSION_FEATURE_TITLE}
+            tabs={MISSION_TABS}
               activeTab="open"
               missions={[]}
               empty={MISSION_EMPTY.open}
@@ -134,7 +141,9 @@ export const Empty: StoryObj = {
         <DeviceFrame>
           <InShell>
             <MissionListPage
-              tabs={MISSION_TABS}
+              banner={MISSION_BANNER}
+            bannerAlt={MISSION_FEATURE_TITLE}
+            tabs={MISSION_TABS}
               activeTab="done"
               missions={[]}
               empty={MISSION_EMPTY.done}
@@ -154,6 +163,8 @@ export const Loading: StoryObj = {
       <DeviceFrame>
         <InShell>
           <MissionListPage
+            banner={MISSION_BANNER}
+            bannerAlt={MISSION_FEATURE_TITLE}
             tabs={MISSION_TABS}
             activeTab="open"
             missions={[]}

@@ -1,5 +1,6 @@
 import type { MissionCardProps, MissionClosedCardProps } from './components/MissionCard';
 
+import missionBanner from './assets/mission-banner.png';
 import rewardNokpoint from './assets/reward-nokpoint.png';
 import rewardVoucher from './assets/reward-voucher.png';
 import rewardStarbucks from './assets/reward-starbucks.png';
@@ -365,6 +366,13 @@ export const DETAIL_EXPIRED: MissionDetail = {
 // ═══════════════════════════════════════════
 //  หน้าและสถานะร่วม
 // ═══════════════════════════════════════════
+
+/**
+ * The campaign banner at the top of the list. Artwork, and campaign artwork at that — the
+ * next round replaces it — so it travels with the fixtures like the reward shots do.
+ * 1560x480 as supplied, downsampled to 1170 (3x of the 390 it renders at).
+ */
+export const MISSION_BANNER = missionBanner;
 
 export const MISSION_FEATURE_TITLE = 'ภารกิจคนจะรวย';
 export const MISSION_DETAIL_TITLE = 'รายละเอียดภารกิจ';

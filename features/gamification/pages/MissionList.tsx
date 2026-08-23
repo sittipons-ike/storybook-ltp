@@ -32,6 +32,10 @@ export interface MissionListEmpty {
 }
 
 export interface MissionListPageProps {
+  /** The campaign banner, flush to both edges above the tabs. */
+  banner: string;
+  bannerAlt?: string;
+
   tabs: readonly MissionListTab[];
   activeTab: string;
   onTabChange?: (key: string) => void;
@@ -78,6 +82,8 @@ const MissionSkeleton: React.FC = () => (
  * token directly (tools/check-pages.py).
  */
 const MissionListPage: React.FC<MissionListPageProps> = ({
+  banner,
+  bannerAlt = '',
   tabs,
   activeTab,
   onTabChange,
@@ -92,6 +98,14 @@ const MissionListPage: React.FC<MissionListPageProps> = ({
 
   return (
     <Stack gap="none" grow>
+      {/* At its own proportions — the artwork is 3.25:1 and nothing crops or stretches it,
+          so the birds stay the shape they were drawn. */}
+      <img
+        src={banner}
+        alt={bannerAlt}
+        style={{ display: 'block', width: '100%', height: 'auto' }}
+      />
+
       <Tabs
         variant="underline"
         items={tabs.map((t) => ({ key: t.key, label: t.label }))}

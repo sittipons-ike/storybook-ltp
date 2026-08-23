@@ -14,33 +14,35 @@
 
 /* The hero carries the same red as the header above it, so reward and page read as one
    block rather than two stripes. */
+/* `primary-dark` for the same reason the card's band is: the hero carries tinted lines at
+   10, 12 and 14px, and that tint on the brand red measures 3.80:1. Here it reads 6.82:1,
+   and the header above stays #E32321 — chrome and content as two depths of the same red. */
 .ltp-mission-block__hero {
   display: flex;
   flex-direction: column;
   gap: var(--sys-spacing-xl);
   padding: var(--sys-spacing-2xl);
-  background: var(--sys-color-background-accent-red);
+  background: var(--sys-color-primary-dark);
   color: var(--sys-color-text-on-bgcolor);
 }
 
-/* Same reasoning as the card's tile: the shots are cut out on white, so the panel is
-   white and the photograph sits in it rather than on the red. */
+/* The photograph fills the panel edge to edge. The sources are square and this panel is
+   358x150, so `cover` crops the top and bottom of a tall product — landscape crops would
+   show the whole thing, and that is a request to the team rather than something to solve
+   by letterboxing the picture. */
 .ltp-mission-block__art {
   height: 150px;
   border-radius: var(--sys-radius-2xl);
   background: var(--sys-color-background-default);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--sys-spacing-2lg);
   overflow: hidden;
 }
 
 .ltp-mission-block__art img {
   display: block;
-  max-width: 100%;
+  width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
+  object-position: center;
 }
 
 .ltp-mission-block__kind {
@@ -154,12 +156,14 @@
   gap: var(--sys-spacing-2lg);
 }
 
+/* A white tick on `success-default` measures 2.28:1 — an icon needs 3. `success-dark`
+   carries the same white at 7.13:1 and still reads green. */
 .ltp-mission-block__banner-mark {
   width: 28px;
   height: 28px;
   flex: none;
   border-radius: var(--sys-radius-full);
-  background: var(--sys-color-status-success-default);
+  background: var(--sys-color-status-success-dark);
   display: flex;
   align-items: center;
   justify-content: center;
