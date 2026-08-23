@@ -254,3 +254,126 @@ export const MISSION_EMPTY = {
     action: 'ดูภารกิจทั้งหมด',
   },
 } as const;
+
+// ═══════════════════════════════════════════
+//  MSN-210 — รายละเอียดภารกิจ
+//
+//  The detail screen carries everything the card could not: the sub-steps a compound
+//  condition breaks into (§4.4 "แตกเป็นขั้นย่อย ถ้ามี"), the quota, how long the reward
+//  itself lasts, and the terms that come with its type.
+// ═══════════════════════════════════════════
+
+/** One rung of a compound condition — §6.1's missions are all "ซื้อ N งวด + จิ๊ดริด M ประเภท". */
+export interface MissionStep {
+  label: string;
+  current: number;
+  target: number;
+  unit?: string;
+  /** Counted but not settled yet (§5.2.1 SET-01). */
+  pending?: number;
+}
+
+export interface MissionDetail extends Mission {
+  /** ช่วงเวลาแคมเปญ — a real window, not an SLA. §4.4 puts it in the hero. */
+  campaignWindow: string;
+  steps?: MissionStep[];
+  /**
+   * How long the reward lasts once claimed. OPEN-13 has not set it, so the placeholder
+   * stays visible and labelled rather than being quietly dropped — §2.2 moved this line
+   * here when onboarding was deferred, and BP-10 says the screen has to explain itself.
+   */
+  rewardValidity?: string;
+  /** The terms that belong to this reward type. Shown above the CTA (BP-02 / BP-06). */
+  terms: string[];
+  /** What "ไปทำภารกิจ" should say and where it goes, per mission. */
+  actionLabel?: string;
+}
+
+/** §2.1.1 — the terms differ by reward type, so they are written per type, not shared. */
+const TERMS: Record<'NOKPOINT' | 'E_COUPON' | 'PHYSICAL', string[]> = {
+  NOKPOINT: [
+    'แต้มเข้าบัญชีนกพอยต์เดิมของคุณทันทีที่กดรับ',
+    '1 ภารกิจ รับได้ 1 สิทธิ์ต่อ 1 บัญชี ต่อ 1 แคมเปญ',
+  ],
+  E_COUPON: [
+    'กดรับแล้วระบบจะพาไปที่คูปองของฉันใน NokShop',
+    'คูปองใช้ได้ครั้งเดียว และไม่แลกเปลี่ยนเป็นเงินสด',
+    '1 ภารกิจ รับได้ 1 สิทธิ์ต่อ 1 บัญชี ต่อ 1 แคมเปญ',
+  ],
+  PHYSICAL: [
+    'กดรับแล้วกรอกที่อยู่จัดส่ง ทีมงานจะติดต่อกลับตามข้อมูลที่ให้ไว้',
+    'หากติดต่อไม่ได้ตามข้อมูลที่ให้ไว้ ถือว่าสละสิทธิ์',
+    'ของรางวัลมีจำนวนจำกัด หมดแล้วหมดเลย และไม่แลกเปลี่ยนเป็นเงินสด',
+    '1 ภารกิจ รับได้ 1 สิทธิ์ต่อ 1 บัญชี ต่อ 1 แคมเปญ',
+  ],
+};
+
+const CAMPAIGN_WINDOW = '1 – 30 กันยายน 2569';
+
+/** OPEN-13 — nobody has set how long a coupon lives. The bracket is the ticket's own
+ *  placeholder, kept visible so the gap is reviewed rather than forgotten. */
+const COUPON_VALIDITY = 'ใช้ได้ภายใน [X วัน] หลังกดรับ · TBD รอ OPEN-13';
+
+const detail = (
+  mission: Mission,
+  extra: Omit<MissionDetail, keyof Mission | 'campaignWindow' | 'terms'> &
+    Partial<Pick<MissionDetail, 'campaignWindow' | 'terms'>>,
+): MissionDetail => ({
+  ...mission,
+  campaignWindow: CAMPAIGN_WINDOW,
+  terms: TERMS[mission.rewardType],
+  ...extra,
+});
+
+const byId = (id: string): Mission => {
+  const found = [...MISSIONS_OPEN, ...MISSIONS_DONE].find((m) => m.id === id);
+  if (!found) throw new Error(`fixtures: no mission ${id}`);
+  return found;
+};
+
+/** ยังไม่ครบเงื่อนไข — CTA พาไปทำต่อ */
+export const DETAIL_IN_PROGRESS: MissionDetail = detail(byId('freq-jidrid-fan'), {
+  steps: [
+    { label: 'ซื้อลอตเตอรี่ต่อเนื่อง 3 งวด', current: 2, pending: 1, target: 3, unit: 'งวด' },
+    { label: 'ลองจิ๊ดริดหยิบโชคอย่างน้อย 1 ประเภท', current: 0, target: 1, unit: 'ประเภท' },
+  ],
+  actionLabel: 'ไปลองจิ๊ดริดหยิบโชค',
+});
+
+/** ครบแล้ว ยังไม่รับ — จุด claim เดียวของระบบ (MECH-05) */
+export const DETAIL_COMPLETED: MissionDetail = detail(
+  { ...byId('vol-beginner'), state: 'COMPLETED', current: 50 },
+  {
+    steps: [{ label: 'ซื้อลอตเตอรี่สะสมครบ 50 ใบ', current: 50, target: 50, unit: 'ใบ' }],
+    rewardValidity: 'ทีมงานจะติดต่อกลับตามข้อมูลที่ให้ไว้',
+  },
+);
+
+/** รับแล้ว — ต้องมีทางไปปลายทางของรางวัลชนิดนั้น (AC7) */
+export const DETAIL_CLAIMED_NOKPOINT: MissionDetail = detail(
+  { ...byId('freq-lovely'), state: 'CLAIMED', current: 2 },
+  { steps: [{ label: 'ซื้อลอตเตอรี่ต่อเนื่อง 2 งวด', current: 2, target: 2, unit: 'งวด' }] },
+);
+
+export const DETAIL_CLAIMED_COUPON: MissionDetail = detail(
+  { ...byId('vol-easy'), state: 'CLAIMED', current: 200 },
+  {
+    steps: [{ label: 'ซื้อลอตเตอรี่สะสมครบ 200 ใบ', current: 200, target: 200, unit: 'ใบ' }],
+    rewardValidity: COUPON_VALIDITY,
+  },
+);
+
+export const DETAIL_CLAIMED_PHYSICAL: MissionDetail = detail(
+  { ...byId('vol-beginner'), state: 'CLAIMED', current: 50 },
+  { steps: [{ label: 'ซื้อลอตเตอรี่สะสมครบ 50 ใบ', current: 50, target: 50, unit: 'ใบ' }] },
+);
+
+/** ของหมด — เงื่อนไขไม่ผ่าน ไม่ใช่ระบบพัง (BP-05) */
+export const DETAIL_OUT_OF_STOCK: MissionDetail = detail(byId('vol-legend-out'), {
+  steps: [{ label: 'ซื้อลอตเตอรี่สะสมครบ 20,000 ใบ', current: 38, target: 20000, unit: 'ใบ' }],
+});
+
+/** หมดอายุ */
+export const DETAIL_EXPIRED: MissionDetail = detail(byId('engage-live-expired'), {
+  steps: [{ label: 'ดูไลฟ์ประกาศรางวัลที่ 1 ต่อเนื่อง 1 นาที', current: 0, target: 1, unit: 'ครั้ง' }],
+});

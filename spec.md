@@ -1,5 +1,5 @@
 # Project Spec — Lotteryplus Design System
-_Last updated: 2026-08-23 16:00_
+_Last updated: 2026-08-23 17:10_
 
 ## Current State
 _Restructured 2026-08-21: `UI Library` → `ui` · feature tier ที่ `features/` (profile = UI ครบ, gamification = docs ครบ, avatar = assets) · `~/Lottery+` ยุบเข้า repo ทั้งหมด (ของหนักอยู่ `_source/` gitignored, ของเก่าอยู่ `archive/`) · helper/page metadata ตรง Lark §3.7 แล้ว_
@@ -229,7 +229,7 @@ ui/
 
 ### features/gamification — ticket T1 (mission flow ทั้งเส้น)
 - [x] `MSN-200 / 201 / 202 / 900` + loading skeleton · components `MissionCard` · `MissionProgress` (scope: feature)
-- [ ] `MSN-210` รายละเอียดภารกิจ — CTA 5 สถานะ · เป็นจุด claim เดียวของระบบ (MECH-05)
+- [x] `MSN-210` รายละเอียดภารกิจ — CTA 5 สถานะ · จุด claim เดียว (MECH-05) · ปลายทางครบ 3 แบบ (AC7)
 - [ ] `MSN-301 / 302 / 310 / 311 / 330` claim 3 เส้นทาง (`NOKPOINT` · `E_COUPON` · `PHYSICAL`)
 - [ ] `MSN-910 / 911 / 920 / 921 / 922` system states + loading อีก 4 จุด
 - [ ] T2 entry points (`MSN-001 / 002 / 003 / 500`) — เฟสถัดไป ยังไม่เริ่ม

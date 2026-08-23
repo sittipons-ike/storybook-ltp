@@ -1,4 +1,18 @@
-# Page manifest — Lark Standard §3.7 (page)
+# Page manifests — Lark Standard §3.7 (page)
+#
+# Two pages so far, both from ticket T1. One document per page.
+#
+# Authority for every page in this feature: there is no Figma frame behind them. The mock
+# in "Marketing view" (7gVv3oV6G6xzldSjIxoSxb) was taken out of scope on 2026-08-23, so the
+# documents in this folder are the only source and the design system supplies every value.
+sources:
+  - features/gamification/prd-dev.md          # v1.0 — AC-301/302/503, MECH-02/05, §5.2, §6.1, §6.2
+  - features/gamification/ux-gamification.md  # §2 naming, §4.2 ordering, §4.3 card, §4.4 detail, §5, §6
+  - features/gamification/user-flow.md        # entry points, decision points
+  - features/gamification/tickets.md          # T1 scope + acceptance criteria
+figma: none — by decision 2026-08-23
+
+---
 name: mission-list-page
 responsibility: "รายการภารกิจของสมาชิก — เห็นว่ามีอะไรให้ทำ ไปถึงไหนแล้ว เหลือเวลาและสิทธิ์เท่าไหร่"
 
@@ -13,28 +27,51 @@ scope: feature
 project: lotteryplus
 folder: features/gamification/pages
 
-# Library-local facts, beyond what §3.7 asks for:
 frontend_route: /mission
 screens:
   MSN-200: หน้าภารกิจ (page)
   MSN-201: ↳ tab ทั้งหมด
   MSN-202: ↳ tab สำเร็จแล้ว
   MSN-900: Empty — ยังไม่มีภารกิจ
-ticket: features/gamification/tickets.md — T1
+ticket: T1
 status: designer-state   # real fixtures, no API
 
-# Authority for this page. There is no Figma frame behind it: the mock in
-# "Marketing view" (7gVv3oV6G6xzldSjIxoSxb) was taken out of scope on 2026-08-23, so the
-# documents below are the only source and the design system supplies every value.
-figma: none — by decision 2026-08-23
-sources:
-  - features/gamification/prd-dev.md      # v1.0 — AC-301, AC-302, AC-503, MECH-02/05, §5.2, §6.1, §6.2
-  - features/gamification/ux-gamification.md  # §2 naming, §4.2 ordering, §4.3 card, §5 empty, §6.1 loading
-  - features/gamification/user-flow.md    # entry points, decision points
-  - features/gamification/tickets.md      # T1 scope + acceptance criteria
-
-# Numbers on this screen that no document has settled yet (ticket DoD asks these be named)
 placeholders:
   - "จำนวนสิทธิ์คงเหลือ — TBD, รอ OPEN-08 (โควตาต่อรางวัลยังเป็น TBD ทั้งคอลัมน์)"
   - "ขั้น STARTER — TBD, รอ OPEN-07 · ยังไม่มีเงื่อนไขและรางวัล จึงยังไม่มีการ์ด"
   - "วันเริ่มรอบถัดไป — TBD, รอ OPEN-11 · empty state จึงไม่ระบุวัน (SLA-01)"
+
+---
+name: mission-detail-page
+responsibility: "รายละเอียดภารกิจ — อธิบายเงื่อนไข ความคืบหน้า โควตา และอายุของรางวัล แล้วรับรางวัลที่นี่ที่เดียว"
+
+type: page
+pattern: app-shell
+organisms:
+  - header            # ui/components/Header variant=sub
+  - mission-progress  # features/gamification/components — scope: feature
+  - accordion         # ui/components/Accordion — เงื่อนไขฉบับเต็ม
+  - action-bar        # ui/components/ActionBar — CTA เดียว 5 สถานะ (sticky)
+
+scope: feature
+project: lotteryplus
+folder: features/gamification/pages
+
+frontend_route: /mission/:id
+screens:
+  MSN-210: รายละเอียดภารกิจ — จุด claim เดียวของระบบ (MECH-05)
+ticket: T1
+status: designer-state
+
+# กฎที่กำหนดรูปหน้านี้
+rules:
+  - "BP-02 — โควตา · อายุของรางวัล · เงื่อนไข อยู่เหนือ CTA ทุกสถานะ"
+  - "BP-10 — ไม่มี onboarding แล้ว หน้านี้ต้องอธิบายตัวเองได้ทั้งหมด"
+  - "MECH-05 — เป็นจุด claim เดียว ไม่มีปุ่มรับรางวัลที่อื่นในระบบ"
+  - "AC7 — สถานะ 'รับแล้ว' มีลิงก์รองไปปลายทางครบ 3 แบบ (NokPoint · My Coupon · LINE OA)"
+  - "AC15 / SLA-01 — ไม่มีตัวเลขวันของ PHYSICAL ปรากฏบนหน้าจอ"
+
+placeholders:
+  - "อายุคูปอง `[X วัน]` — TBD, รอ OPEN-13"
+  - "จำนวนสิทธิ์คงเหลือ — TBD, รอ OPEN-08"
+  - "เงื่อนไขการแลกรับรางวัลฉบับเต็ม — เว้นที่ไว้ รอทีมกฎหมายรีวิว (R-03)"

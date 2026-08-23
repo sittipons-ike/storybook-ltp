@@ -31,7 +31,14 @@
 
 ทั้งสองตัวย้ายขึ้น `ui/components` ได้เมื่อมีหลักฐานใช้ซ้ำ ≥2 feature (Lark §3.3)
 
+## หน้าที่ทำแล้ว
+
+| หน้าจอ | ไฟล์ |
+|---|---|
+| `MSN-200 / 201 / 202 / 900` + loading | `pages/MissionList.tsx` |
+| `MSN-210` รายละเอียดภารกิจ · CTA 5 สถานะ | `pages/MissionDetail.tsx` |
+
 ## ที่เหลือใน T1 (ยังไม่ทำ)
 
-`MSN-210` รายละเอียดภารกิจ (5 CTA states) · `MSN-301/302/310/311/330` claim 3 เส้นทาง ·
-`MSN-910/911/920/921/922` system states · loading อีก 4 จุด
+`MSN-301/302/310/311/330` claim 3 เส้นทาง · `MSN-910/911/920/921/922` system states ·
+loading อีก 4 จุด · state map 1 หน้า (AC22)
