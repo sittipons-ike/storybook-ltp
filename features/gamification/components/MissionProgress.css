@@ -1,0 +1,93 @@
+/* MissionProgress — features/gamification
+ *
+ * No Figma node: this feature is built from its own documents (prd-dev.md v1.0,
+ * ux-gamification.md, user-flow.md), not from a mock. Every value below is a token.
+ */
+.ltp-mission-progress,
+.ltp-mission-progress * {
+  box-sizing: border-box;
+}
+
+.ltp-mission-progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-sm);
+  width: 100%;
+}
+
+.ltp-mission-progress__head {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sys-spacing-lg);
+}
+
+/* The rail is 8 tall and fully rounded. The pins ride on top of it, so the row that holds
+   them is taller than the rail and the rail is centred inside it. */
+.ltp-mission-progress__rail {
+  position: relative;
+  height: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.ltp-mission-progress__track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 8px;
+  border-radius: var(--sys-radius-full);
+  background: var(--sys-color-background-gray-light);
+  overflow: hidden;
+}
+
+.ltp-mission-progress__fill {
+  height: 100%;
+  border-radius: var(--sys-radius-full);
+  background: var(--sys-color-background-accent-red);
+}
+
+/* SET-01: progress that has not settled yet is shown, but it must not read as earned.
+   A lighter band continues the fill rather than a second bar, because it is the same
+   number — part of it is simply not final. */
+.ltp-mission-progress__pending {
+  height: 100%;
+  border-radius: var(--sys-radius-full);
+  background: var(--sys-color-primary-light);
+}
+
+.ltp-mission-progress__bars {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+}
+
+/* A milestone the user has not reached: an outlined dot on the empty part of the rail.
+   Reached ones fill, so the row reads as "three of six" without counting. */
+.ltp-mission-progress__pin {
+  position: absolute;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  margin-left: -6px;
+  margin-top: -6px;
+  border-radius: 50%;
+  background: var(--sys-color-background-default);
+  box-shadow: inset 0 0 0 2px var(--sys-color-border-accent-gray-light);
+}
+
+.ltp-mission-progress__pin--reached {
+  background: var(--sys-color-background-accent-red);
+  box-shadow: inset 0 0 0 2px var(--sys-color-background-default);
+}
+
+.ltp-mission-progress--muted .ltp-mission-progress__fill,
+.ltp-mission-progress--muted .ltp-mission-progress__pin--reached {
+  background: var(--sys-color-background-gray-soft-light);
+}
+
+.ltp-mission-progress--muted .ltp-mission-progress__pin--reached {
+  box-shadow: inset 0 0 0 2px var(--sys-color-background-default);
+}

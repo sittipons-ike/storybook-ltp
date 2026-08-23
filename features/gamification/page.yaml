@@ -1,0 +1,40 @@
+# Page manifest — Lark Standard §3.7 (page)
+name: mission-list-page
+responsibility: "รายการภารกิจของสมาชิก — เห็นว่ามีอะไรให้ทำ ไปถึงไหนแล้ว เหลือเวลาและสิทธิ์เท่าไหร่"
+
+type: page
+pattern: app-shell
+organisms:
+  - header            # ui/components/Header variant=sub
+  - tabs              # ui/components/Tabs variant=underline — 2 tabs (AC-302)
+  - mission-card      # features/gamification/components — scope: feature
+
+scope: feature
+project: lotteryplus
+folder: features/gamification/pages
+
+# Library-local facts, beyond what §3.7 asks for:
+frontend_route: /mission
+screens:
+  MSN-200: หน้าภารกิจ (page)
+  MSN-201: ↳ tab ทั้งหมด
+  MSN-202: ↳ tab สำเร็จแล้ว
+  MSN-900: Empty — ยังไม่มีภารกิจ
+ticket: features/gamification/tickets.md — T1
+status: designer-state   # real fixtures, no API
+
+# Authority for this page. There is no Figma frame behind it: the mock in
+# "Marketing view" (7gVv3oV6G6xzldSjIxoSxb) was taken out of scope on 2026-08-23, so the
+# documents below are the only source and the design system supplies every value.
+figma: none — by decision 2026-08-23
+sources:
+  - features/gamification/prd-dev.md      # v1.0 — AC-301, AC-302, AC-503, MECH-02/05, §5.2, §6.1, §6.2
+  - features/gamification/ux-gamification.md  # §2 naming, §4.2 ordering, §4.3 card, §5 empty, §6.1 loading
+  - features/gamification/user-flow.md    # entry points, decision points
+  - features/gamification/tickets.md      # T1 scope + acceptance criteria
+
+# Numbers on this screen that no document has settled yet (ticket DoD asks these be named)
+placeholders:
+  - "จำนวนสิทธิ์คงเหลือ — TBD, รอ OPEN-08 (โควตาต่อรางวัลยังเป็น TBD ทั้งคอลัมน์)"
+  - "ขั้น STARTER — TBD, รอ OPEN-07 · ยังไม่มีเงื่อนไขและรางวัล จึงยังไม่มีการ์ด"
+  - "วันเริ่มรอบถัดไป — TBD, รอ OPEN-11 · empty state จึงไม่ระบุวัน (SLA-01)"

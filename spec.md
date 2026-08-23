@@ -1,8 +1,12 @@
 # Project Spec — Lotteryplus Design System
-_Last updated: 2026-08-21 18:20_
+_Last updated: 2026-08-23 16:00_
 
 ## Current State
 _Restructured 2026-08-21: `UI Library` → `ui` · feature tier ที่ `features/` (profile = UI ครบ, gamification = docs ครบ, avatar = assets) · `~/Lottery+` ยุบเข้า repo ทั้งหมด (ของหนักอยู่ `_source/` gitignored, ของเก่าอยู่ `archive/`) · helper/page metadata ตรง Lark §3.7 แล้ว_
+
+_2026-08-23: เริ่ม UI ของ `features/gamification` (ticket T1) — `MSN-200/201/202/900` + loading ขึ้นแล้ว_
+_**ตัดสินสำคัญ:** ฟีเจอร์นี้ **ไม่อ้างอิง Figma** · mock ใน `Marketing view` (7gVv3oV6G6xzldSjIxoSxb) ถูกตัดออกจาก scope
+โดย user 2026-08-23 → authority คือ `prd-dev.md` v1.0 + `ux-gamification.md` และค่าทุกตัวมาจาก design system_
 
 
 สร้าง **Storybook เป็น Single Source of Truth** ให้ทีม Design + Dev sync กันแบบ code-based
@@ -222,6 +226,18 @@ ui/
   เผื่อ paddingBottom = var(--navigation-height) · ยืนยันแล้ว banner ทะลุ strip
 
 ## Next Up
+
+### features/gamification — ticket T1 (mission flow ทั้งเส้น)
+- [x] `MSN-200 / 201 / 202 / 900` + loading skeleton · components `MissionCard` · `MissionProgress` (scope: feature)
+- [ ] `MSN-210` รายละเอียดภารกิจ — CTA 5 สถานะ · เป็นจุด claim เดียวของระบบ (MECH-05)
+- [ ] `MSN-301 / 302 / 310 / 311 / 330` claim 3 เส้นทาง (`NOKPOINT` · `E_COUPON` · `PHYSICAL`)
+- [ ] `MSN-910 / 911 / 920 / 921 / 922` system states + loading อีก 4 จุด
+- [ ] T2 entry points (`MSN-001 / 002 / 003 / 500`) — เฟสถัดไป ยังไม่เริ่ม
+- [ ] **typography ผูกกับ viewport ไม่ใช่ container** — หน้าจอมือถือใน Storybook กว้าง ≥768px
+      จะได้ type ขนาด desktop (`sub-title-md` 12→14) ทำให้รีวิวเทียบขนาดไม่ตรง
+      workaround ตอนนี้: ย่อ browser ให้ต่ำกว่า 768 ก่อนรีวิว · ทางแก้จริงคือให้ `DeviceFrame`
+      ประกาศ token ชั้นมือถือทับในตัวเอง (แตะ `ui/` → ต้องยืนยันกับ Figma ก่อน)
+
 
 - [x] ~~**asset path พังบน Pages**~~ — แก้แล้ว 2026-08-21: `asset()` + base จากชื่อ repo + ด่านที่ 11
 - [ ] **Storybook ยัง public — ตั้งใจพักไว้ (2026-08-21)** · `sittipons-ike.github.io/storybook-ltp`
