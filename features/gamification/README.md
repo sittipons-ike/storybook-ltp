@@ -87,7 +87,40 @@ http://localhost:6006/iframe.html?id=<story-id>&viewMode=story
 
 ทั้งหมดย้ายขึ้น `ui/components` ได้เมื่อมีหลักฐานใช้ซ้ำ ≥2 feature (Lark §3.3)
 
-**ที่ reuse ตรงๆ ไม่แก้:** `Header` · `Tabs` · `Button` · `Divider` · `Skeleton` · `Logo` · `Icon` · `Text` · `Surface` · `Stack` · `AppShell` · `DeviceFrame` · `StatusBar`
+### Reuse audit (2026-08-23)
+
+ไล่ทั้ง 35 component ใน `design-library/lotteryplus/components.json` เทียบกับที่ feature นี้ import จริง
+
+**ใช้อยู่ 14 ตัว** — `Header` · `Tabs` · `Button` · `Divider` · `Skeleton` · `Logo` · `Icon` · `Text` ·
+`Surface` · `Stack` · `AppShell` · `DeviceFrame` · `StatusBar` · `Toast` (prototype)
+
+**แก้ในรอบนี้** — หมุดสถานะในเงื่อนไขเคยใช้ `✓` กับ `•` เป็นตัวอักษร เปลี่ยนเป็น icon จริง
+`filled-check` / `filled-clock` (glyph ขึ้นกับ font ที่ fallback · รับสี/ขนาดไม่ได้ · screen reader อ่านออกเสียง)
+
+**ยังไม่ได้ใช้ แต่ควรใช้ตอนทำหน้าที่เหลือใน T1**
+
+| Component | ใช้ที่ไหน |
+|---|---|
+| `BottomSheet` | `MSN-300/301/302` ยืนยันรับรางวัล — มี prop `contained` สำหรับ prototype ด้วย |
+| `Modal` | `MSN-330` สำเร็จ · `MSN-003` popup ภารกิจสำเร็จ (T2) |
+| `ErrorState` | `MSN-910` เชื่อมต่อไม่ได้ · `MSN-911` รับรางวัลไม่สำเร็จ |
+| `TextField` | `MSN-311` ฟอร์มที่อยู่ · error ระดับ field ตาม AC11 |
+| `Alert` | ป้ายบอกว่ายอดยังไม่ settle (§5.2.1 SET-01) ถ้าอยากได้หนักกว่า pill |
+
+**ตั้งใจไม่ใช้**
+
+| Component | เหตุผล |
+|---|---|
+| `ProgressBar` | stepper ของ checkout — step มีชื่อ+ไอคอน · ภารกิจคือนับเทียบเป้า |
+| `Card` | หน้าสลาก คนละของ |
+| `CountdownTimer` | นับถอยหลังการจอง · deadline ภารกิจเป็นหน่วยวัน |
+| `Accordion` | ดีไซน์รอบนี้ไม่มีส่วนพับเก็บ |
+| `Badge` | เป็น pill พื้นทึบ+ตัวอักษรขาว · pill สถานะภารกิจเป็นพื้นอ่อน+ตัวอักษรเข้ม |
+| `NavigationBar` | หน้านี้เข้าจาก banner/แถวบริการ ไม่ใช่ tab หลัก |
+
+**ข้อเสนอถึงเจ้าของ DS 2 ข้อ**
+1. `Badge` เพิ่ม variant พื้นอ่อน — จะได้ยก pill สถานะขึ้นไปเป็นของ DS แทนที่จะเขียนเองในทุก feature
+2. `Button variant="link"` ใช้ `status-info-default` `#3B82F6` = **3.68:1** บนขาว ไม่ผ่าน AA
 
 ## หน้าที่ทำแล้ว
 

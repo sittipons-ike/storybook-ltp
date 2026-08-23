@@ -123,10 +123,15 @@ export const MissionDoneBanner: React.FC<{ title: string; body: string }> = ({ t
   </Stack>
 );
 
-const MARK: Record<MissionStep['state'], { className: string; glyph: string }> = {
-  done: { className: 'ltp-mission-block__mark--done', glyph: '✓' },
-  wait: { className: 'ltp-mission-block__mark--wait', glyph: '•' },
-  todo: { className: 'ltp-mission-block__mark--todo', glyph: '' },
+/**
+ * The three standings a rung can be in. Real icons from the set, not `✓` and `•` typed as
+ * text: a glyph is at the mercy of whichever font falls back, it does not take a colour or
+ * a size the way the rest of the UI does, and a screen reader announces it.
+ */
+const MARK: Record<MissionStep['state'], { className: string; icon?: string }> = {
+  done: { className: 'ltp-mission-block__mark--done', icon: 'filled-check' },
+  wait: { className: 'ltp-mission-block__mark--wait', icon: 'filled-clock' },
+  todo: { className: 'ltp-mission-block__mark--todo' },
 };
 
 /**
@@ -142,7 +147,9 @@ export const MissionSteps: React.FC<{ steps: MissionStep[] }> = ({ steps }) => (
     {steps.map((step) => (
       <Stack direction="row" align="flex-start" gap="none" key={step.text} className="ltp-mission-block__step">
         <span className={`ltp-mission-block__mark ${MARK[step.state].className}`}>
-          {MARK[step.state].glyph}
+          {MARK[step.state].icon && (
+            <Icon name={MARK[step.state].icon as string} size="2xs" color="inherit" />
+          )}
         </span>
         <Stack gap="none">
           <Text role="body-md-regular" tone="secondary" style={{ textWrap: 'pretty' }}>

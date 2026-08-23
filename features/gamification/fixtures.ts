@@ -400,3 +400,129 @@ export const MISSION_EMPTY = {
     action: 'ดูภารกิจทั้งหมด',
   },
 } as const;
+
+// ═══════════════════════════════════════════
+//  Prototype wiring
+// ═══════════════════════════════════════════
+
+const KIND_LABEL: Record<MissionCardProps['kind'], string> = {
+  'นกพอยต์': 'นกพอยต์ · เข้าบัญชีทันที',
+  'คูปอง': 'คูปอง · ใช้ที่ NokShop',
+  'ของส่งถึงบ้าน': 'ของส่งถึงบ้าน',
+};
+
+/** AC7 — where each kind of reward actually ends up. */
+const DESTINATIONS: Record<MissionCardProps['kind'], string[]> = {
+  'นกพอยต์': ['ไปดูนกพอยต์'],
+  'คูปอง': ['ไปที่คูปองของฉัน'],
+  'ของส่งถึงบ้าน': ['สอบถามที่ LINE OA'],
+};
+
+const FACTS: Record<MissionCardProps['kind'], MissionFact[]> = {
+  'นกพอยต์': [
+    { label: 'ปลายทางของรางวัล', value: 'เข้าบัญชีนกพอยต์ทันทีที่กดรับ' },
+    { label: 'ต้องกดรับภายใน', value: 'รอข้อมูล', pending: true },
+  ],
+  'คูปอง': [
+    { label: 'ปลายทางของรางวัล', value: 'ออกคูปองแล้วพาไปที่คูปองของฉัน' },
+    { label: 'อายุของคูปองหลังกดรับ', value: 'รอข้อมูล', pending: true },
+  ],
+  'ของส่งถึงบ้าน': [
+    { label: 'การจัดส่ง', value: 'กรอกที่อยู่แล้วทีมงานติดต่อกลับ' },
+    { label: 'อายุของรางวัลหลังกดรับ', value: 'รอข้อมูล', pending: true },
+  ],
+};
+
+const TERMS: Record<MissionCardProps['kind'], string> = {
+  'นกพอยต์': 'นกพอยต์ที่ได้ใช้ได้ตามเงื่อนไขนกพอยต์เดิมของแอป · หนึ่งบัญชีรับรางวัลนี้ได้ 1 ครั้ง',
+  'คูปอง': 'คูปองใช้ได้ครั้งเดียว ไม่แลกเปลี่ยนเป็นเงินสด · หนึ่งบัญชีรับรางวัลนี้ได้ 1 ครั้ง',
+  'ของส่งถึงบ้าน':
+    'หากติดต่อไม่ได้ตามข้อมูลที่ให้ไว้ ถือว่าสละสิทธิ์ · ของมีจำนวนจำกัด ไม่แลกเปลี่ยนเป็นเงินสด · หนึ่งบัญชีรับรางวัลนี้ได้ 1 ครั้ง',
+};
+
+/**
+ * Build a detail screen from a mission on the list.
+ *
+ * The prototype needs one for every card, and writing nine by hand would be nine chances
+ * for the list and the detail to disagree about the same mission. Derived instead: the
+ * numbers, the condition and the standing all come from the card's own data, so tapping a
+ * card always opens the mission it showed.
+ *
+ * The step breakdown is the honest limit of deriving. A real compound condition
+ * ("ซื้อ 6 งวดติด + จิ๊ดริดครบ 3 ประเภท") splits into rungs that only the rule engine
+ * knows; here one rung stands for the whole condition. `DETAIL_IN_PROGRESS` and the other
+ * hand-written fixtures show what the real breakdown looks like.
+ */
+export const detailFor = (m: Mission): MissionDetail => {
+  const done = m.current >= m.target;
+  const claimed = m.tone === 'claimed';
+  return {
+    name: m.name,
+    reward: m.reward,
+    kind: m.kind,
+    kindLabel: KIND_LABEL[m.kind],
+    image: m.image,
+    campaignWindow: CAMPAIGN,
+    progress: done
+      ? undefined
+      : {
+          current: m.current,
+          target: m.target,
+          marks: m.marks ?? [],
+          unit: m.unit ?? '',
+          note: [
+            `เหลืออีก ${(m.target - m.current).toLocaleString('en-US')} ${m.unit ?? ''}`.trim(),
+            m.daysLabel,
+          ]
+            .filter(Boolean)
+            .join(' · '),
+        },
+    banner: claimed
+      ? { title: 'รับรางวัลแล้ว', body: 'ดูของที่ได้จากปลายทางด้านล่าง' }
+      : done
+        ? { title: `ทำครบแล้ว ${m.current}/${m.target} ${m.unit ?? ''}`.trim(), body: 'ยอดยืนยันแล้ว' }
+        : undefined,
+    steps: [
+      {
+        state: done ? 'done' : m.current > 0 ? 'wait' : 'todo',
+        text: m.cond,
+        meta: done
+          ? 'ผ่านแล้ว'
+          : `ตอนนี้ ${m.current.toLocaleString('en-US')}/${m.target.toLocaleString('en-US')} ${m.unit ?? ''}`.trim(),
+      },
+    ],
+    facts: [
+      ...(m.quota ? [{ label: 'สิทธิ์คงเหลือ', value: 'รอข้อมูล', pending: true }] : []),
+      ...FACTS[m.kind],
+    ],
+    terms: TERMS[m.kind],
+    cta: claimed
+      ? { label: 'รับรางวัลแล้ว', disabled: true }
+      : done
+        ? { label: 'รับรางวัล' }
+        : { label: 'ไปทำภารกิจ' },
+    links: claimed ? DESTINATIONS[m.kind] : undefined,
+  };
+};
+
+/** A closed mission opens too — §4.2 keeps it tappable so the reason is readable. */
+export const detailForClosed = (m: ClosedMission): MissionDetail => {
+  const out = m.statusLabel.includes('หมดแล้ว');
+  return {
+    name: m.name,
+    reward: m.reward,
+    kind: 'ของส่งถึงบ้าน',
+    kindLabel: 'ของส่งถึงบ้าน',
+    image: REWARD.headphones,
+    campaignWindow: CAMPAIGN,
+    steps: [{ state: 'todo', text: m.cond, meta: out ? 'ยังทำได้ แต่รางวัลหมดแล้ว' : 'ปิดรอบแล้ว' }],
+    facts: out
+      ? [{ label: 'สิทธิ์คงเหลือ', value: '0 สิทธิ์' }]
+      : [{ label: 'ช่วงแคมเปญ', value: 'สิ้นสุด 30 ก.ย. 2569' }],
+    terms: out
+      ? 'ภารกิจนี้ปิดรับรางวัลแล้วในรอบนี้ · รอบถัดไปเริ่มเมื่อไหร่ยังไม่ยืนยัน'
+      : 'ยอดที่สะสมไว้ในรอบนี้ไม่ถูกยกไปรอบถัดไป · รอบถัดไปเริ่มเมื่อไหร่ยังไม่ยืนยัน',
+    cta: { label: m.statusLabel, disabled: true },
+    links: ['ดูภารกิจอื่น'],
+  };
+};
