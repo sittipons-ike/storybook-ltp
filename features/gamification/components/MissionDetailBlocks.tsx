@@ -25,25 +25,24 @@ export interface MissionHeroProps {
   /** The reward type, as an eyebrow — which of the three endings this one has (§2.1.1). */
   kindLabel: string;
   reward: string;
+  /** The reward, photographed. Campaign material, so it arrives through fixtures. */
+  image: string;
   name: string;
   campaignWindow: string;
 }
 
-/**
- * The red block under the header: what you get, for which mission, within which window.
- *
- * The artwork is a marked placeholder. Reward images are campaign material that does not
- * exist yet, and a stand-in that admits what it is beats a stock photo that lies.
- */
+/** The red block under the header: what you get, for which mission, within which window. */
 export const MissionHero: React.FC<MissionHeroProps> = ({
   kindLabel,
   reward,
+  image,
   name,
   campaignWindow,
 }) => (
   <div className="ltp-mission-block__hero">
     <div className="ltp-mission-block__art">
-      <span className="ltp-mission-block__art-label">ภาพรางวัล 358×150 · {reward}</span>
+      {/* Decorative: the reward's name is directly underneath. */}
+      <img src={image} alt="" />
     </div>
     <Stack gap="sm">
       <span className="ltp-mission-block__kind">{kindLabel}</span>

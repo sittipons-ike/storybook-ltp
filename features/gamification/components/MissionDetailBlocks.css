@@ -23,24 +23,24 @@
   color: var(--sys-color-text-on-bgcolor);
 }
 
+/* Same reasoning as the card's tile: the shots are cut out on white, so the panel is
+   white and the photograph sits in it rather than on the red. */
 .ltp-mission-block__art {
   height: 150px;
   border-radius: var(--sys-radius-2xl);
-  background: repeating-linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.18) 0 8px,
-    rgba(255, 255, 255, 0.06) 8px 16px
-  );
+  background: var(--sys-color-background-default);
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: center;
   padding: var(--sys-spacing-2lg);
+  overflow: hidden;
 }
 
-.ltp-mission-block__art-label {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 10px;
-  line-height: 16px;
-  color: rgba(255, 255, 255, 0.78);
+.ltp-mission-block__art img {
+  display: block;
+  max-width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .ltp-mission-block__kind {

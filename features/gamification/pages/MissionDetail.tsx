@@ -44,6 +44,7 @@ const MissionDetailPage: React.FC<MissionDetailPageProps> = ({ mission, onCta, o
     <MissionHero
       kindLabel={mission.kindLabel}
       reward={mission.reward}
+      image={mission.image}
       name={mission.name}
       campaignWindow={mission.campaignWindow}
     />

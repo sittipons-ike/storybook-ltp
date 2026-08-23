@@ -32,7 +32,13 @@
 - **empty state** ดีไซน์วาง placeholder 120×120 ไว้ — เราใช้ `gp-quick-menu-news` จาก logo set จริงแทน เพราะมีของอยู่แล้ว
 - **สีเทาการ์ดที่ปิดแล้ว** `#A3A3A3` ไม่มี role ใน `colors/text` (ตัว `disable` = `#D4D4D4` จางเกินอ่าน) จึงดึงจาก tertiary accent scale ตรงๆ
 
-**ภาพรางวัลยังไม่มี** — เป็น campaign asset ที่ยังไม่ถูกสร้าง การ์ดกับ hero ใช้กล่อง placeholder ที่เขียนบอกตัวเองว่าเป็น placeholder
+**ภาพรางวัล** — ทีมส่งมา 2026-08-23 · ย่อเหลือ 320px แล้ว track ที่ `assets/` (ต้นฉบับอยู่ `_source/rewards-asset/` ซึ่ง gitignored)
+เข้ามาทาง `fixtures.ts` เพราะเป็น campaign data — งวดใหม่เปลี่ยนรูป แต่กรอบไม่ขยับ
+
+3 จุดที่ต้องเคลียร์ก่อน ship:
+- `nokpoint.png` มี **"+100 Point"** อยู่ในรูป แต่ §6.1 จ่าย 10 กับ 20 พอยต์ — การ์ดจะขัดกันเอง ต้องขอรูปเหรียญเปล่า หรือแยกรูปตามจำนวน
+- `iphone` เป็นรูป **iPhone 17 Pro** แต่ §6.2 เขียนว่า iPhone 18 Pro
+- `dyson` ส่งมาชื่อ `amplifyer.png` — รูปเป็น Dyson Purifier Big+Quiet ตรงกับ §6.2 จึงตั้งชื่อตามของที่เห็น
 
 ## Components ที่เพิ่มในเฟสนี้ (`scope: feature`)
 

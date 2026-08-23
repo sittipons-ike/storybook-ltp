@@ -39,6 +39,11 @@ export interface MissionCardProps {
   /** The reward in the user's words: "กล่องข้าวร่ำรวย" · "10 นกพอยต์". Leads the band. */
   reward: string;
   kind: RewardKind;
+  /**
+   * The reward, photographed. Campaign material — it arrives through fixtures rather than
+   * living in the component, because a new round swaps every one of them.
+   */
+  image: string;
   /** เงื่อนไขแบบอ่านจบใน 1 บรรทัด — AC-301 #2. */
   cond: string;
 
@@ -75,6 +80,7 @@ const MissionCard: React.FC<MissionCardProps> = ({
   name,
   reward,
   kind,
+  image,
   cond,
   current,
   target,
@@ -98,7 +104,9 @@ const MissionCard: React.FC<MissionCardProps> = ({
       }`}
     >
       <div className="ltp-mission-card__art">
-        <span className="ltp-mission-card__art-label">ภาพรางวัล</span>
+        {/* The reward's name is right beside it, so the picture adds nothing for a screen
+            reader and is marked decorative rather than described twice. */}
+        <img src={image} alt="" />
       </div>
       <div className="ltp-mission-card__band-text">
         <span className="ltp-mission-card__kind">{kind}</span>

@@ -9,6 +9,13 @@
 .ltp-mission-card {
   display: flex;
   flex-direction: column;
+  /* The card is a <button>, and a button that is a flex container does not get the same
+     defaults everywhere: several UA stylesheets set `align-items: center` on it, which
+     makes the band and the body shrink to their text instead of filling the card. Both
+     axes are stated here rather than inherited, so the card looks the same in every
+     engine — it rendered correctly in Chromium and wrong elsewhere. */
+  align-items: stretch;
+  justify-content: flex-start;
   width: 100%;
   padding: 0;
   border: none;
@@ -41,28 +48,27 @@
   background: var(--sys-color-primary-dark);
 }
 
-/* Reward artwork does not exist yet — campaign material, not design material. A hatched
-   box says "a picture goes here" without pretending to be one. */
+/* The reward, photographed. The tile is white rather than transparent: the shots are cut
+   out on white, and a white-on-red tile reads as a product card while the same image laid
+   straight on the band would read as a hole in it. */
 .ltp-mission-card__art {
   width: 88px;
   height: 88px;
   flex: none;
   border-radius: var(--sys-radius-lg);
-  background: repeating-linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.18) 0 6px,
-    rgba(255, 255, 255, 0.06) 6px 12px
-  );
+  background: var(--sys-color-background-default);
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: center;
   padding: var(--sys-spacing-md);
+  overflow: hidden;
 }
 
-.ltp-mission-card__art-label {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 9px;
-  line-height: 12px;
-  color: rgba(255, 255, 255, 0.78);
+.ltp-mission-card__art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .ltp-mission-card__band-text {

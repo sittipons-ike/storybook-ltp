@@ -1,5 +1,45 @@
 import type { MissionCardProps, MissionClosedCardProps } from './components/MissionCard';
 
+import rewardNokpoint from './assets/reward-nokpoint.png';
+import rewardVoucher from './assets/reward-voucher.png';
+import rewardStarbucks from './assets/reward-starbucks.png';
+import rewardBento from './assets/reward-bento.png';
+import rewardHeadphones from './assets/reward-headphones.png';
+import rewardLuggage from './assets/reward-luggage.png';
+import rewardAppleWatch from './assets/reward-apple-watch.png';
+import rewardDyson from './assets/reward-dyson.png';
+import rewardIphone from './assets/reward-iphone.png';
+
+/**
+ * Reward artwork, supplied by the team 2026-08-23 and downsampled to 320px.
+ *
+ * It is campaign data, not design material — a new round swaps every picture while the
+ * frame around it stays — so it arrives through this file and the components take it as a
+ * prop. The files are imported rather than served from a static directory, so a missing
+ * one is a build error instead of a hole on a phone.
+ *
+ * Three things worth knowing before these ship:
+ *   · `nokpoint` has "+100 Point" drawn into the artwork, and §6.1 pays 10 and 20 points.
+ *     A card that says 10 นกพอยต์ beside a picture saying +100 contradicts itself, which
+ *     is exactly what value INTEGRITY rules out. It is used here because it is the only
+ *     point artwork there is — a plain coin, or one per denomination, closes it.
+ *   · `iphone` is a photograph of an iPhone **17** Pro; §6.2 lists the reward as an
+ *     iPhone 18 Pro. Flagged rather than quietly relabelled.
+ *   · `dyson` arrived named `amplifyer.png`; the picture is the Dyson Purifier Big+Quiet
+ *     that §6.2 names, so it is filed under what it shows.
+ */
+export const REWARD = {
+  nokpoint: rewardNokpoint,
+  voucher: rewardVoucher,
+  starbucks: rewardStarbucks,
+  bento: rewardBento,
+  headphones: rewardHeadphones,
+  luggage: rewardLuggage,
+  appleWatch: rewardAppleWatch,
+  dyson: rewardDyson,
+  iphone: rewardIphone,
+} as const;
+
 /**
  * Designer state for the mission feature.
  *
@@ -31,6 +71,7 @@ export const MISSIONS_OPEN: Mission[] = [
     name: 'ภารกิจคนน่ารัก',
     reward: '10 นกพอยต์',
     kind: 'นกพอยต์',
+    image: REWARD.nokpoint,
     cond: 'ซื้อลอตเตอรี่ 2 งวดติดกัน',
     current: 2,
     target: 2,
@@ -45,6 +86,7 @@ export const MISSIONS_OPEN: Mission[] = [
     name: 'ภารกิจว่าที่คนจะรวย',
     reward: 'กล่องข้าวร่ำรวย',
     kind: 'ของส่งถึงบ้าน',
+    image: REWARD.bento,
     cond: 'สะสมครบ 50 ใบในแคมเปญนี้',
     current: 38,
     target: 50,
@@ -60,6 +102,7 @@ export const MISSIONS_OPEN: Mission[] = [
     name: 'ภารกิจพิชิตใจจิ๊ดริด',
     reward: '20 นกพอยต์',
     kind: 'นกพอยต์',
+    image: REWARD.nokpoint,
     cond: 'ซื้อ 3 งวดติด + ลองจิ๊ดริด 1 ประเภท',
     current: 2,
     target: 3,
@@ -76,6 +119,7 @@ export const MISSIONS_OPEN: Mission[] = [
     name: 'ภารกิจเศรษฐีมือใหม่',
     reward: 'บัตรสตาร์บัคส์ 500 บาท',
     kind: 'คูปอง',
+    image: REWARD.starbucks,
     cond: 'สะสมครบ 200 ใบในแคมเปญนี้',
     current: 120,
     target: 200,
@@ -91,6 +135,7 @@ export const MISSIONS_OPEN: Mission[] = [
     name: 'ภารกิจศิษย์เอกจิ๊ดริด',
     reward: 'โค้ดส่วนลด Thaimart 300 บาท',
     kind: 'คูปอง',
+    image: REWARD.voucher,
     cond: 'ซื้อ 6 งวดติด + จิ๊ดริดครบ 3 ประเภท',
     current: 0,
     target: 6,
@@ -106,6 +151,7 @@ export const MISSIONS_OPEN: Mission[] = [
     name: 'ภารกิจเจ้าสัว',
     reward: 'Apple Watch',
     kind: 'ของส่งถึงบ้าน',
+    image: REWARD.appleWatch,
     cond: 'สะสมครบ 3,000 ใบในแคมเปญนี้',
     current: 0,
     target: 3000,
@@ -121,6 +167,7 @@ export const MISSIONS_OPEN: Mission[] = [
     name: 'ภารกิจขาประจำตัวตึง',
     reward: 'โค้ดส่วนลด Thaimart 100 บาท',
     kind: 'คูปอง',
+    image: REWARD.voucher,
     cond: 'ซื้อ 4 งวดติด + ลองจิ๊ดริด 2 ประเภท',
     current: 4,
     target: 4,
@@ -180,6 +227,7 @@ export interface MissionDetail {
   name: string;
   reward: string;
   kind: MissionCardProps['kind'];
+  image: string;
   /** The eyebrow above the reward — the type, plus where it lands when there is room. */
   kindLabel: string;
   campaignWindow: string;
@@ -211,6 +259,7 @@ export const DETAIL_IN_PROGRESS: MissionDetail = {
   name: 'ภารกิจว่าที่คนจะรวย',
   reward: 'กล่องข้าวร่ำรวย',
   kind: 'ของส่งถึงบ้าน',
+  image: REWARD.bento,
   kindLabel: 'ของส่งถึงบ้าน',
   campaignWindow: CAMPAIGN,
   progress: {
@@ -240,6 +289,7 @@ export const DETAIL_COMPLETED: MissionDetail = {
   name: 'ภารกิจคนน่ารัก',
   reward: '10 นกพอยต์',
   kind: 'นกพอยต์',
+  image: REWARD.nokpoint,
   kindLabel: 'นกพอยต์ · เข้าบัญชีทันที',
   campaignWindow: CAMPAIGN,
   banner: { title: 'ทำครบแล้ว 2/2 งวด', body: 'ยอดทั้งสองงวดยืนยันแล้ว' },
@@ -273,6 +323,7 @@ export const DETAIL_OUT_OF_STOCK: MissionDetail = {
   name: 'ภารกิจเศรษฐีป้ายแดง',
   reward: 'หูฟัง Sony',
   kind: 'ของส่งถึงบ้าน',
+  image: REWARD.headphones,
   kindLabel: 'ของส่งถึงบ้าน',
   campaignWindow: CAMPAIGN,
   progress: {
@@ -294,6 +345,7 @@ export const DETAIL_EXPIRED: MissionDetail = {
   name: 'ภารกิจเศรษฐีประจำงวด',
   reward: 'กระเป๋าเดินทาง',
   kind: 'ของส่งถึงบ้าน',
+  image: REWARD.luggage,
   kindLabel: 'ของส่งถึงบ้าน',
   campaignWindow: 'ช่วงแคมเปญ สิ้นสุด 30 ก.ย. 2569',
   progress: {
