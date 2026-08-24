@@ -150,15 +150,21 @@
   gap: var(--sys-spacing-xl);
 }
 
-/* A value the product has not settled reads as a machine value, never as an answer. The
-   mono family is deliberate debt — the system has no mono role, and a role that fits would
-   defeat the signal. The 11px it used to be was on no scale at all; at 12/18 it matches the
-   settled values it sits beside, which is the honest comparison to invite. */
+/* A value the product has not settled, marked the same way the card marks one: a
+   warning-tinted chip, not a different typeface. The mono family this used to carry had no
+   Thai glyphs, so it rendered in whatever face the device happened to substitute — a
+   convention borrowed from Latin typography that the script does not support.
+   One treatment for one meaning, in both places it appears (OPEN-08 · OPEN-13). */
 .ltp-mission-block__pending {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--sys-spacing-md);
+  border-radius: var(--sys-radius-lg);
+  background: var(--sys-color-status-warning-soft-light);
+  color: var(--sys-color-status-warning-darker);
   font-size: var(--sys-type-caption-lg-regular-size);
   line-height: var(--sys-type-caption-lg-regular-line-height);
-  color: var(--sys-color-status-warning-darker);
+  font-weight: var(--sys-type-label-md-semibold-weight);
 }
 
 /* The bar the CTA sits in. Sticky, because the terms above it are long and a CTA that
