@@ -91,14 +91,25 @@ def check_entry(where: str, name: str, e: dict) -> list[str]:
     return bad
 
 
-def load_yaml_head(path: Path) -> dict:
-    """Read the flat scalar/list fields off a page manifest without a YAML dependency.
+def load_yaml_docs(path: Path) -> list[dict]:
+    """Read every document in a page manifest without a YAML dependency.
+
+    A manifest may hold more than one page — gamification ships two, separated by `---`,
+    and a reader that stopped at the first would have declared the file clean while the
+    second page was missing five fields. Split first, then parse each.
 
     The manifests are hand-written and deliberately flat; a real parser would be the right
     answer the moment one grows nesting beyond `organisms:`.
     """
+    text = path.read_text(encoding="utf-8")
+    chunks = re.split(r"^---\s*$", text, flags=re.M)
+    docs = [d for d in (parse_flat(c) for c in chunks) if "name" in d]
+    return docs
+
+
+def parse_flat(text: str) -> dict:
     out, key = {}, None
-    for raw in path.read_text(encoding="utf-8").splitlines():
+    for raw in text.splitlines():
         line = raw.split("#")[0].rstrip() if not raw.strip().startswith("#") else ""
         if not line.strip():
             continue
@@ -142,8 +153,12 @@ def main() -> int:
 
     if FEATURES.is_dir():
         for man in sorted(FEATURES.glob("*/page.yaml")):
-            failures += check_entry("page", man.parent.name, load_yaml_head(man))
-            counted["page"] += 1
+            docs = load_yaml_docs(man)
+            if not docs:
+                failures.append(f"page {man.parent.name}: no page document found in page.yaml")
+            for doc in docs:
+                failures += check_entry("page", doc.get("name", man.parent.name), doc)
+                counted["page"] += 1
 
     if failures:
         print("metadata does not match Lark Standard §3.7:")

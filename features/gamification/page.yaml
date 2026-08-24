@@ -28,9 +28,12 @@ design:
 
 ---
 name: mission-list-page
+type: page
 responsibility: "รายการภารกิจของสมาชิก — เห็นว่ามีอะไรให้ทำ ไปถึงไหนแล้ว เหลือเวลาและสิทธิ์เท่าไหร่"
 
-type: page
+composition_level: null
+dependencies: []
+slots: []
 pattern: app-shell
 organisms:
   - header            # ui/components/Header variant=sub
@@ -40,7 +43,10 @@ organisms:
 
 scope: feature
 project: lotteryplus
-folder: features/gamification/pages
+feature: gamification
+public: false            # designer state — ยังไม่ได้ผูกสัญญากับใคร
+
+folder: projects/lotteryplus/features/gamification/pages
 
 frontend_route: /mission
 screens:
@@ -60,9 +66,12 @@ placeholders:
 
 ---
 name: mission-detail-page
+type: page
 responsibility: "รายละเอียดภารกิจ — อธิบายเงื่อนไข ความคืบหน้า โควตา และอายุของรางวัล แล้วรับรางวัลที่นี่ที่เดียว"
 
-type: page
+composition_level: null
+dependencies: []
+slots: []
 pattern: app-shell
 organisms:
   - header                 # ui/components/Header variant=sub phoenix
@@ -71,7 +80,10 @@ organisms:
 
 scope: feature
 project: lotteryplus
-folder: features/gamification/pages
+feature: gamification
+public: false            # designer state — ยังไม่ได้ผูกสัญญากับใคร
+
+folder: projects/lotteryplus/features/gamification/pages
 
 frontend_route: /mission/:id
 screens:
