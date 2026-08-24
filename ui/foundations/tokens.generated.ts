@@ -682,7 +682,7 @@ export const TOKEN_VALUES = {
   "--timer-weight": "500",
   "--timer-float-size": "8px",
   "--timer-float-line-height": "14px",
-  "--timer-float-weight": "600px",
+  "--timer-float-weight": "600",
   "--divider-thickness": "1px",
   "--divider-color-light-gray": "#D4D4D4",
   "--divider-color-gray": "#737373",
