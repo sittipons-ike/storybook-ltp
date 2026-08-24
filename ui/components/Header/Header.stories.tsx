@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import Header, { HeaderAction } from './Header';
+import HeaderCounter from './HeaderCounter';
 import Icon from '../../icons/Icon';
 import '../../icons/icon-data'; // register all icons
 import { HEADER, HEADER_UNMIGRATED_TYPE, topfootTokenNames, topfootValue } from './tokens';
@@ -48,22 +49,10 @@ const Device: React.FC<{ children: React.ReactNode; label: string; sub: string }
 );
 
 
-/** The two counters Figma shows in the home header by default: nok cash and lottery count. */
-const Counter: React.FC<{ value: string; icon: string }> = ({ value, icon }) => (
-  <span
-    style={{
-      display: 'inline-flex',
-      alignItems: 'center',
-      gap: sys('spacing-sm'),
-      color: HEADER.foreground,
-      fontSize: sys('type-button-md-semibold-size'),
-      fontWeight: sys('type-button-md-semibold-weight'),
-    }}
-  >
-    <Icon name={icon} size="md" color="onBg" />
-    {value}
-  </span>
-);
+// The two counters the home header shows were declared here as a local `Counter`. They are
+// the header's own artwork — Figma draws them inside `header-bar-mobile` — so they are
+// `HeaderCounter` now, beside the component, and this story uses the same one every page
+// does rather than a copy that could drift from it.
 
 // ═══════════════════════════════════════════
 export const Variants: StoryObj = {
@@ -85,8 +74,8 @@ export const Variants: StoryObj = {
           variant="home"
           actionRight={
             <>
-              <Counter icon="outline-NokPoints-W" value="1,050" />
-              <Counter icon="outline-Lottery" value="10" />
+              <HeaderCounter icon="outline-NokPoints-W" value="1,050" label="นกแคช" />
+              <HeaderCounter icon="outline-Lottery" value="10" label="สลากของฉัน" />
               <HeaderAction icon="filled-navigation" label="เมนู" />
             </>
           }
@@ -99,8 +88,8 @@ export const Variants: StoryObj = {
           title="คำสั่งซื้อของฉัน"
           actionRight={
             <>
-              <Counter icon="outline-NokPoints-W" value="1,050" />
-              <Counter icon="outline-Lottery" value="10" />
+              <HeaderCounter icon="outline-NokPoints-W" value="1,050" label="นกแคช" />
+              <HeaderCounter icon="outline-Lottery" value="10" label="สลากของฉัน" />
               <HeaderAction icon="filled-navigation" label="เมนู" />
             </>
           }

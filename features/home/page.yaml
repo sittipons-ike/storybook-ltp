@@ -1,0 +1,40 @@
+# Page manifest — Lark Standard §3.7 (page)
+name: home-page
+responsibility: "หน้าแรกของแอป — ค้นเลข ดูสลากที่กำลังขายทุกหมวด และทางเข้าบริการทั้งหมด"
+
+type: page
+pattern: app-shell
+organisms:
+  - status-bar           # StatusBar (21084:85178)
+  - home-header          # header-bar-mobile type=home-page (21282:143458) + HeaderCounter
+  - lotto-board          # main-home-card type=search-card (21084:85041) — MainHomeCard
+  - lottery-section      # Lottery / Lottery-1..4 (21084:85067)
+  - quick-menu           # menu-nok-more-mobile Var.2 (21086:143142)
+  - add-on-service       # add-on-service (21086:148859)
+  - footer               # footer-mobile (21084:85176) — ui/components/Footer defaults
+  - navigation-bar       # navigation-bar/Mobile-v2 state=home (21084:85180)
+
+scope: project
+project: lotteryplus
+folder: projects/lotteryplus/pages/home
+
+# Library-local facts, beyond what §3.7 asks for:
+frontend_route: /
+figma: "[Mobile] Home — home-page(mobile) (21085:96373), 390 x 4651"
+status: designer-state   # real fixtures, no API
+verified_from:
+  node: "21085:96373"
+  date: "2026-08-22"
+  scope: "ทุกบล็อกของหน้า: ขนาด/ระยะ/สี/ตัวหนังสือ/ไอคอน วัดทีละ node จาก Figma Desktop bridge"
+feature_components:      # scope: feature — ขึ้น ui/ ได้เมื่อมีที่ใช้ซ้ำ ≥2 (Lark §3.3)
+  - LotteryTile         # lottery-card (14291:138124 / 138147)
+  - LotterySection      # Lottery-1..4 (21084:85104, 85117, 85132, 85147)
+  - FlashSaleBanner     # Frame 43608 + Frame 43604 (21084:85070, 85076)
+  - CountdownPanel      # Frame 43604 (21084:85076)
+  - QuickMenuGrid       # menu-nok-more-mobile Var.2 (20032:6885)
+  - CarouselDots        # Navigation (9005:33166)
+  - SeoPanel            # SEO Support (21084:85163)
+  - AddOnServiceCard    # add-on-service (16821:38580)
+  - HomeAdsRow          # Frame 1000013545 (22244:118774)
+  - PromoBanner         # Banner Promote (22244:118794)
+  - HomeRedBlock        # Lottery section ground (21084:85067, 85173)

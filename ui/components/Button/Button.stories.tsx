@@ -12,6 +12,7 @@ import {
   type ButtonSize,
 } from './tokens';
 import ColorBindingsTable from '../../system/ColorBindingsTable';
+import { sys } from '../../foundations/tokens';
 
 // ═══════════════════════════════════════════
 //  Button Stories — Lotteryplus Design System
@@ -68,6 +69,43 @@ export const Default: Story = {};
 // ═══════════════════════════════════════════
 //  All Variants
 // ═══════════════════════════════════════════
+/**
+ * `special` — Figma's `button-special / status=random-number` (`14291:131519`).
+ *
+ * The one variant that carries its own geometry: 114x54 where the size axis stops at 44, a
+ * gradient rather than a flat fill, and two blurred ellipses over it. Three of its four
+ * states differ in ways a colour token cannot express, so they are drawn here side by side —
+ * hover and pressed drop the lower glow, focus is the only ring any Button variant draws,
+ * and pressed lays a 40% scrim over the gradient.
+ *
+ * It arrived on 2026-08-22, when reading all twelve `button-special` variants showed the set
+ * to be four unrelated controls and only this one a button. See phase3-vocabulary.md §2.
+ */
+export const Special: Story = {
+  name: 'special — the randomise control',
+  render: () => (
+    <div style={{ fontFamily: sans, display: 'flex', flexDirection: 'column', gap: 20, maxWidth: 640 }}>
+      <p style={{ margin: 0, fontSize: 13, lineHeight: 1.75, color: sys('color-text-tertiary-default') }}>
+        กด/โฟกัสดูได้ — state ต่างกันที่ <strong>glow ล่าง</strong> (hover · pressed ซ่อน),{' '}
+        <strong>ring 4px</strong> (focus) และ <strong>scrim ดำ 40%</strong> (pressed)
+      </p>
+      <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+        <Button variant="special" showIcon iconName="filled-AI">
+          สุ่มตัวเลข
+        </Button>
+        <Button variant="special" showIcon iconName="filled-AI" disabled>
+          สุ่มตัวเลข
+        </Button>
+      </div>
+      <p style={{ margin: 0, fontSize: 12.5, lineHeight: 1.8, color: sys('color-text-tertiary-default') }}>
+        Figma ไม่ได้วาด state <code style={{ fontFamily: mono }}>disabled</code> ให้ตัวนี้ —
+        ตัวขวาใช้ opacity ที่ใช้ร่วมกันทั้ง Button บันทึกไว้ใน{' '}
+        <code style={{ fontFamily: mono }}>known_gaps</code> ให้ดีไซเนอร์วาดเพิ่ม
+      </p>
+    </div>
+  ),
+};
+
 export const AllVariants: Story = {
   name: 'All Variants',
   render: () => (
@@ -439,6 +477,9 @@ const figmaName = (variant: ButtonVariant, prop: string, state: string): string 
     outline: 'ter',   // Figma still calls the stroked one `tertiary`
     ghost: 'out',     // Figma still calls the unstroked one `outline`
     link: 'link',
+    // `special` has no entry in `colors/button/*` at all — its values live in the
+    // `button-special` set, not the button colour group, so there is nothing to bridge to.
+    special: '',
   };
   const s: Record<string, string> = {
     rest: 'default',

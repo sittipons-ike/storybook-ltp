@@ -33,18 +33,11 @@ step "tokens.css matches Figma"
 python3 tools/verify-tokens.py | sed 's/^/  /' || bad "token verification failed"
 
 step "No literal colours in component code"
-# Scan every source directory, not just components/ — Icon lives in icons/ and went
-# unchecked for the whole first pass because this list was too narrow.
-hits=$(grep -rnE "#[0-9A-Fa-f]{6}\b" "ui/components" "ui/icons" "ui/system" \
-        --include='*.ts' --include='*.tsx' --include='*.css' 2>/dev/null \
-        | grep -v '\.stories\.tsx' \
-        | grep -v 'icon-data\.ts' || true)
-if [ -z "$hits" ]; then
-  ok "none found"
-else
-  bad "literal colours found:"
-  printf '%s\n' "$hits" | sed 's/^/      /'
-fi
+# Was a grep with two `grep -v` filters after it. The filters were the blind spot: a whole
+# file waved through hides whatever lands in it later, which is how five third-party brand
+# colours sat in Footer.stories.tsx unseen. Exceptions are per literal now, each naming the
+# brand that owns the colour, and the story count is printed rather than discarded.
+python3 tools/check-literal-colours.py | sed 's/^/  /' || bad "a literal colour in component code is not on the allowed list, or an allowed entry is stale"
 
 step "Every component has a verification record"
 python3 tools/collect-verification.py | sed 's/^/  /' || bad "a component overlay has no _verified_from — nobody has checked it against Figma"

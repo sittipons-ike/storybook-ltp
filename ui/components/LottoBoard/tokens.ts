@@ -25,6 +25,10 @@ import { component } from '../../foundations/tokens';
 
 const t = component('lotto-board');
 
+// The randomise control's own values used to live here as `randomize-*`. It is
+// `Button variant="special"` now — the values moved to the button prefix with it — so a
+// `randomize-*` reference in this file would resolve to a token nobody declares.
+
 /** `var(--lotto-board-<token>)` — what the components render with. */
 export const lottoBoardRef = (token: string, fallback?: string): string => t.ref(token, fallback);
 
@@ -226,12 +230,6 @@ export const SEARCH_CARD = {
   gap: t.ref('card-gap'),
   paddingX: t.ref('card-padding-x'),
   headerGap: t.ref('card-header-gap'),
-  randomizeWidth: t.ref('randomize-width'),
-  randomizeHeight: t.ref('randomize-height'),
-  randomizeRadius: t.ref('randomize-radius'),
-  randomizeGradient: t.ref('randomize-gradient'),
-  randomizeForeground: t.ref('randomize-foreground'),
-  randomizeGap: t.ref('randomize-gap'),
   searchHeight: t.ref('search-height'),
   opacityDisabled: t.ref('opacity-disabled'),
   actionsGap: t.ref('card-actions-gap'),
@@ -251,7 +249,6 @@ export const OPACITY = {
 export const ICON_SIZE = Number(t.value('set-icon-size').replace('px', '')) || 24;
 
 /** The randomise tile's glyph. Figma sizes it independently of the stepper's. */
-export const RANDOMIZE_ICON_SIZE = Number(t.value('randomize-icon-size').replace('px', '')) || 24;
 
 /** Everything the family renders with, in one place. */
 export const LOTTO_BOARD = {

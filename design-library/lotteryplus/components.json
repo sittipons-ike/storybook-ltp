@@ -85,7 +85,24 @@
               }
             }
           ]
-        }
+        },
+        "special-height": 54,
+        "special-width": 114,
+        "_source-special-width": "The component is a fixed 114 wide in all four states, and its instance in the search row is `layoutSizingHorizontal: FIXED`. Content is 90 (24 icon + 4 + 62 label), so the 12 each side falls out of centring rather than being padding.",
+        "_source-special-height": "`button-special / status=random-number` is a fixed 114x54 COMPONENT in every state. 54 is not a step on the size axis — L is 44 — so the variant carries its own height and `size` does not apply to it. Read 2026-08-22 from 14291:131519.",
+        "special-glow-color": "{design.semantic.colors.secondary.default}",
+        "special-glow-blur": 16,
+        "special-glow-top-x": 30.3,
+        "special-glow-top-y": 0,
+        "special-glow-top-width": 72.1,
+        "special-glow-top-height": 32.5,
+        "special-glow-bottom-x": 1.1,
+        "special-glow-bottom-y": 35.7,
+        "special-glow-bottom-width": 45.9,
+        "special-glow-bottom-height": 18.3,
+        "_source-special-glow": "Two `#262626` ellipses at LAYER_BLUR 16 sit over the gradient — `Ellipse 4` top right, `Ellipse 5` bottom left. The library used to draw the gradient without them and recorded it as the `randomise-glow` gap. Geometry is in the px Figma states, because the variant is a fixed 114x54 rather than a size that scales.",
+        "special-scrim-active": "rgba(0, 0, 0, 0.4)",
+        "_source-special-scrim-active": "`state=pressed` layers a 40% black fill over the gradient rather than changing it."
       },
       "sizes": {
         "lg": {
@@ -251,19 +268,51 @@
               "foreground": "{design.semantic.colors.secondary.light}"
             }
           }
+        },
+        "special": {
+          "extends": "primary",
+          "reason": "The randomise control on the lottery board: a dark-to-red gradient with two blurred ellipses over it, an icon and a label. Not on the Standard's list of five and not a rename of anything on it. Figma keeps it in a separate set, `button-special` (14291:131519), whose 12 variants are four unrelated controls — `random-number`, `lotto-tab`, `buy-lotto` and a near-duplicate of Primary L. Only `random-number` is a button in any sense the atom shares, so only it moved here; the team decided the scope on 2026-08-22. See phase3-vocabulary.md §2.",
+          "expires": "2027-02-22",
+          "review_owner": "Design lead",
+          "shadow": "{design.semantic.colors.primary.default}@24%",
+          "states": {
+            "rest": {
+              "background": "linear-gradient(180deg, #262626 0%, #E32321 66%)",
+              "foreground": "{design.semantic.colors.primary.soft-light}"
+            },
+            "hover": {
+              "background": "linear-gradient(180deg, #262626 0%, #E32321 66%)",
+              "foreground": "{design.semantic.colors.primary.soft-light}"
+            },
+            "focus": {
+              "background": "linear-gradient(180deg, #262626 0%, #E32321 66%)",
+              "foreground": "{design.semantic.colors.primary.soft-light}"
+            },
+            "active": {
+              "background": "linear-gradient(180deg, #262626 0%, #E32321 66%)",
+              "foreground": "{design.semantic.colors.primary.soft-light}"
+            },
+            "disabled": {
+              "background": "linear-gradient(180deg, #262626 0%, #E32321 66%)",
+              "foreground": "{design.semantic.colors.primary.soft-light}"
+            }
+          }
         }
       },
       "known_gaps": [
         "Figma defines an `on-cont` (on-container) button variant with a full state set including `selected` — Storybook has no such variant. Adding it is Phase 4 work.",
         "Figma's `colors/button/accent/*` group is a loose palette (btn-bg-red, btn-bg-green, btn-bg-dark, …) rather than a variant. Not modelled here; it maps to background accents at the semantic tier.",
         "Storybook invents per-state borders for `tertiary` and disabled borders for `primary`/`secondary`. Figma has a single static `btn-ter-border`. Marked `_source: storybook-local` above — a designer should either add the Figma tokens or drop the borders.",
-        "Frontend defines 6 further variants (green, green_line, green_light, red_outline, transparent, disabled). `green*` are deprecated per Q0.3; `red_outline` and `transparent` fold into `outline`/`ghost` during Phase 5."
+        "Frontend defines 6 further variants (green, green_line, green_light, red_outline, transparent, disabled). `green*` are deprecated per Q0.3; `red_outline` and `transparent` fold into `outline`/`ghost` during Phase 5.",
+        "The `special` variant differs by state in ways no colour token can carry: `hover` and `pressed` hide the lower glow, `focus` adds the 4px ring, `pressed` layers a 40% black scrim. Those are rendered from the state in Button.tsx rather than looked up, and are listed here so the difference is visible.",
+        "Figma gives `status=random-number` no disabled state. The library reuses the rest gradient at the shared disabled opacity, which is what the hand-rolled control did before it became a variant. A designer should draw one.",
+        "`--btn-<variant>-shadow` is declared for every variant and read by none of them except `special`, whose focus ring Figma states outright (0 0 0 4px, primary at 24%). The other variants draw no focus ring at all. Either Figma draws them or the tokens should go."
       ],
       "_verified_from": {
-        "node": "14291:130847 — component set `button` on page `↳ button ✅`, 195 variants",
-        "date": "2026-08-19",
-        "scope": "the five Type values at Size=L, the three Size values at Type=Primary, and the icon+text and icon-only variants at all three sizes",
-        "result": "Radius 8, padding 0/16, heights 44/36/28, label 14/22 Semibold = button.md.semibold. Primary fills `btn-bg-pri-default`; Secondary `btn-bg-sec-default` (#262626); Tertiary is white with a 1px INSIDE `btn-ter-border`; Outline and Link have no fill at all. With an icon, the left padding drops to 12 and the gap is 4 — both already correct.",
+        "node": "14291:130847 — component set `button` on page `↳ button ✅`, 195 variants · 14291:131519 `button-special` (12 variants) — read 2026-08-22",
+        "date": "2026-08-22",
+        "scope": "the five Type values at Size=L, the three Size values at Type=Primary, and the icon+text and icon-only variants at all three sizes · 2026-08-22: all 12 `button-special` variants at node level, to decide which of them are the same idea as `button`.",
+        "result": "Radius 8, padding 0/16, heights 44/36/28, label 14/22 Semibold = button.md.semibold. Primary fills `btn-bg-pri-default`; Secondary `btn-bg-sec-default` (#262626); Tertiary is white with a 1px INSIDE `btn-ter-border`; Outline and Link have no fill at all. With an icon, the left padding drops to 12 and the gap is 4 — both already correct. 2026-08-22: `button-special` turned out to be four unrelated controls in one set. `status=random-number` (114x54, gradient, two blurred ellipses, #FEF2F2) became `variant=\"special\"`; `lotto-tab` is a tab, and `buy-lotto` and `status=button` are near-duplicates of Primary L left for a later pass.",
         "corrections": {
           "sm icon-only padding": "Was 2, Figma says 6. The outer box came out at 28 either way, which is why it went unnoticed: 2+24+2 and 6+16+6 both total 28. The glyph was the wrong size and the padding compensated.",
           "icon size is per size, not fixed": "Was a single 24 on `base`. Figma uses 24 at L and M and 16 at S. Moved onto each size.",
@@ -1391,15 +1440,15 @@
         "card-padding-x": "{design.semantic.spacing.2xl}",
         "card-header-gap": "{design.semantic.spacing.sm}",
         "card-actions-gap": "{design.semantic.spacing.lg}",
-        "randomize-width": 114,
-        "randomize-height": 54,
-        "randomize-radius": "{design.semantic.radius.lg}",
-        "randomize-gradient": "linear-gradient(180deg, #262626 0%, #E32321 66%)",
-        "randomize-foreground": "#FEF2F2",
-        "randomize-icon-size": 24,
-        "randomize-gap": "{design.semantic.spacing.sm}",
         "search-height": 54,
         "card-max-width": 400,
+        "main-radius": "{design.semantic.radius.2xl}",
+        "main-padding-y": "{design.semantic.spacing.2xl}",
+        "main-gradient": "linear-gradient(180deg, #FAFAFA 0%, #FFFFFF 100%)",
+        "_source-main-gradient": "Two stops, top to bottom, on `main-home-card` (14854:33341). Both ends have a role — background.soft-light and background.default — but a gradient is one CSS value, so it is authored whole here rather than assembled in the component from two refs.",
+        "main-bleed-height": 8,
+        "_source-main-bleed-height": "`Top-BG` (21084:85034) paints the page red to y=209 while the header stops at 201, so the card sits on 8px of red rather than on the page background. Figma gets there by letting the header overflow a fixed-height `Top-bar`; the card carries it instead, which keeps the shell honest — a slot that says 154 is 154.",
+        "main-bleed-background": "{design.semantic.colors.background.accent-red}",
         "_source-card-max-width": "storybook-local, no Figma token backs it — the search-card frame is 400 wide in Figma and design.md's breakpoints start at 321/361/390, none of which is 400",
         "opacity-disabled": "{design.semantic.opacity.disabled}",
         "opacity-limit-reached": "{design.semantic.opacity.muted}",
@@ -1437,10 +1486,10 @@
           "typography-number": "The digits in the number cells carry the text style `typography/display/xl-semb` — 20/36 Semibold, read off lotto-board-mobile (14583:89931) on 2026-08-21, and the style id is set on the layer, so this is Figma's own naming rather than a guess. The overlay used to say 24/32 weight 700, which matched no layer and no role: an invented value that survived because nothing forced typography to bind."
         },
         "_verified_from": {
-          "node": "14583:89931 `lotto-board-mobile` (3 variants), 14583:89963 `menu-button` (3), 14583:90116 `number-search-box-2` (7), 19002:25158 `search-card` (3) — page `↳ search-lottery ✅`",
-          "date": "2026-08-19",
-          "scope": "variant lists for all four sets, depth-3 walks, plus a rendered screenshot of lotto-board-mobile",
-          "result": "Cell 53x64 with 8 padding, radius 8, a 1px `lotto-board-border` stroke and elevation.card; cell gap 8; row padding 16. Menu row 390x44 with three 114x44 buttons, gap 8, radius 8. Search row: a 114x54 randomise button and a 236x54 search button, gap 8. All geometry matches.",
+          "node": "14583:89931 `lotto-board-mobile` (3 variants), 14583:89963 `menu-button` (3), 14583:90116 `number-search-box-2` (7), 19002:25158 `search-card` (3) — page `↳ search-lottery ✅` · 14854:33344 `main-home-card` (7 variants) — page `↳ home ✅`, read 2026-08-22",
+          "date": "2026-08-22",
+          "scope": "variant lists for all four sets, depth-3 walks, plus a rendered screenshot of lotto-board-mobile · 2026-08-22: the `main-home-card` set — variant list, and `type=search-card` at node level against its instance on `/` (21084:85041), which overrides nothing.",
+          "result": "Cell 53x64 with 8 padding, radius 8, a 1px `lotto-board-border` stroke and elevation.card; cell gap 8; row padding 16. Menu row 390x44 with three 114x44 buttons, gap 8, radius 8. Search row: a 114x54 randomise button and a 236x54 search button, gap 8. All geometry matches. 2026-08-22: main-home-card 390x266, radius 16, 16 of padding top and bottom and none at the sides, filled #FAFAFA to #FFFFFF top to bottom. It wraps `lotto-board-mobile Type=All` unchanged. Six sibling variants recorded as a gap. 2026-08-22: the `ค้นหา` button rendered 44 against a 54 row — Figma marks that instance `layoutSizingVertical: FILL` and the library had no way to express a cross-axis fill. `Button` gained `fullHeight`; both controls now measure 54 in the browser, 114 and 236 wide. 2026-08-22: the randomise control became `Button variant=\"special\"` after all twelve `button-special` variants were read; its glow — two blurred ellipses this overlay had recorded as unimplemented — is drawn now.",
           "corrections": {
             "header layout": "Figma lays the title and the draw date side by side on one 24px row with an 8px gap, and puts `ล้างค่า` at the far end. The library stacked the title above the date.",
             "date colour": "`Color/Text/Text-Secondary` (#262626) — the same weight as body copy, not a dimmed grey.",
@@ -1448,9 +1497,9 @@
           }
         },
         "_figma_gaps": {
-          "button-special-not-a-button-variant": "Figma models the randomise control as its own component set, `button-special` (14291:131519, 12 variants), rather than a variant of `button`. The library renders its shape inside LottoBoard. Whether it should become a Button variant is a designer's call.",
+          "button-special-not-a-button-variant": "Resolved for one of the four controls in the set. `button-special` (14291:131519) holds twelve variants that are four unrelated things: `random-number` (114x54, gradient, glow), `lotto-tab` (a grey tab), `buy-lotto` (Primary L plus a Loading slot) and `status=button` (Primary L with 8 of padding instead of 16). The team decided on 2026-08-22 to move only `random-number`, as `Button variant=\"special\"`. `lotto-tab` belongs with Tabs or MenuButton, not Button; `buy-lotto` and `status=button` are near-duplicates of Primary L and are left for a later pass. See phase3-vocabulary.md §2.",
           "search-card-is-a-second-set": "`search-card` (19002:25158) repeats lotto-board-mobile with a different title and a root gap of 8 instead of 16. Two sets for one thing.",
-          "randomise-glow": "Figma layers two blurred #262626 ellipses over the gradient (LAYER_BLUR 16) for a glow. The library renders the gradient alone — close, but not the same thing. Recorded rather than approximated."
+          "main-home-card-six-states-not-built": "`main-home-card` (14854:33344) is a 7-variant set and only `type=search-card` is built. The other six are the board replaced by a state: sold-out (478), closed-for-service (612), maintenance (660), coming-soon (612), live-broadcast (349), end-live-broadcast (349). Each holds its own illustration and copy, none of which has been measured. Listed rather than stubbed, because a variant that renders an empty frame reads as built."
         },
         "_figma_icons": {
           "_comment": "The icons Figma instantiates for this component, read 2026-08-20 by walking the instance tree and keeping every main component whose parent set is `icons`. check-figma-icons.py holds the files in `sources` to exactly this set — an extra icon fails as loudly as a missing one, because an extra is one nobody compared. Files not listed in `sources` carry payload a caller passes, not a choice the design makes.",
@@ -1469,9 +1518,11 @@
               }
             }
           ]
-        }
+        },
+        "_source-search-height": "`Search` inside `lotto-board-mobile Type=All` is 390x54, HORIZONTAL, gap 8, 16 of side padding, counter-axis CENTER, and hugs. The 54 comes from `button-special` (114x54); the primary `ค้นหา` button beside it is `Size=L` — 44 on its own — carrying `layoutSizingVertical: FILL`, so it stretches to 54 rather than sitting 10px short. That is what `Button`'s `fullHeight` is for.",
+        "_moved-randomize-to-button": "The randomise control's values were `randomize-*` here until 2026-08-22. It is `Button variant=\"special\"` now, so they live under the `btn-special-*` prefix with the atom — including the glow this overlay had recorded as a gap and never drawn. Kept as a note rather than deleted silently, so a search for `randomize-` lands somewhere."
       },
-      "figma_node": "14583:89931 (lotto-board-mobile) · 14583:89963 (menu-button) · 14583:90116 (number-search-box-2) · 19002:25158 (search-card)"
+      "figma_node": "14583:89931 (lotto-board-mobile) · 14583:89963 (menu-button) · 14583:90116 (number-search-box-2) · 19002:25158 (search-card) · 14854:33344 (main-home-card, 7 variants)"
     },
     "modal": {
       "name": "modal",
@@ -2647,10 +2698,10 @@
           "phoenix-geometry": "Was one square `size` positioned with a percentage translate. Figma gives each variant its own box and offset, and the success one is 118x125 — not square."
         },
         "_verified_from": {
-          "node": "14924:2118 `header-bar-mobile` · `footer-mobile` on page `↳ footer ✅` · the page template at 23430:298541",
-          "date": "2026-08-19",
-          "scope": "all 3 header variants at node level, the footer instance, and the sticky action bar in the template",
-          "result": "Header 146/56/94 confirmed in the browser at mobile width. Corrections in this pass: phoenix opacity 40 to 70, HARD_LIGHT blend added, per-variant phoenix geometry, action wells given the tertiary button chrome, the app-bar logo swapped from the wordmark to the 31px mark, and the wordmark row modelled at 32 rather than 31."
+          "node": "14924:2118 `header-bar-mobile` · `footer-mobile` on page `↳ footer ✅` · the page template at 23430:298541 · `footer-mobile` main component 14291:133483 (re-read 2026-08-22)",
+          "date": "2026-08-22",
+          "scope": "all 3 header variants at node level, the footer instance, and the sticky action bar in the template · 2026-08-22: the footer's own artwork — the five social tiles in `Frame 43983` (14291:133486) and the two chips in `Frame 43624` (14291:133509), read off the main component and confirmed against the `/` instance (21084:85176), which overrides none of it.",
+          "result": "Header 146/56/94 confirmed in the browser at mobile width. Corrections in this pass: phoenix opacity 40 to 70, HARD_LIGHT blend added, per-variant phoenix geometry, action wells given the tertiary button chrome, the app-bar logo swapped from the wordmark to the 31px mark, and the wordmark row modelled at 32 rather than 31. 2026-08-22: the footer rendered an empty red band with nothing passed, because socials and chips defaulted to []. The glyphs belong to the component — Figma draws them inside `footer-mobile` — so the five channel marks and the visitor/DBD chips are now its defaults, exported to ui/assets/brand and served through asset(). The stories' stand-in icons (a bell for Facebook, a tick for TikTok) are gone: they resolved and drew the wrong thing. Height measured 190 in the browser at mobile width, matching Figma."
         },
         "_figma_gaps": {
           "_closed-2026-08-21-success-frame-was-two-short": "CLOSED. type=success (22447:63726) was FIXED at 94 while its own auto-layout added up to 96; the library rendered 96 and recorded the disagreement rather than clipping a line the design asks for. The designer switched the frame to hug the same day and it now reports 96, which is what the library was already drawing. Kept as a record of how the gap was resolved, not as an open item.",

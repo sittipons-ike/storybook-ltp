@@ -177,19 +177,19 @@
     },
     "lotto-board": {
       "verified": true,
-      "node": "14583:89931 `lotto-board-mobile` (3 variants), 14583:89963 `menu-button` (3), 14583:90116 `number-search-box-2` (7), 19002:25158 `search-card` (3) — page `↳ search-lottery ✅`",
-      "date": "2026-08-19",
-      "scope": "variant lists for all four sets, depth-3 walks, plus a rendered screenshot of lotto-board-mobile",
-      "result": "Cell 53x64 with 8 padding, radius 8, a 1px `lotto-board-border` stroke and elevation.card; cell gap 8; row padding 16. Menu row 390x44 with three 114x44 buttons, gap 8, radius 8. Search row: a 114x54 randomise button and a 236x54 search button, gap 8. All geometry matches.",
+      "node": "14583:89931 `lotto-board-mobile` (3 variants), 14583:89963 `menu-button` (3), 14583:90116 `number-search-box-2` (7), 19002:25158 `search-card` (3) — page `↳ search-lottery ✅` · 14854:33344 `main-home-card` (7 variants) — page `↳ home ✅`, read 2026-08-22",
+      "date": "2026-08-22",
+      "scope": "variant lists for all four sets, depth-3 walks, plus a rendered screenshot of lotto-board-mobile · 2026-08-22: the `main-home-card` set — variant list, and `type=search-card` at node level against its instance on `/` (21084:85041), which overrides nothing.",
+      "result": "Cell 53x64 with 8 padding, radius 8, a 1px `lotto-board-border` stroke and elevation.card; cell gap 8; row padding 16. Menu row 390x44 with three 114x44 buttons, gap 8, radius 8. Search row: a 114x54 randomise button and a 236x54 search button, gap 8. All geometry matches. 2026-08-22: main-home-card 390x266, radius 16, 16 of padding top and bottom and none at the sides, filled #FAFAFA to #FFFFFF top to bottom. It wraps `lotto-board-mobile Type=All` unchanged. Six sibling variants recorded as a gap. 2026-08-22: the `ค้นหา` button rendered 44 against a 54 row — Figma marks that instance `layoutSizingVertical: FILL` and the library had no way to express a cross-axis fill. `Button` gained `fullHeight`; both controls now measure 54 in the browser, 114 and 236 wide. 2026-08-22: the randomise control became `Button variant=\"special\"` after all twelve `button-special` variants were read; its glow — two blurred ellipses this overlay had recorded as unimplemented — is drawn now.",
       "corrections": {
         "header layout": "Figma lays the title and the draw date side by side on one 24px row with an 8px gap, and puts `ล้างค่า` at the far end. The library stacked the title above the date.",
         "date colour": "`Color/Text/Text-Secondary` (#262626) — the same weight as body copy, not a dimmed grey.",
         "randomise button": "Was `Button variant=outline`, a white pill. Figma fills it with a dark-to-red gradient and sets the label to #FEF2F2."
       },
       "gaps": {
-        "button-special-not-a-button-variant": "Figma models the randomise control as its own component set, `button-special` (14291:131519, 12 variants), rather than a variant of `button`. The library renders its shape inside LottoBoard. Whether it should become a Button variant is a designer's call.",
+        "button-special-not-a-button-variant": "Resolved for one of the four controls in the set. `button-special` (14291:131519) holds twelve variants that are four unrelated things: `random-number` (114x54, gradient, glow), `lotto-tab` (a grey tab), `buy-lotto` (Primary L plus a Loading slot) and `status=button` (Primary L with 8 of padding instead of 16). The team decided on 2026-08-22 to move only `random-number`, as `Button variant=\"special\"`. `lotto-tab` belongs with Tabs or MenuButton, not Button; `buy-lotto` and `status=button` are near-duplicates of Primary L and are left for a later pass. See phase3-vocabulary.md §2.",
         "search-card-is-a-second-set": "`search-card` (19002:25158) repeats lotto-board-mobile with a different title and a root gap of 8 instead of 16. Two sets for one thing.",
-        "randomise-glow": "Figma layers two blurred #262626 ellipses over the gradient (LAYER_BLUR 16) for a glow. The library renders the gradient alone — close, but not the same thing. Recorded rather than approximated."
+        "main-home-card-six-states-not-built": "`main-home-card` (14854:33344) is a 7-variant set and only `type=search-card` is built. The other six are the board replaced by a state: sold-out (478), closed-for-service (612), maintenance (660), coming-soon (612), live-broadcast (349), end-live-broadcast (349). Each holds its own illustration and copy, none of which has been measured. Listed rather than stubbed, because a variant that renders an empty frame reads as built."
       }
     },
     "modal": {
@@ -315,10 +315,10 @@
     },
     "top-and-footer": {
       "verified": true,
-      "node": "14924:2118 `header-bar-mobile` · `footer-mobile` on page `↳ footer ✅` · the page template at 23430:298541",
-      "date": "2026-08-19",
-      "scope": "all 3 header variants at node level, the footer instance, and the sticky action bar in the template",
-      "result": "Header 146/56/94 confirmed in the browser at mobile width. Corrections in this pass: phoenix opacity 40 to 70, HARD_LIGHT blend added, per-variant phoenix geometry, action wells given the tertiary button chrome, the app-bar logo swapped from the wordmark to the 31px mark, and the wordmark row modelled at 32 rather than 31.",
+      "node": "14924:2118 `header-bar-mobile` · `footer-mobile` on page `↳ footer ✅` · the page template at 23430:298541 · `footer-mobile` main component 14291:133483 (re-read 2026-08-22)",
+      "date": "2026-08-22",
+      "scope": "all 3 header variants at node level, the footer instance, and the sticky action bar in the template · 2026-08-22: the footer's own artwork — the five social tiles in `Frame 43983` (14291:133486) and the two chips in `Frame 43624` (14291:133509), read off the main component and confirmed against the `/` instance (21084:85176), which overrides none of it.",
+      "result": "Header 146/56/94 confirmed in the browser at mobile width. Corrections in this pass: phoenix opacity 40 to 70, HARD_LIGHT blend added, per-variant phoenix geometry, action wells given the tertiary button chrome, the app-bar logo swapped from the wordmark to the 31px mark, and the wordmark row modelled at 32 rather than 31. 2026-08-22: the footer rendered an empty red band with nothing passed, because socials and chips defaulted to []. The glyphs belong to the component — Figma draws them inside `footer-mobile` — so the five channel marks and the visitor/DBD chips are now its defaults, exported to ui/assets/brand and served through asset(). The stories' stand-in icons (a bell for Facebook, a tick for TikTok) are gone: they resolved and drew the wrong thing. Height measured 190 in the browser at mobile width, matching Figma.",
       "corrections": {
         "phoenix-opacity": "Was 40% (semantic.opacity.muted, taken from the Frontend). Figma says 70%.",
         "phoenix-blend": "Was missing. Figma composites it with HARD_LIGHT.",
