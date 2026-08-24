@@ -42,6 +42,9 @@ python3 tools/check-literal-colours.py | sed 's/^/  /' || bad "a literal colour 
 step "Every component has a verification record"
 python3 tools/collect-verification.py | sed 's/^/  /' || bad "a component overlay has no _verified_from — nobody has checked it against Figma"
 
+step "Metadata carries the Standard's thirteen fields"
+python3 tools/check-metadata.py | sed 's/^/  /' || bad "metadata does not match Lark Standard §3.7"
+
 step "Icons resolve to the icon set"
 python3 tools/check-icons.py | sed 's/^/  /' || bad "an icon name does not exist in icon-data.ts"
 

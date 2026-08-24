@@ -31,15 +31,10 @@
   "patterns": {
     "app-shell": {
       "name": "app-shell",
-      "responsibility": "Frame every page that sits inside the app chrome",
       "type": "pattern",
-      "scope": "global",
-      "folder": "global/patterns/app-shell",
-      "css_prefix": "shell",
-      "usage": {
-        "pages": 69,
-        "of": 81
-      },
+      "responsibility": "Frame every page that sits inside the app chrome",
+      "composition_level": null,
+      "dependencies": [],
       "slots": [
         {
           "name": "status-bar",
@@ -115,6 +110,18 @@
           "note": "Two different components, never both at once. `footer` is Figma's `footer-mobile` — the red-dark site footer. `action-bar` is the sticky bar of committing actions, which Figma draws only inside the page template and the Frontend ships as `components/common/footer-button` with 17 call sites."
         }
       ],
+      "pattern": null,
+      "organisms": [],
+      "scope": "global",
+      "project": null,
+      "feature": null,
+      "public": true,
+      "folder": "global/patterns/app-shell",
+      "css_prefix": "shell",
+      "usage": {
+        "pages": 69,
+        "of": 81
+      },
       "variants": {
         "navbar": {
           "_note": "Which navigation-bar treatment the shell mounts. Measured from `navbarType` across all pages.",
@@ -309,15 +316,10 @@
     },
     "bare-screen": {
       "name": "bare-screen",
-      "responsibility": "Fill the viewport with no app chrome",
       "type": "pattern",
-      "scope": "global",
-      "folder": "global/patterns/bare-screen",
-      "css_prefix": "bare",
-      "usage": {
-        "pages": 7,
-        "of": 81
-      },
+      "responsibility": "Fill the viewport with no app chrome",
+      "composition_level": null,
+      "dependencies": [],
       "slots": [
         {
           "name": "main",
@@ -329,6 +331,18 @@
           "note": "The whole viewport. Nothing frames it."
         }
       ],
+      "pattern": null,
+      "organisms": [],
+      "scope": "global",
+      "project": null,
+      "feature": null,
+      "public": true,
+      "folder": "global/patterns/bare-screen",
+      "css_prefix": "bare",
+      "usage": {
+        "pages": 7,
+        "of": 81
+      },
       "real_pages": [
         "404.tsx",
         "checklogin/index.tsx",
