@@ -75,7 +75,8 @@ export const TabOpen: StoryObj = {
   render: () => (
     <div style={{ padding: 24 }}>
       <Caption>
-        MSN-201 · ครบทุกสถานะ — ทำครบรอรับ · กำลังทำ · กำลังตรวจสอบยอด · ยังไม่เริ่ม · รับแล้ว · ของหมด · หมดเวลา
+        MSN-201 · เฉพาะภารกิจที่ยังทำไม่เสร็จ — กำลังทำ · กำลังตรวจสอบยอด · ยังไม่เริ่ม · ของหมด
+        ที่ทำครบแล้วย้ายไปแท็บสำเร็จแล้ว ไม่โผล่ซ้ำสองที่
       </Caption>
       <DeviceFrame scroll>
         <InShell>
@@ -99,7 +100,8 @@ export const TabDone: StoryObj = {
   render: () => (
     <div style={{ padding: 24 }}>
       <Caption>
-        MSN-202 · ไม่มีปุ่มรับรางวัลบนการ์ด — จุด claim อยู่ที่ MSN-210 เท่านั้น (MECH-05)
+        MSN-202 · ประวัติของที่จบแล้ว — ทำครบรอรับ + รับแล้ว
+        ไม่มีปุ่มรับรางวัลบนการ์ด จุด claim อยู่ที่ MSN-210 เท่านั้น (MECH-05)
       </Caption>
       <DeviceFrame scroll>
         <InShell>

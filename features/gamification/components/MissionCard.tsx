@@ -141,7 +141,13 @@ export interface MissionClosedCardProps {
   name: string;
   reward: string;
   cond: string;
-  /** "ของรางวัลหมดแล้ว" · "หมดเวลาแล้ว" — the reason, not a generic unavailable. */
+  /**
+   * "ของรางวัลหมดแล้ว" — the reason, not a generic unavailable (BP-05).
+   *
+   * Running out of stock is the only way a mission closes. Every mission shares the
+   * campaign's one three-month window, so none can run out of time on its own
+   * `[user 2026-08-24]`.
+   */
   statusLabel: string;
   onOpen?: () => void;
   className?: string;

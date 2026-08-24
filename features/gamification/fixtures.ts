@@ -65,23 +65,14 @@ export interface ClosedMission extends MissionClosedCardProps {
   id: string;
 }
 
-/** MSN-201 · tab ทั้งหมด — every state a live mission can be in, in reading order (§4.2). */
+/**
+ * MSN-201 · tab ทั้งหมด — missions still to do, and nothing else.
+ *
+ * A mission that has met its conditions leaves this tab for `สำเร็จแล้ว` and does not
+ * appear in both `[user 2026-08-24]`. §4.1 already gives that tab the job of being the
+ * record of what is finished; a mission in two places is a mission the user counts twice.
+ */
 export const MISSIONS_OPEN: Mission[] = [
-  {
-    id: 'freq-lovely',
-    name: 'ภารกิจคนน่ารัก',
-    reward: '10 นกพอยต์',
-    kind: 'นกพอยต์',
-    image: REWARD.nokpoint,
-    cond: 'ซื้อลอตเตอรี่ 2 งวดติดกัน',
-    current: 2,
-    target: 2,
-    marks: [1, 2],
-    unit: 'งวด',
-    tone: 'ready',
-    statusLabel: 'ทำครบ รอรับรางวัล',
-    daysLabel: 'เหลืออีก 12 วัน',
-  },
   {
     id: 'vol-beginner',
     name: 'ภารกิจว่าที่คนจะรวย',
@@ -163,6 +154,44 @@ export const MISSIONS_OPEN: Mission[] = [
     daysLabel: 'เหลืออีก 9 วัน',
     quota: true,
   },
+];
+
+/**
+ * §4.2 — still on the list, greyed. Hiding them reads as the system having lost them.
+ *
+ * Running out of stock is the only way a mission closes. There is no expiry: every mission
+ * in a campaign shares one three-month window, so none of them can run out of time while
+ * the others are still open — the campaign ends for all of them at once `[user 2026-08-24]`.
+ */
+export const MISSIONS_CLOSED: ClosedMission[] = [
+  {
+    id: 'vol-normal-out',
+    name: 'ภารกิจเศรษฐีป้ายแดง',
+    reward: 'หูฟัง Sony',
+    cond: 'สะสมครบ 500 ใบในแคมเปญนี้',
+    statusLabel: 'ของรางวัลหมดแล้ว',
+  },
+];
+
+/**
+ * MSN-202 · tab สำเร็จแล้ว — the record of what is finished: waiting to be collected,
+ * and already collected. These do not appear in `ทั้งหมด`.
+ */
+export const MISSIONS_DONE: Mission[] = [
+  {
+    id: 'freq-lovely',
+    name: 'ภารกิจคนน่ารัก',
+    reward: '10 นกพอยต์',
+    kind: 'นกพอยต์',
+    image: REWARD.nokpoint,
+    cond: 'ซื้อลอตเตอรี่ 2 งวดติดกัน',
+    current: 2,
+    target: 2,
+    marks: [1, 2],
+    unit: 'งวด',
+    tone: 'ready',
+    statusLabel: 'ทำครบ รอรับรางวัล',
+  },
   {
     id: 'freq-regular',
     name: 'ภารกิจขาประจำตัวตึง',
@@ -177,30 +206,6 @@ export const MISSIONS_OPEN: Mission[] = [
     tone: 'claimed',
     statusLabel: 'รับรางวัลแล้ว',
   },
-];
-
-/** §4.2 — still on the list, greyed. Hiding them reads as the system having lost them. */
-export const MISSIONS_CLOSED: ClosedMission[] = [
-  {
-    id: 'vol-normal-out',
-    name: 'ภารกิจเศรษฐีป้ายแดง',
-    reward: 'หูฟัง Sony',
-    cond: 'สะสมครบ 500 ใบในแคมเปญนี้',
-    statusLabel: 'ของรางวัลหมดแล้ว',
-  },
-  {
-    id: 'vol-hard-expired',
-    name: 'ภารกิจเศรษฐีประจำงวด',
-    reward: 'กระเป๋าเดินทาง',
-    cond: 'สะสมครบ 1,000 ใบในแคมเปญนี้',
-    statusLabel: 'หมดเวลาแล้ว',
-  },
-];
-
-/** MSN-202 · tab สำเร็จแล้ว — what is finished, waiting or collected. */
-export const MISSIONS_DONE: Mission[] = [
-  MISSIONS_OPEN[0],
-  MISSIONS_OPEN[6],
 ];
 
 // ═══════════════════════════════════════════
@@ -255,7 +260,7 @@ export interface MissionDetail {
 
 const CAMPAIGN = 'ช่วงแคมเปญ 1 ส.ค. – 30 ก.ย. 2569';
 
-/** CTA 1/5 — ยังไม่ครบเงื่อนไข */
+/** CTA 1/4 — ยังไม่ครบเงื่อนไข */
 export const DETAIL_IN_PROGRESS: MissionDetail = {
   name: 'ภารกิจว่าที่คนจะรวย',
   reward: 'กล่องข้าวร่ำรวย',
@@ -285,7 +290,7 @@ export const DETAIL_IN_PROGRESS: MissionDetail = {
   cta: { label: 'ไปทำภารกิจ' },
 };
 
-/** CTA 2/5 — ครบแล้ว ยังไม่รับ · จุด claim เดียวของระบบ (MECH-05) */
+/** CTA 2/4 — ครบแล้ว ยังไม่รับ · จุด claim เดียวของระบบ (MECH-05) */
 export const DETAIL_COMPLETED: MissionDetail = {
   name: 'ภารกิจคนน่ารัก',
   reward: '10 นกพอยต์',
@@ -307,7 +312,7 @@ export const DETAIL_COMPLETED: MissionDetail = {
   cta: { label: 'รับรางวัล' },
 };
 
-/** CTA 3/5 — รับแล้ว · AC7 ปลายทางครบ 3 แบบ */
+/** CTA 3/4 — รับแล้ว · AC7 ปลายทางครบ 3 แบบ */
 export const DETAIL_CLAIMED: MissionDetail = {
   ...DETAIL_COMPLETED,
   banner: { title: 'รับรางวัลแล้ว', body: 'แต้มเข้าบัญชีนกพอยต์เรียบร้อย' },
@@ -319,7 +324,14 @@ export const DETAIL_CLAIMED: MissionDetail = {
   links: ['ไปดูนกพอยต์', 'ไปที่คูปองของฉัน', 'สอบถามที่ LINE OA'],
 };
 
-/** CTA 4/5 — ของหมด */
+/**
+ * CTA 4/4 — ของหมด.
+ *
+ * The last of them: there is no "หมดเวลา". Every mission shares the campaign's one
+ * three-month window, so a mission cannot run out of time on its own — when the window
+ * closes it closes for all of them, which is a campaign ending, not a mission expiring
+ * `[user 2026-08-24]`.
+ */
 export const DETAIL_OUT_OF_STOCK: MissionDetail = {
   name: 'ภารกิจเศรษฐีป้ายแดง',
   reward: 'หูฟัง Sony',
@@ -338,28 +350,6 @@ export const DETAIL_OUT_OF_STOCK: MissionDetail = {
   facts: [{ label: 'สิทธิ์คงเหลือ', value: '0 สิทธิ์' }],
   terms: 'ภารกิจนี้ปิดรับรางวัลแล้วในรอบนี้ · รอบถัดไปเริ่มเมื่อไหร่ยังไม่ยืนยัน',
   cta: { label: 'ของรางวัลหมดแล้ว', disabled: true },
-  links: ['ดูภารกิจอื่น'],
-};
-
-/** CTA 5/5 — หมดอายุ */
-export const DETAIL_EXPIRED: MissionDetail = {
-  name: 'ภารกิจเศรษฐีประจำงวด',
-  reward: 'กระเป๋าเดินทาง',
-  kind: 'ของส่งถึงบ้าน',
-  image: REWARD.luggage,
-  kindLabel: 'ของส่งถึงบ้าน',
-  campaignWindow: 'ช่วงแคมเปญ สิ้นสุด 30 ก.ย. 2569',
-  progress: {
-    current: 240,
-    target: 1000,
-    marks: [250, 500, 750, 1000],
-    unit: 'ใบ',
-    note: 'รอบนี้ปิดแล้ว',
-  },
-  steps: [{ state: 'todo', text: 'สะสมลอตเตอรี่ในแคมเปญนี้ครบ 1,000 ใบ', meta: 'ปิดรอบที่ 240 ใบ' }],
-  facts: [{ label: 'ช่วงแคมเปญ', value: 'สิ้นสุด 30 ก.ย. 2569' }],
-  terms: 'ยอดที่สะสมไว้ในรอบนี้ไม่ถูกยกไปรอบถัดไป · รอบถัดไปเริ่มเมื่อไหร่ยังไม่ยืนยัน',
-  cta: { label: 'หมดเวลาแล้ว', disabled: true },
   links: ['ดูภารกิจอื่น'],
 };
 
@@ -506,23 +496,16 @@ export const detailFor = (m: Mission): MissionDetail => {
 };
 
 /** A closed mission opens too — §4.2 keeps it tappable so the reason is readable. */
-export const detailForClosed = (m: ClosedMission): MissionDetail => {
-  const out = m.statusLabel.includes('หมดแล้ว');
-  return {
-    name: m.name,
-    reward: m.reward,
-    kind: 'ของส่งถึงบ้าน',
-    kindLabel: 'ของส่งถึงบ้าน',
-    image: REWARD.headphones,
-    campaignWindow: CAMPAIGN,
-    steps: [{ state: 'todo', text: m.cond, meta: out ? 'ยังทำได้ แต่รางวัลหมดแล้ว' : 'ปิดรอบแล้ว' }],
-    facts: out
-      ? [{ label: 'สิทธิ์คงเหลือ', value: '0 สิทธิ์' }]
-      : [{ label: 'ช่วงแคมเปญ', value: 'สิ้นสุด 30 ก.ย. 2569' }],
-    terms: out
-      ? 'ภารกิจนี้ปิดรับรางวัลแล้วในรอบนี้ · รอบถัดไปเริ่มเมื่อไหร่ยังไม่ยืนยัน'
-      : 'ยอดที่สะสมไว้ในรอบนี้ไม่ถูกยกไปรอบถัดไป · รอบถัดไปเริ่มเมื่อไหร่ยังไม่ยืนยัน',
-    cta: { label: m.statusLabel, disabled: true },
-    links: ['ดูภารกิจอื่น'],
-  };
-};
+export const detailForClosed = (m: ClosedMission): MissionDetail => ({
+  name: m.name,
+  reward: m.reward,
+  kind: 'ของส่งถึงบ้าน',
+  kindLabel: 'ของส่งถึงบ้าน',
+  image: REWARD.headphones,
+  campaignWindow: CAMPAIGN,
+  steps: [{ state: 'todo', text: m.cond, meta: 'ยังทำได้ แต่รางวัลหมดแล้ว' }],
+  facts: [{ label: 'สิทธิ์คงเหลือ', value: '0 สิทธิ์' }],
+  terms: 'ภารกิจนี้ปิดรับรางวัลแล้วในรอบนี้ · รอบถัดไปเริ่มเมื่อไหร่ยังไม่ยืนยัน',
+  cta: { label: m.statusLabel, disabled: true },
+  links: ['ดูภารกิจอื่น'],
+});

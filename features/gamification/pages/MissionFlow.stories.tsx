@@ -9,6 +9,7 @@ import Header from '../../../ui/components/Header/Header';
 import Toast from '../../../ui/components/Toast/Toast';
 import {
   MISSIONS_CLOSED,
+  MISSIONS_DONE,
   MISSIONS_OPEN,
   MISSION_BANNER,
   MISSION_DETAIL_TITLE,
@@ -69,15 +70,15 @@ const Flow: React.FC = () => {
       ? { ...m, tone: 'claimed', statusLabel: 'รับรางวัลแล้ว', daysLabel: undefined }
       : m;
 
-  const open = MISSIONS_OPEN.map(withClaims);
-  const done = open.filter((m) => m.tone === 'ready' || m.tone === 'claimed');
+  // A mission claimed during this run stays in `สำเร็จแล้ว`; the two tabs never hold the
+  // same mission at once.
+  const open = MISSIONS_OPEN;
+  const done = MISSIONS_DONE.map(withClaims);
 
   const missions = tab === 'open' ? open : done;
   const closed: ClosedMission[] = tab === 'open' ? MISSIONS_CLOSED : [];
 
-  const current = openId
-    ? (open.find((m) => m.id === openId) ?? null)
-    : null;
+  const current = openId ? ([...open, ...done].find((m) => m.id === openId) ?? null) : null;
   const currentClosed = openId ? (MISSIONS_CLOSED.find((m) => m.id === openId) ?? null) : null;
   const detail = current ? detailFor(current) : currentClosed ? detailForClosed(currentClosed) : null;
 
@@ -146,7 +147,7 @@ export const Prototype: StoryObj = {
     <div style={{ padding: 24 }}>
       <Caption>
         กดการ์ดเพื่อเข้ารายละเอียด · ลูกศรย้อนกลับพากลับมา · สลับแท็บได้ ·
-        “ภารกิจคนน่ารัก” ทำครบแล้ว กดรับรางวัลได้จริง แล้วสถานะจะเปลี่ยนทั้ง 2 หน้า ·
+        แท็บ “สำเร็จแล้ว” มี “ภารกิจคนน่ารัก” ที่ทำครบแล้ว กดรับรางวัลได้จริง ·
         ยังไม่มีหน้ายืนยันรับรางวัล (MSN-300/330) เพราะยังไม่ได้ออกแบบ — ตรงนั้นเว้นไว้ตามจริง
       </Caption>
       <Flow />

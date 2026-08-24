@@ -8,7 +8,6 @@ import Header from '../../../ui/components/Header/Header';
 import {
   DETAIL_CLAIMED,
   DETAIL_COMPLETED,
-  DETAIL_EXPIRED,
   DETAIL_IN_PROGRESS,
   DETAIL_OUT_OF_STOCK,
   MISSION_DETAIL_TITLE,
@@ -20,7 +19,7 @@ import {
 //
 //  Design: Claude Design project b20d61e7 › `Mission Screens.dc.html`, artboards 2b–2d.
 //
-//  จุด claim เดียวของระบบ (MECH-05) · CTA ปุ่มเดียว 5 สถานะ (§4.4) · ของที่ BP-02 บังคับให้
+//  จุด claim เดียวของระบบ (MECH-05) · CTA ปุ่มเดียว 4 สถานะ · ของที่ BP-02 บังคับให้
 //  อยู่เหนือปุ่ม — โควตา อายุของรางวัล เงื่อนไข — อยู่เหนือจริงทุกสถานะ
 //
 //  Placeholder บนหน้านี้ (ตาม DoD ของ ticket):
@@ -67,24 +66,20 @@ const Screen: React.FC<{ mission: MissionDetail }> = ({ mission }) => (
 
 const CASES: { caption: string; mission: MissionDetail }[] = [
   {
-    caption: 'CTA 1/5 · ยังไม่ครบเงื่อนไข — ปุ่มพาไปทำต่อ · เงื่อนไขแตกเป็น 3 ขั้น',
+    caption: 'CTA 1/4 · ยังไม่ครบเงื่อนไข — ปุ่มพาไปทำต่อ · เงื่อนไขแตกเป็น 3 ขั้น',
     mission: DETAIL_IN_PROGRESS,
   },
   {
-    caption: 'CTA 2/5 · ครบแล้ว ยังไม่รับ — จุด claim เดียวของระบบ (MECH-05)',
+    caption: 'CTA 2/4 · ครบแล้ว ยังไม่รับ — จุด claim เดียวของระบบ (MECH-05)',
     mission: DETAIL_COMPLETED,
   },
   {
-    caption: 'CTA 3/5 · รับแล้ว — ปุ่มปิด แต่ยังมีทางไปปลายทางครบ 3 แบบ (AC7)',
+    caption: 'CTA 3/4 · รับแล้ว — ปุ่มปิด แต่ยังมีทางไปปลายทางครบ 3 แบบ (AC7)',
     mission: DETAIL_CLAIMED,
   },
   {
-    caption: 'CTA 4/5 · ของหมด — บอกเหตุผล + ทางอื่น ไม่ใช่ pattern ของ error (BP-05)',
+    caption: 'CTA 4/4 · ของหมด — บอกเหตุผล + ทางอื่น ไม่ใช่ pattern ของ error (BP-05) · ไม่มีสถานะหมดเวลา ทุกภารกิจใช้ช่วงแคมเปญเดียวกัน',
     mission: DETAIL_OUT_OF_STOCK,
-  },
-  {
-    caption: 'CTA 5/5 · หมดอายุ — ปิดรอบแล้ว แต่ยังมีทางออก (BP-01)',
-    mission: DETAIL_EXPIRED,
   },
 ];
 
@@ -108,9 +103,9 @@ export const Completed: StoryObj = {
   ),
 };
 
-/** AC6 — CTA ครบทั้ง 5 สถานะในที่เดียว */
+/** AC6 — CTA ครบทุกสถานะในที่เดียว · 4 ไม่ใช่ 5 เพราะไม่มีหมดเวลา */
 export const EveryCtaState: StoryObj = {
-  name: 'CTA ครบ 5 สถานะ',
+  name: 'CTA ครบ 4 สถานะ',
   render: () => (
     <div style={{ padding: 24, display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'flex-start' }}>
       {CASES.map(({ caption, mission }) => (
