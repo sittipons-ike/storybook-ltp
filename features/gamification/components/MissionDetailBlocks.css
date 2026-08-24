@@ -91,18 +91,14 @@
 }
 
 
-.ltp-mission-block__kind {
-  font-size: var(--sys-type-caption-md-regular-size);
-  line-height: var(--sys-type-caption-md-regular-line-height);
-  font-weight: var(--sys-type-label-md-semibold-weight);
-  letter-spacing: 0.08em;
-  color: var(--sys-color-text-on-bgcolor);
-}
-
+/* Same measurement as the card's reward: Thai at 20/600 inks 27.6px when a vowel and a
+   tone mark stack, so the 28 this rule used to invent was a hair over the ink and a step
+   off the scale. 36 is the system's own answer for every 20px role. */
 .ltp-mission-block__reward {
   font-size: var(--sys-type-display-xl-semibold-size);
-  line-height: 28px;
+  line-height: var(--sys-type-display-xl-semibold-line-height);
   font-weight: var(--sys-type-display-xl-semibold-weight);
+  text-wrap: pretty;
 }
 
 .ltp-mission-block__count {
@@ -120,9 +116,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--sys-type-caption-md-regular-size);
-  line-height: var(--sys-type-caption-md-regular-line-height);
-  font-weight: var(--sys-type-label-md-semibold-weight);
 }
 
 .ltp-mission-block__mark--done {
@@ -157,11 +150,14 @@
   gap: var(--sys-spacing-xl);
 }
 
-/* A value the product has not settled reads as a machine value, never as an answer. */
+/* A value the product has not settled reads as a machine value, never as an answer. The
+   mono family is deliberate debt — the system has no mono role, and a role that fits would
+   defeat the signal. The 11px it used to be was on no scale at all; at 12/18 it matches the
+   settled values it sits beside, which is the honest comparison to invite. */
 .ltp-mission-block__pending {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 11px;
-  line-height: 18px;
+  font-size: var(--sys-type-caption-lg-regular-size);
+  line-height: var(--sys-type-caption-lg-regular-line-height);
   color: var(--sys-color-status-warning-darker);
 }
 
@@ -284,6 +280,9 @@
 .ltp-mission-rung__text {
   flex: 1 1 auto;
   min-width: 0;
+  /* Three thresholds stacked in a column: 50 · 200 · 500. Proportional digits would make
+     them ragged against each other for no reason. */
+  font-variant-numeric: tabular-nums;
 }
 
 .ltp-mission-rung__state {

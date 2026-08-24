@@ -117,7 +117,13 @@ const MissionProgress: React.FC<MissionProgressProps> = ({
   );
 };
 
-/** A number pinned under its own mark, pulled back inside the rail at either end. */
+/**
+ * A number pinned under its own mark, pulled back inside the rail at either end.
+ *
+ * Set at 12px, not the 10 it used to be. On a ladder the rungs are drawn equal-width while
+ * the numbers they stand for are not, so these labels are the only thing keeping the
+ * picture honest — the smallest step in the scale is the wrong place for that job.
+ */
 const RailLabel: React.FC<{ left: number; children: React.ReactNode }> = ({ left, children }) => {
   const shift = left <= 2 ? '0' : left >= 98 ? '-100%' : '-50%';
   return (
@@ -125,7 +131,7 @@ const RailLabel: React.FC<{ left: number; children: React.ReactNode }> = ({ left
       className="ltp-mission-progress__label"
       style={{ left: `${left}%`, transform: `translateX(${shift})` }}
     >
-      <Text role="caption-md-regular" tone="tertiary">{children}</Text>
+      <Text role="caption-lg-regular" tone="tertiary">{children}</Text>
     </span>
   );
 };

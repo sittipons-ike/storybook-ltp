@@ -7,6 +7,7 @@ import Text from '../../../ui/components/Text/Text';
 import Skeleton from '../../../ui/components/Skeleton/Skeleton';
 import Logo from '../../../ui/logos/Logo';
 import MissionCard, { MissionClosedCard } from '../components/MissionCard';
+import bindUnits from '../components/bindUnits';
 import type { ClosedMission, Mission } from '../fixtures';
 
 /**
@@ -135,10 +136,13 @@ const MissionListPage: React.FC<MissionListPageProps> = ({
                 {empty.title}
               </Text>
               <Text role="body-md-regular" tone="tertiary" align="center" as="p">
-                {empty.body}
+                {bindUnits(empty.body)}
               </Text>
+              {/* 10px was the bottom of the scale and this line is centred Thai that the
+                  reader is meant to read, not an eyebrow. It sits at the same 12px as every
+                  other unsettled value in the feature. */}
               {empty.note && (
-                <Text role="caption-md-regular" tone="tertiary" align="center" as="p">
+                <Text role="caption-lg-regular" tone="tertiary" align="center" as="p">
                   {empty.note}
                 </Text>
               )}

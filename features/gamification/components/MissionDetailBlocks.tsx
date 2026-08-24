@@ -11,6 +11,7 @@ import '../../../ui/icons/icon-data';
 import MissionProgress, { MissionLadder, MissionTracks } from './MissionProgress';
 import type { MissionRung, MissionShape, MissionTrack } from './MissionProgress';
 import type { MissionFact, MissionStep } from '../fixtures';
+import bindUnits from './bindUnits';
 import './MissionDetailBlocks.css';
 
 // ═══════════════════════════════════════════
@@ -34,6 +35,16 @@ import './MissionDetailBlocks.css';
  * 3.80:1 on brand red and white reads 4.64:1.
  */
 const HERO_META = { color: sys('color-text-on-bgcolor') } as const;
+
+/**
+ * Let the browser balance the last line.
+ *
+ * Binding a count to its unit stops "1" and "ครั้ง" landing on different lines, but it can
+ * leave the pair alone on a line of its own — the note under the rail broke to a second
+ * line holding nothing but "เหลืออีก 9 วัน". `pretty` asks the engine to pull a word down
+ * rather than strand one, which is the half of the problem a non-breaking space cannot fix.
+ */
+const BALANCED = { textWrap: 'pretty' } as const;
 const BANNER_TITLE = { color: sys('color-status-success-darker') } as const;
 const BANNER_BODY = { color: sys('color-status-success-dark') } as const;
 
@@ -126,7 +137,7 @@ export const MissionProgressCard: React.FC<MissionProgressCardProps> = ({
         )}
       </>
     )}
-    <Text role="caption-lg-regular" tone="tertiary">{note}</Text>
+    <Text role="caption-lg-regular" tone="tertiary" style={BALANCED}>{bindUnits(note)}</Text>
   </Surface>
 );
 
@@ -174,7 +185,7 @@ export const MissionRungList: React.FC<{ name: string; rungs: MissionRung[]; uni
             <img src={rung.image} alt="" />
           </span>
           <Stack gap="none" className="ltp-mission-rung__text">
-            <Text role="body-md-semibold" tone="secondary">{rung.reward}</Text>
+            <Text role="body-md-semibold" tone="secondary" style={BALANCED}>{rung.reward}</Text>
             <Text role="caption-lg-regular" tone="tertiary">
               ถึง {rung.at.toLocaleString('en-US')}{unit ? ` ${unit}` : ''}
             </Text>
@@ -242,10 +253,10 @@ export const MissionSteps: React.FC<{ name: string; steps: MissionStep[] }> = ({
           )}
         </span>
         <Stack gap="none">
-          <Text role="body-md-regular" tone="secondary" style={{ textWrap: 'pretty' }}>
-            {step.text}
+          <Text role="body-md-regular" tone="secondary" style={BALANCED}>
+            {bindUnits(step.text)}
           </Text>
-          <Text role="caption-lg-regular" tone="tertiary">{step.meta}</Text>
+          <Text role="caption-lg-regular" tone="tertiary" style={BALANCED}>{bindUnits(step.meta)}</Text>
         </Stack>
       </Stack>
     ))}
@@ -267,21 +278,27 @@ export const MissionFacts: React.FC<{ facts: MissionFact[]; terms: string }> = (
   terms,
 }) => (
   <div className="ltp-mission-block__facts">
-    <Text role="body-md-semibold" tone="secondary">สิ่งที่ต้องรู้ก่อนกด</Text>
+    {/* A section heading, and the fourth on this screen. It used to be set a step below
+        "ความคืบหน้า" and "เงื่อนไขที่ต้องทำให้ครบ", which made the block BP-02 puts closest
+        to the button read as the least important thing on the page. */}
+    <Text role="title-lg-semibold" tone="secondary">สิ่งที่ต้องรู้ก่อนกด</Text>
     <Stack gap="md">
       {facts.map((fact) => (
+        /* The value carries one weight more than its label: it is what the row was read
+           for, while the label only says which question it answers. Same size — a second
+           size would add a step to a scale this screen already uses five of. */
         <div className="ltp-mission-block__fact" key={fact.label}>
           <Text role="caption-lg-regular" tone="tertiary">{fact.label}</Text>
           {fact.pending ? (
             <span className="ltp-mission-block__pending">{fact.value}</span>
           ) : (
-            <Text role="caption-lg-regular" tone="secondary" align="right">{fact.value}</Text>
+            <Text role="label-md-semibold" tone="secondary" align="right">{bindUnits(fact.value)}</Text>
           )}
         </div>
       ))}
     </Stack>
     <Divider tone="light-gray" lineStyle="solid" />
-    <Text role="caption-lg-regular" tone="tertiary" style={{ textWrap: 'pretty' }}>{terms}</Text>
+    <Text role="caption-lg-regular" tone="tertiary" style={BALANCED}>{bindUnits(terms)}</Text>
   </div>
 );
 

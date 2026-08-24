@@ -78,30 +78,45 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--sys-spacing-sm);
+  /* No gap. The reward line carries 36px of leading on a 24px glyph box, which already
+     leaves 6px of air above and below it; an added gap would be counted twice and push
+     the reward away from the name it belongs to. */
+  gap: var(--sys-spacing-none);
 }
 
-/* The reward type, set as an eyebrow: which of the three endings this one has. Small and
-   tracked out rather than tinted — see the band's note. */
+/* The reward type, set as an eyebrow: which of the three endings this one has. Weight and
+   size separate it from the reward, not tracking — this text is Thai, and Thai letters are
+   written without spaces between words while a vowel and its tone mark belong to the
+   consonant they sit on. Tracking them apart breaks the cluster the reader is looking for.
+   The design system agrees: all 35 of its tracking tokens are 0. */
 .ltp-mission-card__kind {
   font-size: var(--sys-type-caption-md-regular-size);
   line-height: var(--sys-type-caption-md-regular-line-height);
   font-weight: var(--sys-type-label-md-semibold-weight);
-  letter-spacing: 0.08em;
   color: var(--sys-color-text-on-bgcolor);
 }
 
+/* 36px of leading on 20px type looks generous until you measure the language. Graphik TH
+   at 20/600 reports a 24px font box, but a Thai cluster carrying both an upper vowel and a
+   tone mark inks 27.6px — so 24 clips and the 26 this rule used to invent still fell short.
+   36 is the only step in the scale that clears it, which is why every 20px role in the
+   system is set at 36. */
 .ltp-mission-card__reward {
   font-size: var(--sys-type-display-xl-semibold-size);
-  line-height: 26px;
+  line-height: var(--sys-type-display-xl-semibold-line-height);
   font-weight: var(--sys-type-display-xl-semibold-weight);
   text-wrap: pretty;
 }
 
+/* The name of the mission, one weight above the metadata below it. Same size — it is not
+   more important than the days left, it is a different KIND of thing, and weight says that
+   where another size would only add a fourth step to a card that has enough. */
 .ltp-mission-card__name {
   font-size: var(--sys-type-caption-lg-regular-size);
   line-height: var(--sys-type-caption-lg-regular-line-height);
+  font-weight: var(--sys-type-label-md-medium-weight);
   color: var(--sys-color-text-on-bgcolor);
+  text-wrap: pretty;
 }
 
 .ltp-mission-card__body {
@@ -153,9 +168,15 @@
   border-radius: var(--sys-radius-lg);
   background: var(--sys-color-status-warning-soft-light);
   color: var(--sys-color-status-warning-darker);
+  /* Monospace is the one thing here with no token behind it — the system has no mono
+     family, and the signal is the point: an unsettled number must not read as an answer.
+     Recorded as debt rather than approximated with a role that would hide it.
+     Size and leading do come from the scale: this is a fact's value, the thing the row
+     was read for, so it sits at the same 12/18 as every other value and not at the 10px
+     an eyebrow gets. */
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 10px;
-  line-height: 16px;
+  font-size: var(--sys-type-caption-lg-regular-size);
+  line-height: var(--sys-type-caption-lg-regular-line-height);
 }
 
 /* ── closed: ran out, or ran late ──────────────────────────────────────────────

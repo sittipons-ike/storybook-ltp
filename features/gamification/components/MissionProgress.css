@@ -74,9 +74,11 @@
 
 /* Labels sit under their own mark, not in equal columns. Each is centred on its mark and
    pulled back inside the rail at the two ends so 0 and the target stay on the card. */
+/* The labels are absolutely placed, so the row needs a height of its own — taken from the
+   leading of the type inside it, which means it follows if that type ever changes. */
 .ltp-mission-progress__labels {
   position: relative;
-  height: 16px;
+  height: var(--sys-type-caption-lg-regular-line-height);
 }
 
 .ltp-mission-progress__label {

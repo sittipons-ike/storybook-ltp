@@ -3,6 +3,7 @@ import '../../../ui/foundations/tokens.css';
 import { sys } from '../../../ui/foundations/tokens';
 import Text from '../../../ui/components/Text/Text';
 import MissionProgress, { MissionLadder, MissionTracks } from './MissionProgress';
+import bindUnits from './bindUnits';
 import type { MissionRung, MissionShape, MissionTrack } from './MissionProgress';
 
 export type { MissionShape } from './MissionProgress';
@@ -140,7 +141,9 @@ const MissionCard: React.FC<MissionCardProps> = ({
           "ซื้อต่อเนื่อง 3 งวด + ใช้จิ๊ดริดกล่องสุ่ม 3" above them is the card saying the
           same thing twice within an inch. AC-301 #2 is met by the rows, better. */}
       {shape !== 'pair' && (
-        <Text role="body-md-regular" tone="secondary" style={{ textWrap: 'pretty' }}>{cond}</Text>
+        <Text role="body-md-regular" tone="secondary" style={{ textWrap: 'pretty' }}>
+          {bindUnits(cond)}
+        </Text>
       )}
 
       {shape === 'pair' ? (
@@ -224,7 +227,7 @@ export const MissionClosedCard: React.FC<MissionClosedCardProps> = ({
           unreadable. Text's own `disable` role is #D4D4D4 and is fainter still. */}
       <Text role="title-lg-semibold" style={{ color: sys('color-tertiary-accent-lg') }}>{reward}</Text>
       <Text role="caption-lg-regular" style={{ color: sys('color-tertiary-accent-lg') }}>
-        {name} · {cond}
+        {name} · {bindUnits(cond)}
       </Text>
       <span className="ltp-mission-card__pill ltp-mission-card__closed-pill">{statusLabel}</span>
     </div>
