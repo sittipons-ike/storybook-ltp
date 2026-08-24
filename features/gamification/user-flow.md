@@ -4,6 +4,19 @@
 > Page: `↳ ✅ Mission/Gamification` · Section: `User Flow — Mission Journey` (`997:50213`)
 > Extracted: 2026-08-05 · 8363 × 1345 px · 29 nodes + 29 connectors
 
+> ⚠️ **นี่คือ snapshot ของ Figma ณ 2026-08-05 ไม่ใช่ flow ที่จะ implement**
+> flow ที่ใช้จริง → `features/gamification/ux-gamification.md` §3
+>
+> | node ในไฟล์นี้ | สถานะปัจจุบัน |
+> |---|---|
+> | `Onboarding` + decision `เข้าภารกิจนี้ครั้งแรก?` | ⏸️ เลื่อนออก — ทุกคนเข้าหน้าเดียวกัน (ux §2.2) |
+> | `แสดง tier ที่ยังไม่ครบ` (D5) | ❌ ขัด MECH-02 — ห้ามใช้คำว่า tier ใน UI · แทนด้วย "เงื่อนไขที่ยังขาด + preview รางวัล" |
+> | `D8 สินค้าเป็นคูปอง ไม่ใช่สินค้า?` (แตก 2 ทาง) | 🔁 แตกเป็น **3 ทาง** ตาม `reward_type` — `NOKPOINT` / `E_COUPON` / `PHYSICAL` (prd-dev §2.1.1) |
+> | `รอรับสินค้าที่บ้าน` | ❌ ตัดถาวร — CRM ส่งสถานะกลับไม่ได้ ใช้ LINE OA แทน |
+> | ไม่มี error / loading / back path | ✅ เติมแล้วใน ux §3.4, §6 |
+>
+> **ยังไม่มีเจ้าภาพแก้ Figma ต้นทาง** — 3 อย่างค้างอยู่: node `tier`, orphan node ซ้อน, typo D6 (ดู §ข้อสังเกตท้ายไฟล์)
+
 ---
 
 ## Diagram

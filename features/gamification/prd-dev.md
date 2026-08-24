@@ -1,18 +1,34 @@
 # PRD — Mission & Reward System (Dev / Designer)
 
-**Version** 1.0 · **Date** 2026-08-05 · **Target** ทีม Dev / Designer
-**Supersedes** `prd-mission-gamification.md` v0.2 (2026-07-22) เฉพาะส่วนกลไกจ่ายรางวัลและ KPI
+**Version** 1.1 · **Date** 2026-08-23 · **Target** ทีม Dev / Designer
+**Supersedes** `features/gamification/prd.md` v0.2 (2026-07-22) เฉพาะส่วนกลไกจ่ายรางวัลและ KPI
+
+**เปลี่ยนจาก v1.0 (2026-08-23)**
+
+| # | เปลี่ยนอะไร | section |
+|---|---|---|
+| 1 | เพิ่มโครงสร้าง **Mission : Task** 3 แบบ จาก Figma `2250:46164` | §6.0 ใหม่ · MT-01/MT-02 |
+| 2 | ตาราง FREQUENCY + VOLUME อัปเดตตาม Figma — `% Reward` ปรับขึ้นเกือบทุกขั้น | §6.1 · §6.2 |
+| 3 | เจอว่าเงื่อนไข Jidrid ใน Figma ระบุ **ขนาดกล่องเจาะจง** ขัดกับ JID-01 | §2.2 · §6.1 · OPEN-20 |
+| 4 | `% Reward` = **เพดานงบ** ไม่ใช่มูลค่ารางวัล — ปิด OPEN-03 ได้ครึ่งหนึ่ง | §6.1 · OPEN-03 |
+| 5 | เพดานงบคำนวณใหม่ **58.96M** (เดิมอ้าง 35.46M) | §6.4 ใหม่ · OPEN-02 |
+| 6 | State machine เขียนใหม่ — แก้ `OUT_OF_STOCK` ที่ห้อยผิดที่ + แยกปลายทางตาม `reward_type` | §5.2 · ST-05/ST-06 |
+| 7 | Analytics จัดเป็นตาราง — เพิ่ม event ของ popup/redirect/fulfillment · ตัด `onboarding_completed` | §5.7 |
+| 8 | `AC-503` ที่ซ้ำกัน 2 ตัว → ตัวที่ว่าด้วยโควตาเปลี่ยนเป็น **AC-505** | §3.6 |
+| 9 | Roadmap ล้างซากของ v1.0 (tab รางวัล · ชื่อ reward type เก่า · onboarding) | §9 |
+| 10 | เพิ่ม OPEN-18 (MVP scope ขัดเกณฑ์ผ่าน) · OPEN-19 (เพดานแต้มขัดตาราง) · OPEN-20 (นิยาม Jidrid) | §8 |
 
 ## Sources
 
 | Tag | Source | ใช้กับ section |
 |---|---|---|
 | `[lark]` | Lark Wiki · Gamification (`De81dCgcgoxI5BxVhwZlGV2Wgme`, แก้ล่าสุด 2026-08) | ปัญหา · ตาราง tier · KPI · ความเสี่ยง |
-| `[flow]` | `gamification/user-flow-mission-journey.md` (Figma HandOver · 29 nodes / 29 connectors) | User stories · state machine · edge cases |
-| `[deck]` | `deck-gamification.html` (16 สไลด์ · competitor reference 2026-08-05) | ข้อเสนอ UX ที่ยังไม่อยู่ใน flow |
-| `[v0.2]` | `docs/prd/prd-mission-gamification.md` v0.2 | Non-goals · roadmap · anti-abuse · ข้อค้าง |
-| `[brand]` | `LTP-Brandbook/brand-book-LTP-core.md` + `-overview.md` + `-personas.md` | Values · personas · constraint |
+| `[flow]` | `features/gamification/user-flow.md` (Figma HandOver · 29 nodes / 29 connectors) | User stories · state machine · edge cases |
+| `[deck]` | `_source/deck-gamification.html` (16 สไลด์ · competitor reference 2026-08-05) | ข้อเสนอ UX ที่ยังไม่อยู่ใน flow |
+| `[v0.2]` | `features/gamification/prd.md` v0.2 | Non-goals · roadmap · anti-abuse · ข้อค้าง |
+| `[brand]` | `brand/brand-book-core.md` + `-overview.md` + `-personas.md` | Values · personas · constraint |
 | `[user]` | Phase 1 interview 2026-08-05 | กลไกจ่ายรางวัล · ชุด KPI · target |
+| `[figma]` | Figma · Marketing view → `✅ Flow - Mission Feature` → section `Ex : list misstion` (`2250:46164`, อ่าน 2026-08-23) | §6.0 โครงสร้าง Mission:Task · §6.1 · §6.2 · §6.4 |
 
 ---
 
@@ -76,6 +92,8 @@
 | `JIDRID_10` | สุ่ม 10 ใบ |
 
 **JID-01 (MUST)** — "ใช้ Jidrid ≥N ประเภท" = เคยซื้อกล่องสุ่ม **ขนาดที่ต่างกัน** อย่างน้อย N ขนาด — นับ `COUNT(DISTINCT jidrid_type)` ไม่ใช่จำนวนครั้ง `[user 2026-08-06]`
+
+> 🔴 **JID-01 กลับมาเปิดอีกครั้ง 2026-08-23** — Figma `2250:46165` ระบุ **ขนาดกล่องเจาะจง** ต่อ tier ไม่ใช่ "จำนวนประเภท" (ดู §6.1) · ห้ามเขียน rule engine จนกว่า **OPEN-20** จะปิด
 **เหตุผล:** เป้าหมายของแกน FREQUENCY คือให้ลองใช้ feature ให้กว้าง ส่วน "ซื้อเยอะ" มีแกน VOLUME รับอยู่แล้ว
 
 ผลที่ต้องยอมรับ: ผู้ใช้ที่ซื้อ `JIDRID_10` ซ้ำ 5 ครั้ง (5,250 บาท) ยังนับเป็น 1 ประเภท → ไม่ผ่าน HARD จนกว่าจะแตะขนาดอื่น
@@ -248,7 +266,7 @@ CTA รับรางวัล (อยู่บนหน้ารายละ�
 - ต้องมีทางไปหน้า NokPoint จากหน้ายืนยัน
 - แต้มจากภารกิจต้องแยก `reason` ใน ledger ได้ เพื่อ reconcile กับแต้มจากช่องทางอื่น
 
-**AC-503 — โควตา**
+**AC-505 — โควตา**
 - โควตาคงเหลือต้องแสดง **ตั้งแต่หน้ารายละเอียดภารกิจ ก่อนผู้ใช้เริ่มทำ** `[deck]`
 - Given โควตาหมดระหว่างที่ผู้ใช้ทำภารกิจอยู่, Then ต้องแจ้งทันทีที่หน้าภารกิจ ไม่ใช่ตอนกดรับ
 - การตัดโควตาต้อง atomic — ห้ามแจกเกินจำนวนที่ประกาศไว้ (ดู §5.4)
@@ -286,12 +304,28 @@ CTA รับรางวัล (อยู่บนหน้ารายละ�
 ### 5.2 Mission state machine
 
 ```
-LOCKED → IN_PROGRESS → COMPLETED → CLAIMED
-                          ↓            ↓
-                       EXPIRED     REDEEMED / FULFILLED
-                          ↓
-                     OUT_OF_STOCK
+LOCKED ──► IN_PROGRESS ──► COMPLETED ──► CLAIMED ──► ปลายทางตาม reward_type
+              │   ▲            │  │                      ├─ NOKPOINT  → CREDITED
+              │   └────────────┘  │                      ├─ E_COUPON  → ISSUED → REDEEMED
+              │    refund ถอย     │                      └─ PHYSICAL  → FULFILLMENT_REQUESTED
+              │    (SET-03)       │                                        → FULFILLED
+              ▼                   ▼
+           EXPIRED           EXPIRED / OUT_OF_STOCK
 ```
+
+| State | เมื่อไหร่ | หน้าจอที่ผูก |
+|---|---|---|
+| `LOCKED` | ภารกิจยังไม่เปิด หรือยังไม่ถึงรอบ | การ์ด disabled ใน `MSN-201` |
+| `IN_PROGRESS` | มี event แรกแล้ว เงื่อนไขยังไม่ครบ | `MSN-210` CTA = "ไปทำภารกิจ" |
+| `COMPLETED` | เงื่อนไขครบ (นับเฉพาะ progress ที่ `CONFIRMED`) ยังไม่ claim | `MSN-210` CTA = "รับรางวัล" · `MSN-003` popup |
+| `CLAIMED` | claim สำเร็จ ตัด stock แล้ว (QT-01) | `MSN-922` |
+| `CREDITED` | `NOKPOINT` เข้าบัญชีแล้ว | `MSN-330a` |
+| `ISSUED` → `REDEEMED` | `E_COUPON` ออกโค้ดแล้ว → ผู้ใช้ใช้คูปองที่ NokShop | `MSN-330b` → นอกระบบภารกิจ |
+| `FULFILLMENT_REQUESTED` → `FULFILLED` | `PHYSICAL` CRM รับเรื่องแล้ว → ของถึงมือ | `MSN-330c` · **ผู้ใช้ไม่เห็น transition นี้ในแอป** (CRM one-way) |
+| `EXPIRED` | หมดเวลาก่อนทำครบ หรือหมดอายุก่อน claim | `MSN-921` |
+| `OUT_OF_STOCK` | `stock_left = 0` ก่อน claim | `MSN-920` |
+
+> `PENDING` / `CONFIRMED` (§5.2.1) เป็น**สถานะของ progress record ไม่ใช่ของ mission** — mission ที่มี progress `PENDING` ค้างอยู่ยังคงเป็น `IN_PROGRESS` (SET-01)
 
 | # | Requirement | เหตุผล |
 |---|---|---|
@@ -299,6 +333,8 @@ LOCKED → IN_PROGRESS → COMPLETED → CLAIMED
 | ST-02 | Evaluation ต้อง **idempotent** ต่อ (user, mission, source_event) | กัน double-grant จาก retry |
 | ST-03 | ทุก transition ต้องเขียน audit log ที่ย้อนกลับได้ | value INTEGRITY — ระบบผิดบริษัทรับผิด ไม่มีข้อแก้ตัว `[brand]` |
 | ST-04 | `EXPIRED` และ `OUT_OF_STOCK` ต้องมีทางกลับเข้า List | flow ปัจจุบันไม่มี back path จาก edge state `[flow]` |
+| ST-05 | `EXPIRED` และ `OUT_OF_STOCK` ต้องเข้าถึงได้จาก `COMPLETED` **โดยตรง** ไม่ใช่ผ่านกันเอง | ของหมดกับหมดอายุเป็นคนละเหตุ เกิดอันไหนก่อนก็ได้ |
+| ST-06 | ปลายทางหลัง `CLAIMED` ต้องแยกตาม `reward_type` และเก็บแยกกัน | `CREDITED` จบทันที · `REDEEMED` เกิดนอกระบบภารกิจ · `FULFILLED` เกิด offline (SLA-05 ต้องเก็บ timestamp ทั้ง 2 จุด) |
 
 ### 5.2.1 Progress settlement — PENDING / CONFIRMED
 
@@ -366,9 +402,18 @@ purchase event → progress +1 (PENDING)  ← ผู้ใช้เห็นค�
 
 ### 5.7 Analytics events (ขั้นต่ำที่ต้องมีเพื่อวัด M1/M2)
 
-`mission_entry_viewed` (source: banner/icon/popup) · `onboarding_completed` · `mission_list_viewed` · `mission_opened` · `mission_progress_changed` · `mission_completed` · `reward_claim_started` · `reward_claim_succeeded` · `reward_claim_failed` (reason: `ALREADY_CLAIMED` / `EXPIRED` / `OUT_OF_STOCK`) · `coupon_redeemed` · `followup_shown` · `followup_clicked` · `followup_dismissed`
+| กลุ่ม | Event | หมายเหตุ |
+|---|---|---|
+| Entry | `mission_entry_viewed` (source: `banner` / `icon` / `popup`) · `mission_list_viewed` · `mission_opened` | |
+| Popup ภารกิจสำเร็จ (`MSN-003`) | `success_popup_shown` · `success_popup_clicked` · `success_popup_dismissed` | ต้องแยกจาก `followup_*` ซึ่งเป็นของ `MSN-500` — คนละ trigger คนละข้อความ |
+| Progress | `mission_progress_changed` (`settlement`: `PENDING` / `CONFIRMED`) · `mission_completed` | ติด `settlement` เพื่อวัด latency ตาม OPEN-05 |
+| Claim | `reward_claim_started` · `reward_claim_succeeded` (`reward_type`) · `reward_claim_failed` (reason: `ALREADY_CLAIMED` / `EXPIRED` / `OUT_OF_STOCK` / `NETWORK` / `SERVER`) | `NETWORK`/`SERVER` แยกจาก business rule ตาม BP-05 |
+| ปลายทาง | `coupon_redirect_succeeded` · `coupon_redirect_failed` · `coupon_redeemed` · `points_credited` · `fulfillment_requested` | `coupon_redirect_failed` คือเคส BP-08 · `fulfillment_requested` ผูก timestamp ของ SLA-05 |
+| Follow-up (`MSN-500`) | `followup_shown` · `followup_clicked` · `followup_dismissed` | |
 
 ทุก event ต้องมี `campaign_id`, `mission_id`, `axis`
+
+> ตัด `onboarding_completed` ออกแล้ว — onboarding เลื่อนออกจาก scope รอบนี้ (ux §2.2) ให้ใส่กลับเมื่อ `MSN-100/110` กลับเข้า scope
 
 ### 5.8 Error & loading states — ช่องว่างจาก flow
 
@@ -385,29 +430,54 @@ flow ปัจจุบัน **ไม่มี error / loading state ตอน�
 
 ## 6. Data reference (ตาราง tier — internal)
 
-### 6.1 FREQUENCY `[lark]`
+### 6.0 โครงสร้าง Mission : Task `[figma]`
 
-| Tier (internal) | ชื่อภารกิจ | เงื่อนไข | ใบขั้นต่ำ | จำนวนคน | รางวัล |
-|---|---|---|---|---|---|
-| EASY | ภารกิจคนน่ารัก | ซื้อต่อเนื่อง 2 งวด | 2 | 257,146 | 10 นกพ้อย |
-| NORMAL | ภารกิจพิชิตใจจิ๊ดริด | ต่อเนื่อง 3 งวด + Jidrid ≥1 ประเภท | 5 | 28,981 | 20 นกพ้อย |
-| HARD | ภารกิจขาประจำตัวตึง | ต่อเนื่อง >4 งวด + Jidrid ≥2 ประเภท | 10 | 6,879 | โค้ด Thaimart 100.- |
-| VERY HARD | ภารกิจศิษย์เอกจิ๊ดริด | ต่อเนื่อง 6 งวด + Jidrid ครบ 3 ประเภท | 21 | 3,734 | โค้ด Thaimart 300.- |
+Figma `2250:46164` แบ่งภารกิจเป็น 3 กลุ่ม โดยแต่ละกลุ่มมีรูปแบบการแตก task ต่างกัน — dev ใช้เป็นโครง `rule_spec` (§5.1)
 
-> ⚠️ คอลัมน์ `% Reward` ในต้นฉบับระบุมูลค่า (20.- / 50.- / 150.- / 440.-) ไม่ตรงกับคอลัมน์รางวัลจริง (10 นกพ้อย / 20 นกพ้อย / โค้ด 100.- / โค้ด 300.-) — ต้องยืนยัน (OPEN-03)
-> ⚠️ ยังขาดขั้น **STARTER** ที่จบได้ภายในงวดเดียว ซึ่ง `[lark]` ระบุเองว่าต้องมี เพราะ "ซื้อต่อเนื่อง 2 งวด" คือด่านที่ 72% แพ้อยู่แล้ว — **ยังไม่มีเงื่อนไขและรางวัล** (OPEN-07)
+| กลุ่ม | Tier ที่อยู่ในกลุ่ม | โครงสร้าง | แปลว่า |
+|---|---|---|---|
+| **VOLUME #1** | BEGINNER · EASY · NORMAL | `1 Mission : 3 Task ประเภทเดียวกันแบบต่อเนื่อง` | ภารกิจเดียวแตกเป็น 3 หมุดย่อยชนิดเดียวกัน ทำไล่กันไป → ผูกกับ "หมุดระหว่างทาง" ใน AC-301 |
+| **VOLUME #2** | HARD · VERY HARD · EXTREME · LEGENDARY | `1 Mission : 1 Task แบบต่อเนื่อง` | ภารกิจเดียว task เดียว วิ่งยาวตลอดแคมเปญ ไม่มีหมุดย่อย |
+| **FREQUENCY** | EASY · NORMAL · HARD · VERY HARD | `1 Mission : 2 Task คนละประเภท` | ภารกิจเดียวมี 2 เงื่อนไข**คนละชนิด** ที่ต้องผ่านทั้งคู่ — "ซื้อต่อเนื่อง N งวด" + "ใช้ Jidrid กล่องสุ่ม X" |
 
-### 6.2 VOLUME `[lark]` — 3 เดือน / 6 งวด · profit 15 บาท/ใบ
+**MT-01 (MUST)** — `MissionProgress.milestones[]` ต้องรองรับทั้ง 3 แบบ: 3 หมุดชนิดเดียวกัน · 1 หมุด · 2 หมุดคนละชนิดที่นับแยกกัน
+**MT-02** — กลุ่ม FREQUENCY มี 2 task คนละประเภท → การ์ดต้องแสดง progress **แยก 2 เส้น** ไม่ใช่ `X/Y` เส้นเดียว (กระทบ AC-301 ข้อ 3 และ ux §4.3)
 
-| Tier (internal) | ชื่อภารกิจ | จำนวนใบ | จำนวนคน | รางวัล | โควตา |
-|---|---|---|---|---|---|
-| LEGENDARY | ภารกิจจักรพรรดิ | 20,000+ | 7 | iPhone 18 Pro · Galaxy Fold 8 | TBD |
-| EXTREME | ภารกิจมหาเศรษฐี | 10,000–19,999 | 20 | Dyson Purifier Big+Quiet | TBD |
-| VERY HARD | ภารกิจเจ้าสัว | 3,000–9,999 | 248 | Apple Watch / Whoop | TBD |
-| HARD | ภารกิจเศรษฐีประจำงวด | 1,000–2,999 | 1,627 | กระเป๋าเดินทาง · หม้อทอดไร้น้ำมัน | TBD |
-| NORMAL | ภารกิจเศรษฐีป้ายแดง | 500–999 | 3,734 | หูฟัง Sony | TBD |
-| EASY | ภารกิจเศรษฐีมือใหม่ | 200–499 | 17,591 | บัตรสตาร์บัคส์ 500.- | TBD |
-| BEGINNER | ภารกิจว่าที่คนจะรวย | 50–199 | 141,037 | กล่องข้าว | TBD |
+### 6.1 FREQUENCY `[figma]` — อัปเดตจาก Figma `2250:46165`
+
+| Tier (internal) | ชื่อภารกิจ | เงื่อนไข (2 task) | ใบขั้นต่ำ | คิดเป็นเงิน | จำนวนคน | % Reward (เพดานงบ) | รางวัลจริง |
+|---|---|---|---|---|---|---|---|
+| EASY | ภารกิจคนน่ารัก | ซื้อลอตเตอรี่ 1 ใบ **+** ซื้อต่อเนื่อง 2 งวด | 2 | 210 | 257,146 | 10% (20.-) | 10 นกพ้อย |
+| NORMAL | ภารกิจพิชิตใจจิ๊ดริด | ซื้อต่อเนื่อง 3 งวด **+** ใช้ Jidrid **กล่องสุ่ม 3** | 5 | 525 | 28,981 | 10% (50.-) | 20 นกพ้อย |
+| HARD | ภารกิจขาประจำตัวตึง | ซื้อต่อเนื่อง >4 งวด **+** ใช้ Jidrid **กล่องสุ่ม 5** | 10 | 1,050 | 6,879 | 15% (150.-) | โค้ดส่วนลด Thaimart 100.- |
+| VERY HARD | ภารกิจศิษย์เอกจิ๊ดริด | ซื้อต่อเนื่อง 6 งวด **+** ใช้ Jidrid **กล่องสุ่ม 10** | 21 | 2,205 | 3,734 | 20% (440.-) | โค้ดส่วนลด Thaimart 300.- |
+
+> 🔴 **เงื่อนไข Jidrid เปลี่ยนความหมาย — ขัดกับ JID-01 (§2.2)**
+> JID-01 นิยามว่า "ใช้ Jidrid ≥N **ประเภท**" = `COUNT(DISTINCT jidrid_type) ≥ N` (ขนาดไหนก็ได้)
+> Figma ระบุ **ขนาดเจาะจง** — NORMAL = กล่อง 3 · HARD = กล่อง 5 · VERY HARD = กล่อง 10
+> ต่างกันจริงที่เคสนี้: ผู้ใช้ที่ซื้อกล่อง 3 + กล่อง 10 = 2 ประเภท → **ผ่าน HARD ตาม JID-01 แต่ไม่ผ่านตาม Figma** (ไม่เคยแตะกล่อง 5)
+> ต้องเคาะก่อนเขียน rule engine → **OPEN-20**
+
+> ✅ **ที่มาของ `% Reward` ชัดแล้ว** — เป็น % ของคอลัมน์ "คิดเป็นเงิน" (ใบขั้นต่ำ × 105) และเป็น **เพดานงบต่อคน ไม่ใช่มูลค่ารางวัล**
+> ตรวจแล้วตรงทุกแถว: 210×10%≈20 · 525×10%≈50 · 1,050×15%≈150 · 2,205×20%≈440
+> รางวัลจริงต่ำกว่าเพดานเสมอ (150.- → โค้ด 100.- · 440.- → โค้ด 300.-) → ปิด OPEN-03 ได้ครึ่งหนึ่ง เหลือแค่ **อัตราแลกนกพ้อย → บาท** (20.- = 10 นกพ้อย แต่ 50.- = 20 นกพ้อย → 2.0 vs 2.5 บาท/แต้ม ไม่คงที่)
+
+> ⚠️ ยังขาดขั้น **STARTER** ที่จบได้ภายในงวดเดียว — Figma ก็ยังไม่มี · EASY ต่ำสุดยังต้อง "ต่อเนื่อง 2 งวด" ซึ่งคือด่านที่ 72% แพ้อยู่แล้ว (OPEN-07)
+
+### 6.2 VOLUME `[figma]` — 3 เดือน / 6 งวด · profit 15 บาท/ใบ · อัปเดตจาก Figma `2250:47462` + `2250:50200`
+
+| Tier (internal) | ชื่อภารกิจ | จำนวนใบ | Spend รวม | Profit รวม | จำนวนคน | % Reward (เพดานงบ) | รางวัลจริง | โควตา |
+|---|---|---|---|---|---|---|---|---|
+| LEGENDARY | ภารกิจจักรพรรดิ | 20,000+ | 2,100,000 | 300,000 | 7 | 30% (90,000.-) | iPhone 18 Pro · Galaxy Fold 8 | TBD |
+| EXTREME | ภารกิจมหาเศรษฐี | 10,000–19,999 | 1,050,000 | 150,000 | 20 | **30% (45,000.-)** | Dyson Purifier Big+Quiet | TBD |
+| VERY HARD | ภารกิจเจ้าสัว | 3,000–9,999 | 315,000 | 45,000 | 248 | **30% (13,500.-)** | Apple Watch / Whoop | TBD |
+| HARD | ภารกิจเศรษฐีประจำงวด | 1,000–2,999 | 105,000 | 15,000 | 1,627 | **25% (3,750.-)** | กระเป๋าเดินทาง · หม้อทอดไร้น้ำมัน | TBD |
+| NORMAL | ภารกิจเศรษฐีป้ายแดง | 500–999 | 52,500 | 7,500 | 3,734 | **25% (1,875.-)** | หูฟัง Sony | TBD |
+| EASY | ภารกิจเศรษฐีมือใหม่ | 200–499 | 21,000 | 3,000 | 17,591 | **20% (600.-)** | บัตรสตาร์บัคส์ 500.- | TBD |
+| BEGINNER | ภารกิจว่าที่คนจะรวย | 50–199 | 5,250 | 750 | 141,037 | **20% (150.-)** | กล่องข้าว | TBD |
+
+> **% Reward ปรับขึ้นทุกขั้นยกเว้น LEGENDARY** เทียบกับ `[v0.2]`: EXTREME 20→30% · VERY HARD 20→30% · HARD 15→25% · NORMAL 15→25% · EASY 15→20% · BEGINNER 15→20%
+> ตรวจแล้วทุกช่องคำนวณตรง `Profit รวม × %` — ตัวเลขในตารางสอดคล้องกันเอง
 
 ### 6.3 ENGAGEMENT `[lark]`
 
@@ -420,6 +490,36 @@ flow ปัจจุบัน **ไม่มี error / loading state ตอน�
 | แนะนำเพื่อน (สำเร็จ) | 200 | สูงสุด 5 คน/งวด | เพื่อนซื้อใบแรกจริง | TBD |
 | ดู Live วันประกาศรางวัลที่ 1 | 100 | ต่องวด | ดูต่อเนื่อง ≥60 วินาที | TBD |
 
+### 6.4 เพดานงบที่คำนวณจากตาราง Figma
+
+> ⚠️ **ตัวเลขในหมวดนี้คำนวณเองจาก `จำนวนคน × % Reward` ในตาราง §6.1/§6.2 ยังไม่ผ่านการยืนยันจาก Finance** — เป็นกรณีสูงสุดที่ทุกคนซึ่งเข้าเงื่อนไขวันนี้ทำภารกิจสำเร็จและกดรับครบ (OPEN-02)
+
+| แกน | Tier | คน | เพดานต่อคน | รวม |
+|---|---|---|---|---|
+| VOLUME | LEGENDARY | 7 | 90,000 | 630,000 |
+| VOLUME | EXTREME | 20 | 45,000 | 900,000 |
+| VOLUME | VERY HARD | 248 | 13,500 | 3,348,000 |
+| VOLUME | HARD | 1,627 | 3,750 | 6,101,250 |
+| VOLUME | NORMAL | 3,734 | 1,875 | 7,001,250 |
+| VOLUME | EASY | 17,591 | 600 | 10,554,600 |
+| VOLUME | BEGINNER | 141,037 | 150 | 21,155,550 |
+| | **รวม VOLUME** | 164,264 | | **49,690,650** |
+| FREQUENCY | VERY HARD | 3,734 | 440 | 1,642,960 |
+| FREQUENCY | HARD | 6,879 | 150 | 1,031,850 |
+| FREQUENCY | NORMAL | 28,981 | 50 | 1,449,050 |
+| FREQUENCY | EASY | 257,146 | 20 | 5,142,920 |
+| | **รวม FREQUENCY** | 296,740 | | **9,266,780** |
+| | **รวมทั้งหมด** | | | **58,957,430** |
+
+**สิ่งที่ตัวเลขนี้บอก**
+
+| ประเด็น | รายละเอียด |
+|---|---|
+| เพดานใหม่สูงกว่าที่ `[v0.2]` เคยอ้าง | 58.96M เทียบกับ 35.46M เดิม (+66%) — เพราะ % Reward ปรับขึ้นเกือบทุกขั้น **และ** เพิ่มแกน FREQUENCY เข้ามา |
+| 45% ของเพดานยังตกที่ BEGINNER | 21.2M จาก 49.7M ของแกน VOLUME — ปัญหาเดิมจาก `[v0.2]` §5 ยังอยู่ ภายใต้กลไกใหม่ที่ไม่เทียบ baseline ยิ่งไม่มีตัวกรองคนที่ซื้ออยู่แล้ว (R-02) |
+| งบจริงจะต่ำกว่าเพดาน | `% Reward` เป็นเพดานงบ ส่วนรางวัลจริงถูกกว่า (EASY เพดาน 600.- แต่รางวัลคือบัตร 500.-) — แต่**คำนวณงบจริงไม่ได้จนกว่าจะรู้ต้นทุนของทุกรางวัล** (กล่องข้าว · หูฟัง Sony · กระเป๋าเดินทาง ฯลฯ ยังไม่มีราคา) |
+| โควตาคือตัวคุมงบตัวจริง | ทั้ง 7 tier ของ VOLUME ยังเป็น `TBD` ทั้งคอลัมน์ — ตราบใดที่ไม่มีโควตา เพดาน 58.96M คือความเสี่ยงจริง ไม่ใช่ทฤษฎี (OPEN-08, QT-01) |
+
 ---
 
 ## 7. Risks
@@ -429,7 +529,7 @@ flow ปัจจุบัน **ไม่มี error / loading state ตอน�
 | **R-01** | **Threshold arbitrage** — ภายใต้กลไกใหม่ คนที่อยู่ปลายช่วงพอดี ซื้อเพิ่ม 1 ใบ (105 บาท) เพื่อข้ามเข้าเงื่อนไขและรับรางวัลสูงสุด 90,000 บาท ตัวกัน +40% ของ v0.2 ถูกยกเลิกไปพร้อมกลไกเก่า | สูงมาก | ต้องออกแบบตัวกันใหม่ก่อนเปิด VOLUME ขั้นบน — ตัวเลือก: โควตาต่อรางวัล · เพดานมูลค่าต่อคนต่อแคมเปญ · ไม่เปิด tier บนสุดในเฟสแรก · **ห้าม launch VOLUME ขั้น EXTREME/LEGENDARY ก่อนตัวกันผ่านการรีวิว** |
 | **R-02** | จ่ายรางวัลให้คนที่จะซื้ออยู่แล้ว — 1,020 บาท/100 คน แต่ retention ไม่ขยับ `[lark]` | สูง | รัน MVP แบบ A/B (กลุ่มมีภารกิจ vs ไม่มี) วัดผลก่อนเปิดเต็ม — **ห้ามข้ามขั้นนี้** `[lark]` |
 | **R-03** | กฎหมายและภาพลักษณ์ — ระบบที่กระตุ้นให้ซื้อทุกวันติดกัน 6 งวด อาจถูกมองว่าส่งเสริมการพนันเกินพอดี `[lark]` | สูง | ฝ่ายกฎหมายรีวิวก่อนเปิด · เพดานสิทธิ์ต่อคน · ข้อความเตือนเล่นอย่างมีสติ · kill switch (SEC-06) |
-| **R-04** | **Design-affecting** — ผู้ใช้กลุ่ม INNOCENT ต้องการ "ปลอดภัย + โปร่งใส" และ trust เสีย = งานล้มเหลวทันที `[brand]` ระบบที่โชว์รางวัลใหญ่โดยไม่บอกโควตา/เงื่อนไข จะอ่านเป็นหลอกลวง | สูง | เงื่อนไข โควตา และวันหมดอายุ ต้องปรากฏ **ก่อน** ผู้ใช้เริ่มทำภารกิจ (AC-201, AC-301, AC-503) |
+| **R-04** | **Design-affecting** — ผู้ใช้กลุ่ม INNOCENT ต้องการ "ปลอดภัย + โปร่งใส" และ trust เสีย = งานล้มเหลวทันที `[brand]` ระบบที่โชว์รางวัลใหญ่โดยไม่บอกโควตา/เงื่อนไข จะอ่านเป็นหลอกลวง | สูง | เงื่อนไข โควตา และวันหมดอายุ ต้องปรากฏ **ก่อน** ผู้ใช้เริ่มทำภารกิจ (AC-201, AC-301, AC-505) |
 | **R-05** | รางวัลสินค้ามีขั้นตอนยาว (กรอกที่อยู่ → รอของ) และมีเงื่อนไขสละสิทธิ์ ถ้าไม่สื่อสารล่วงหน้าจะกลายเป็นเรื่องร้องเรียน | กลาง | AC-502 บังคับแสดงเงื่อนไขก่อนกดรับ + สถานะติดตามหลังกรอก |
 
 ---
@@ -439,9 +539,9 @@ flow ปัจจุบัน **ไม่มี error / loading state ตอน�
 | # | ต้องรู้อะไร | กระทบอะไร | ใครตอบ | ต้องปิดเมื่อไหร่ |
 |---|---|---|---|---|
 | **OPEN-01** | Pool ของ M2 = 99,592 หรือ 257,146 · และเลข 3,734 ที่ซ้ำทั้ง FREQ VERY HARD และ VOLUME NORMAL | นิยาม KPI + analytics | Data | ก่อนเริ่ม dev |
-| **OPEN-02** | งบรางวัลภายใต้กลไกใหม่ — ตัวเลข 11.5M ของ v0.2 ใช้ไม่ได้แล้ว เพดานอ้างอิงถ้าทุกคนที่เข้าเงื่อนไขทำสำเร็จ = **35.46 ล้านบาท** เฉพาะบันได VOLUME `[v0.2]` ยังไม่รวม FREQUENCY | อนุมัติเปิดระบบ | Finance | ก่อนเริ่ม dev |
-| **OPEN-03** | อัตราแลก "นกพ้อย" → มูลค่า และเหตุผลที่ `% Reward` ไม่ตรงกับรางวัลจริงในตาราง FREQUENCY | PT-02, budget | Product + Finance | ก่อนเริ่ม dev |
-| **OPEN-04** | ~~นิยาม Jidrid~~ ✅ · ~~กติกานับซ้ำ~~ ✅ JID-01 · ~~มี event แยกขนาดกล่องไหม~~ ✅ มีแล้ว — **เหลือ:** ขอ schema/field จริงของ event มา map เข้า rule engine | เงื่อนไข FREQUENCY ทั้งบันได | Dev / Data | ก่อนเริ่ม dev |
+| **OPEN-02** | งบรางวัลภายใต้กลไกใหม่ — เพดานอ้างอิงคำนวณใหม่จากตาราง Figma = **58.96 ล้านบาท** (VOLUME 49.69M + FREQUENCY 9.27M ดู §6.4) · ตัวเลข 11.5M ของ v0.2 และ 35.46M ที่เคยอ้างไว้ ใช้ไม่ได้ทั้งคู่ · **งบจริงคำนวณไม่ได้จนกว่าจะรู้ต้นทุนรางวัลทุกตัว + โควตา** | อนุมัติเปิดระบบ | Finance | ก่อนเริ่ม dev |
+| **OPEN-03** | 🟡 **ปิดไปครึ่ง** — `% Reward` คือ **เพดานงบ** ไม่ใช่มูลค่ารางวัล (§6.1 ตรวจแล้วตรงทุกแถว) · **เหลือ:** อัตราแลกนกพ้อย → บาท ยังไม่คงที่ (20.- = 10 แต้ม แต่ 50.- = 20 แต้ม → 2.0 vs 2.5 บาท/แต้ม) · และต้นทุนจริงของรางวัลสินค้าทุกตัว (§6.2) | PT-02 · §6.4 งบจริง | Product + Finance | ก่อนเริ่ม dev |
+| **OPEN-04** | ~~นิยาม Jidrid~~ ✅ · ~~มี event แยกขนาดกล่องไหม~~ ✅ มีแล้ว — **เหลือ:** ขอ schema/field จริงของ event มา map เข้า rule engine · ⚠️ กติกานับ (JID-01) กลับมาเปิดอีกครั้ง ดู OPEN-20 | เงื่อนไข FREQUENCY ทั้งบันได | Dev / Data | ก่อนเริ่ม dev |
 | **OPEN-04b** | สัดส่วนคนใช้ Jidrid **แยกตามประเภท** (ไม่มัดรวมกับ frequency) — ตอนนี้มีแต่ตัวเลขที่มัดรวมแล้ว | เลือกว่า MVP ควรดันกล่องขนาดไหนก่อน | Data | ก่อน MVP |
 | **OPEN-12** | ลอตเตอรี่ / Jidrid **ยกเลิกหรือคืนเงินได้ไหม** · ถ้าได้ หน้าต่างยกเลิกกี่วัน (ค่า T+X ใน SET-05) | ตัดสินว่าต้องสร้าง PENDING/CONFIRMED (§5.2.1) หรือข้ามได้ทั้งหมด | Product | ก่อนเริ่ม dev |
 | **OPEN-13** | **อายุของคูปอง / e-coupon** — กี่วันนับจากวันที่ได้รับ · และแจ้งเตือนก่อนหมดอายุกี่วัน | AC-201 (ต้องบอกตั้งแต่ onboarding) · AC-501 · D7 ใน claim chain | Product + Finance | ก่อนเริ่ม dev |
@@ -452,10 +552,13 @@ flow ปัจจุบัน **ไม่มี error / loading state ตอน�
 | **OPEN-05** | หนึ่งงวดมีวันขายกี่วัน · latency จากพฤติกรรมจริง → progress อัปเดต | นิยาม "ทุกวัน" ในสาย ENGAGEMENT, AC-303, loading state | Product + Data | ก่อนเริ่ม dev |
 | **OPEN-06** | Frequency cap ของ follow-up ต่อคนต่องวด | AC-401 | Product + Marketing | ก่อน launch |
 | **OPEN-07** | เงื่อนไขและรางวัลของขั้น **STARTER** (จบในงวดเดียว) | ภารกิจที่แก้ 72% โดยตรง | Product + Finance | ก่อน MVP |
-| **OPEN-08** | โควตาต่อรางวัลทุกตัว (§6.2 ยังเป็น TBD ทั้งคอลัมน์) | AC-503, QT-01, R-01 | Product + Finance | ก่อน launch |
-| **OPEN-09** | รางวัลของสาย ENGAGEMENT ทั้ง 6 ภารกิจ | §6.3 | Product + Marketing | ก่อน v1.1 |
+| **OPEN-08** | โควตาต่อรางวัลทุกตัว (§6.2 ยังเป็น TBD ทั้งคอลัมน์) | AC-505, QT-01, R-01 | Product + Finance | ก่อน launch |
+| **OPEN-09** | รางวัลของสาย ENGAGEMENT ทั้ง 6 ภารกิจ | §6.3 | Product + Marketing | **ก่อน MVP** — ENGAGEMENT อยู่ใน MVP scope (§9) จึงเลื่อนขึ้นจากเดิม "ก่อน v1.1" |
 | **OPEN-10** | Tech stack / architecture / API contract ปัจจุบันของแอป | §5 ทั้งหมด | Dev | ก่อนเริ่ม dev |
 | **OPEN-11** | ช่วงเวลาแคมเปญรอบใหม่ | Roadmap | Marketing | ก่อน MVP |
+| **OPEN-18** | **MVP scope ขัดกับเกณฑ์ผ่านของตัวเอง** — §9 เปิด FREQUENCY แค่ STARTER/EASY แต่เกณฑ์ผ่านใช้ M2 = EASY→NORMAL (3 งวด + Jidrid ≥1) ซึ่งเป็นภารกิจขั้น NORMAL ที่ยังไม่เปิดในรอบนั้น · ตัวเลือก: (ก) ดึง NORMAL เข้า MVP (ข) เปลี่ยนเกณฑ์ผ่าน MVP เป็น metric ของ STARTER/EASY | ขอบเขต MVP · การวัดผล A/B (R-02) | Product | ก่อนเริ่ม dev |
+| **OPEN-19** | **เพดานแต้ม ENGAGEMENT ขัดกับตารางภารกิจเอง** — PT-03 ตั้ง cap 800 แต้ม/งวด แต่ §6.3 รวมกันได้ ~1,410 (แนะนำเพื่อนอย่างเดียว 200×5 = 1,000 · login+ค้นหา ~160 · live 100 · ติดตามเพจ 50 · ส่งของขวัญ 100) → cap ทำให้ครึ่งหลังของตารางไม่มีผล · ตัวเลือก: (ก) ยกเพดาน (ข) ลด per-item max (ค) แยกเพดานรายภารกิจ | PT-03 · §6.3 · งบแต้ม | Product + Finance | ก่อน MVP |
+| **OPEN-20** | 🔴 **นิยามเงื่อนไข Jidrid ขัดกัน** — JID-01 (§2.2) = "≥N **ประเภท** อะไรก็ได้" `COUNT(DISTINCT jidrid_type)` · Figma `2250:46165` = **ขนาดเจาะจง** (NORMAL กล่อง 3 · HARD กล่อง 5 · VERY HARD กล่อง 10) · เคสที่ต่างกัน: ซื้อกล่อง 3 + กล่อง 10 → ผ่าน HARD ตาม JID-01 แต่ไม่ผ่านตาม Figma · ตัวเลือก: (ก) ยึด Figma — บังคับขนาด (ข) ยึด JID-01 — นับจำนวนประเภท (ค) ต้องครบทั้ง 2 (สะสมขนาดตามลำดับ) | JID-01 · rule engine ของ FREQUENCY ทั้งบันได · MT-01 | Product + Data | **ก่อนเริ่ม dev** |
 
 ---
 
@@ -463,13 +566,15 @@ flow ปัจจุบัน **ไม่มี error / loading state ตอน�
 
 **MVP — งวดแรก**
 - ขอบเขต: ENGAGEMENT (สายที่ไม่ผูกกับการซื้อ ความเสี่ยงกฎหมายต่ำสุด) + FREQUENCY ขั้น STARTER/EASY
-- ต้องมี: mission list + card, onboarding, claim flow ของ `POINTS` และ `COUPON`, tab รางวัลของฉัน, follow-up 1 รูปแบบ
+- ต้องมี: mission list + card (`MSN-200/201/202`), หน้ารายละเอียดภารกิจ (`MSN-210` — จุด claim เดียว), claim flow ของ `NOKPOINT` และ `E_COUPON`, follow-up 1 รูปแบบ, system state ครบชุด `9xx`
+- **ไม่มีในรอบนี้:** onboarding (เลื่อนออก — ux §2.2) · tab รางวัล (ตัดถาวร — MECH-05) · `PHYSICAL`
 - รันเป็น A/B (มีภารกิจ vs ไม่มี) ตาม R-02
 - เกณฑ์ผ่าน: M2 ขยับจาก 0% ไปได้อย่างน้อยครึ่งทางของเป้า 22.5%
+- ⚠️ **ขอบเขตกับเกณฑ์ผ่านยังขัดกันอยู่ — ต้องเคาะก่อนเริ่ม (OPEN-18)**
 
 **v1.1 — งวด 2–3**
 - เปิด VOLUME ขั้นล่าง (BEGINNER → NORMAL) เท่านั้น + FREQUENCY ครบทุกขั้น
-- เปิด reward type `GOODS` พร้อม fulfillment flow เต็ม
+- เปิด reward type `PHYSICAL` พร้อม fulfillment flow เต็ม (`MSN-310/311/330c` + CRM + LINE OA)
 - เกณฑ์ผ่าน: M1 ขยับ + ไม่มีเคสแจกเกินโควตา
 
 **v2.0 — งวด 4–6**
@@ -482,7 +587,8 @@ flow ปัจจุบัน **ไม่มี error / loading state ตอน�
 
 | เอกสาร | ทำไมต้องมี | สถานะ |
 |---|---|---|
-| `docs/brand/voice-tone.md` | AC-401 กำหนดว่าข้อความต้องมีตัวเลขจริง แต่ยังไม่มีเกณฑ์ voice กลางให้ writer ยึด | ยังไม่มี |
-| `docs/blueprints/ux-mission.md` | flow ปัจจุบันไม่มี error/loading/back path (§5.8, ST-04) | ยังไม่มี |
+| `brand/voice-tone.md` | AC-401 กำหนดว่าข้อความต้องมีตัวเลขจริง แต่ยังไม่มีเกณฑ์ voice กลางให้ writer ยึด | ยังไม่มี |
+| `features/gamification/ux-gamification.md` | flow ปัจจุบันไม่มี error/loading/back path (§5.8, ST-04) | ✅ **มีแล้ว** — ปิดช่องว่างทั้ง 3 อย่างใน §5, §6, §3.4 |
 | Legal review memo | R-03 | ยังไม่มี |
 | Data dictionary ของ Jidrid | OPEN-04 — นิยามมีแล้วใน §2.2 แต่ยังไม่มี event schema | บางส่วน |
+| อัปเดต Figma flow ต้นทาง (`user-flow.md` §ข้อสังเกต) | node `แสดง tier ที่ยังไม่ครบ` ขัด MECH-02 · orphan node ซ้อน · typo D6 — ยังไม่มีเจ้าภาพแก้ | ยังไม่มี |

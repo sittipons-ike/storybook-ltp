@@ -1,7 +1,9 @@
 # Project Spec — Lotteryplus Design System
-_Last updated: 2026-08-22 19:35_
+_Last updated: 2026-08-23 15:00_
 
 ## Current State
+
+_2026-08-23: **`features/gamification/` docs ผ่าน consistency review + sync กับ Figma แล้ว** — prd-dev ขึ้น v1.1 · ล้างซากของ version ก่อน 2026-08-06 (roadmap · `AC-503` ซ้ำ · `MSN-110`) · path อ้างอิงทั้ง 4 ไฟล์ชี้โครง feature-first แล้ว · ดึงตาราง mission จาก Figma `2250:46164` เข้า §6.0/6.1/6.2/6.4 · เปิด OPEN-18/19/20 ที่เป็น product decision ค้าง_
 _หน้าที่สองของ page tier เสร็จ 2026-08-22: `features/home/` — `/` ทั้งหน้า 390×4651 วัดจาก Figma `21085:96373` ทีละ node · 11 feature component (+11 story) · 6 asset ของหน้า · อีก 3 component + 7 asset ยกขึ้น ui/ แล้ว · `npm run check` เขียว_
 
 _Restructured 2026-08-21: `UI Library` → `ui` · feature tier ที่ `features/` (profile = UI ครบ, home = UI ครบ, gamification = docs ครบ, avatar = assets) · `~/Lottery+` ยุบเข้า repo ทั้งหมด (ของหนักอยู่ `_source/` gitignored, ของเก่าอยู่ `archive/`) · helper/page metadata ตรง Lark §3.7 แล้ว_
@@ -23,6 +25,12 @@ _Restructured 2026-08-21: `UI Library` → `ui` · feature tier ที่ `featu
 Storybook (เป้าหมาย SSOT) · FE (ตัวให้ยืม implementation) · design.md (สะพาน)
 
 ## Decisions Made
+
+- 2026-08-23 — **`% Reward` ในตาราง gamification = เพดานงบต่อคน ไม่ใช่มูลค่ารางวัล**
+  ตรวจจาก Figma ทุกแถว: `Profit รวม × %` ตรงหมด และรางวัลจริงถูกกว่าเพดานเสมอ (เพดาน 600.- → บัตร 500.-)
+  ปิด OPEN-03 ได้ครึ่งหนึ่ง · ที่เหลือคืออัตรานกพ้อย→บาท ที่ยังไม่คงที่ (2.0 vs 2.5)
+- 2026-08-23 — **เอกสาร feature อ้าง path จากราก repo เสมอ** (`features/…`, `brand/…`, `docs/…`)
+  ของเดิมอ้างโครงก่อน restructure 2026-08-21 ทั้งชุด — ตามลิงก์ไม่เจอสักไฟล์
 
 - 2026-08-21 — **ProfileHeader icon set ตรง Figma แล้ว** (`14962:94338`, 9 variant)
   เพิ่ม `outline-document-copy` (state=login+view) + `filled-close` (state=*+actived)
@@ -274,6 +282,12 @@ prd.md · ux-home.md · page.yaml (§3.7) · fixtures.ts · components/ 11 ต�
   เผื่อ paddingBottom = var(--navigation-height) · ยืนยันแล้ว banner ทะลุ strip
 
 ## Next Up
+
+- [ ] **gamification — 3 product decision บล็อกอยู่** (ต้องให้ PO/Finance เคาะ ไม่ใช่งาน design)
+      `OPEN-20` นิยาม Jidrid: Figma บอกขนาดกล่องเจาะจง แต่ JID-01 บอกนับจำนวนประเภท — rule engine เขียนไม่ได้จนกว่าจะเคาะ
+      `OPEN-19` เพดานแต้ม ENGAGEMENT 800/งวด แต่ตารางภารกิจรวมได้ ~1,410
+      `OPEN-18` MVP เปิดแค่ STARTER/EASY แต่เกณฑ์ผ่านวัด M2 ซึ่งเป็นภารกิจขั้น NORMAL
+- [ ] **gamification — เพดานงบ 58.96M ยังไม่มีโควตาคุม** โควตา VOLUME ทั้ง 7 tier เป็น TBD (`OPEN-08`)
 
 - [x] ~~**asset path พังบน Pages**~~ — แก้แล้ว 2026-08-21: `asset()` + base จากชื่อ repo + ด่านที่ 11
 - [ ] **Storybook ยัง public — ตั้งใจพักไว้ (2026-08-21)** · `sittipons-ike.github.io/storybook-ltp`

@@ -2,14 +2,15 @@
 feature: mission-gamification
 scale: feature
 created: 2026-08-06
-updated: 2026-08-06
+updated: 2026-08-23
 sources:
-  - docs/prd/prd-mission-gamification-dev.md   # v1.0 — source of truth
-  - ../gamification/user-flow-mission-journey.md  # flow เดิมจาก Figma 29 nodes
-  - ../sitemap/sitemap.md                      # IA ปัจจุบัน V.7.0.0 (2025-05-09)
-  - ../LTP-Brandbook/brand-book-LTP-core.md    # values
-  - ../LTP-Brandbook/brand-book-LTP-personas.md
-  - ../deck-gamification.html                  # competitor reference
+  - features/gamification/prd-dev.md   # v1.1 — source of truth
+  - figma://7gVv3oV6G6xzldSjIxoSxb?node-id=2250-46164  # ตาราง mission ที่สรุปแล้ว (อ่าน 2026-08-23)
+  - features/gamification/user-flow.md  # flow เดิมจาก Figma 29 nodes
+  - docs/sitemap.md                      # IA ปัจจุบัน V.7.0.0 (2025-05-09)
+  - brand/brand-book-core.md    # values
+  - brand/brand-book-personas.md
+  - _source/deck-gamification.html                  # competitor reference
 confidence: 85%
 status: draft
 ---
@@ -23,6 +24,7 @@ status: draft
 > 4. IA ของ tab — และการชนกับ IA ที่มีอยู่แล้วในแอป
 
 **อัปเดต 2026-08-06** — ตัด tab รางวัลออก · claim ย้ายไปอยู่ที่หน้ารายละเอียดภารกิจ · แยก reward เป็น 3 ชนิดที่มี flow ต่างกัน
+**อัปเดต 2026-08-23** — ล้างซาก `MSN-110` · reconcile จำนวน frame เป็น **21** · เติมปลายทาง `PHYSICAL` (LINE OA) ที่ตกไป · progress บนการ์ดแตกเป็น **3 รูปแบบ** ตามโครงสร้าง Mission:Task ที่ได้จาก Figma (prd §6.0)
 
 ---
 
@@ -38,7 +40,7 @@ status: draft
 
 ### 1.1 ✅ IA collision — แก้แล้ว
 
-sitemap V.7.0.0 บอกว่าแอปมีของพวกนี้อยู่แล้ว `[source: sitemap.md]` — การตัดสินใจ 2026-08-06 แก้ collision ไปได้ 2 ใน 4 จุด
+sitemap V.7.0.0 บอกว่าแอปมีของพวกนี้อยู่แล้ว `[source: docs/sitemap.md]` — การตัดสินใจ 2026-08-06 แก้ collision ไปได้ 2 ใน 4 จุด
 
 | ของที่มีอยู่แล้ว | อยู่ที่ไหน | สถานะ |
 |---|---|---|
@@ -73,7 +75,7 @@ sitemap V.7.0.0 บอกว่าแอปมีของพวกนี้อ�
 | `MSN-200` | ภารกิจ (หน้าหลัก + 2 tabs) | Page | Mission | AC-302 |
 | `MSN-201` | ↳ tab ทั้งหมด | Tab | Mission | |
 | `MSN-202` | ↳ tab สำเร็จแล้ว | Tab | Mission | |
-| `MSN-210` | **รายละเอียดภารกิจ** | Page | Mission → Reward | AC-301/503 · **เป็นจุด claim เดียวของระบบ** (MECH-05) |
+| `MSN-210` | **รายละเอียดภารกิจ** | Page | Mission → Reward | AC-301 / AC-505 · **เป็นจุด claim เดียวของระบบ** (MECH-05) |
 | `MSN-300` | ยืนยันรับรางวัล | Bottom sheet | Reward | แตกเป็น 3 variant ตามชนิดรางวัล |
 | `MSN-301` | ↳ variant `NOKPOINT` | Bottom sheet | Reward | AC-504 |
 | `MSN-302` | ↳ variant `E_COUPON` | Bottom sheet | Reward | AC-501 |
@@ -97,11 +99,20 @@ sitemap V.7.0.0 บอกว่าแอปมีของพวกนี้อ�
 | ~~`MSN-901` Empty — ยังไม่มีรางวัล~~ | ตายตาม tab รางวัล |
 | ~~`MSN-320` สถานะการจัดส่ง~~ | ✅ ตัดถาวร — **CRM ส่งสถานะกลับไม่ได้** `[user 2026-08-06]` · ผู้ใช้ติดตามผ่าน **LINE OA** แทน |
 
-**ลดจาก 23 → 19 หน้าจอ** และตัด dependency ที่ไม่แน่นอนออกไป 2 ตัว
+**ตัดออก 4 รายการ** และตัด dependency ที่ไม่แน่นอนออกไป 2 ตัว (สถานะจัดส่งจาก CRM · หน้าคูปองของระบบภารกิจ)
 
 ### 2.2 ⏸️ Onboarding เลื่อนออก — และผลที่ตามมา
 
-`[user 2026-08-06]` — ไม่ทำ onboarding ในรอบนี้ รอขายผ่านก่อนค่อยกลับมาเก็บ **เหลือ 17 หน้าจอ**
+`[user 2026-08-06]` — ไม่ทำ onboarding ในรอบนี้ รอขายผ่านก่อนค่อยกลับมาเก็บ
+
+**นับ frame ที่ต้องวาดจริง — 21**
+
+| | จำนวน | หมายเหตุ |
+|---|---|---|
+| แถวใน §2 ที่ยังไม่ถูกตัด | 20 | ไม่นับ `MSN-100` / `MSN-110` ที่เลื่อนออก |
+| − `MSN-300` | −1 | เป็น parent เชิงแนวคิด ไม่ได้วาดเอง — วาดที่ `MSN-301` / `MSN-302` / `MSN-310` |
+| + `MSN-330` แตกเป็น 3 variant | +2 | `330a` NokPoint · `330b` E-Coupon · `330c` ของส่งถึงบ้าน |
+| **รวม** | **21** | = T1 (17) + T2 (4) ในไฟล์ `tickets.md` |
 
 การเลื่อนออกไม่ใช่แค่ลบ 2 หน้าจอ — มีของ 3 อย่างที่เคยฝากไว้กับ onboarding และตอนนี้ไม่มีบ้าน
 
@@ -109,7 +120,7 @@ sitemap V.7.0.0 บอกว่าแอปมีของพวกนี้อ�
 |---|---|---|
 | แจ้ง **อายุของรางวัล/คูปอง** ตั้งแต่ต้น (AC-201) | `MSN-100` | → **`MSN-210`** ต้องแสดงก่อนผู้ใช้เริ่มทำภารกิจ (BP-02 อยู่แล้ว) |
 | อธิบายว่า **ระบบทำงานยังไง** | `MSN-110` | → เนื้อหาต้องอ่านออกจาก `MSN-201` + `MSN-210` โดยไม่ต้องมีใครสอน |
-| ปุ่ม "วิธีใช้งาน" ใน header ของ `MSN-200` | ชี้ไป `MSN-110` | → **ตัดปุ่มออก** หรือชี้ไป `วิธีการใช้งาน` ที่มีอยู่แล้วในเมนูหลัก `[source: sitemap.md]` — ต้องตัดสิน (D-06) |
+| ปุ่ม "วิธีใช้งาน" ใน header ของ `MSN-200` | ชี้ไป `MSN-110` | → **ตัดปุ่มออก** หรือชี้ไป `วิธีการใช้งาน` ที่มีอยู่แล้วในเมนูหลัก `[source: docs/sitemap.md]` — ต้องตัดสิน (D-06) |
 
 **BP-10 — ถ้าไม่มี onboarding การ์ดกับหน้ารายละเอียดต้องอธิบายตัวเองได้**
 
@@ -234,7 +245,7 @@ flowchart LR
     Already[MSN-922 รับแล้ว]
     Err[MSN-910 เชื่อมต่อไม่ได้]
     List([MSN-200 หน้าภารกิจ])
-    Dest([ปลายทางของรางวัล: NokShop / NokPoint])
+    Dest([ปลายทางของรางวัล: NokPoint / NokShop / LINE OA])
     Home([หน้าแรก])
 
     Empty -->|ดูภารกิจงวดหน้า| Home
@@ -263,7 +274,7 @@ flowchart LR
 
 ```
 ┌ Header ─────────────────────────────────────┐
-│ ชื่อฟีเจอร์ · ปุ่มวิธีใช้งาน (→ MSN-110)      │
+│ ชื่อฟีเจอร์  ⚠️ ไม่มีปุ่มวิธีใช้งาน (D-06)    │
 ├ Tabs ───────────────────────────────────────┤
 │ [ทั้งหมด]  [สำเร็จแล้ว]                       │
 ├ Content ────────────────────────────────────┤
@@ -290,9 +301,10 @@ flowchart LR
 |---|---|---|
 | 1 | รางวัล (ภาพ + ชื่อ) | เป็นเหตุผลเดียวที่ทำให้หยุดอ่าน |
 | 2 | เงื่อนไข 1 บรรทัด | ตัดสินใจว่าทำไหวไหม |
-| 3 | Progress `X/Y` + หมุดระหว่างทาง | ตอบ "ฉันอยู่ตรงไหน" |
+| 3 | Progress + หมุดระหว่างทาง — **รูปแบบต่างกัน 3 แบบตามกลุ่มภารกิจ** (prd §6.0) | ตอบ "ฉันอยู่ตรงไหน" |
+| | ↳ VOLUME ขั้นล่าง = `X/Y` + **3 หมุดชนิดเดียวกัน** · VOLUME ขั้นบน = `X/Y` เส้นเดียวไม่มีหมุด · **FREQUENCY = 2 เส้นแยกกัน** (งวด + Jidrid) | เงื่อนไขคนละชนิดรวมเป็นเส้นเดียวไม่ได้ — ผู้ใช้จะอ่านไม่ออกว่าค้างที่อันไหน (prd MT-02) |
 | 4 | เหลืออีกกี่วัน | ตอบ "ต้องรีบไหม" |
-| 5 | โควตาคงเหลือ (ถ้ามีจำกัด) | ตอบ "ยังทันไหม" `[source: prd AC-503]` |
+| 5 | โควตาคงเหลือ (ถ้ามีจำกัด) | ตอบ "ยังทันไหม" `[source: prd AC-505]` |
 
 ### 4.4 MSN-210 — รายละเอียดภารกิจ (จุด claim เดียวของระบบ)
 
@@ -310,12 +322,12 @@ flowchart LR
 |---|---|---|
 | ยังไม่ครบเงื่อนไข | ไปทำภารกิจ | deep link ไปหน้าที่ทำได้ (เช่น จิ๊ดริดหยิบโชค) |
 | ครบแล้ว ยังไม่รับ | รับรางวัล | `MSN-300` variant ตามชนิด |
-| รับแล้ว | รับแล้ว (disabled) + ลิงก์รอง | ปลายทางของรางวัล (NokShop / NokPoint) |
+| รับแล้ว | รับแล้ว (disabled) + ลิงก์รอง | ปลายทางตามชนิดรางวัล — `NOKPOINT` → หน้า NokPoint · `E_COUPON` → My Coupon (NokShop) · `PHYSICAL` → **ปุ่ม LINE OA + หมายเลขอ้างอิงคำร้อง** (SLA-03, SLA-04) |
 | ของหมด | หมดแล้ว (disabled) | — พร้อมลิงก์ดูภารกิจอื่น |
 | หมดอายุ | หมดอายุ (disabled) | — พร้อมลิงก์ดูภารกิจอื่น |
 
 **BP-02:** โควตา อายุรางวัล และเงื่อนไข ต้องอยู่ **เหนือ CTA** เสมอ
-**เหตุผล:** persona กลุ่ม INNOCENT ต้องการ "ปลอดภัย + โปร่งใส" และ value FAIR FOR TRUST ระบุว่า trust เสีย = งานล้มเหลวทันที `[source: brand-book-LTP-core.md, prd R-04]`
+**เหตุผล:** persona กลุ่ม INNOCENT ต้องการ "ปลอดภัย + โปร่งใส" และ value FAIR FOR TRUST ระบุว่า trust เสีย = งานล้มเหลวทันที `[source: brand-book-core.md, prd R-04]`
 
 ### 4.5 MSN-330 — หน้าสำเร็จ 3 variant
 
@@ -337,7 +349,7 @@ flowchart LR
 | คำคลุมเครือแบบ "เร็ว ๆ นี้" ที่ไม่บอกอะไร | **หมายเลขอ้างอิงคำร้องที่ copy ได้** |
 | ปล่อยให้ผู้ใช้ไม่มีที่ถาม | ปุ่มไป **LINE OA** |
 
-**เหตุผล:** ตัวเลขที่เดาแล้วพลาด = ผิดสัญญาโดยตรง ซึ่งกระทบ value FAIR FOR TRUST ที่ระบุว่า trust เสีย = งานล้มเหลวทันที `[source: brand-book-LTP-core.md]` · ส่วนหมายเลขอ้างอิงทำให้การถามผ่าน LINE OA ตอบได้เร็ว แทนที่ CRM จะต้องไล่ถามว่าใครคือใคร
+**เหตุผล:** ตัวเลขที่เดาแล้วพลาด = ผิดสัญญาโดยตรง ซึ่งกระทบ value FAIR FOR TRUST ที่ระบุว่า trust เสีย = งานล้มเหลวทันที `[source: brand-book-core.md]` · ส่วนหมายเลขอ้างอิงทำให้การถามผ่าน LINE OA ตอบได้เร็ว แทนที่ CRM จะต้องไล่ถามว่าใครคือใคร
 
 ---
 
@@ -373,7 +385,7 @@ flow เดิมไม่มี error/loading เลยแม้แต่ตั
 | `MSN-911` | claim แล้ว server ตอบ error ที่ไม่ใช่ business rule | บอกว่ายังไม่สำเร็จ + **ยืนยันว่าสิทธิ์ยังอยู่** + ปุ่มลองใหม่ | retry |
 | `MSN-920` | `stock_left = 0` ตอนกด | บอกว่าของหมด | → ภารกิจอื่น |
 | `MSN-921` | เลยวันหมดอายุ | บอกว่าหมดอายุแล้ว | → ภารกิจอื่น |
-| `MSN-922` | เคย claim ไปแล้ว | บอกว่ารับไปแล้ว + ชี้ไปปลายทางของรางวัลชนิดนั้น | → NokShop / NokPoint |
+| `MSN-922` | เคย claim ไปแล้ว | บอกว่ารับไปแล้ว + ชี้ไปปลายทางของรางวัลชนิดนั้น (3 แบบ) | → NokPoint · My Coupon (NokShop) · **LINE OA + หมายเลขอ้างอิง** สำหรับ `PHYSICAL` |
 | `MSN-311` | ที่อยู่ validate ไม่ผ่าน | error ระดับ **field** ไม่ใช่ก้อนเดียวรวมบนสุด | แก้ในหน้าเดิม |
 | **ใหม่** | claim `E_COUPON` สำเร็จ แต่ redirect ไป NokShop ไม่ได้ | ต้องบอกว่า **คูปองออกให้แล้ว** และไปหาได้ที่ไหน | ให้ path แบบ manual ไปที่ My Coupon |
 
@@ -409,11 +421,11 @@ flow เดิมไม่มี error/loading เลยแม้แต่ตั
 |---|---|
 | **#1 Visibility of system status** | Progress `X/Y` · loading ทุกจุด (§6.1) · ของหมดแสดง disabled แทนซ่อน |
 | **#2 Match real world** | ห้ามใช้คำว่า "tier" ใน UI `[source: prd MECH-02]` |
-| **#3 User control & freedom** | BP-01 ทุก `9xx` มีทางออก · onboarding ข้ามได้และเรียกดูซ้ำได้ · ที่อยู่แก้ได้ก่อนยืนยัน |
+| **#3 User control & freedom** | BP-01 ทุก `9xx` มีทางออก · ที่อยู่แก้ได้ก่อนยืนยัน (`MSN-310` → `MSN-311`) · claim ยกเลิกได้ก่อนกดยืนยันใน bottom sheet |
 | **#4 Consistency & standards** | BP-00 — ของที่ได้ไปอยู่ในระบบเดิมที่ผู้ใช้รู้จัก ไม่สร้าง pattern ใหม่ |
 | **#5 Error prevention** | ล็อกปุ่มตอน claim · แสดงโควตาก่อนเริ่มทำภารกิจ · เงื่อนไขอยู่เหนือปุ่มยืนยัน |
 | **#9 Help users recover from errors** | BP-04 / BP-05 / BP-08 |
-| **#10 Help & documentation** | `MSN-110` เข้าถึงได้ตลอดจาก header |
+| **#10 Help & documentation** | ⚠️ **ไม่มีในรอบนี้** — onboarding เลื่อนออก (§2.2) ภาระอธิบายย้ายไป BP-10 (`MSN-201` + `MSN-210` ต้องอธิบายตัวเองได้) |
 | **Goal-gradient** | เรียงภารกิจที่ใกล้สำเร็จขึ้นก่อน · หมุดระหว่างทาง |
 | **Miller's Law (7±2)** | D-03 |
 | **Fitts's Law** | ปุ่มปิด floating reward ≥44×44 px `[source: prd AC-101]` |
@@ -439,7 +451,7 @@ flow เดิมไม่มี error/loading เลยแม้แต่ตั
 |---|---|---|---|
 | UX-01 | Floating reward บัง content หรือเด้งตอนกำลังจ่ายเงิน | สูง | D-04 + frequency cap (`OPEN-06`) |
 | ~~UX-02~~ | ~~คูปองหาไม่เจอเพราะมี 2 ที่~~ | ✅ แก้แล้วด้วย MECH-05 | |
-| UX-03 | ผู้ใช้ทำภารกิจไปครึ่งทาง แล้วโควตาหมด | กลาง | แจ้งที่หน้าภารกิจทันทีที่หมด `[source: prd AC-503]` |
+| UX-03 | ผู้ใช้ทำภารกิจไปครึ่งทาง แล้วโควตาหมด | กลาง | แจ้งที่หน้าภารกิจทันทีที่หมด `[source: prd AC-505]` |
 | UX-04 | ภารกิจต่อเนื่อง 6 งวด (3 เดือน) ยาวเกินกว่าจะจำได้ | กลาง | หมุดระหว่างทาง + follow-up ที่บอกตัวเลขจริง |
 | UX-05 | ยังไม่มีขั้น STARTER ที่จบในงวดเดียว | **สูง** | `OPEN-07` — blocker ของ MVP |
 | **UX-06** | `PHYSICAL` เป็น manual ผ่าน CRM และ **ไม่มีหน้าติดตามในแอปเลย** — ผู้ใช้เงียบหายไปจนของถึง | **สูง** | BP-07 + BP-09 — หมายเลขอ้างอิง + ปุ่ม LINE OA · **ยอมรับตั้งแต่ต้นว่าจะมีสายเข้า CRM** จึงต้องทำให้การถามมีประสิทธิภาพที่สุด ไม่ใช่พยายามกันไม่ให้ถาม |
@@ -473,7 +485,7 @@ flow เดิมไม่มี error/loading เลยแม้แต่ตั
 
 ### ที่ยังไม่มีและควรทำ
 
-- `docs/brand/voice-tone.md`
+- `brand/voice-tone.md`
 - Design system / component inventory
 
 ---
@@ -482,10 +494,10 @@ flow เดิมไม่มี error/loading เลยแม้แต่ตั
 
 | ไฟล์ | ใช้ทำอะไร |
 |---|---|
-| `docs/prd/prd-mission-gamification-dev.md` v1.0 | problem, metrics, AC, mechanic, reward types, risks |
-| `gamification/user-flow-mission-journey.md` | flow เดิม 29 nodes, decision points, edge state ที่ไม่มีทางออก |
-| `sitemap/sitemap.md` V.7.0.0 | IA ปัจจุบัน → NokShop / NokPoint / ที่อยู่ของฉัน / จิ๊ดริดหยิบโชค |
-| `LTP-Brandbook/brand-book-LTP-core.md` | values FAIR FOR TRUST / SIMPLIFY → BP-02 |
-| `LTP-Brandbook/brand-book-LTP-personas.md` | persona (proto → A-02) |
-| `deck-gamification.html` | competitor reference |
+| `features/gamification/prd-dev.md` v1.0 | problem, metrics, AC, mechanic, reward types, risks |
+| `features/gamification/user-flow.md` | flow เดิม 29 nodes, decision points, edge state ที่ไม่มีทางออก |
+| `docs/sitemap.md` V.7.0.0 | IA ปัจจุบัน → NokShop / NokPoint / ที่อยู่ของฉัน / จิ๊ดริดหยิบโชค |
+| `brand/brand-book-core.md` | values FAIR FOR TRUST / SIMPLIFY → BP-02 |
+| `brand/brand-book-personas.md` | persona (proto → A-02) |
+| `_source/deck-gamification.html` | competitor reference |
 | user 2026-08-06 | MECH-05 · reward 3 types · CRM fulfillment |
