@@ -26,7 +26,7 @@ import ColorBindingsTable from '../../system/ColorBindingsTable';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof TextField> = {
-  title: 'Atoms/TextField',
+  title: 'Components/Forms/TextField',
   component: TextField,
   tags: ['autodocs'],
   argTypes: {

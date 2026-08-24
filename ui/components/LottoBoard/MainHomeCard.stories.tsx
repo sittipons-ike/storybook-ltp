@@ -9,7 +9,7 @@ import { sys } from '../../foundations/tokens';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof MainHomeCard> = {
-  title: 'Organisms/LottoBoard/MainHomeCard',
+  title: 'Components/Commerce/LottoBoard/MainHomeCard',
   component: MainHomeCard,
   parameters: { layout: 'fullscreen' },
 };

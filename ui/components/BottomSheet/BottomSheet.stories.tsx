@@ -22,7 +22,7 @@ import ColorBindingsTable from '../../system/ColorBindingsTable';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof BottomSheet> = {
-  title: 'Organisms/BottomSheet',
+  title: 'Components/Overlay/BottomSheet',
   component: BottomSheet,
   tags: ['autodocs'],
   argTypes: {

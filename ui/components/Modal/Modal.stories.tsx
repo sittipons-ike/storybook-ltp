@@ -27,7 +27,7 @@ const sans = "'Graphik TH', sans-serif";
 const mono = 'ui-monospace, SFMono-Regular, Menlo, monospace';
 
 const meta: Meta<typeof Modal> = {
-  title: 'Organisms/Modal',
+  title: 'Components/Overlay/Modal',
   component: Modal,
   tags: ['autodocs'],
   argTypes: {

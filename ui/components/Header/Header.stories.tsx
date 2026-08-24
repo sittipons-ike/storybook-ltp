@@ -16,7 +16,7 @@ import { sys } from '../../foundations/tokens';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof Header> = {
-  title: 'Organisms/Header',
+  title: 'Components/Layout/Header',
   component: Header,
   parameters: { layout: 'padded' },
 };

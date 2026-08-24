@@ -9,7 +9,7 @@ import { sys } from '../../foundations/tokens';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof ImageUpload> = {
-  title: 'Molecules/ImageUpload',
+  title: 'Components/Forms/ImageUpload',
   component: ImageUpload,
   parameters: { layout: 'padded' },
 };

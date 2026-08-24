@@ -44,7 +44,7 @@ const note: React.CSSProperties = {
 //  NumberSearchBox Stories
 // ─────────────────────────────────────────
 const numberSearchBoxMeta: Meta<typeof NumberSearchBox> = {
-  title: 'Organisms/LottoBoard/NumberSearchBox',
+  title: 'Components/Commerce/LottoBoard/NumberSearchBox',
   component: NumberSearchBox,
   tags: ['autodocs'],
   argTypes: {

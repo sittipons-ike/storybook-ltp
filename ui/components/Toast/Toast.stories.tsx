@@ -36,7 +36,7 @@ const muted = 'var(--sys-color-text-tertiary-default)';
 const faint = 'var(--sys-color-text-state-light-gray)';
 
 const meta: Meta<typeof Toast> = {
-  title: 'Molecules/Toast',
+  title: 'Components/Feedback/Toast',
   component: Toast,
   tags: ['autodocs'],
   argTypes: {

@@ -32,7 +32,7 @@ import {
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof MissionDetailPage> = {
-  title: 'Pages/Mission/MSN-210 รายละเอียดภารกิจ',
+  title: 'Features/Gamification/Pages/MSN-210 รายละเอียดภารกิจ',
   component: MissionDetailPage,
   parameters: { layout: 'fullscreen' },
 };

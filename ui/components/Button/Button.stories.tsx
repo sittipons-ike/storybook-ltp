@@ -25,7 +25,7 @@ import { sys } from '../../foundations/tokens';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof Button> = {
-  title: 'Atoms/Button',
+  title: 'Components/Forms/Button',
   component: Button,
   tags: ['autodocs'],
   argTypes: {

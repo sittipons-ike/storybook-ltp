@@ -11,7 +11,7 @@ import { sys } from '../../foundations/tokens';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof CountdownTimer> = {
-  title: 'Atoms/CountdownTimer',
+  title: 'Components/Feedback/CountdownTimer',
   component: CountdownTimer,
   parameters: { layout: 'padded' },
 };

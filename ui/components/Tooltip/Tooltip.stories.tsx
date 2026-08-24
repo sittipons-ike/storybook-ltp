@@ -35,7 +35,7 @@ const GAP_SUMMARY =
   'Figma — see the “Figma Gap” story.';
 
 const meta: Meta<typeof Tooltip> = {
-  title: 'Molecules/Tooltip',
+  title: 'Components/Feedback/Tooltip',
   component: Tooltip,
   tags: ['autodocs'],
   parameters: {

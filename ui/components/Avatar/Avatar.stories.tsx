@@ -10,7 +10,7 @@ import { asset } from '../../foundations/asset';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof Avatar> = {
-  title: 'Atoms/Avatar',
+  title: 'Components/Display/Avatar',
   component: Avatar,
   parameters: { layout: 'padded' },
 };

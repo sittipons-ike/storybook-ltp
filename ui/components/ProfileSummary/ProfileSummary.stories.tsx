@@ -16,7 +16,7 @@ import { sys } from '../../foundations/tokens';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof ProfileSummary> = {
-  title: 'Organisms/ProfileSummary',
+  title: 'Components/Layout/ProfileSummary',
   component: ProfileSummary,
   parameters: { layout: 'padded' },
 };

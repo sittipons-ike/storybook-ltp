@@ -10,7 +10,7 @@ import { SEO } from '../fixtures';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof SeoPanel> = {
-  title: 'Features/Home/SeoPanel',
+  title: 'Features/Home/Components/SeoPanel',
   component: SeoPanel,
   parameters: { layout: 'fullscreen' },
 };

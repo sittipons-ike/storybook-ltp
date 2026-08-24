@@ -31,7 +31,7 @@ const caption: React.CSSProperties = {
 };
 
 const meta: Meta<typeof Tabs> = {
-  title: 'Organisms/Tabs',
+  title: 'Components/Navigation/Tabs',
   component: Tabs,
   tags: ['autodocs'],
   parameters: {

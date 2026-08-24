@@ -9,7 +9,7 @@ import { asset } from '../../foundations/asset';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof ProfileHeader> = {
-  title: 'Organisms/ProfileHeader',
+  title: 'Components/Layout/ProfileHeader',
   component: ProfileHeader,
   parameters: { layout: 'padded' },
 };

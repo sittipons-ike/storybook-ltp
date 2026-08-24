@@ -11,7 +11,7 @@ import { sys } from '../../foundations/tokens';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof TitleWithUnderline> = {
-  title: 'Molecules/TitleWithUnderline',
+  title: 'Components/Display/TitleWithUnderline',
   component: TitleWithUnderline,
   parameters: { layout: 'padded' },
 };

@@ -35,7 +35,7 @@ const sans = sys('type-label-md-medium-family');
 const mono = 'ui-monospace, SFMono-Regular, Menlo, monospace';
 
 const meta: Meta<typeof ProgressBar> = {
-  title: 'Atoms/ProgressBar',
+  title: 'Components/Feedback/ProgressBar',
   component: ProgressBar,
   tags: ['autodocs'],
   argTypes: {

@@ -29,7 +29,7 @@ import {
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof HomePage> = {
-  title: 'Pages/Home',
+  title: 'Features/Home/Pages/Home',
   component: HomePage,
   parameters: { layout: 'fullscreen' },
 };

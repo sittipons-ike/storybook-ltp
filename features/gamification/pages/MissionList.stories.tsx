@@ -32,7 +32,7 @@ import {
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof MissionListPage> = {
-  title: 'Pages/Mission/MSN-200 หน้าภารกิจ',
+  title: 'Features/Gamification/Pages/MSN-200 หน้าภารกิจ',
   component: MissionListPage,
   parameters: { layout: 'fullscreen' },
 };

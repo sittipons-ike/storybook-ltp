@@ -10,7 +10,7 @@ import { QUICK_MENU } from '../fixtures';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof QuickMenuGrid> = {
-  title: 'Features/Home/QuickMenuGrid',
+  title: 'Features/Home/Components/QuickMenuGrid',
   component: QuickMenuGrid,
   parameters: { layout: 'fullscreen' },
 };

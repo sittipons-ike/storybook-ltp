@@ -26,7 +26,7 @@ import {
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof ProfilePage> = {
-  title: 'Pages/Profile',
+  title: 'Features/Profile/Pages/Profile',
   component: ProfilePage,
   parameters: { layout: 'fullscreen' },
 };

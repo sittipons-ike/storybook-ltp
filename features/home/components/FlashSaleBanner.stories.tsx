@@ -15,7 +15,7 @@ import { COUNTDOWN, FLASH_SALE_NOTE, HEADLINE } from '../fixtures';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof FlashSaleBanner> = {
-  title: 'Features/Home/FlashSaleBanner',
+  title: 'Features/Home/Components/FlashSaleBanner',
   component: FlashSaleBanner,
   parameters: { layout: 'fullscreen' },
 };

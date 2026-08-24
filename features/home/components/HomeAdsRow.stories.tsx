@@ -10,7 +10,7 @@ import { AD_FEATURE, AD_STACKED } from '../fixtures';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof HomeAdsRow> = {
-  title: 'Features/Home/HomeAdsRow',
+  title: 'Features/Home/Components/HomeAdsRow',
   component: HomeAdsRow,
   parameters: { layout: 'fullscreen' },
 };

@@ -30,7 +30,7 @@ const SURFACE_LIGHT = sys('color-background-light');
 const SURFACE_WHITE = sys('color-background-default');
 
 const meta: Meta<typeof Loading> = {
-  title: 'Atoms/Loading',
+  title: 'Components/Feedback/Loading',
   component: Loading,
   tags: ['autodocs'],
   parameters: {

@@ -10,7 +10,7 @@ import { sys } from '../../foundations/tokens';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof HeaderCounter> = {
-  title: 'Organisms/Header/HeaderCounter',
+  title: 'Components/Layout/Header/HeaderCounter',
   component: HeaderCounter,
   parameters: { layout: 'fullscreen' },
 };

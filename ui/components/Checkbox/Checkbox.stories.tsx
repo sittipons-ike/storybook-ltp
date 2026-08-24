@@ -25,7 +25,7 @@ import ColorBindingsTable from '../../system/ColorBindingsTable';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof Checkbox> = {
-  title: 'Atoms/Checkbox',
+  title: 'Components/Forms/Checkbox',
   component: Checkbox,
   tags: ['autodocs'],
   argTypes: {

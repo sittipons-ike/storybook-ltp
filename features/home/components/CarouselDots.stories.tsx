@@ -9,7 +9,7 @@ import { Row, Spec } from './story-helpers';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof CarouselDots> = {
-  title: 'Features/Home/CarouselDots',
+  title: 'Features/Home/Components/CarouselDots',
   component: CarouselDots,
   parameters: { layout: 'padded' },
 };

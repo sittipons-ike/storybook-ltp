@@ -10,7 +10,7 @@ import { PROMO_BANNERS } from '../fixtures';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof PromoBanner> = {
-  title: 'Features/Home/PromoBanner',
+  title: 'Features/Home/Components/PromoBanner',
   component: PromoBanner,
   parameters: { layout: 'fullscreen' },
 };
