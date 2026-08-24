@@ -6,6 +6,7 @@ import {
   MissionFooter,
   MissionHero,
   MissionProgressCard,
+  MissionRungList,
   MissionSteps,
 } from '../components/MissionDetailBlocks';
 import type { MissionDetail } from '../fixtures';
@@ -51,10 +52,20 @@ const MissionDetailPage: React.FC<MissionDetailPageProps> = ({ mission, onCta, o
       {mission.banner ? (
         <MissionDoneBanner title={mission.banner.title} body={mission.banner.body} />
       ) : (
-        mission.progress && <MissionProgressCard {...mission.progress} />
+        mission.progress && <MissionProgressCard name={mission.name} {...mission.progress} />
       )}
 
-      <MissionSteps name={mission.name} steps={mission.steps} />
+      {/* A ladder's rungs are its conditions (prd §6.0), so one block or the other carries
+          the mission's name and what it asks for — never both. */}
+      {mission.steps.length === 0 && !mission.progress?.rungs?.length ? null : mission.progress?.rungs?.length ? (
+        <MissionRungList
+          name={mission.name}
+          rungs={mission.progress.rungs}
+          unit={mission.progress.unit}
+        />
+      ) : (
+        <MissionSteps name={mission.name} steps={mission.steps} />
+      )}
 
       {/* BP-02 — the last thing before the button, never the first thing after it. */}
       <MissionFacts facts={mission.facts} terms={mission.terms} />

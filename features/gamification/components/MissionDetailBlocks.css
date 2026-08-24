@@ -225,3 +225,88 @@
   justify-content: center;
 }
 
+
+/* ── Ladder rungs, spelled out ───────────────────────────────────
+ * One row per rung: how it stands, what it pays, what it costs, and whether it has been
+ * collected. The mark carries the colour and the icon inherits it, so a rung's standing is
+ * set in one place.
+ */
+.ltp-mission-rung__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+.ltp-mission-rung--claimed .ltp-mission-rung__mark {
+  /* `status-success-default` is #22C55E and a white tick on it measures 2.28:1 — under
+     even the 3:1 a meaningful graphic needs. `-dark` is the same green three steps down
+     and reads 8.14:1. A token says a colour exists, not that a pair is readable. */
+  background: var(--sys-color-status-success-dark);
+  color: var(--sys-color-text-on-bgcolor);
+}
+
+.ltp-mission-rung--ready .ltp-mission-rung__mark {
+  background: var(--sys-color-background-accent-red);
+  color: var(--sys-color-text-on-bgcolor);
+}
+
+.ltp-mission-rung--locked .ltp-mission-rung__mark {
+  background: var(--sys-color-background-light);
+  color: var(--sys-color-tertiary-accent-lg);
+}
+
+/* The reward, photographed, at the size of a thumbnail rather than a hero: on this row it
+   is there to be recognised, not admired. */
+.ltp-mission-rung__art {
+  display: block;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  border-radius: var(--sys-radius-lg);
+  background: var(--sys-color-background-light);
+}
+
+.ltp-mission-rung__art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* The name and its threshold take whatever is left, so a long reward name wraps instead of
+   pushing the standing off the row. */
+.ltp-mission-rung__text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.ltp-mission-rung__state {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  font-size: var(--sys-type-label-md-semibold-size);
+  line-height: var(--sys-type-label-md-semibold-line-height);
+  font-weight: var(--sys-type-label-md-semibold-weight);
+}
+
+.ltp-mission-rung--claimed .ltp-mission-rung__state {
+  color: var(--sys-color-status-success-darker);
+}
+
+.ltp-mission-rung--ready .ltp-mission-rung__state {
+  color: var(--sys-color-primary-darker);
+}
+
+.ltp-mission-rung--locked .ltp-mission-rung__state {
+  color: var(--sys-color-tertiary-accent-lg);
+}
+
+/* A rung already collected steps back — it is history, and the two ahead are the decision. */
+.ltp-mission-rung--claimed .ltp-mission-rung__art {
+  opacity: 0.72;
+}

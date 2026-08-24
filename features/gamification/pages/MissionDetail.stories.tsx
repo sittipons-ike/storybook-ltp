@@ -66,11 +66,11 @@ const Screen: React.FC<{ mission: MissionDetail }> = ({ mission }) => (
 
 const CASES: { caption: string; mission: MissionDetail }[] = [
   {
-    caption: 'CTA 1/4 · ยังไม่ครบเงื่อนไข — ปุ่มพาไปทำต่อ · เงื่อนไขแตกเป็น 3 ขั้น',
+    caption: 'CTA 1/4 · บันได VOLUME #1 — ผ่านมา 2 หมุด หมุดที่ 2 รอรับ · รางวัลของทุกหมุดอยู่ในหน้าเดียว (prd §6.0)',
     mission: DETAIL_IN_PROGRESS,
   },
   {
-    caption: 'CTA 2/4 · ครบแล้ว ยังไม่รับ — จุด claim เดียวของระบบ (MECH-05)',
+    caption: 'CTA 2/4 · ครบแล้ว ยังไม่รับ — FREQUENCY 2 task คนละประเภท ผ่านทั้งคู่ · จุด claim เดียวของระบบ (MECH-05)',
     mission: DETAIL_COMPLETED,
   },
   {
@@ -78,7 +78,7 @@ const CASES: { caption: string; mission: MissionDetail }[] = [
     mission: DETAIL_CLAIMED,
   },
   {
-    caption: 'CTA 4/4 · ของหมด — บอกเหตุผล + ทางอื่น ไม่ใช่ pattern ของ error (BP-05) · ไม่มีสถานะหมดเวลา ทุกภารกิจใช้ช่วงแคมเปญเดียวกัน',
+    caption: 'CTA 4/4 · ของหมด — VOLUME #2 task เดียวไม่มีหมุดย่อย · บอกเหตุผล + ทางอื่น ไม่ใช่ pattern ของ error (BP-05) · ไม่มีสถานะหมดเวลา ทุกภารกิจใช้ช่วงแคมเปญเดียวกัน',
     mission: DETAIL_OUT_OF_STOCK,
   },
 ];

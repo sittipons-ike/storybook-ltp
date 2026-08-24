@@ -1,4 +1,5 @@
-import type { MissionCardProps, MissionClosedCardProps } from './components/MissionCard';
+import type { MissionCardProps, MissionClosedCardProps, RewardKind } from './components/MissionCard';
+import type { MissionRung, MissionTrack } from './components/MissionProgress';
 
 import missionBanner from './assets/mission-banner.png';
 import rewardNokpoint from './assets/reward-nokpoint.png';
@@ -72,20 +73,53 @@ export interface ClosedMission extends MissionClosedCardProps {
  * appear in both `[user 2026-08-24]`. §4.1 already gives that tab the job of being the
  * record of what is finished; a mission in two places is a mission the user counts twice.
  */
+/** A rung of the VOLUME ladder. Each pays its own reward, so each carries its own kind. */
+export interface LadderRung extends MissionRung {
+  kind: RewardKind;
+}
+
+/**
+ * The VOLUME ladder — prd §6.0 `1 Mission : 3 Task ประเภทเดียวกันแบบต่อเนื่อง`.
+ *
+ * §6.2 lists BEGINNER · EASY · NORMAL as three tiers of the same count of the same thing,
+ * one after another. They are one mission with three rungs rather than three missions
+ * `[user 2026-08-24]`: a user who buys 214 tickets has not finished three separate errands,
+ * they have climbed past two gates on one ladder, and the reward at each gate is what
+ * makes the next one worth walking to.
+ *
+ * The thresholds and the rewards are §6.2 verbatim. The three tier names it collapses
+ * (ว่าที่คนจะรวย · เศรษฐีมือใหม่ · เศรษฐีป้ายแดง) become the rungs of one climb, which is
+ * why the mission needs a name of its own — `ภารกิจเส้นทางเศรษฐี` is written here, not
+ * taken from any table, and wants a marketing eye before it ships.
+ */
+export const LADDER_RUNGS: LadderRung[] = [
+  { at: 50, reward: 'กล่องข้าวร่ำรวย', kind: 'ของส่งถึงบ้าน', image: REWARD.bento, state: 'claimed' },
+  { at: 200, reward: 'บัตรสตาร์บัคส์ 500 บาท', kind: 'คูปอง', image: REWARD.starbucks, state: 'ready' },
+  { at: 500, reward: 'หูฟัง Sony', kind: 'ของส่งถึงบ้าน', image: REWARD.headphones, state: 'locked' },
+];
+
+/** The rung the user is walking toward — the one the card leads with. */
+export const nextRung = (rungs: LadderRung[]): LadderRung =>
+  rungs.find((r) => r.state !== 'claimed') ?? rungs[rungs.length - 1];
+
+const LADDER_NEXT = nextRung(LADDER_RUNGS);
+
 export const MISSIONS_OPEN: Mission[] = [
   {
-    id: 'vol-beginner',
-    name: 'ภารกิจว่าที่คนจะรวย',
-    reward: 'กล่องข้าวร่ำรวย',
-    kind: 'ของส่งถึงบ้าน',
-    image: REWARD.bento,
-    cond: 'สะสมครบ 50 ใบในแคมเปญนี้',
-    current: 38,
-    target: 50,
-    marks: [10, 25, 40, 50],
+    id: 'vol-ladder',
+    name: 'ภารกิจเส้นทางเศรษฐี',
+    // The band leads with the rung being walked toward, not the top of the ladder: the
+    // reward two gates away is the one that decides whether today is worth it.
+    reward: LADDER_NEXT.reward,
+    kind: LADDER_NEXT.kind,
+    image: LADDER_NEXT.image,
+    cond: 'ถึงหมุดไหน รับรางวัลหมุดนั้นได้เลย',
+    shape: 'ladder',
+    current: 214,
     unit: 'ใบ',
-    tone: 'doing',
-    statusLabel: 'กำลังทำอยู่',
+    rungs: LADDER_RUNGS,
+    tone: 'ready',
+    statusLabel: 'ถึงหมุดที่ 2 แล้ว · รอรับรางวัล',
     daysLabel: 'เหลืออีก 9 วัน',
     quota: true,
   },
@@ -95,11 +129,18 @@ export const MISSIONS_OPEN: Mission[] = [
     reward: '20 นกพอยต์',
     kind: 'นกพอยต์',
     image: REWARD.nokpoint,
-    cond: 'ซื้อ 3 งวดติด + ลองจิ๊ดริด 1 ประเภท',
-    current: 2,
-    target: 3,
-    marks: [1, 2, 3],
-    unit: 'งวด',
+    cond: 'ซื้อต่อเนื่อง 3 งวด + ใช้จิ๊ดริดกล่องสุ่ม 3',
+    // §6.0 `1 Mission : 2 Task คนละประเภท` — two counts in two different units. MT-02:
+    // they cannot share one bar, and the second one used to be missing from the card
+    // entirely.
+    shape: 'pair',
+    tracks: [
+      { label: 'ซื้อต่อเนื่อง', current: 2, target: 3, unit: 'งวด' },
+      // §6.1 reads "ใช้ Jidrid กล่องสุ่ม 3" — one named box, done or not done. Whether
+      // that means the size-3 box specifically or three boxes of any size is OPEN-20,
+      // still unsettled; drawn as a single task because that is true either way.
+      { label: 'ใช้จิ๊ดริดกล่องสุ่ม 3', current: 0, target: 1 },
+    ],
     // §5.2.1 SET-01 — the third round is counted but not settled, so it shows and does
     // not complete the mission.
     tone: 'pending',
@@ -107,47 +148,35 @@ export const MISSIONS_OPEN: Mission[] = [
     daysLabel: 'เหลืออีก 9 วัน',
   },
   {
-    id: 'vol-easy',
-    name: 'ภารกิจเศรษฐีมือใหม่',
-    reward: 'บัตรสตาร์บัคส์ 500 บาท',
-    kind: 'คูปอง',
-    image: REWARD.starbucks,
-    cond: 'สะสมครบ 200 ใบในแคมเปญนี้',
-    current: 120,
-    target: 200,
-    marks: [50, 100, 150, 200],
-    unit: 'ใบ',
-    tone: 'doing',
-    statusLabel: 'กำลังทำอยู่',
-    daysLabel: 'เหลืออีก 9 วัน',
-    quota: true,
-  },
-  {
     id: 'freq-master',
     name: 'ภารกิจศิษย์เอกจิ๊ดริด',
     reward: 'โค้ดส่วนลด Thaimart 300 บาท',
     kind: 'คูปอง',
     image: REWARD.voucher,
-    cond: 'ซื้อ 6 งวดติด + จิ๊ดริดครบ 3 ประเภท',
-    current: 0,
-    target: 6,
-    marks: [2, 4, 6],
-    unit: 'งวด',
+    cond: 'ซื้อต่อเนื่อง 6 งวด + ใช้จิ๊ดริดกล่องสุ่ม 10',
+    shape: 'pair',
+    tracks: [
+      { label: 'ซื้อต่อเนื่อง', current: 0, target: 6, unit: 'งวด' },
+      { label: 'ใช้จิ๊ดริดกล่องสุ่ม 10', current: 0, target: 1 },
+    ],
     tone: 'idle',
     statusLabel: 'ยังไม่เริ่ม',
     daysLabel: 'เหลืออีก 9 วัน',
     quota: true,
   },
   {
-    id: 'vol-very-hard',
+    id: 'vol-tycoon',
     name: 'ภารกิจเจ้าสัว',
     reward: 'Apple Watch',
     kind: 'ของส่งถึงบ้าน',
     image: REWARD.appleWatch,
     cond: 'สะสมครบ 3,000 ใบในแคมเปญนี้',
+    // §6.0 `1 Mission : 1 Task แบบต่อเนื่อง` — one run at one number. No checkpoints:
+    // the upper VOLUME tiers pay once, at the end, and marks along the way would promise
+    // something that is not there.
+    shape: 'single',
     current: 0,
     target: 3000,
-    marks: [500, 1500, 3000],
     unit: 'ใบ',
     tone: 'idle',
     statusLabel: 'ยังไม่เริ่ม',
@@ -165,10 +194,10 @@ export const MISSIONS_OPEN: Mission[] = [
  */
 export const MISSIONS_CLOSED: ClosedMission[] = [
   {
-    id: 'vol-normal-out',
-    name: 'ภารกิจเศรษฐีป้ายแดง',
-    reward: 'หูฟัง Sony',
-    cond: 'สะสมครบ 500 ใบในแคมเปญนี้',
+    id: 'vol-hard-out',
+    name: 'ภารกิจเศรษฐีประจำงวด',
+    reward: 'กระเป๋าเดินทาง',
+    cond: 'สะสมครบ 1,000 ใบในแคมเปญนี้',
     statusLabel: 'ของรางวัลหมดแล้ว',
   },
 ];
@@ -184,11 +213,12 @@ export const MISSIONS_DONE: Mission[] = [
     reward: '10 นกพอยต์',
     kind: 'นกพอยต์',
     image: REWARD.nokpoint,
-    cond: 'ซื้อลอตเตอรี่ 2 งวดติดกัน',
-    current: 2,
-    target: 2,
-    marks: [1, 2],
-    unit: 'งวด',
+    cond: 'ซื้อลอตเตอรี่ 1 ใบ + ซื้อต่อเนื่อง 2 งวด',
+    shape: 'pair',
+    tracks: [
+      { label: 'ซื้อลอตเตอรี่', current: 1, target: 1 },
+      { label: 'ซื้อต่อเนื่อง', current: 2, target: 2, unit: 'งวด' },
+    ],
     tone: 'ready',
     statusLabel: 'ทำครบ รอรับรางวัล',
   },
@@ -198,11 +228,12 @@ export const MISSIONS_DONE: Mission[] = [
     reward: 'โค้ดส่วนลด Thaimart 100 บาท',
     kind: 'คูปอง',
     image: REWARD.voucher,
-    cond: 'ซื้อ 4 งวดติด + ลองจิ๊ดริด 2 ประเภท',
-    current: 4,
-    target: 4,
-    marks: [2, 3, 4],
-    unit: 'งวด',
+    cond: 'ซื้อต่อเนื่องมากกว่า 4 งวด + ใช้จิ๊ดริดกล่องสุ่ม 5',
+    shape: 'pair',
+    tracks: [
+      { label: 'ซื้อต่อเนื่อง', current: 4, target: 4, unit: 'งวด' },
+      { label: 'ใช้จิ๊ดริดกล่องสุ่ม 5', current: 1, target: 1 },
+    ],
     tone: 'claimed',
     statusLabel: 'รับรางวัลแล้ว',
   },
@@ -237,10 +268,13 @@ export interface MissionDetail {
   campaignWindow: string;
 
   progress?: {
-    current: number;
-    target: number;
-    marks: number[];
-    unit: string;
+    /** prd §6.0 MT-01 — the same three shapes the card draws. */
+    shape: MissionCardProps['shape'];
+    current?: number;
+    target?: number;
+    unit?: string;
+    rungs?: LadderRung[];
+    tracks?: MissionTrack[];
     /** "เหลืออีก 12 ใบ · เหลืออีก 9 วัน" — what is left, in both currencies. */
     note: string;
   };
@@ -262,34 +296,31 @@ const CAMPAIGN = 'ช่วงแคมเปญ 1 ก.ค. – 30 ก.ย. 2569
 
 /** CTA 1/4 — ยังไม่ครบเงื่อนไข */
 export const DETAIL_IN_PROGRESS: MissionDetail = {
-  name: 'ภารกิจว่าที่คนจะรวย',
-  reward: 'กล่องข้าวร่ำรวย',
-  kind: 'ของส่งถึงบ้าน',
-  image: REWARD.bento,
+  name: 'ภารกิจเส้นทางเศรษฐี',
+  reward: LADDER_NEXT.reward,
+  kind: LADDER_NEXT.kind,
+  image: LADDER_NEXT.image,
   campaignWindow: CAMPAIGN,
   progress: {
-    current: 38,
-    target: 50,
-    marks: [10, 25, 40, 50],
+    shape: 'ladder',
+    current: 214,
     unit: 'ใบ',
-    note: 'เหลืออีก 12 ใบ · เหลืออีก 9 วัน',
+    rungs: LADDER_RUNGS,
+    note: 'ผ่านแล้ว 2 จาก 3 หมุด · อีก 286 ใบ ถึงหมุดสุดท้าย · เหลืออีก 9 วัน',
   },
-  steps: [
-    { state: 'done', text: 'สะสมลอตเตอรี่ในแคมเปญนี้ครบ 25 ใบ', meta: 'ผ่านแล้ว' },
-    { state: 'wait', text: 'สะสมต่อให้ครบ 40 ใบ', meta: 'ตอนนี้ 38 ใบ · เหลืออีก 2 ใบ' },
-    { state: 'todo', text: 'สะสมต่อให้ครบ 50 ใบ', meta: 'เหลืออีก 12 ใบ' },
-  ],
+  // A ladder's rungs are its conditions, so the rung list stands in for the step list —
+  // spelling the same three thresholds out twice would be the page arguing with itself.
+  steps: [],
   facts: [
     { label: 'สิทธิ์คงเหลือ', value: 'รอข้อมูล', pending: true },
     { label: 'อายุของรางวัลหลังกดรับ', value: 'รอข้อมูล', pending: true },
     { label: 'การจัดส่ง', value: 'กรอกที่อยู่แล้วทีมงานติดต่อกลับ' },
   ],
   terms:
-    'รางวัลนับตามยอดที่ยืนยันแล้วในแคมเปญนี้เท่านั้น · หนึ่งบัญชีรับรางวัลนี้ได้ 1 ครั้ง · ถ้าระบบนับยอดผิด บริษัทรับผิดชอบและแก้ให้',
-  cta: { label: 'ไปทำภารกิจ' },
+    'รางวัลนับตามยอดที่ยืนยันแล้วในแคมเปญนี้เท่านั้น · รับได้หมุดละ 1 ครั้งต่อบัญชี · ถ้าระบบนับยอดผิด บริษัทรับผิดชอบและแก้ให้',
+  cta: { label: 'รับรางวัลหมุดที่ 2' },
 };
 
-/** CTA 2/4 — ครบแล้ว ยังไม่รับ · จุด claim เดียวของระบบ (MECH-05) */
 export const DETAIL_COMPLETED: MissionDetail = {
   name: 'ภารกิจคนน่ารัก',
   reward: '10 นกพอยต์',
@@ -297,9 +328,11 @@ export const DETAIL_COMPLETED: MissionDetail = {
   image: REWARD.nokpoint,
   campaignWindow: CAMPAIGN,
   banner: { title: 'ทำครบแล้ว 2/2 งวด', body: 'ยอดทั้งสองงวดยืนยันแล้ว' },
+  // §6.1 EASY asks for two different things — one ticket, and two rounds in a row. Both
+  // get their own line, in the order the condition names them.
   steps: [
-    { state: 'done', text: 'ซื้อลอตเตอรี่งวด 1 ส.ค. 2569', meta: 'ยืนยันยอดแล้ว' },
-    { state: 'done', text: 'ซื้อลอตเตอรี่งวด 16 ส.ค. 2569', meta: 'ยืนยันยอดแล้ว' },
+    { state: 'done', text: 'ซื้อลอตเตอรี่ 1 ใบ', meta: 'ยืนยันยอดแล้ว' },
+    { state: 'done', text: 'ซื้อต่อเนื่อง 2 งวด', meta: 'งวด 1 ก.ค. และ 16 ก.ค. 2569 ยืนยันแล้ว' },
   ],
   facts: [
     { label: 'สิทธิ์คงเหลือ', value: 'รอข้อมูล', pending: true },
@@ -331,19 +364,19 @@ export const DETAIL_CLAIMED: MissionDetail = {
  * `[user 2026-08-24]`.
  */
 export const DETAIL_OUT_OF_STOCK: MissionDetail = {
-  name: 'ภารกิจเศรษฐีป้ายแดง',
-  reward: 'หูฟัง Sony',
+  name: 'ภารกิจเศรษฐีประจำงวด',
+  reward: 'กระเป๋าเดินทาง',
   kind: 'ของส่งถึงบ้าน',
-  image: REWARD.headphones,
+  image: REWARD.luggage,
   campaignWindow: CAMPAIGN,
   progress: {
+    shape: 'single',
     current: 120,
-    target: 500,
-    marks: [100, 250, 400, 500],
+    target: 1000,
     unit: 'ใบ',
     note: 'ยอดที่สะสมไว้ยังอยู่ · แต่รางวัลนี้หมดแล้ว',
   },
-  steps: [{ state: 'wait', text: 'สะสมลอตเตอรี่ในแคมเปญนี้ครบ 500 ใบ', meta: 'ตอนนี้ 120 ใบ' }],
+  steps: [{ state: 'wait', text: 'สะสมลอตเตอรี่ในแคมเปญนี้ครบ 1,000 ใบ', meta: 'ตอนนี้ 120 ใบ' }],
   facts: [{ label: 'สิทธิ์คงเหลือ', value: '0 สิทธิ์' }],
   terms: 'ภารกิจนี้ปิดรับรางวัลแล้วในรอบนี้ · รอบถัดไปเริ่มเมื่อไหร่ยังไม่ยืนยัน',
   cta: { label: 'ของรางวัลหมดแล้ว', disabled: true },
@@ -434,43 +467,95 @@ const TERMS: Record<MissionCardProps['kind'], string> = {
  * knows; here one rung stands for the whole condition. `DETAIL_IN_PROGRESS` and the other
  * hand-written fixtures show what the real breakdown looks like.
  */
+/**
+ * Whether a mission has nothing left to ask for.
+ *
+ * "Finished" means something different in each shape, which is the whole point of §6.0: a
+ * pair is finished when both of its counts are, a ladder when its last rung has been
+ * collected, a single when its one count reaches its one target. Every screen that has to
+ * make that call asks here, so none of them can answer it differently.
+ */
+export const isMissionDone = (m: Mission): boolean =>
+  m.shape === 'pair'
+    ? (m.tracks ?? []).length > 0 && (m.tracks ?? []).every((t) => t.current >= t.target)
+    : m.shape === 'ladder'
+      ? (m.rungs ?? []).every((r) => r.state === 'claimed')
+      : (m.current ?? 0) >= (m.target ?? 0);
+
+/** The rung a ladder mission is offering right now, if any is waiting to be collected. */
+export const readyRungIndex = (m: Mission): number =>
+  (m.rungs ?? []).findIndex((r) => r.state === 'ready');
+
 export const detailFor = (m: Mission): MissionDetail => {
-  const done = m.current >= m.target;
+  const tracks = m.tracks ?? [];
+  const rungs = (m.rungs ?? []) as LadderRung[];
   const claimed = m.tone === 'claimed';
+  const done = isMissionDone(m);
+
+  const readyAt = readyRungIndex(m);
+  const passed = rungs.filter((r) => (m.current ?? 0) >= r.at).length;
+  const days = m.daysLabel ? ` · ${m.daysLabel}` : '';
+
+  const note =
+    m.shape === 'pair'
+      ? `ต้องทำให้ครบทั้ง ${tracks.length} อย่างถึงจะรับรางวัลได้${days}`
+      : m.shape === 'ladder'
+        ? `ผ่านแล้ว ${passed} จาก ${rungs.length} หมุด${days}`
+        : `เหลืออีก ${((m.target ?? 0) - (m.current ?? 0)).toLocaleString('en-US')} ${m.unit ?? ''}`.trim() + days;
+
   return {
     name: m.name,
     reward: m.reward,
     kind: m.kind,
     image: m.image,
     campaignWindow: CAMPAIGN,
-    progress: done
-      ? undefined
-      : {
-          current: m.current,
-          target: m.target,
-          marks: m.marks ?? [],
-          unit: m.unit ?? '',
-          note: [
-            `เหลืออีก ${(m.target - m.current).toLocaleString('en-US')} ${m.unit ?? ''}`.trim(),
-            m.daysLabel,
-          ]
-            .filter(Boolean)
-            .join(' · '),
-        },
+    // A ladder keeps its rail even with a rung ready to collect: the climb is not over,
+    // and hiding the bar would say it was.
+    progress:
+      done && m.shape !== 'ladder'
+        ? undefined
+        : {
+            shape: m.shape,
+            current: m.current,
+            target: m.target,
+            unit: m.unit,
+            rungs: m.shape === 'ladder' ? rungs : undefined,
+            tracks: m.shape === 'pair' ? tracks : undefined,
+            note,
+          },
     banner: claimed
       ? { title: 'รับรางวัลแล้ว', body: 'ดูของที่ได้จากปลายทางด้านล่าง' }
       : done
-        ? { title: `ทำครบแล้ว ${m.current}/${m.target} ${m.unit ?? ''}`.trim(), body: 'ยอดยืนยันแล้ว' }
+        ? { title: 'ทำครบทุกเงื่อนไขแล้ว', body: 'ยอดยืนยันแล้ว' }
         : undefined,
-    steps: [
-      {
-        state: done ? 'done' : m.current > 0 ? 'wait' : 'todo',
-        text: m.cond,
-        meta: done
-          ? 'ผ่านแล้ว'
-          : `ตอนนี้ ${m.current.toLocaleString('en-US')}/${m.target.toLocaleString('en-US')} ${m.unit ?? ''}`.trim(),
-      },
-    ],
+    // A pair gets one line per count, so the screen names both of the things it asks for.
+    // A ladder gets none — its rungs are its conditions, and the rung list carries them.
+    // A pair that is still counting shows its two tasks as tracks, so a step list under
+    // them would be the third telling of the same two lines. Once it is finished the
+    // tracks are gone — then the list is the record of what was done.
+    steps:
+      m.shape === 'ladder' || (m.shape === 'pair' && !done)
+        ? []
+        : m.shape === 'pair'
+          ? tracks.map((t) => ({
+              state: (t.current >= t.target ? 'done' : t.current > 0 ? 'wait' : 'todo') as MissionStep['state'],
+              text: t.label,
+              meta:
+                t.current >= t.target
+                  ? 'ผ่านแล้ว'
+                  : t.target <= 1
+                    ? 'ยังไม่ได้ทำ'
+                    : `ตอนนี้ ${t.current.toLocaleString('en-US')}/${t.target.toLocaleString('en-US')} ${t.unit ?? ''}`.trim(),
+            }))
+          : [
+              {
+                state: (done ? 'done' : (m.current ?? 0) > 0 ? 'wait' : 'todo') as MissionStep['state'],
+                text: m.cond,
+                meta: done
+                  ? 'ผ่านแล้ว'
+                  : `ตอนนี้ ${(m.current ?? 0).toLocaleString('en-US')}/${(m.target ?? 0).toLocaleString('en-US')} ${m.unit ?? ''}`.trim(),
+              },
+            ],
     facts: [
       ...(m.quota ? [{ label: 'สิทธิ์คงเหลือ', value: 'รอข้อมูล', pending: true }] : []),
       ...FACTS[m.kind],
@@ -478,9 +563,11 @@ export const detailFor = (m: Mission): MissionDetail => {
     terms: TERMS[m.kind],
     cta: claimed
       ? { label: 'รับรางวัลแล้ว', disabled: true }
-      : done
-        ? { label: 'รับรางวัล' }
-        : { label: 'ไปทำภารกิจ' },
+      : readyAt >= 0
+        ? { label: `รับรางวัลหมุดที่ ${readyAt + 1}` }
+        : done
+          ? { label: 'รับรางวัล' }
+          : { label: 'ไปทำภารกิจ' },
     links: claimed ? DESTINATIONS[m.kind] : undefined,
   };
 };
@@ -490,7 +577,7 @@ export const detailForClosed = (m: ClosedMission): MissionDetail => ({
   name: m.name,
   reward: m.reward,
   kind: 'ของส่งถึงบ้าน',
-  image: REWARD.headphones,
+  image: REWARD.luggage,
   campaignWindow: CAMPAIGN,
   steps: [{ state: 'todo', text: m.cond, meta: 'ยังทำได้ แต่รางวัลหมดแล้ว' }],
   facts: [{ label: 'สิทธิ์คงเหลือ', value: '0 สิทธิ์' }],

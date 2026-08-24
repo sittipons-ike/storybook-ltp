@@ -18,7 +18,10 @@ import {
   MISSION_TABS,
   detailFor,
   detailForClosed,
+  isMissionDone,
+  readyRungIndex,
   type ClosedMission,
+  type LadderRung,
   type Mission,
 } from '../fixtures';
 
@@ -59,20 +62,48 @@ const Caption: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 const Flow: React.FC = () => {
   const [tab, setTab] = React.useState<string>('open');
   const [openId, setOpenId] = React.useState<string | null>(null);
-  // Missions claimed during this run. Kept by id so both screens agree.
+  /**
+   * What has been collected during this run. A whole mission is kept as its id; a single
+   * rung of a ladder as `id#index`, because a ladder pays out more than once and claiming
+   * the second rung does not finish the climb.
+   */
   const [claimed, setClaimed] = React.useState<string[]>([]);
   const [note, setNote] = React.useState<string | null>(null);
 
   const say = (text: string) => setNote(text);
 
-  const withClaims = (m: Mission): Mission =>
-    claimed.includes(m.id)
+  const withClaims = (m: Mission): Mission => {
+    // A ladder advances instead of finishing: the rung just collected greys out, the card
+    // starts leading with the next reward, and the climb carries on.
+    if (m.shape === 'ladder' && m.rungs) {
+      const rungs = (m.rungs as LadderRung[]).map((r, i) =>
+        claimed.includes(`${m.id}#${i}`) ? { ...r, state: 'claimed' as const } : r,
+      );
+      const next = rungs.find((r) => r.state !== 'claimed');
+      const waiting = rungs.some((r) => r.state === 'ready');
+      const left = (next?.at ?? 0) - (m.current ?? 0);
+      return {
+        ...m,
+        rungs,
+        reward: next?.reward ?? m.reward,
+        image: next?.image ?? m.image,
+        kind: next?.kind ?? m.kind,
+        tone: waiting ? 'ready' : 'doing',
+        statusLabel: waiting
+          ? m.statusLabel
+          : next
+            ? `อีก ${left.toLocaleString('en-US')} ${m.unit ?? ''} ถึงหมุดถัดไป`.trim()
+            : 'รับครบทุกหมุดแล้ว',
+      };
+    }
+    return claimed.includes(m.id)
       ? { ...m, tone: 'claimed', statusLabel: 'รับรางวัลแล้ว', daysLabel: undefined }
       : m;
+  };
 
   // A mission claimed during this run stays in `สำเร็จแล้ว`; the two tabs never hold the
   // same mission at once.
-  const open = MISSIONS_OPEN;
+  const open = MISSIONS_OPEN.map(withClaims);
   const done = MISSIONS_DONE.map(withClaims);
 
   const missions = tab === 'open' ? open : done;
@@ -84,7 +115,16 @@ const Flow: React.FC = () => {
 
   const onCta = () => {
     if (!current) return;
-    if (current.current >= current.target && !claimed.includes(current.id)) {
+    // What counts as claimable differs by shape (prd §6.0), and a ladder can pay out with
+    // the climb still unfinished — both questions are answered in fixtures so this screen
+    // and the detail's own CTA can never disagree about the same mission.
+    const rung = readyRungIndex(current);
+    if (rung >= 0) {
+      setClaimed((ids) => [...ids, `${current.id}#${rung}`]);
+      say(`รับ ${current.rungs![rung].reward} เรียบร้อย`);
+      return;
+    }
+    if (isMissionDone(current) && !claimed.includes(current.id)) {
       setClaimed((ids) => [...ids, current.id]);
       say(`รับ ${current.reward} เรียบร้อย`);
       return;

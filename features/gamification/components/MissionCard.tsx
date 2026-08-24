@@ -2,7 +2,10 @@ import React from 'react';
 import '../../../ui/foundations/tokens.css';
 import { sys } from '../../../ui/foundations/tokens';
 import Text from '../../../ui/components/Text/Text';
-import MissionProgress from './MissionProgress';
+import MissionProgress, { MissionLadder, MissionTracks } from './MissionProgress';
+import type { MissionRung, MissionShape, MissionTrack } from './MissionProgress';
+
+export type { MissionShape } from './MissionProgress';
 import './MissionCard.css';
 
 // ═══════════════════════════════════════════
@@ -24,6 +27,7 @@ export type RewardKind = 'นกพอยต์' | 'คูปอง' | 'ขอ�
  * `pending` is §5.2.1: counted, not settled — visible, but not yet earned (SET-01).
  */
 export type MissionTone = 'ready' | 'doing' | 'pending' | 'idle' | 'claimed';
+
 
 const TONE: Record<MissionTone, { background: string; color: string }> = {
   ready: { background: sys('color-status-success-light'), color: sys('color-status-success-darker') },
@@ -47,11 +51,25 @@ export interface MissionCardProps {
   /** เงื่อนไขแบบอ่านจบใน 1 บรรทัด — AC-301 #2. */
   cond: string;
 
-  /** AC-301 #3 — the real count, and the marks along the way. */
-  current: number;
-  target: number;
-  marks?: number[];
+  /**
+   * AC-301 #3 / prd §6.0 MT-01 — which of the three progress shapes this mission has.
+   *
+   * `single` reads `current`/`target`; `ladder` reads `rungs`; `pair` reads `tracks`.
+   * The shape is a property of the mission group, not a styling choice: drawing a
+   * FREQUENCY mission as a single count hides one of the two things it asks for.
+   */
+  shape: MissionShape;
+
+  /** `single` and `ladder` — the real count, in `unit`. A `pair` counts inside its tracks. */
+  current?: number;
+  /** `single` — what finishes the mission. */
+  target?: number;
   unit?: string;
+
+  /** `ladder` — the rungs, in ascending order. Each pays out on its own. */
+  rungs?: MissionRung[];
+  /** `pair` — the two counts, both of which must fill. */
+  tracks?: MissionTrack[];
 
   tone: MissionTone;
   /** What the pill says. Written per mission because a refusal owes a reason (BP-05). */
@@ -82,10 +100,12 @@ const MissionCard: React.FC<MissionCardProps> = ({
   kind,
   image,
   cond,
-  current,
-  target,
-  marks,
+  shape,
+  current = 0,
+  target = 0,
   unit,
+  rungs = [],
+  tracks = [],
   tone,
   statusLabel,
   daysLabel,
@@ -116,17 +136,38 @@ const MissionCard: React.FC<MissionCardProps> = ({
     </div>
 
     <div className="ltp-mission-card__body">
-      <Text role="body-md-regular" tone="secondary" style={{ textWrap: 'pretty' }}>{cond}</Text>
+      {/* A pair spells its condition out as two named rows just below; printing
+          "ซื้อต่อเนื่อง 3 งวด + ใช้จิ๊ดริดกล่องสุ่ม 3" above them is the card saying the
+          same thing twice within an inch. AC-301 #2 is met by the rows, better. */}
+      {shape !== 'pair' && (
+        <Text role="body-md-regular" tone="secondary" style={{ textWrap: 'pretty' }}>{cond}</Text>
+      )}
 
-      <div className="ltp-mission-card__progress-head">
-        <Text role="caption-lg-regular" tone="tertiary">ความคืบหน้า</Text>
-        <Text role="title-lg-semibold" tone="primary" className="ltp-mission-card__count">
-          {current.toLocaleString('en-US')}/{target.toLocaleString('en-US')}
-          {unit ? ` ${unit}` : ''}
-        </Text>
-      </div>
+      {shape === 'pair' ? (
+        /* Each track names itself and prints its own count, so a shared heading above them
+           would only repeat what the rows already say. */
+        <MissionTracks tracks={tracks} />
+      ) : (
+        <>
+          <div className="ltp-mission-card__progress-head">
+            <Text role="caption-lg-regular" tone="tertiary">ความคืบหน้า</Text>
+            <Text role="title-lg-semibold" tone="primary" className="ltp-mission-card__count">
+              {/* A ladder prints where the user is and stops there. `214/500` beside a bar
+                  that is two rungs of three along would be two different answers to the
+                  same question — the rung numbers under the rail carry the targets. */}
+              {current.toLocaleString('en-US')}
+              {shape === 'single' ? `/${target.toLocaleString('en-US')}` : ''}
+              {unit ? ` ${unit}` : ''}
+            </Text>
+          </div>
 
-      <MissionProgress current={current} target={target} marks={marks} />
+          {shape === 'ladder' ? (
+            <MissionLadder current={current} rungs={rungs} unit={unit} showLabels />
+          ) : (
+            <MissionProgress current={current} target={target} />
+          )}
+        </>
+      )}
 
       <div className="ltp-mission-card__meta">
         <span className="ltp-mission-card__pill" style={TONE[tone]}>{statusLabel}</span>

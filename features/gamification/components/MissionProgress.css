@@ -94,3 +94,92 @@
     transition: none;
   }
 }
+
+/* ── Ladder rungs ────────────────────────────────────────────────
+ * A rung is a gate, not a tick: reaching one pays out, so it is drawn larger than a
+ * pacing pip and ringed in the card's own background so it stays legible whether the fill
+ * has reached it or not. It overhangs the rail by 2px on each side for the same reason —
+ * a marker flush inside a 10px rail disappears under the fill.
+ */
+.ltp-mission-progress__pip--rung {
+  width: 14px;
+  height: 14px;
+  margin-top: -7px;
+  margin-left: -7px;
+  background: var(--sys-color-border-tertiary);
+  box-shadow: 0 0 0 2px var(--sys-color-background-default);
+}
+
+.ltp-mission-progress__pip--rung.ltp-mission-progress__pip--reached {
+  /* White, not red: a red stud on a red fill is only its own ring, and the ring is what
+     the head knob looks like too. A hole reads as "passed" at a glance. */
+  background: var(--sys-color-background-default);
+  box-shadow: none;
+}
+
+/* ── Two tracks (FREQUENCY) ──────────────────────────────────────
+ * Stacked rather than side by side. Two half-width bars would each be too short to read a
+ * position off, and the eye would compare their lengths — which means nothing here,
+ * because the two counts are in different units.
+ */
+.ltp-mission-tracks,
+.ltp-mission-tracks * {
+  box-sizing: border-box;
+}
+
+.ltp-mission-tracks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-lg);
+  width: 100%;
+}
+
+.ltp-mission-tracks__row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-sm);
+}
+
+.ltp-mission-tracks__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sys-spacing-md);
+}
+
+.ltp-mission-tracks__count {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* A one-step task is a tick in the margin, not a rail. The mark sits on the first line's
+   optical centre rather than the row's, so it lines up with the label whether or not the
+   label wraps. */
+.ltp-mission-tracks__row--tick {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  align-items: start;
+  column-gap: var(--sys-spacing-md);
+}
+
+.ltp-mission-tracks__row--tick .ltp-mission-tracks__head {
+  grid-column: 2;
+}
+
+.ltp-mission-tracks__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  border-radius: 50%;
+  border: 2px solid var(--sys-color-border-tertiary);
+  background: var(--sys-color-background-default);
+}
+
+.ltp-mission-tracks__mark--done {
+  border-color: var(--sys-color-background-accent-red);
+  background: var(--sys-color-background-accent-red);
+  color: var(--sys-color-text-on-bgcolor);
+}

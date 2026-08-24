@@ -8,7 +8,8 @@ import Text from '../../../ui/components/Text/Text';
 import Divider from '../../../ui/components/Divider/Divider';
 import Icon from '../../../ui/icons/Icon';
 import '../../../ui/icons/icon-data';
-import MissionProgress from './MissionProgress';
+import MissionProgress, { MissionLadder, MissionTracks } from './MissionProgress';
+import type { MissionRung, MissionShape, MissionTrack } from './MissionProgress';
 import type { MissionFact, MissionStep } from '../fixtures';
 import './MissionDetailBlocks.css';
 
@@ -72,31 +73,116 @@ export const MissionHero: React.FC<MissionHeroProps> = ({ reward, image, campaig
 );
 
 export interface MissionProgressCardProps {
-  current: number;
-  target: number;
-  marks: number[];
-  unit: string;
+  /** prd §6.0 MT-01 — which of the three pictures this mission's progress is. */
+  shape: MissionShape;
+  /** `pair` — the mission's name heads its two tasks, the way a step list is headed. */
+  name?: string;
+  current?: number;
+  target?: number;
+  unit?: string;
+  /** `ladder` — the rungs, and what waits at each. */
+  rungs?: MissionRung[];
+  /** `pair` — the two counts, both of which must fill. */
+  tracks?: MissionTrack[];
   /** "เหลืออีก 12 ใบ · เหลืออีก 9 วัน" — what is left, counted both ways. */
   note: string;
 }
 
 /** Where the user stands. Drops out entirely once the mission is finished. */
 export const MissionProgressCard: React.FC<MissionProgressCardProps> = ({
-  current,
-  target,
-  marks,
-  unit,
+  shape,
+  name,
+  current = 0,
+  target = 0,
+  unit = '',
+  rungs = [],
+  tracks = [],
   note,
 }) => (
   <Surface radius="2xl" elevation="card" padding="2xl" gap="lg">
-    <Stack direction="row" align="baseline" justify="space-between" gap="lg">
-      <Text role="title-lg-semibold" tone="secondary">ความคืบหน้า</Text>
-      <Text role="display-xl-semibold" tone="primary" className="ltp-mission-block__count">
-        {current.toLocaleString('en-US')}/{target.toLocaleString('en-US')} {unit}
-      </Text>
-    </Stack>
-    <MissionProgress current={current} target={target} marks={marks} showLabels />
+    {shape === 'pair' ? (
+      <>
+        {/* No headline number: the two counts are in different units, so there is no one
+            number that stands for both. Each row says its own. */}
+        <Stack gap="none">
+          <Text role="title-lg-semibold" tone="secondary">{name}</Text>
+          <Text role="caption-lg-regular" tone="tertiary">ต้องทำให้ครบทั้ง 2 อย่าง</Text>
+        </Stack>
+        <MissionTracks tracks={tracks} />
+      </>
+    ) : (
+      <>
+        <Stack direction="row" align="baseline" justify="space-between" gap="lg">
+          <Text role="title-lg-semibold" tone="secondary">ความคืบหน้า</Text>
+          <Text role="display-xl-semibold" tone="primary" className="ltp-mission-block__count">
+            {current.toLocaleString('en-US')}
+            {shape === 'single' ? `/${target.toLocaleString('en-US')}` : ''} {unit}
+          </Text>
+        </Stack>
+        {shape === 'ladder' ? (
+          <MissionLadder current={current} rungs={rungs} unit={unit} showLabels />
+        ) : (
+          <MissionProgress current={current} target={target} showLabels />
+        )}
+      </>
+    )}
     <Text role="caption-lg-regular" tone="tertiary">{note}</Text>
+  </Surface>
+);
+
+/** What each rung of the ladder is worth, and whether it has been paid. */
+const RUNG: Record<MissionRung['state'], { icon: string; label: string; className: string }> = {
+  claimed: { icon: 'filled-check', label: 'รับแล้ว', className: 'ltp-mission-rung--claimed' },
+  ready: { icon: 'filled-gift', label: 'รอรับรางวัล', className: 'ltp-mission-rung--ready' },
+  locked: { icon: 'outline-radio-button', label: 'ยังไม่ถึง', className: 'ltp-mission-rung--locked' },
+};
+
+/**
+ * The ladder, spelled out: what each rung costs and what it pays.
+ *
+ * The rail above shows position; this shows the deal. A user asked to walk from 214 to 500
+ * deserves to see the thing waiting at 500 before deciding, and the two rungs already
+ * behind them are the evidence that the deal is real.
+ */
+export const MissionRungList: React.FC<{ name: string; rungs: MissionRung[]; unit?: string }> = ({
+  name,
+  rungs,
+  unit = '',
+}) => (
+  <Surface radius="2xl" elevation="card" padding="2xl" gap="xl">
+    {/* The mission's name heads its rungs for the same reason it heads a step list: on a
+        ladder, the rungs are what the mission asks for. */}
+    <Stack gap="none">
+      <Text role="title-lg-semibold" tone="secondary">{name}</Text>
+      <Text role="caption-lg-regular" tone="tertiary">ถึงหมุดไหน รับรางวัลหมุดนั้นได้เลย</Text>
+    </Stack>
+    <Stack gap="lg">
+      {rungs.map((rung) => (
+        <Stack
+          key={rung.at}
+          direction="row"
+          align="center"
+          gap="lg"
+          className={`ltp-mission-rung ${RUNG[rung.state].className}`}
+        >
+          <span className="ltp-mission-rung__mark">
+            <Icon name={RUNG[rung.state].icon} size="2xs" color="inherit" />
+          </span>
+          <span className="ltp-mission-rung__art">
+            {/* The reward is named on the line beside it, so the picture is decoration for
+                a screen reader rather than a second telling. */}
+            <img src={rung.image} alt="" />
+          </span>
+          <Stack gap="none" className="ltp-mission-rung__text">
+            <Text role="body-md-semibold" tone="secondary">{rung.reward}</Text>
+            <Text role="caption-lg-regular" tone="tertiary">
+              ถึง {rung.at.toLocaleString('en-US')}{unit ? ` ${unit}` : ''}
+            </Text>
+          </Stack>
+          <span className="ltp-mission-rung__state">{RUNG[rung.state].label}</span>
+        </Stack>
+      ))}
+    </Stack>
   </Surface>
 );
 

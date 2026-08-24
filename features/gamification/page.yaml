@@ -2,15 +2,21 @@
 #
 # Two pages so far, both from ticket T1. One document per page.
 #
-# Authority for every page in this feature: there is no Figma frame behind them. The mock
-# in "Marketing view" (7gVv3oV6G6xzldSjIxoSxb) was taken out of scope on 2026-08-23, so the
-# documents in this folder are the only source and the design system supplies every value.
+# Authority for every page in this feature: no Figma frame is copied. The screen mock in
+# "Marketing view" (7gVv3oV6G6xzldSjIxoSxb) was taken out of scope on 2026-08-23, so the
+# documents in this folder decide the layout and the design system supplies every value.
+#
+# One section of that same file is data, not design, and is authority: `2250:46164` carries
+# the tier tables AND the Mission:Task structure the three groups have (prd §6.0). It sets
+# what a mission asks for; it does not set what the screen looks like.
 sources:
-  - features/gamification/prd-dev.md          # v1.0 — AC-301/302/503, MECH-02/05, §5.2, §6.1, §6.2
+  - features/gamification/prd-dev.md          # v1.1 — AC-301/302/503, MECH-02/05, §5.2, §6.0 MT-01/02/03, §6.1, §6.2
   - features/gamification/ux-gamification.md  # §2 naming, §4.2 ordering, §4.3 card, §4.4 detail, §5, §6
   - features/gamification/user-flow.md        # entry points, decision points
   - features/gamification/tickets.md          # T1 scope + acceptance criteria
-figma: none — by decision 2026-08-23
+figma:
+  screens: none — by decision 2026-08-23
+  data: "7gVv3oV6G6xzldSjIxoSxb · 2250:46164 — tier tables + Mission:Task structure (read 2026-08-24)"
 design:
   tool: Claude Design
   project: b20d61e7-5cd9-4bcd-8ab5-2e382d2b5991
@@ -30,6 +36,7 @@ organisms:
   - header            # ui/components/Header variant=sub
   - tabs              # ui/components/Tabs variant=underline — 2 tabs (AC-302)
   - mission-card      # features/gamification/components — scope: feature
+  - mission-progress  # 3 รูปแบบตาม prd §6.0 — ladder · single · pair (MT-01)
 
 scope: feature
 project: lotteryplus
@@ -46,7 +53,8 @@ status: designer-state   # real fixtures, no API
 
 placeholders:
   - "จำนวนสิทธิ์คงเหลือ — TBD, รอ OPEN-08 · การ์ดเขียน 'รอข้อมูล' แทนตัวเลข"
-  - "ภาพรางวัล — ยังไม่มี artwork · ใช้กล่อง placeholder ที่บอกตัวเองว่าเป็น placeholder"
+  - "ชื่อภารกิจของบันได VOLUME #1 — 'ภารกิจเส้นทางเศรษฐี' เขียนขึ้นเอง ไม่มีในตาราง รอ marketing"
+  - "รอยต่อบันได (จบ 500 ใบ) กับ VOLUME #2 (เริ่ม 1,000 ใบ) — รอ OPEN-21"
   - "ขั้น STARTER — TBD, รอ OPEN-07 · ยังไม่มีเงื่อนไขและรางวัล จึงยังไม่มีการ์ด"
   - "วันเริ่มรอบถัดไป — TBD, รอ OPEN-11 · empty state จึงไม่ระบุวัน (SLA-01)"
 
@@ -58,8 +66,8 @@ type: page
 pattern: app-shell
 organisms:
   - header                 # ui/components/Header variant=sub phoenix
-  - mission-detail-blocks  # hero · progress · steps · facts · footer — scope: feature
-  - mission-progress       # features/gamification/components — scope: feature
+  - mission-detail-blocks  # hero · progress · rung-list | steps · facts · footer — scope: feature
+  - mission-progress       # ladder · single · pair — scope: feature
 
 scope: feature
 project: lotteryplus
@@ -78,7 +86,8 @@ rules:
   - "MECH-05 — เป็นจุด claim เดียว ไม่มีปุ่มรับรางวัลที่อื่นในระบบ"
   - "AC7 — สถานะ 'รับแล้ว' มีลิงก์รองไปปลายทางครบ 3 แบบ (NokPoint · My Coupon · LINE OA)"
   - "AC15 / SLA-01 — ไม่มีตัวเลขวันของ PHYSICAL ปรากฏบนหน้าจอ"
+  - "MT-01/MT-03 — บันได VOLUME #1 แสดง 'รางวัลแต่ละหมุด' แทนบล็อกเงื่อนไข และ claim ทีละหมุด"
 
 placeholders:
   - "อายุของรางวัล · สิทธิ์คงเหลือ — 'รอข้อมูล' เขียนเป็น mono (OPEN-13 · OPEN-08)"
-  - "ภาพรางวัล 358×150 — ยังไม่มี artwork"
+  - "หน้ายืนยันรับรางวัล MSN-300/330 — ยังไม่ได้ออกแบบ ปุ่มจึงหยุดที่ toast ใน prototype"

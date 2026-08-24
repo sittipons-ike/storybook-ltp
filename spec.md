@@ -1,8 +1,9 @@
 # Project Spec — Lotteryplus Design System
-_Last updated: 2026-08-24 18:30_
+_Last updated: 2026-08-24 13:10_
 
 ## Current State
 
+_2026-08-24: **mission ทั้งสามประเภทวาดคนละแบบแล้ว** ตาม Figma `2250:46164` + prd §6.0 — บันได VOLUME #1 (3 หมุด มีรางวัลทุกหมุด) · VOLUME #2 เส้นเดียวไม่มีหมุด · FREQUENCY 2 เส้นแยก · ของที่หายไปคือเงื่อนไขจิ๊ดริดที่การ์ดไม่เคยแสดง (MT-02) · prototype กดรับทีละหมุดแล้วบันไดเดินหน้าจริง · contrast audit 0 failure ทั้ง 4 view_
 _2026-08-24: **สาขารวมกลับเป็นเส้นเดียวแล้ว** — `feature/home-page` (doc review v1.1) merge เข้าสายหลักแล้ว · `main` = `44b6e09` · ล้าง branch ที่ merge แล้วทิ้ง 7 อัน · เหลือ `main` · `claude/gamification-mission-ui-0ec113` · `feature/home-page` · `claude/mystifying-torvalds-e98f4c` (worktree อื่นถืออยู่ มีงาน untracked 30 ไฟล์ ห้ามแตะ) · `main` ยังนำ `origin/main` อยู่ 29 commit — **ยังไม่ได้ push**_
 _2026-08-23: **`features/gamification/` docs ผ่าน consistency review + sync กับ Figma แล้ว** — prd-dev ขึ้น v1.1 · ล้างซากของ version ก่อน 2026-08-06 (roadmap · `AC-503` ซ้ำ · `MSN-110`) · path อ้างอิงทั้ง 4 ไฟล์ชี้โครง feature-first แล้ว · ดึงตาราง mission จาก Figma `2250:46164` เข้า §6.0/6.1/6.2/6.4 · เปิด OPEN-18/19/20 ที่เป็น product decision ค้าง_
 _หน้าที่สองของ page tier เสร็จ 2026-08-22: `features/home/` — `/` ทั้งหน้า 390×4651 วัดจาก Figma `21085:96373` ทีละ node · 11 feature component (+11 story) · 6 asset ของหน้า · อีก 3 component + 7 asset ยกขึ้น ui/ แล้ว · `npm run check` เขียว_
@@ -294,7 +295,11 @@ prd.md · ux-home.md · page.yaml (§3.7) · fixtures.ts · components/ 11 ต�
 - [x] `MSN-200 / 201 / 202 / 900` + loading skeleton · components `MissionCard` · `MissionProgress` (scope: feature)
 - [x] `MSN-210` รายละเอียดภารกิจ — CTA 5 สถานะ · จุด claim เดียว (MECH-05) · ปลายทางครบ 3 แบบ (AC7)
 - [x] ทั้ง 2 หน้า redesign ตาม Claude Design แล้ว — การ์ดเป็นแถบรางวัลแดง + เนื้อขาว · หน้า detail มีบล็อก "สิ่งที่ต้องรู้ก่อนกด" เหนือ CTA
+- [x] progress 3 รูปแบบตาม prd §6.0 (MT-01/02/03) — `MissionLadder` · `MissionTracks` · `MissionRungList`
 - [ ] `MSN-301 / 302 / 310 / 311 / 330` claim 3 เส้นทาง (`NOKPOINT` · `E_COUPON` · `PHYSICAL`)
+      — บันไดทำให้ claim key เปลี่ยนจาก `mission_id` เป็น `mission_id + rung` ต้องออกแบบเผื่อ
+- [ ] **OPEN-21 (ใหม่)** รอยต่อบันได VOLUME #1 (จบ 500 ใบ) กับ VOLUME #2 (เริ่ม 1,000 ใบ)
+- [ ] ชื่อ `ภารกิจเส้นทางเศรษฐี` เขียนขึ้นเอง — รอ marketing ยืนยัน
 - [ ] `MSN-910 / 911 / 920 / 921 / 922` system states + loading อีก 4 จุด
 - [ ] T2 entry points (`MSN-001 / 002 / 003 / 500`) — เฟสถัดไป ยังไม่เริ่ม
 - [ ] **typography ผูกกับ viewport ไม่ใช่ container** — หน้าจอมือถือใน Storybook กว้าง ≥768px
