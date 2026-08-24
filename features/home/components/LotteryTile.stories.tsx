@@ -10,7 +10,7 @@ import { TICKET_FACE } from '../fixtures';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof LotteryTile> = {
-  title: 'Features/Home/LotteryTile',
+  title: 'Features/Home/Components/LotteryTile',
   component: LotteryTile,
   parameters: { layout: 'fullscreen' },
 };

@@ -50,7 +50,7 @@ const sectionTitle: React.CSSProperties = {
 };
 
 const meta: Meta<typeof NavigationBar> = {
-  title: 'Organisms/NavigationBar',
+  title: 'Components/Navigation/NavigationBar',
   component: NavigationBar,
   tags: ['autodocs'],
   parameters: {

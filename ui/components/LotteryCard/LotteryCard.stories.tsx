@@ -9,7 +9,7 @@ import { sys } from '../../foundations/tokens';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof LotteryCard> = {
-  title: 'Atoms/LotteryCard',
+  title: 'Components/Display/LotteryCard',
   component: LotteryCard,
   parameters: { layout: 'padded' },
 };

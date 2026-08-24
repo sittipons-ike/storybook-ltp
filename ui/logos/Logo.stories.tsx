@@ -10,7 +10,7 @@ import { sys } from '../foundations/tokens';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof Logo> = {
-  title: 'Atoms/Logo',
+  title: 'Components/Display/Logo',
   component: Logo,
   parameters: { layout: 'padded' },
 };

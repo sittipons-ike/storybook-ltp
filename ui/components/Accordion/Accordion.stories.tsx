@@ -9,7 +9,7 @@ import { sys } from '../../foundations/tokens';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof Accordion> = {
-  title: 'Molecules/Accordion',
+  title: 'Components/Overlay/Accordion',
   component: Accordion,
   parameters: { layout: 'padded' },
 };

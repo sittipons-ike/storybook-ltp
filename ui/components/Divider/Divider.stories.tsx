@@ -17,7 +17,7 @@ import { sys } from '../../foundations/tokens';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof Divider> = {
-  title: 'Atoms/Divider',
+  title: 'Components/Display/Divider',
   component: Divider,
   parameters: { layout: 'padded' },
 };

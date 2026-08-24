@@ -9,7 +9,7 @@ import { sys } from '../../foundations/tokens';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof Footer> = {
-  title: 'Organisms/Footer',
+  title: 'Components/Layout/Footer',
   component: Footer,
   parameters: { layout: 'padded' },
 };

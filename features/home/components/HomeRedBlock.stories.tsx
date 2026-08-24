@@ -10,7 +10,7 @@ import { Row, Spec } from './story-helpers';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof HomeRedBlock> = {
-  title: 'Features/Home/HomeRedBlock',
+  title: 'Features/Home/Components/HomeRedBlock',
   component: HomeRedBlock,
   parameters: { layout: 'fullscreen' },
 };

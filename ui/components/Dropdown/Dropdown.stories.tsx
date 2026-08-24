@@ -52,7 +52,7 @@ const caption: React.CSSProperties = {
 };
 
 const meta: Meta<typeof Dropdown> = {
-  title: 'Molecules/Dropdown',
+  title: 'Components/Forms/Dropdown',
   component: Dropdown,
   tags: ['autodocs'],
   argTypes: {

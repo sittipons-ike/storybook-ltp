@@ -24,7 +24,7 @@ const sans = "'Graphik TH', sans-serif";
 const mono = 'ui-monospace, SFMono-Regular, Menlo, monospace';
 
 const meta: Meta<typeof ToggleSwitch> = {
-  title: 'Atoms/ToggleSwitch',
+  title: 'Components/Forms/ToggleSwitch',
   component: ToggleSwitch,
   tags: ['autodocs'],
   parameters: {

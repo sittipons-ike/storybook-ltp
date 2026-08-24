@@ -9,7 +9,7 @@ import { sys } from '../../foundations/tokens';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof Alert> = {
-  title: 'Molecules/Alert',
+  title: 'Components/Feedback/Alert',
   component: Alert,
   parameters: { layout: 'padded' },
 };

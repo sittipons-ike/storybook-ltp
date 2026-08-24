@@ -42,7 +42,7 @@ const OPTIONS = [
 ];
 
 const meta: Meta<typeof RadioButtonGroup> = {
-  title: 'Atoms/RadioButton',
+  title: 'Components/Forms/RadioButton',
   component: RadioButtonGroup,
   tags: ['autodocs'],
   argTypes: {

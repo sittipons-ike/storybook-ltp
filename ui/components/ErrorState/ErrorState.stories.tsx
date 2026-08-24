@@ -10,7 +10,7 @@ import { sys } from '../../foundations/tokens';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof ErrorState> = {
-  title: 'Organisms/ErrorState',
+  title: 'Components/Feedback/ErrorState',
   component: ErrorState,
   parameters: { layout: 'padded' },
 };

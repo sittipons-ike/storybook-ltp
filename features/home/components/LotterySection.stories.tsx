@@ -11,7 +11,7 @@ import { COUNTDOWN, FLASH_SALE_NOTE, HEADLINE, LOTTERY_SECTIONS } from '../fixtu
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof LotterySection> = {
-  title: 'Features/Home/LotterySection',
+  title: 'Features/Home/Components/LotterySection',
   component: LotterySection,
   parameters: { layout: 'fullscreen' },
 };

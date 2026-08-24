@@ -39,7 +39,7 @@ import {
 // ═══════════════════════════════════════════
 
 const meta: Meta = {
-  title: 'Pages/Mission/Prototype กดได้',
+  title: 'Features/Gamification/Pages/Prototype กดได้',
   parameters: { layout: 'fullscreen' },
 };
 export default meta;

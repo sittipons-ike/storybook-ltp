@@ -11,7 +11,7 @@ import { sys } from '../../foundations/tokens';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof ActionBar> = {
-  title: 'Organisms/ActionBar',
+  title: 'Components/Layout/ActionBar',
   component: ActionBar,
   parameters: { layout: 'padded' },
 };

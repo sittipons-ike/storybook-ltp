@@ -10,7 +10,7 @@ import { COUNTDOWN } from '../fixtures';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof CountdownPanel> = {
-  title: 'Features/Home/CountdownPanel',
+  title: 'Features/Home/Components/CountdownPanel',
   component: CountdownPanel,
   parameters: { layout: 'fullscreen' },
 };

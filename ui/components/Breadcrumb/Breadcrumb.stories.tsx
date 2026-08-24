@@ -65,7 +65,7 @@ const Swatch: React.FC<{ value: string }> = ({ value }) =>
   ) : null;
 
 const meta: Meta<typeof Breadcrumb> = {
-  title: 'Molecules/Breadcrumb',
+  title: 'Components/Navigation/Breadcrumb',
   component: Breadcrumb,
   tags: ['autodocs'],
   argTypes: {

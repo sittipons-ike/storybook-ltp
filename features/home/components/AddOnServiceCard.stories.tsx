@@ -10,7 +10,7 @@ import { ADD_ON_SERVICES } from '../fixtures';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof AddOnServiceCard> = {
-  title: 'Features/Home/AddOnServiceCard',
+  title: 'Features/Home/Components/AddOnServiceCard',
   component: AddOnServiceCard,
   parameters: { layout: 'fullscreen' },
 };

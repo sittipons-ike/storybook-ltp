@@ -9,7 +9,7 @@ import { sys } from '../../foundations/tokens';
 // ═══════════════════════════════════════════
 
 const meta: Meta<typeof Skeleton> = {
-  title: 'Atoms/Skeleton',
+  title: 'Components/Feedback/Skeleton',
   component: Skeleton,
   parameters: { layout: 'padded' },
 };
