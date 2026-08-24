@@ -104,7 +104,7 @@ export const MISSIONS_OPEN: Mission[] = [
     // not complete the mission.
     tone: 'pending',
     statusLabel: 'กำลังตรวจสอบยอด · 1 งวดยังไม่ยืนยัน',
-    daysLabel: 'เหลืออีก 4 วัน',
+    daysLabel: 'เหลืออีก 9 วัน',
   },
   {
     id: 'vol-easy',
@@ -256,7 +256,9 @@ export interface MissionDetail {
   links?: string[];
 }
 
-const CAMPAIGN = 'ช่วงแคมเปญ 1 ส.ค. – 30 ก.ย. 2569';
+// §6.2 — one window for every mission: three months, six draws (1 and 16 of each
+// month). Nothing runs on its own clock, so no mission can run out before the rest.
+const CAMPAIGN = 'ช่วงแคมเปญ 1 ก.ค. – 30 ก.ย. 2569';
 
 /** CTA 1/4 — ยังไม่ครบเงื่อนไข */
 export const DETAIL_IN_PROGRESS: MissionDetail = {
