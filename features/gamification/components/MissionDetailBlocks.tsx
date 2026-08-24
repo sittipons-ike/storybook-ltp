@@ -33,40 +33,26 @@ import './MissionDetailBlocks.css';
  * 3.80:1 on brand red and white reads 4.64:1.
  */
 const HERO_META = { color: sys('color-text-on-bgcolor') } as const;
-/**
- * The gap that starts the second group. It goes through `style` for the same reason the
- * colour does: Text writes `margin: 0` inline, and inline beats a class — a
- * `.hero-break { margin-top }` rule did nothing, which is the identical trap the colour
- * fell into on this same component.
- */
-const HERO_NAME = { ...HERO_META, marginTop: sys('spacing-md') } as const;
 const BANNER_TITLE = { color: sys('color-status-success-darker') } as const;
 const BANNER_BODY = { color: sys('color-status-success-dark') } as const;
 
 export interface MissionHeroProps {
-  /** The reward type, as an eyebrow — which of the three endings this one has (§2.1.1). */
-  kindLabel: string;
   reward: string;
   /** The reward, photographed. Campaign material, so it arrives through fixtures. */
   image: string;
-  name: string;
   campaignWindow: string;
 }
 
 /**
- * The block under the header: the reward photographed full-bleed, with the wording over
- * its lower half.
+ * The block under the header: the reward photographed full-bleed, with its name and the
+ * window it runs in over the lower edge.
  *
- * The readability is structural rather than hopeful — see the gradient's note in the
- * stylesheet. Nothing here depends on how light or dark a given campaign photograph is.
+ * Two lines and no more. The mission's name moved down to the conditions card, where the
+ * thing it names actually is, and the reward type left altogether — "ปลายทางของรางวัล"
+ * in the facts block already says where this one ends up, and said it in a full sentence
+ * rather than a two-word tag.
  */
-export const MissionHero: React.FC<MissionHeroProps> = ({
-  kindLabel,
-  reward,
-  image,
-  name,
-  campaignWindow,
-}) => (
+export const MissionHero: React.FC<MissionHeroProps> = ({ reward, image, campaignWindow }) => (
   <div className="ltp-mission-block__hero">
     <div className="ltp-mission-block__art">
       {/* Decorative: the reward's name is written across it. */}
@@ -79,12 +65,7 @@ export const MissionHero: React.FC<MissionHeroProps> = ({
       <div className="ltp-mission-block__scrim" aria-hidden="true" />
     </div>
     <div className="ltp-mission-block__hero-text">
-      <span className="ltp-mission-block__kind">{kindLabel}</span>
       <span className="ltp-mission-block__reward">{reward}</span>
-      {/* The second group. `title-md-medium` against the window's regular keeps the two
-          apart at the same colour — white is the only thing that reads on this red, so the
-          separation has to come from weight rather than tone. */}
-      <Text role="title-md-medium" style={HERO_NAME}>{name}</Text>
       <Text role="caption-lg-regular" style={HERO_META}>{campaignWindow}</Text>
     </div>
   </div>
@@ -150,15 +131,23 @@ const MARK: Record<MissionStep['state'], { className: string; icon?: string }> =
 };
 
 /**
- * เงื่อนไขภารกิจ, broken into its rungs.
+ * The mission's name, and the conditions it asks for, broken into rungs.
  *
  * §6.1's missions are compound — "ซื้อ 6 งวดติด + จิ๊ดริดครบ 3 ประเภท" — and BP-10 leaves
  * this screen to explain them with no onboarding behind it, so each rung gets its own line
  * and its own standing.
  */
-export const MissionSteps: React.FC<{ steps: MissionStep[] }> = ({ steps }) => (
+export const MissionSteps: React.FC<{ name: string; steps: MissionStep[] }> = ({
+  name,
+  steps,
+}) => (
   <Surface radius="2xl" elevation="card" padding="2xl" gap="xl">
-    <Text role="title-lg-semibold" tone="secondary">เงื่อนไข</Text>
+    {/* The mission's name heads the list of what it asks for — the two belong together,
+        and in the hero it was a second line competing with the reward it sat under. */}
+    <Stack gap="none">
+      <Text role="title-lg-semibold" tone="secondary">{name}</Text>
+      <Text role="caption-lg-regular" tone="tertiary">เงื่อนไขที่ต้องทำให้ครบ</Text>
+    </Stack>
     {steps.map((step) => (
       <Stack direction="row" align="flex-start" gap="none" key={step.text} className="ltp-mission-block__step">
         <span className={`ltp-mission-block__mark ${MARK[step.state].className}`}>

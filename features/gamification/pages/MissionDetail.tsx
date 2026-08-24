@@ -42,10 +42,8 @@ export interface MissionDetailPageProps {
 const MissionDetailPage: React.FC<MissionDetailPageProps> = ({ mission, onCta, onLink }) => (
   <Stack gap="none" grow>
     <MissionHero
-      kindLabel={mission.kindLabel}
       reward={mission.reward}
       image={mission.image}
-      name={mission.name}
       campaignWindow={mission.campaignWindow}
     />
 
@@ -56,7 +54,7 @@ const MissionDetailPage: React.FC<MissionDetailPageProps> = ({ mission, onCta, o
         mission.progress && <MissionProgressCard {...mission.progress} />
       )}
 
-      <MissionSteps steps={mission.steps} />
+      <MissionSteps name={mission.name} steps={mission.steps} />
 
       {/* BP-02 — the last thing before the button, never the first thing after it. */}
       <MissionFacts facts={mission.facts} terms={mission.terms} />

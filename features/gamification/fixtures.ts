@@ -234,8 +234,6 @@ export interface MissionDetail {
   reward: string;
   kind: MissionCardProps['kind'];
   image: string;
-  /** The eyebrow above the reward — the type, plus where it lands when there is room. */
-  kindLabel: string;
   campaignWindow: string;
 
   progress?: {
@@ -266,7 +264,6 @@ export const DETAIL_IN_PROGRESS: MissionDetail = {
   reward: 'กล่องข้าวร่ำรวย',
   kind: 'ของส่งถึงบ้าน',
   image: REWARD.bento,
-  kindLabel: 'ของส่งถึงบ้าน',
   campaignWindow: CAMPAIGN,
   progress: {
     current: 38,
@@ -296,7 +293,6 @@ export const DETAIL_COMPLETED: MissionDetail = {
   reward: '10 นกพอยต์',
   kind: 'นกพอยต์',
   image: REWARD.nokpoint,
-  kindLabel: 'นกพอยต์ · เข้าบัญชีทันที',
   campaignWindow: CAMPAIGN,
   banner: { title: 'ทำครบแล้ว 2/2 งวด', body: 'ยอดทั้งสองงวดยืนยันแล้ว' },
   steps: [
@@ -337,7 +333,6 @@ export const DETAIL_OUT_OF_STOCK: MissionDetail = {
   reward: 'หูฟัง Sony',
   kind: 'ของส่งถึงบ้าน',
   image: REWARD.headphones,
-  kindLabel: 'ของส่งถึงบ้าน',
   campaignWindow: CAMPAIGN,
   progress: {
     current: 120,
@@ -395,12 +390,6 @@ export const MISSION_EMPTY = {
 //  Prototype wiring
 // ═══════════════════════════════════════════
 
-const KIND_LABEL: Record<MissionCardProps['kind'], string> = {
-  'นกพอยต์': 'นกพอยต์ · เข้าบัญชีทันที',
-  'คูปอง': 'คูปอง · ใช้ที่ NokShop',
-  'ของส่งถึงบ้าน': 'ของส่งถึงบ้าน',
-};
-
 /** AC7 — where each kind of reward actually ends up. */
 const DESTINATIONS: Record<MissionCardProps['kind'], string[]> = {
   'นกพอยต์': ['ไปดูนกพอยต์'],
@@ -450,7 +439,6 @@ export const detailFor = (m: Mission): MissionDetail => {
     name: m.name,
     reward: m.reward,
     kind: m.kind,
-    kindLabel: KIND_LABEL[m.kind],
     image: m.image,
     campaignWindow: CAMPAIGN,
     progress: done
@@ -500,7 +488,6 @@ export const detailForClosed = (m: ClosedMission): MissionDetail => ({
   name: m.name,
   reward: m.reward,
   kind: 'ของส่งถึงบ้าน',
-  kindLabel: 'ของส่งถึงบ้าน',
   image: REWARD.headphones,
   campaignWindow: CAMPAIGN,
   steps: [{ state: 'todo', text: m.cond, meta: 'ยังทำได้ แต่รางวัลหมดแล้ว' }],
