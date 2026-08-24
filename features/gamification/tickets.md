@@ -1,6 +1,6 @@
 # Mid-fi Design Tickets — Mission & Gamification
 
-_อัปเดต 2026-08-06 · อ้างอิง `docs/blueprints/ux-mission-gamification.md` + `docs/prd/prd-mission-gamification-dev.md` v1.0_
+_อัปเดต 2026-08-06 · อ้างอิง `features/gamification/ux-gamification.md` + `features/gamification/prd-dev.md` v1.0_
 
 **แบ่ง 2 ใบ**
 - **T1** — flow หลักทั้งหมด ตั้งแต่หน้าภารกิจ จนของถึงมือ (Mission → Reward)
@@ -20,7 +20,7 @@ _อัปเดต 2026-08-06 · อ้างอิง `docs/blueprints/ux-miss
 | **Type** | Design Task |
 | **Priority** | High |
 | **Fidelity** | Mid-fi (โครงหน้า + ลำดับข้อมูล + copy จริงเท่าที่มี · ไม่ทำ visual design) |
-| **Blueprint** | `docs/blueprints/ux-mission-gamification.md` §2 §3 §4 §5 §6 |
+| **Blueprint** | `features/gamification/ux-gamification.md` §2 §3 §4 §5 §6 |
 
 ### Description
 
@@ -67,7 +67,8 @@ _อัปเดต 2026-08-06 · อ้างอิง `docs/blueprints/ux-miss
 ### Acceptance Criteria
 
 **หน้าภารกิจ**
-- [ ] **AC1** Mission card แสดงครบ 5 อย่างตามลำดับสายตาใน §4.3 — รางวัล → เงื่อนไข 1 บรรทัด → progress `X/Y` + หมุด → เหลืออีกกี่วัน → โควตาคงเหลือ
+- [ ] **AC1** Mission card แสดงครบ 5 อย่างตามลำดับสายตาใน §4.3 — รางวัล → เงื่อนไข 1 บรรทัด → progress + หมุด → เหลืออีกกี่วัน → โควตาคงเหลือ
+- [ ] **AC1b** Progress มี **3 รูปแบบ** ตามกลุ่มภารกิจ (prd §6.0 · MT-02) — VOLUME ขั้นล่าง `X/Y` + 3 หมุดชนิดเดียวกัน · VOLUME ขั้นบน `X/Y` เส้นเดียว · **FREQUENCY 2 เส้นแยกกัน** (จำนวนงวด + Jidrid) · ต้องมีการ์ดตัวอย่างครบทั้ง 3 แบบ
 - [ ] **AC2** `MSN-201` แสดงการเรียง 4 กลุ่มตาม §4.2 มีการ์ดตัวอย่างครบทุกกลุ่ม รวมกลุ่ม "ของหมด/หมดอายุ" ที่แสดงแบบ disabled **ไม่ใช่ซ่อน**
 - [ ] **AC3** `MSN-200` มี **2 tab เท่านั้น** — ห้ามมี tab รางวัล (MECH-05)
 - [ ] **AC4** ไม่มีปุ่ม/ลิงก์ที่ชี้ไปหน้า onboarding หรือหน้าวิธีใช้งานที่ยังไม่มี (ผลของ D-06)
@@ -131,7 +132,7 @@ _อัปเดต 2026-08-06 · อ้างอิง `docs/blueprints/ux-miss
 | **Type** | Design Task |
 | **Priority** | High |
 | **Fidelity** | Mid-fi |
-| **Blueprint** | `docs/blueprints/ux-mission-gamification.md` §2 §7 (D-03, D-04) |
+| **Blueprint** | `features/gamification/ux-gamification.md` §2 §7 (D-03, D-04) |
 
 ### Description
 
