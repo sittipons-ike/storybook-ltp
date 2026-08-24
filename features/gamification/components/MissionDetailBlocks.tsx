@@ -99,7 +99,7 @@ export const MissionProgressCard: React.FC<MissionProgressCardProps> = ({
         {current.toLocaleString('en-US')}/{target.toLocaleString('en-US')} {unit}
       </Text>
     </Stack>
-    <MissionProgress current={current} target={target} marks={marks} />
+    <MissionProgress current={current} target={target} marks={marks} showLabels />
     <Text role="caption-lg-regular" tone="tertiary">{note}</Text>
   </Surface>
 );

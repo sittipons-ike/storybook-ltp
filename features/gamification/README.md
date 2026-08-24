@@ -82,7 +82,7 @@ http://localhost:6006/iframe.html?id=<story-id>&viewMode=story
 | Component | ทำไมไม่ reuse ของเดิม |
 |---|---|
 | `MissionCard` + `MissionClosedCard` | `ui/components/Card` คือหน้าสลาก คนละของ |
-| `MissionProgress` | `ui/components/ProgressBar` คือ stepper ของ checkout (step มีชื่อ+ไอคอน) ส่วนภารกิจคือ **นับเทียบเป้า** เช่น `38/50 ใบ` |
+| `MissionProgress` | `ui/components/ProgressBar` คือ stepper ของ checkout (step มีชื่อ+ไอคอน) ส่วนภารกิจคือ **นับเทียบเป้า** เช่น `38/50 ใบ` · หมุดวางตามค่าจริง (`value / target`) ไม่ใช่ช่องเท่าๆ กัน · การ์ดซ่อนตัวเลขใต้หมุด หน้า detail เปิด (`showLabels`) |
 | `MissionDetailBlocks` | section ของ MSN-210 (hero · progress · steps · facts · footer) — อยู่ชั้น component เพราะถือ token ส่วน page ถือไม่ได้ (`check-pages.py`) |
 
 ทั้งหมดย้ายขึ้น `ui/components` ได้เมื่อมีหลักฐานใช้ซ้ำ ≥2 feature (Lark §3.3)
