@@ -50,32 +50,46 @@
   object-position: center 42%;
 }
 
-/* The fade the earlier pass had: clear through the upper third, then a long ramp that is
-   well on its way to opaque before it reaches the seam. The lighter version that replaced
-   it read as a hard edge at this height — 183px of picture leaves no room for a fade that
-   only starts to bite near the bottom. Same four stops as before, expressed as a share of
-   the picture's own box so they hold at any height. */
+/* The fade, on an ease-in curve rather than four evenly-spaced stops.
+   
+   A linear ramp has to choose: start late and you get a visible edge where it begins,
+   start early and half the photograph is tinted. Both were tried. Easing removes the
+   choice — the first stops are close to nothing and barely register, and the curve does
+   its work over the last third, so the picture keeps its colour and the seam still has no
+   line in it. The stops below approximate t^2.4 across the lower two thirds. Reaching for the curve
+   was not the first instinct — a four-stop linear ramp was tried twice, once too heavy and
+   once so light it left a line. Neither is a tuning problem; a straight ramp cannot be
+   both. */
 .ltp-mission-block__scrim {
   position: absolute;
   inset: 0;
   background-image: linear-gradient(
     180deg,
-    color-mix(in srgb, var(--sys-color-background-accent-red) 0%, transparent) 38%,
-    color-mix(in srgb, var(--sys-color-background-accent-red) 30%, transparent) 62%,
-    color-mix(in srgb, var(--sys-color-background-accent-red) 82%, transparent) 88%,
+    color-mix(in srgb, var(--sys-color-background-accent-red) 0%, transparent) 34%,
+    color-mix(in srgb, var(--sys-color-background-accent-red) 2%, transparent) 50%,
+    color-mix(in srgb, var(--sys-color-background-accent-red) 6%, transparent) 62%,
+    color-mix(in srgb, var(--sys-color-background-accent-red) 14%, transparent) 72%,
+    color-mix(in srgb, var(--sys-color-background-accent-red) 26%, transparent) 80%,
+    color-mix(in srgb, var(--sys-color-background-accent-red) 44%, transparent) 87%,
+    color-mix(in srgb, var(--sys-color-background-accent-red) 68%, transparent) 93%,
+    color-mix(in srgb, var(--sys-color-background-accent-red) 88%, transparent) 97%,
     var(--sys-color-background-accent-red) 100%
   );
 }
 
+/* Four lines, but two thoughts: what you get, then where it came from and until when.
+   One even gap made them read as four peers, so the gap that matters — the one between
+   the two groups — is the only one that is wide. */
 .ltp-mission-block__hero-text {
   position: relative;
   flex: none;
   display: flex;
   flex-direction: column;
-  gap: var(--sys-spacing-sm);
-  padding: 0 var(--sys-spacing-2xl) var(--sys-spacing-2xl);
+  gap: var(--sys-spacing-xs);
+  padding: var(--sys-spacing-lg) var(--sys-spacing-2xl) var(--sys-spacing-2xl);
   background: var(--sys-color-background-accent-red);
 }
+
 
 .ltp-mission-block__kind {
   font-size: var(--sys-type-caption-md-regular-size);

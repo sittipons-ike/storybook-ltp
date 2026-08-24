@@ -85,3 +85,12 @@
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
+
+/* The rail and its head slide when a count changes. Someone who has asked the system to
+   stop moving things has asked for that too. */
+@media (prefers-reduced-motion: reduce) {
+  .ltp-mission-progress__fill,
+  .ltp-mission-progress__head {
+    transition: none;
+  }
+}

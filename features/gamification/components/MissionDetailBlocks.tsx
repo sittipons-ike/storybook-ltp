@@ -33,6 +33,13 @@ import './MissionDetailBlocks.css';
  * 3.80:1 on brand red and white reads 4.64:1.
  */
 const HERO_META = { color: sys('color-text-on-bgcolor') } as const;
+/**
+ * The gap that starts the second group. It goes through `style` for the same reason the
+ * colour does: Text writes `margin: 0` inline, and inline beats a class — a
+ * `.hero-break { margin-top }` rule did nothing, which is the identical trap the colour
+ * fell into on this same component.
+ */
+const HERO_NAME = { ...HERO_META, marginTop: sys('spacing-md') } as const;
 const BANNER_TITLE = { color: sys('color-status-success-darker') } as const;
 const BANNER_BODY = { color: sys('color-status-success-dark') } as const;
 
@@ -64,12 +71,20 @@ export const MissionHero: React.FC<MissionHeroProps> = ({
     <div className="ltp-mission-block__art">
       {/* Decorative: the reward's name is written across it. */}
       <img src={image} alt="" />
+      {/* Inside the picture's box, not beside it. As a sibling its `inset: 0` resolved
+          against the whole hero, so the fade finished at the bottom of the text instead of
+          at the seam — the picture met the text block's solid red at about 6% and drew a
+          line there. Three rounds of tuning could not fix a gradient ending in the wrong
+          place. */}
+      <div className="ltp-mission-block__scrim" aria-hidden="true" />
     </div>
-    <div className="ltp-mission-block__scrim" aria-hidden="true" />
     <div className="ltp-mission-block__hero-text">
       <span className="ltp-mission-block__kind">{kindLabel}</span>
       <span className="ltp-mission-block__reward">{reward}</span>
-      <Text role="body-md-regular" style={HERO_META}>{name}</Text>
+      {/* The second group. `title-md-medium` against the window's regular keeps the two
+          apart at the same colour — white is the only thing that reads on this red, so the
+          separation has to come from weight rather than tone. */}
+      <Text role="title-md-medium" style={HERO_NAME}>{name}</Text>
       <Text role="caption-lg-regular" style={HERO_META}>{campaignWindow}</Text>
     </div>
   </div>
