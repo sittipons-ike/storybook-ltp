@@ -39,14 +39,17 @@ const meta: Meta<typeof MissionDetailPage> = {
 export default meta;
 
 const Caption: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  /* Reviewer's note, not product copy. It used to be set in a monospace stack to say so,
+     but none of those families carries Thai — the caption came out in whatever face the
+     device substituted. Sitting outside the device frame already says it is not the design;
+     the type only has to be legible. */
   <div
     style={{
-      fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-      fontSize: 11,
+      fontSize: 12,
       opacity: 0.6,
       marginBottom: 8,
       maxWidth: 360,
-      lineHeight: 1.5,
+      lineHeight: 1.6,
     }}
   >
     {children}

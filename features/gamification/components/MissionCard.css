@@ -168,13 +168,14 @@
   border-radius: var(--sys-radius-lg);
   background: var(--sys-color-status-warning-soft-light);
   color: var(--sys-color-status-warning-darker);
-  /* Monospace is the one thing here with no token behind it — the system has no mono
-     family, and the signal is the point: an unsettled number must not read as an answer.
-     Recorded as debt rather than approximated with a role that would hide it.
-     Size and leading do come from the scale: this is a fact's value, the thing the row
-     was read for, so it sits at the same 12/18 as every other value and not at the 10px
-     an eyebrow gets. */
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* No monospace. The idea was that a machine face marks a value the product has not
+     settled, but none of ui-monospace / SFMono / Menlo carries Thai — the browser silently
+     substituted whatever Thai font the device had, so the text rendered in a typeface that
+     appears nowhere else in the product and changes from phone to phone. Measured: 42.79px
+     against Graphik TH's 44.41px for the same string. A borrowed Latin convention that
+     does not survive the script.
+     The signal it was carrying is already here and stronger: a warning-tinted pill, and
+     the words "รอข้อมูล" in place of a number (OPEN-08). */
   font-size: var(--sys-type-caption-lg-regular-size);
   line-height: var(--sys-type-caption-lg-regular-line-height);
 }
