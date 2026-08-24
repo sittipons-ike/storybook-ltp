@@ -358,7 +358,7 @@ def sys_ref(ref: str) -> str:
     return var
 
 
-def literal(ref, doc: dict, static_index: dict[str, str]):
+def literal(ref, doc: dict, static_index: dict[str, str], name: str = ""):
     """Resolve a components.json ref all the way down to a literal value.
 
     `static_index` decides which mode the answer is in: pass the mobile index for the
@@ -366,9 +366,15 @@ def literal(ref, doc: dict, static_index: dict[str, str]):
     responsive Tier 1 token has two correct answers, and saying so is the difference
     between a verification page that can be trusted and one that reports 145 phantom
     mismatches at desktop width.
+
+    `name` is what tells a raw number whether it carries a unit. The CSS side has always
+    asked, through dimension(); this side did not, so the same source value came out `600`
+    in tokens.css and `600px` in tokens.generated.ts — and the verification report read the
+    two apart and called it a mismatch, correctly. The stylesheet was right; the literal
+    map was wrong.
     """
     if not isinstance(ref, str):
-        return px(ref)
+        return dimension(name, ref)
 
     ref = ref.strip()
     alpha = ALPHA_RE.match(ref)
@@ -416,8 +422,8 @@ def component_vars(components: dict, doc: dict, static_index: dict[str, str],
 
         def emit(name: str, ref):
             css = sys_ref(ref) if isinstance(ref, str) else dimension(name, ref)
-            lit = literal(ref, doc, static_index)
-            desk = literal(ref, doc, desktop_index) if desktop_index else lit
+            lit = literal(ref, doc, static_index, name)
+            desk = literal(ref, doc, desktop_index, name) if desktop_index else lit
             return name, css, lit, (desk if desk != lit else None), is_alpha_ref(ref)
 
         # Flat palette — most components are modelled this way in Figma, with no

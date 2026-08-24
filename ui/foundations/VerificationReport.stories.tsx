@@ -92,6 +92,47 @@ const td: React.CSSProperties = {
 };
 
 // ═══════════════════════════════════════════
+/**
+ * Are these two token values the same value, written differently?
+ *
+ * `getComputedStyle` does not hand back the string that was declared — it hands back the
+ * browser's own serialisation of it. For a font stack that means single quotes come back
+ * as double quotes and the separators come back normalised, so
+ *
+ *     'Graphik TH', 'Sarabun', -apple-system      (what the generator wrote)
+ *     "Graphik TH", "Sarabun", -apple-system      (what the browser returns)
+ *
+ * compare unequal under `!==` while being the same declaration. That is the whole of the
+ * 73 "chain mismatches" this report used to show: every one of them a `-family` token, no
+ * colour, size or weight among them — a red number that meant nothing, on the one page
+ * whose job is to be believed when it turns red.
+ *
+ * It is the second time this check has cried wolf. The first was the responsive
+ * typography comparison, which reported 145 phantom mismatches by reading mobile values
+ * on a desktop viewport. A report nobody trusts is worse than no report, because a real
+ * drift now has 73 places to hide.
+ *
+ * The browser rewrites numbers too: it drops a leading zero (`0.3s` comes back `.3s`) and
+ * a trailing one (`0.10` comes back `.1`). Same number, different spelling, and the same
+ * false alarm — five of them, on durations and shadow alphas.
+ *
+ * Only the writing is normalised, never the meaning: quote style, whitespace around
+ * separators, and the spelling of a decimal. A different family, a different order, an
+ * extra fallback, a different NUMBER — all still fail.
+ */
+const sameValue = (a: string, b: string): boolean => {
+  if (a === b) return true;
+  const normalise = (v: string) =>
+    v
+      .replace(/'/g, '"')                 // the browser's quote, not the author's
+      .replace(/\s*,\s*/g, ',')           // and its spacing around list separators
+      .replace(/\s+/g, ' ')
+      // Compare decimals by value, not by spelling: 0.30 · .3 · 0.3 are one number.
+      .replace(/(^|[^\w.])(\d*\.\d+)/g, (_m, lead, num) => lead + String(parseFloat(num)))
+      .trim();
+  return normalise(a) === normalise(b);
+};
+
 export const FullReport: StoryObj = {
   name: 'Full Report',
   render: () => {
@@ -127,7 +168,9 @@ export const FullReport: StoryObj = {
         const expected = String(
           desktopMode && name in desktop ? desktop[name] : (TOKEN_VALUES as Record<string, string>)[name],
         ).trim();
-        if (computed !== expected) mismatches.push([name, computed || '(not declared)', expected]);
+        if (!sameValue(computed, expected)) {
+          mismatches.push([name, computed || '(not declared)', expected]);
+        }
       });
       setChain({
         checked: names.length,
