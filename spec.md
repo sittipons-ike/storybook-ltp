@@ -1,8 +1,9 @@
 # Project Spec — Lotteryplus Design System
-_Last updated: 2026-08-24 12:00_
+_Last updated: 2026-08-24 18:30_
 
 ## Current State
 
+_2026-08-24: **สาขารวมกลับเป็นเส้นเดียวแล้ว** — `feature/home-page` (doc review v1.1) merge เข้าสายหลักแล้ว · `main` = `44b6e09` · ล้าง branch ที่ merge แล้วทิ้ง 7 อัน · เหลือ `main` · `claude/gamification-mission-ui-0ec113` · `feature/home-page` · `claude/mystifying-torvalds-e98f4c` (worktree อื่นถืออยู่ มีงาน untracked 30 ไฟล์ ห้ามแตะ) · `main` ยังนำ `origin/main` อยู่ 29 commit — **ยังไม่ได้ push**_
 _2026-08-23: **`features/gamification/` docs ผ่าน consistency review + sync กับ Figma แล้ว** — prd-dev ขึ้น v1.1 · ล้างซากของ version ก่อน 2026-08-06 (roadmap · `AC-503` ซ้ำ · `MSN-110`) · path อ้างอิงทั้ง 4 ไฟล์ชี้โครง feature-first แล้ว · ดึงตาราง mission จาก Figma `2250:46164` เข้า §6.0/6.1/6.2/6.4 · เปิด OPEN-18/19/20 ที่เป็น product decision ค้าง_
 _หน้าที่สองของ page tier เสร็จ 2026-08-22: `features/home/` — `/` ทั้งหน้า 390×4651 วัดจาก Figma `21085:96373` ทีละ node · 11 feature component (+11 story) · 6 asset ของหน้า · อีก 3 component + 7 asset ยกขึ้น ui/ แล้ว · `npm run check` เขียว_
 
