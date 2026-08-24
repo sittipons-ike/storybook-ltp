@@ -1,8 +1,15 @@
-# Page manifest — Lark Standard §3.7 (page)
+# Page manifest — Lark Standard §3.7
+#
+# All thirteen fields, in the template's order, including the ones that hold nothing:
+# "ฟิลด์ทุกตัวต้องมีหัวข้ออยู่เสมอ ถึงจะไม่มีค่าก็ให้ใส่ null หรือ [] ไว้ ห้ามลบหัวข้อทิ้ง"
+
 name: home-page
+type: page
 responsibility: "หน้าแรกของแอป — ค้นเลข ดูสลากที่กำลังขายทุกหมวด และทางเข้าบริการทั้งหมด"
 
-type: page
+composition_level: null
+dependencies: []
+slots: []
 pattern: app-shell
 organisms:
   - status-bar           # StatusBar (21084:85178)
@@ -16,9 +23,12 @@ organisms:
 
 scope: project
 project: lotteryplus
+feature: null
+public: false            # designer state — ยังไม่ได้ผูกสัญญากับใคร
+
 folder: projects/lotteryplus/pages/home
 
-# Library-local facts, beyond what §3.7 asks for:
+# ── Library-local, beyond §3.7 ──
 frontend_route: /
 figma: "[Mobile] Home — home-page(mobile) (21085:96373), 390 x 4651"
 status: designer-state   # real fixtures, no API

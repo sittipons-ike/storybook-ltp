@@ -339,37 +339,54 @@ def build(mirror: dict) -> dict:
         if meta.get("type") == "helper":
             folder = f"global/helpers/{name}"
         elif scope == "project":
-            folder = f"projects/{meta.get('project', 'lotteryplus')}/components/{name}"
+            # The Standard's own example is projects/<project>/shared/components/<name> —
+            # `shared/` is what separates a component the whole project draws on from the
+            # feature folders beside it. It was missing here.
+            folder = f"projects/{meta.get('project', 'lotteryplus')}/shared/components/{name}"
         elif scope == "feature":
             folder = (
                 f"projects/{meta.get('project', 'lotteryplus')}"
                 f"/features/{meta.get('feature', name)}/components/{name}"
             )
 
+        kind = meta.get("type", "component")
+
+        # §3.7 is explicit that every field keeps its heading even when it holds nothing:
+        # "ห้ามลบหัวข้อทิ้ง". Emitting only the fields that apply produced 35 components
+        # with four different shapes, which is exactly what makes a diff unreadable and a
+        # validator impossible to write. All thirteen, in the template's order, always.
+        #
+        # `public` is the field this repo was missing entirely, and it is not a synonym for
+        # scope: scope says how widely a component MAY be used, public says whether it is
+        # open for use yet — and true carries a contract (an owner, a story someone else can
+        # read, and no breaking prop change without a deprecation). A component with no
+        # story cannot honour that, so having one is the condition here.
         entry = {
             "name": name,
+            "type": kind,
             "responsibility": meta["responsibility"],
-        }
-        # §3.7: helpers carry `type`, everything on the atomic ladder carries
-        # `composition_level` — never both.
-        if meta.get("type") == "helper":
-            entry["type"] = "helper"
-        else:
-            entry["composition_level"] = meta["composition_level"]
-        entry |= {
+
+            "composition_level": None if kind != "component" else meta["composition_level"],
             "dependencies": meta["dependencies"],
+            "slots": [],
+            "pattern": None,
+            "organisms": [],
+
             "scope": scope,
-            "shared": scope == "global",
+            "project": meta.get("project", "lotteryplus" if scope != "global" else None),
+            "feature": meta.get("feature") if scope == "feature" else None,
+            "public": bool(scope == "global" and meta.get("storybook")),
+
             "folder": folder,
+        }
+        # Library-local bookkeeping, after the Standard's thirteen.
+        entry |= {
+            "shared": scope == "global",
             "css_prefix": meta["prefix"],
             "storybook": meta["storybook"],
             "figma_group": meta.get("figma_group", f"colors/{group}"),
             "tokens": dict(sorted(tokens.items())),
         }
-        if "project" in meta:
-            entry["project"] = meta["project"]
-        if "feature" in meta:
-            entry["feature"] = meta["feature"]
 
         # Overlay: layout, sizing and typography that Figma keeps outside the colour
         # collection. Authored per component in components/<name>.json so several people
@@ -390,6 +407,37 @@ def build(mirror: dict) -> dict:
     return components
 
 
+def normalise_metadata(entry: dict) -> dict:
+    """Give a hand-authored entry the same thirteen-field shape build() produces.
+
+    §3.7: every field keeps its heading even when it holds nothing. Order matters too —
+    a field that appears in a different place on one component is a diff that reads as a
+    change when nothing changed.
+    """
+    kind = entry.get("type", "component")
+    scope = entry["scope"]
+    head = {
+        "name": entry["name"],
+        "type": kind,
+        "responsibility": entry["responsibility"],
+
+        "composition_level": entry.get("composition_level") if kind == "component" else None,
+        "dependencies": entry.get("dependencies", []),
+        "slots": entry.get("slots", []),
+        "pattern": entry.get("pattern"),
+        "organisms": entry.get("organisms", []),
+
+        "scope": scope,
+        "project": entry.get("project", "lotteryplus" if scope != "global" else None),
+        "feature": entry.get("feature") if scope == "feature" else None,
+        "public": entry.get("public", bool(scope == "global" and entry.get("storybook"))),
+
+        "folder": entry["folder"],
+    }
+    rest = {k: v for k, v in entry.items() if k not in head}
+    return head | rest
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true")
@@ -399,8 +447,12 @@ def main() -> int:
     existing = json.loads(COMPONENTS.read_text(encoding="utf-8"))
 
     generated = build(mirror)
-    # Button is hand-authored — it has a real variant x state matrix.
-    merged = {"button": existing["components"]["button"]}
+    # Button is hand-authored — it has a real variant x state matrix — and it is read back
+    # out of the file it is written to, so nothing in build() ever touches it. That is how
+    # it ended up as the one component missing the Standard's thirteen fields while the
+    # other 34 gained them. Normalising here rather than editing the JSON by hand keeps the
+    # rule enforced: hand-authored means its *content* is authored, not its shape.
+    merged = {"button": normalise_metadata(existing["components"]["button"])}
     merged.update(dict(sorted(generated.items())))
     existing["components"] = merged
 
