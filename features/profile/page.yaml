@@ -1,8 +1,15 @@
-# Page manifest — Lark Standard §3.7 (page)
+# Page manifest — Lark Standard §3.7
+#
+# All thirteen fields, in the template's order, including the ones that hold nothing:
+# "ฟิลด์ทุกตัวต้องมีหัวข้ออยู่เสมอ ถึงจะไม่มีค่าก็ให้ใส่ null หรือ [] ไว้ ห้ามลบหัวข้อทิ้ง"
+
 name: profile-page
+type: page
 responsibility: "ศูนย์รวมบัญชีของสมาชิก — ยอดเงิน แต้ม สลาก คูปอง และเมนูข้อมูลส่วนตัว"
 
-type: page
+composition_level: null
+dependencies: []
+slots: []
 pattern: app-shell
 organisms:
   - profile-header       # header-bar-profile-moblie (14962:94338)
@@ -11,9 +18,12 @@ organisms:
 
 scope: project
 project: lotteryplus
+feature: null
+public: false            # designer state — ยังไม่ได้ผูกสัญญากับใคร
+
 folder: projects/lotteryplus/pages/profile
 
-# Library-local facts, beyond what §3.7 asks for:
+# ── Library-local, beyond §3.7 ──
 frontend_route: /profile
 figma: "[Mobile] Profile (22483:144307)"
 status: designer-state   # real fixtures, no API
