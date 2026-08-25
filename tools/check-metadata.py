@@ -152,6 +152,10 @@ def main() -> int:
         counted["pattern"] += 1
 
     if FEATURES.is_dir():
+        for man in sorted(FEATURES.glob("*/components.yaml")):
+            for doc in load_yaml_docs(man):
+                failures += check_entry("component", doc.get("name", man.parent.name), doc)
+                counted["component"] += 1
         for man in sorted(FEATURES.glob("*/page.yaml")):
             docs = load_yaml_docs(man)
             if not docs:
@@ -159,6 +163,54 @@ def main() -> int:
             for doc in docs:
                 failures += check_entry("page", doc.get("name", man.parent.name), doc)
                 counted["page"] += 1
+
+    # ── ทางที่สอง: story ที่ไม่มี metadata ──────────────────────────────────
+    #
+    # จนถึงวันนี้ด่านถามทางเดียว: "ของที่มี metadata ครบ 13 ฟิลด์ไหม" ซึ่งเงียบสนิท
+    # กับของที่ไม่มี metadata เลย — 6 component ของกลางและ 14 ตัวใน features/ จึงอยู่ใน
+    # Storybook มาหลายสัปดาห์โดยไม่มีใครรู้ว่าไม่มีสัญญาผูกไว้ กับดักเดียวกับที่ icon
+    # เคยเจอ: ถามว่า "ชื่อ resolve ได้ไหม" แต่ไม่ถามว่า "ครบตาม Figma ไหม"
+    covered = set()
+    for src in (comps, pats):
+        for e in src.values():
+            if not isinstance(e, dict):
+                continue
+            sb = e.get("storybook")
+            if isinstance(sb, str):
+                covered.add(sb)
+            elif isinstance(sb, list):
+                covered.update(sb)
+    if FEATURES.is_dir():
+        for man in FEATURES.glob("*/components.yaml"):
+            for doc in load_yaml_docs(man):
+                if doc.get("storybook"):
+                    covered.add(doc["storybook"])
+        for man in FEATURES.glob("*/page.yaml"):
+            for doc in load_yaml_docs(man):
+                if doc.get("storybook"):
+                    covered.add(doc["storybook"])
+
+    # เอกสาร ไม่ใช่ component — token tables, รายงาน, และ shell ที่อยู่ใน patterns.json แล้ว
+    DOC_STORIES = {
+        "Colors", "Typography", "Spacing", "ComponentTokens",
+        "Changelog", "ComponentInventory", "VerificationReport",
+        "AppShell", "BareScreen",
+    }
+    # page ที่มี page.yaml ของตัวเองแล้ว — เทียบด้วยชื่อไฟล์ story ไม่ได้ตรงๆ
+    PAGE_STORIES = {"Home", "Profile", "MissionList", "MissionDetail", "MissionFlow"}
+
+    orphans = []
+    for f in sorted(list((ROOT / "ui").rglob("*.stories.tsx"))
+                    + list(FEATURES.rglob("*.stories.tsx"))):
+        if "_template" in f.parts:
+            continue
+        name = f.stem[: -len(".stories")] if f.stem.endswith(".stories") else f.stem
+        if name in covered or name in DOC_STORIES or name in PAGE_STORIES:
+            continue
+        orphans.append((name, f.relative_to(ROOT)))
+
+    for name, rel in orphans:
+        failures.append(f"story {name}: has a story but no metadata anywhere — {rel}")
 
     if failures:
         print("metadata does not match Lark Standard §3.7:")
@@ -170,7 +222,8 @@ def main() -> int:
     print(f"    helpers     : {counted['helper']}")
     print(f"    patterns    : {counted['pattern']}")
     print(f"    pages       : {counted['page']}")
-    print("    rule        : all thirteen fields present, in order, values in the canonical sets")
+    print(f"    stories     : every story covered by a manifest ({len(covered)} named)")
+    print("    rule        : all thirteen fields present, in order — and no story without metadata")
     return 0
 
 
