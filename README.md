@@ -164,6 +164,7 @@ Internal use only — Lotteryplus Design System.
 | กฎการเขียนโค้ด + ด่านทั้ง 11 | [CONTRIBUTING.md](CONTRIBUTING.md) |
 | token / สี / typography ทั้งระบบ | [design-library/lotteryplus/design.md](design-library/lotteryplus/design.md) |
 | สร้าง UI ให้ feature ใหม่ | [features/_template/README.md](features/_template/README.md) |
+| metadata ที่ทุก component ต้องมี | [docs/metadata-handbook.md](docs/metadata-handbook.md) |
 | pipeline ของ generator และด่าน | [tools/README.md](tools/README.md) |
 | ทำไมถึงตัดสินใจแบบนี้ | [docs/decisions/](docs/decisions/) |
 | กับดักที่เคยเจอ | [MEMORY.md](MEMORY.md) |

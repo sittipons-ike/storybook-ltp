@@ -23,7 +23,8 @@ tools/            generators + ด่านตรวจ (npm run check)
 3. **Component ใหม่ลง `features/<name>/components/`** ไม่ใช่ `ui/` — จะย้ายขึ้น ui/ ได้ต่อเมื่อมีหลักฐานใช้ซ้ำ ≥2 ที่ (Lark §3.3)
 4. **Figma ชนะเสมอเมื่อ Figma มี** — วัดจริง ห้ามเดา บันทึกลง design-library
 5. `_source/` = ไฟล์ดิบ gitignored — เอกสารที่ agent อ่านต้องเป็น md ที่ track แล้วเท่านั้น
-6. `npm run check` เขียวก่อน commit ทุกครั้ง
+6. **metadata ครบ 13 ฟิลด์เสมอ** — แม่แบบและเหตุผลอยู่ที่ `docs/metadata-handbook.md` · ด่านที่ 5 ปฏิเสธถ้าขาด
+7. `npm run check` เขียวก่อน commit ทุกครั้ง
 
 ## 🎨 Design Skills Registry
 
