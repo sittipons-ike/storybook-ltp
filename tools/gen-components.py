@@ -42,10 +42,18 @@ OVERLAY_DIR = LIB / "components"
 # colour group for. Those groups contribute nothing to the mirror, so `build()` seeds them
 # explicitly and their overlay in components/<name>.json carries the colours too.
 META: dict[str, dict] = {
+    "logo": {
+        # Figma ไม่มี colour group ให้ — โลโก้เป็นไฟล์ภาพ ไม่ใช่ของที่ทา token ได้
+        # (70 จาก 107 ตัวมีสีตายตัว และหลายตัวเป็นแบรนด์ของคนอื่น)
+        "responsibility": "Show a brand mark or graphic that must not be recoloured",
+        "composition_level": "atom", "scope": "global",
+        "dependencies": [], "prefix": "logo", "storybook": "Logo",
+        "figma_group": None,
+    },
     "icon": {
         "responsibility": "Render a single pictogram",
         "composition_level": "atom", "scope": "global",
-        "dependencies": [], "prefix": "icon", "storybook": "icons",
+        "dependencies": [], "prefix": "icon", "storybook": "Icon",
     },
     "breadcrumb": {
         "responsibility": "Show the path back through a page hierarchy",
@@ -199,7 +207,8 @@ META: dict[str, dict] = {
         "responsibility": "Pick lottery numbers from a dense grid",
         "composition_level": "organism", "scope": "project",
         "dependencies": ["button", "text-field", "dropdown"], "prefix": "lotto-board",
-        "storybook": "LottoBoard", "project": "lotteryplus",
+        # สองหน้าจอ: กระดานเลือกเลข และการ์ดค้นหาบนหน้าแรก — token ชุดเดียวกัน
+        "storybook": ["LottoBoard", "MainHomeCard"], "project": "lotteryplus",
     },
     "carts": {
         "responsibility": "Review the tickets chosen before checkout",
@@ -229,7 +238,11 @@ META: dict[str, dict] = {
         "responsibility": "Frame every page with a header and footer",
         "composition_level": "organism", "scope": "project",
         "dependencies": ["navigation-bar", "icon", "button"], "prefix": "topfoot",
-        "storybook": ["Header", "Footer", "ActionBar"],
+        # ทุกตัวกิน token จาก top-and-footer.json ชุดเดียวกัน — HeaderCounter คือแถวนับ
+        # ใน app bar, ProfileHeader/ProfileSummary คือ header-bar-profile-moblie และ
+        # header-profile ใน Figma ซึ่งอยู่กลุ่มสีเดียวกัน
+        "storybook": ["Header", "HeaderCounter", "ProfileHeader", "ProfileSummary",
+                      "Footer", "ActionBar"],
         "project": "lotteryplus",
     },
     "home": {

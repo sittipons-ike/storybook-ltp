@@ -1,0 +1,204 @@
+# Component manifests — Lark Standard §3.7
+#
+# ทุกตัวในไฟล์นี้เกิดที่ feature นี้ ยังไม่มีหลักฐานใช้ซ้ำ ≥2 ที่ จึงยังเป็น scope: feature
+# และ public: false — ขึ้น ui/components ได้เมื่อมีที่ใช้จริงที่สอง (§3.3 share by evidence)
+#
+# ครบ 13 ฟิลด์เสมอ แม้ค่าจะเป็น null หรือ [] — ห้ามลบหัวข้อทิ้ง
+
+name: add-on-service-card
+type: component
+responsibility: "แสดงบริการเสริมหนึ่งรายการพร้อมปุ่มเข้าใช้"
+
+composition_level: molecule
+dependencies: ["button", "text"]
+slots: []
+pattern: null
+organisms: []
+
+scope: feature
+project: lotteryplus
+feature: home
+public: false
+
+folder: projects/lotteryplus/features/home/components/add-on-service-card
+storybook: AddOnServiceCard
+---
+name: carousel-dots
+type: component
+responsibility: "บอกว่ากำลังอยู่หน้าที่เท่าไหร่ของแถบเลื่อน"
+
+composition_level: atom
+dependencies: []
+slots: []
+pattern: null
+organisms: []
+
+scope: feature
+project: lotteryplus
+feature: home
+public: false
+
+folder: projects/lotteryplus/features/home/components/carousel-dots
+storybook: CarouselDots
+---
+name: countdown-panel
+type: component
+responsibility: "นับเวลาถอยหลังจนถึงเวลาปิดรอบ"
+
+composition_level: molecule
+dependencies: ["text"]
+slots: []
+pattern: null
+organisms: []
+
+scope: feature
+project: lotteryplus
+feature: home
+public: false
+
+folder: projects/lotteryplus/features/home/components/countdown-panel
+storybook: CountdownPanel
+---
+name: flash-sale-banner
+type: component
+responsibility: "ประกาศรอบขายพิเศษพร้อมเวลาที่เหลือ"
+
+composition_level: molecule
+dependencies: ["CountdownPanel", "text"]
+slots: []
+pattern: null
+organisms: []
+
+scope: feature
+project: lotteryplus
+feature: home
+public: false
+
+folder: projects/lotteryplus/features/home/components/flash-sale-banner
+storybook: FlashSaleBanner
+---
+name: home-ads-row
+type: component
+responsibility: "วางแบนเนอร์โฆษณาเรียงเป็นแถวบนหน้าแรก"
+
+composition_level: atom
+dependencies: []
+slots: []
+pattern: null
+organisms: []
+
+scope: feature
+project: lotteryplus
+feature: home
+public: false
+
+folder: projects/lotteryplus/features/home/components/home-ads-row
+storybook: HomeAdsRow
+---
+name: home-red-block
+type: component
+responsibility: "พื้นแดงที่รองส่วนสลากของหน้าแรก"
+
+composition_level: atom
+dependencies: []
+slots: []
+pattern: null
+organisms: []
+
+scope: feature
+project: lotteryplus
+feature: home
+public: false
+
+folder: projects/lotteryplus/features/home/components/home-red-block
+storybook: HomeRedBlock
+---
+name: lottery-section
+type: component
+responsibility: "จัดกลุ่มสลากหนึ่งหมวดพร้อมหัวข้อและปุ่มดูทั้งหมด"
+
+composition_level: molecule
+dependencies: ["LotteryTile", "button", "icon", "text"]
+slots: []
+pattern: null
+organisms: []
+
+scope: feature
+project: lotteryplus
+feature: home
+public: false
+
+folder: projects/lotteryplus/features/home/components/lottery-section
+storybook: LotterySection
+---
+name: lottery-tile
+type: component
+responsibility: "แสดงสลากหนึ่งใบให้หยิบใส่ตะกร้าได้"
+
+composition_level: molecule
+dependencies: ["icon"]
+slots: []
+pattern: null
+organisms: []
+
+scope: feature
+project: lotteryplus
+feature: home
+public: false
+
+folder: projects/lotteryplus/features/home/components/lottery-tile
+storybook: LotteryTile
+---
+name: promo-banner
+type: component
+responsibility: "แสดงแบนเนอร์โปรโมชันหนึ่งชิ้น"
+
+composition_level: molecule
+dependencies: ["CarouselDots"]
+slots: []
+pattern: null
+organisms: []
+
+scope: feature
+project: lotteryplus
+feature: home
+public: false
+
+folder: projects/lotteryplus/features/home/components/promo-banner
+storybook: PromoBanner
+---
+name: quick-menu-grid
+type: component
+responsibility: "ทางเข้าบริการหลักเรียงเป็นตาราง"
+
+composition_level: molecule
+dependencies: ["CarouselDots", "logo", "text"]
+slots: []
+pattern: null
+organisms: []
+
+scope: feature
+project: lotteryplus
+feature: home
+public: false
+
+folder: projects/lotteryplus/features/home/components/quick-menu-grid
+storybook: QuickMenuGrid
+---
+name: seo-panel
+type: component
+responsibility: "บล็อกข้อความอธิบายบริการท้ายหน้าแรก"
+
+composition_level: molecule
+dependencies: ["icon", "text"]
+slots: []
+pattern: null
+organisms: []
+
+scope: feature
+project: lotteryplus
+feature: home
+public: false
+
+folder: projects/lotteryplus/features/home/components/seo-panel
+storybook: SeoPanel

@@ -1232,7 +1232,7 @@
       "folder": "global/components/icon",
       "shared": true,
       "css_prefix": "icon",
-      "storybook": "icons",
+      "storybook": "Icon",
       "figma_group": "colors/icon",
       "tokens": {
         "foreground-primary": "{design.semantic.colors.primary.default}",
@@ -1472,6 +1472,26 @@
       },
       "figma_node": "22535:131958"
     },
+    "logo": {
+      "name": "logo",
+      "type": "component",
+      "responsibility": "Show a brand mark or graphic that must not be recoloured",
+      "composition_level": "atom",
+      "dependencies": [],
+      "slots": [],
+      "pattern": null,
+      "organisms": [],
+      "scope": "global",
+      "project": null,
+      "feature": null,
+      "public": true,
+      "folder": "global/components/logo",
+      "shared": true,
+      "css_prefix": "logo",
+      "storybook": "Logo",
+      "figma_group": null,
+      "tokens": {}
+    },
     "lottery": {
       "name": "lottery",
       "type": "component",
@@ -1524,7 +1544,10 @@
       "folder": "projects/lotteryplus/shared/components/lotto-board",
       "shared": false,
       "css_prefix": "lotto-board",
-      "storybook": "LottoBoard",
+      "storybook": [
+        "LottoBoard",
+        "MainHomeCard"
+      ],
       "figma_group": "colors/lotto-board",
       "tokens": {
         "background-dark": "{design.semantic.colors.secondary.default}",
@@ -2690,6 +2713,9 @@
       "css_prefix": "topfoot",
       "storybook": [
         "Header",
+        "HeaderCounter",
+        "ProfileHeader",
+        "ProfileSummary",
         "Footer",
         "ActionBar"
       ],

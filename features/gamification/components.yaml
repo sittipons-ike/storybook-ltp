@@ -1,0 +1,60 @@
+# Component manifests — Lark Standard §3.7
+#
+# ทุกตัวในไฟล์นี้เกิดที่ feature นี้ ยังไม่มีหลักฐานใช้ซ้ำ ≥2 ที่ จึงยังเป็น scope: feature
+# และ public: false — ขึ้น ui/components ได้เมื่อมีที่ใช้จริงที่สอง (§3.3 share by evidence)
+#
+# ครบ 13 ฟิลด์เสมอ แม้ค่าจะเป็น null หรือ [] — ห้ามลบหัวข้อทิ้ง
+
+name: mission-card
+type: component
+responsibility: "แสดงภารกิจ 1 ใบพร้อมความคืบหน้าและสิทธิ์ที่เหลือ"
+
+composition_level: molecule
+dependencies: ["MissionProgress", "text"]
+slots: []
+pattern: null
+organisms: []
+
+scope: feature
+project: lotteryplus
+feature: gamification
+public: false
+
+folder: projects/lotteryplus/features/gamification/components/mission-card
+storybook: null
+---
+name: mission-progress
+type: component
+responsibility: "วาดความคืบหน้าของภารกิจตามโครงสร้าง Mission:Task 3 แบบ (prd §6.0)"
+
+composition_level: molecule
+dependencies: ["icon", "text"]
+slots: []
+pattern: null
+organisms: []
+
+scope: feature
+project: lotteryplus
+feature: gamification
+public: false
+
+folder: projects/lotteryplus/features/gamification/components/mission-progress
+storybook: null
+---
+name: mission-detail-blocks
+type: component
+responsibility: "บล็อกทั้งหมดของหน้ารายละเอียดภารกิจ — hero เงื่อนไข ความคืบหน้า และปุ่มรับรางวัล"
+
+composition_level: organism
+dependencies: ["MissionProgress", "button", "divider", "icon", "text"]
+slots: []
+pattern: null
+organisms: []
+
+scope: feature
+project: lotteryplus
+feature: gamification
+public: false
+
+folder: projects/lotteryplus/features/gamification/components/mission-detail-blocks
+storybook: null
