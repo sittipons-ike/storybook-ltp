@@ -18,12 +18,14 @@ python3 tools/gen-components.py >/dev/null && python3 tools/gen-tokens.py >/dev/
 python3 tools/verify-tokens.py >/dev/null
 python3 tools/collect-verification.py >/dev/null
 python3 tools/gen-logo-manifest.py >/dev/null
+python3 tools/gen-metadata-map.py >/dev/null
 if git diff --quiet -- "ui/foundations/tokens.css" \
       "ui/foundations/tokens.generated.ts" \
       "design-library/lotteryplus/components.json" \
       "design-library/lotteryplus/verification-result.json" \
       "design-library/lotteryplus/component-verification.json" \
-      "ui/logos/logos.generated.ts" 2>/dev/null; then
+      "ui/logos/logos.generated.ts" \
+      "ui/system/metadata.generated.ts" 2>/dev/null; then
   ok "regenerating changed nothing"
 else
   bad "regenerating changed a tracked file — commit the regenerated output"

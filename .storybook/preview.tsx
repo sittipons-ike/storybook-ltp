@@ -1,4 +1,6 @@
 import type { Preview } from '@storybook/react';
+import React from 'react';
+import MetadataBadge from '../ui/system/MetadataBadge';
 // Generated from Figma via design.md + components.json — see tools/README.md.
 // Loaded globally so every story can reference --sys-* / component tokens.
 import '../ui/foundations/tokens.css';
@@ -8,6 +10,19 @@ import { installFonts } from './fonts';
 installFonts();
 
 const preview: Preview = {
+  // The manifest travels with the component. `public: false` is a contract, and a
+  // contract nobody can read is only a note to the machine — nine components carry it
+  // and in Storybook they looked exactly like the forty that do not. The badge is fixed
+  // rather than wrapped around the story on purpose: a decorator in the layout flow
+  // would move every story down and change what a visual review is looking at.
+  decorators: [
+    (Story, context) => (
+      <>
+        <Story />
+        <MetadataBadge title={context.title} />
+      </>
+    ),
+  ],
   parameters: {
     controls: {
       matchers: {
